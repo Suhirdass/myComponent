@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Failed_Components__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( ISPICKVAL(Brake_Fluid__c , &apos;Failed&apos;),&quot;Brake Fluid: Failed&quot;+ BR() ,&quot; &quot;) +
+IF( ISPICKVAL(Brake_Lamps__c , &apos;Failed&apos;),&quot;Brake Lamps: Failed&quot;+ BR() ,&quot; &quot;) +
+IF( ISPICKVAL(Brakes__c , &apos;Failed&apos;),&quot;Brakes: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Driver_Bay_Cage__c , &apos;Failed&apos;),&quot;Driver Bay Cage: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Driver_Door__c , &apos;Failed&apos;),&quot;Driver Door: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Driver_Window__c , &apos;Failed&apos;),&quot;Driver Window: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Engine__c , &apos;Failed&apos;),&quot;Engine: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(First_Aid_Kit__c , &apos;Failed&apos;),&quot;First Aid Kit: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Front_Tires_Rims__c , &apos;Failed&apos;),&quot;Front Tires | Rims: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Headlamps__c , &apos;Failed&apos;),&quot;Headlights: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Heater_AC__c , &apos;Failed&apos;),&quot;Heater / AC: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Horn__c , &apos;Failed&apos;),&quot;Horn: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Interior_Lights__c , &apos;Failed&apos;),&quot;Interior Lights: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Passenger_Door__c , &apos;Failed&apos;),&quot;Passenger Door: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Passenger_Window__c , &apos;Failed&apos;),&quot;Passenger Window: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Power_Steering__c , &apos;Failed&apos;),&quot;Power Steering: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Radi__c , &apos;Failed&apos;),&quot;Radiator: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Radio__c , &apos;Failed&apos;),&quot;Radio: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Rear_Door__c , &apos;Failed&apos;),&quot;Rear Door: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Rear_Tires_Rims__c , &apos;Failed&apos;),&quot;Rear Tires | Rims: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Sanitation_Kits__c , &apos;Failed&apos;),&quot;Sanitation Kits: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Rear_Tires_Rims__c , &apos;Failed&apos;),&quot;Rear Tires | Rims: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Seat_Belts__c , &apos;Failed&apos;),&quot;Seat Belts: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Side_Load_Cage__c , &apos;Failed&apos;),&quot;Side Load Cage: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Side_Load_Door__c , &apos;Failed&apos;),&quot;Side Load Door: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Signals_Front__c , &apos;Failed&apos;),&quot;Signal Lights Front: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Signal_Lights_Rear__c , &apos;Failed&apos;),&quot;Signal Lights Rear: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Transmission__c, &apos;Failed&apos;),&quot;Transmission: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Transmission_Oil__c , &apos;Failed&apos;),&quot;Transmission Oil: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Windshield__c , &apos;Failed&apos;),&quot;Windshield: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Windshield_Washer__c , &apos;Failed&apos;),&quot;Windshield Washer: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Windshield_Washer_Fluid__c , &apos;Failed&apos;),&quot;Windshield Washer Fluid: Failed&quot;+ BR() ,&quot; &quot;)+
+IF( ISPICKVAL(Wipers__c , &apos;Failed&apos;),&quot;Wipers: Failed&quot;+ BR() ,&quot; &quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Failed Components</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

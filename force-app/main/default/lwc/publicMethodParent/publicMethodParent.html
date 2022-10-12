@@ -1,0 +1,10 @@
+<template>
+    <lightning-card title="Call Method on Child Component">
+        <!-- Providing input value, this value will pass to js, when i am onchange and stored into value 
+            and pass into child component by using queryselector and public property-->
+            <lightning-input value={value} label="Checkbox Value" onchange={onInputChangeHandler}></lightning-input>
+            <lightning-button label="Select Checkbox" onclick={checkboxSelectHandler}></lightning-button> 
+            <div> I am Div in Parent Component </div>   
+            <c-public-method-child ></c-public-method-child>
+    </lightning-card>
+</template>

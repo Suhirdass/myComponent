@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Billable_Cultivation_Tax__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(TEXT(Receiving_Line__r.Purchase_Order_Line__r.Billable_Cultivation_Tax__c)),&quot;Missing Billable Cultivation Tax Input&quot;,TEXT(Receiving_Line__r.Purchase_Order_Line__r.Billable_Cultivation_Tax__c))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Billable Cultivation Tax</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

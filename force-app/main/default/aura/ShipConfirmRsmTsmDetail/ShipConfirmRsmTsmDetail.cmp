@@ -1,0 +1,890 @@
+<aura:component extends="c:utility"	controller="RSMTSMShipConfirmCotroller" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global">	
+    
+    <!--attributes-->
+    <aura:attribute name="ShippingManifestValue" type="Shipping_Manifest__c"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="signPad" type="boolean" default="false"/>
+    <aura:attribute name="ccDate" type="String"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="errors" type="Object" default="[]"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    <aura:attribute name="DueDate" type="Date"/>
+    <aura:attribute name="payementValues" type="List"/>
+    <aura:attribute name="ProductAmount" type="List"/>
+    <aura:attribute name="ExciseTaxAmount" type="List"/>
+    <aura:attribute name="paymentMemo" type="List"/>
+    <aura:attribute name="pReceivername" type="String"/>
+    <aura:attribute name="SMLI_Rejection_Reason_Validation_Config" type="String"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean" default="false" description="flag for rendered save and cancel buttons in aura:if "/>
+    <aura:attribute name="currentInvoiceWrapperList" type="InventoryPositionWrapper[]"/>
+    <aura:attribute name="openpendingInvoiceWrapperList" type="object[]"/>
+    <!-- create 2 aura handler with waiting and donewaiting events--> 
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" />
+    <ltng:require scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js',
+                           $Resource.datatable+ '/js/jquery.dataTables.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    <!-- handlers-->
+    <aura:handler name="init" action="{!c.doInit}"   value="{!this}" access="global" />	
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="soId" type="String" />
+    <aura:attribute name="smId" type="String"  />
+    <aura:attribute name="setInvoiceLines" type="RSMTSMShipConfirmCotroller.InvoiceLineWrapper[]" />
+    <aura:attribute name="setOpenInvoiceLines" type="RSMTSMShipConfirmCotroller.InvoiceLineWrapper[]" />
+    <aura:attribute name="setPendingInvoiceLines" type="RSMTSMShipConfirmCotroller.InvoiceLineWrapper[]" />
+    <aura:attribute name="setSM" type="Shipping_Manifest__c" default="{'sobjectType': 'Shipping_Manifest__c',
+                                                                      'Name':''
+                                                                      }"/> 
+    <aura:attribute name="setOpInvoiceLines" type="RSMTSMShipConfirmCotroller.InvoiceLineWrapper[]" />
+    <aura:attribute name="setRsmLines" type="RSMTSMShipConfirmCotroller.rsmlinesWrapper[]" />
+    <aura:attribute name="getReceiverContacts" type="List" />
+    <aura:attribute name="getRsmLines"  type="Shipping_Manifest_Line__c[]" />
+    <aura:attribute name="message" type="String" />
+    <aura:attribute name="rcpaymentData" type="Map"/>
+    <aura:attribute name="getRcPaymentformStatusData" type="Map"/>
+    <aura:attribute name="canvasRandomId" type="String"/>
+    <ltng:require afterScriptsLoaded="{!c.Init}"/>
+    <aura:attribute name="openCreateInvoicePopup" type="Boolean"  />
+    <aura:attribute name="invoiceCheck" type="Boolean" default="false"  />
+    
+    <aura:html tag="style">
+        .slds-card__header {
+        
+        margin-bottom: -25px;
+        }
+        .slds-page-header__name h1 {
+        margin-left: 8px;
+        }
+        .slds-table td {
+        width: 172px;
+        }
+        .slds-modal__container {
+        min-width: 35%;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        margin-bottom:7px;
+        }
+        .slds-card
+        {
+        margin-top: 9px;
+        margin-left: 17px;
+        margin-right: 17px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        }
+        .title-align {
+        padding-left: 10px;
+        padding-top: 5px;
+        }
+        .title-align-two {
+        padding-left: 10px;
+        }
+        .title-align-two li{
+        padding-bottom: 0px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 20px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-media{
+        padding-bottom: 0px;
+        }
+        .text-center{
+        text-align: center;
+        }
+        .heightfixprint {
+        width: 638px;
+        margin-left: -31px;
+        margin-top: -23px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-card__header {
+        padding: var(--lwc-varSpacingVerticalSmall,0.75rem) var(--lwc-varSpacingHorizontalMedium,1rem) 0;
+        margin: 0 0 var(--lwc-varSpacingVerticalSmall,0.75rem);
+        }
+        .slds-wrap {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        }
+        .slds-grid {
+        display: flex;
+        }
+        ol, ul {
+        list-style: none;
+        }
+        .cAssignVehicleToSalesOrder .lstpadding {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 15px;
+        }
+        .slds-page-header__title::first-letter  {
+        text-transform:uppercase;
+        }
+        .paddings {
+        font-size: 14px;
+        margin-top: 13px;
+        }
+        span.slds-form-element__label.slds-truncate {
+        display: inline;
+        }
+        
+        .nlink a {
+        display: inline-block;
+        vertical-align: top;
+        border-bottom: 1px dotted;
+        }
+        
+        
+        span.toastMessage.slds-text-heading--small.forceActionsText {
+        white-space: pre-line !important;
+        } 
+        .slds-size_1-of-6.slds-max-small-size_1-of-3.slds-sizetsm {
+        width: 13.666667% !important;
+        }
+        
+        lightning-timepicker.slds-form-element {
+        width: 100px  !important;
+        }
+        lightning-datepicker.slds-form-element {
+        width: 120px !important;
+        }        
+        div#dropdown-element-294{
+        position: relative !important;
+        Z-index: 999 !important;
+        display: block !important;
+        
+        height:50px !important;
+        }
+         .acolor{
+         color:#0070D2;
+         }
+        
+         .dcnf{
+         display:none;
+         }
+        .trbg{
+        background-color:#F5F5F5;
+        }
+        .fltright{
+        float:right;
+         
+        }
+        .inmaxhgt{
+        max-height: 100% !important;
+        }
+        .inmaxhgtwd{
+        max-height: 100% !important;
+        width: 100% !important;
+        }
+        .cansig{
+        border:2px solid #ddd;
+        background: transparent;
+        }
+        .padtop10{
+        padding-top:10px;
+        }
+          .padleft10{
+        padding-left:10px;
+        }
+        .actname{
+        padding-top:10px;
+        padding-left: 10px;
+        }
+        .actdate{
+        padding-top:10px;
+        float:right;
+        }
+        .btnSec{
+         
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        
+        .flex-container {
+          display: flex;
+          flex-wrap: nowrap;
+        }
+        .flex-container .boxCamera {
+          width: 50%;
+          margin: 10px;
+        }
+        .flex-container .boxOutput {
+          width: 50%;
+          margin: 10px;
+        }
+        /*
+        @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait) { 
+        .btnSec,.fltright{display:block !important;}
+        .btnSec:before,.fltright:before{clear:both !important;}
+        }
+        @media all and (device-width: 1024px) and (device-height: 768px) and (orientation:landscape) {
+        .btnSec,.fltright{display:block !important;}  
+        .btnSec:before,.fltright:before{clear:both !important;}
+        }*/
+        
+        .slds-modal__content {
+        padding: 2em 3em !important;
+        border-radius: 1px !important;
+        }
+        .slds-modal__container {
+        width: 500px !important;
+        }
+    </aura:html>
+    <!--loading spinner start... style=Brand Medium (blue dots)-->
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- Loading spinner end-->
+    
+      <!-- Create Invoice Conformation Popup -->
+    
+    <aura:if isTrue="{!v.openCreateInvoicePopup}">
+          <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="" >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="padding-top: 20px; width: 650px;height: 63px;">
+                    <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                    
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="margin-top: -12px;">{!v.setSM.Name}</h2>
+                </header>
+                <span style="height:14px !important;width: 35px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                
+                <!--###### MODAL BOX BODY Part Start######-->
+                <span style="height:14px !important;margin-left:636px;width:14px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right:250px;"></span>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 650px;padding: 29px;">
+                    
+                    <p class="slds-m-left_xx-large" style="margin-left:31px;">Generate Final Invoice?</p>
+                    
+                </div>
+                
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                
+                <footer class="slds-modal__footer"  style="width: 650px; height: 60px; z-index: 2; display:inline-flex !important;margin-top:-11px;">
+                    <span style="height: 65px !important;width: 30px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-left: -16px;"></span>
+                    <span style="height: 50px !important; width: 560px  !important; z-index: 1;margin-left: 26px;">
+                           <lightning:button class="slds-button_brand textCappop"  label="Yes" title="Yes"  onclick="{!c.createInvoicePdf}"/>
+                        <lightning:button class="slds-button_neutral textCappop"  label="No" title="No"  onclick="{! c.onInvocieCancel}"/>
+                    </span>
+                    <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                </footer>
+                <span style="height: 69px !important;background-color: white !important;z-index: 2;margin-top: -64px; width: 12px;margin-right: -40px;margin-left: 638px;"></span>
+                <div style="padding-bottom: 36px;height:76px; width: 650px; background-color: white; border-radius: 3px; margin-top: -5px; z-index: 1;"></div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    
+    
+    <!-- Create Invoice Conformation Popup -->
+    
+    <aura:if isTrue="{!v.noInvoicePopup}">
+        <div class="slds-m-around_xx-large">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container" style="width:75%;">
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">{!v.setSM.Name}</h1>
+                    </header>
+                    
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <br/><center>Invoice not available to  Generate Final Invoice.</center><br/>
+                    </div>
+                    
+                    <footer class="slds-modal__footer">
+                       
+                        <lightning:button name='Ok' label='Ok' onclick='{!c.onCancel}'/>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </div>
+    </aura:if>
+    
+    <ui:scrollerWrapper class="scrollerSize">
+        <div class="innerDivWrapper">
+            <article class="slds-card cAssignVehicleToSalesOrder" >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom98" title="custom98" /> 
+                                <div class="slds-media__body">
+                                    <div class="slds-grid"> 
+                                       
+                                        <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                                            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">TSM Details</h1>
+                                            <aura:set attribute="else"> 
+                                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">RSM Details</h1>
+                                            </aura:set>
+                                        </aura:if>
+                                        <ui:outputText aura:id="metricId" value="{!v.setSM.Metrc_Manifest__c}" class="smName" > </ui:outputText>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="slds-card__header_" data-aura-rendered-by="438:0">
+                    <ul class="slds-grid slds-wrap list" data-aura-rendered-by="439:0">
+                        <li class="slds-page-header__detail-block lstpadding">
+                            <div class="slds-form-element  slds-hint-parent" >
+                                <span class="slds-form-element__label slds-truncate" title="Manifest" ><b>Manifest #</b></span>
+                                <div class="slds-form-element__control" >
+                                    <div class="slds-form-element__static slds-truncate nlink" >
+                                        <a href="{!'/' + v.setSM.Id}" class="acolor"> <span ><ui:outputText value="{!v.setSM.Name}"/>	</span></a>
+                                        <span  class="dcnf" >
+                                           
+                                            <ui:outputText     value="{!v.setSM.Actual_Receiver_Name__c}" aura:id="actRCName" /></span>
+                                        <ui:outputText aura:id="smName" value="{!v.setSM.Name}" class="smName" >	</ui:outputText>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li  class="dcnf" >
+                            <lightning:formattedDateTime value="{!v.setSM.Receiver_Acceptance_Date__c}"  aura:id="rcAcptDate" year="numeric" month="numeric" day="numeric"  hour="2-digit" minute="2-digit"  />
+                        </li>
+                        <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Business Name" ><b>DBA Name</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span >{!v.setSM.Supplier_Name__r.DBA__c}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li> 
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Business Name" ><b>PO Number</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span >{!v.setSM.Purchase_Order__r.Name}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li> 
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Payment Terms" ><b>Payment Terms</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span >{!v.setSM.Payment_Terms__c}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Driver" ><b>Driver</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <a href="{!'/' + v.setSM.Driver__c}" class="acolor" > <span >{!v.setSM.Driver__r.Name}</span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Vehicle" ><b>Vehicle</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <a href="{!'/' + v.setSM.Vehicle__c}" class="acolor"  > <span >{!v.setSM.Vehicle__r.Name}</span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Vehicle" ><b>Planned Transfer Date</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span ><lightning:input  type="date"   value="{!v.setSM.Planned_Ship_Transfer_Date__c}"  name="input1" dateStyle="short" /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Vehicle" ><b>Actual Departure Date/Time</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span >
+                                                <lightning:input aura:id="actDDTimes" type="datetime"   value="{!v.setSM.Actual_Departure_Date_Time__c}"  name="input1" dateStyle="short" /> 
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Vehicle" ><b>Actual Arrival Date/Time</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span ><lightning:input  type="datetime"  aura:id="actAATime"   value="{!v.setSM.Actual_Arrival_Date_Time__c}"  name="input1" dateStyle="short" /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block lstpadding">
+                                <div class="slds-form-element slds-hint-parent" >
+                                    <span class="slds-form-element__label slds-truncate" title="Vehicle" ><b>Receiver Acceptance Date</b></span>
+                                    <div class="slds-form-element__control" >
+                                        <div class="slds-form-element__static slds-truncate" >
+                                            <span ><lightning:input  type="datetime" aura:id="RAD"   value="{!v.setSM.Receiver_Acceptance_Date__c}"  name="input2"  dateStyle="short" />
+                                                
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <aura:set attribute="else">
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Business Name" ><b>Business Name</b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <span >{!v.setSM.Receiver_Name__r.DBA__c}</span>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Metrc #" ><b>Metrc #</b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <span >{!v.setSM.Metrc_Manifest__c}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Metrc #" ><b>Order #</b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <!-- <span >{!v.setSM.Sales_Order__r.Name}</span> --> 
+                                                <a href="{!'/' + v.setSM.Order_Number__c}" class="acolor" > <span >{!v.setSM.Order_Number__r.Name}</span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Metrc #" ><b>Ship / Transfer Date</b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <span ><lightning:formattedDateTime value="{!v.setSM.Planned_Ship_Transfer_Date__c}" /></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Driver" ><b>Driver</b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <a href="{!'/' + v.setSM.Driver__c}" class="acolor"  > <span >{!v.setSM.Driver__r.Name}</span></a>
+                                                <span ></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Vehicle" ><b>Vehicle</b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <a href="{!'/' + v.setSM.Vehicle__c}" class="acolor"  > <span >{!v.setSM.Vehicle__r.Name}</span></a>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="slds-page-header__detail-block lstpadding">
+                                    <div class="slds-form-element slds-hint-parent" >
+                                        <span class="slds-form-element__label slds-truncate" title="Payment Terms" ><b>Payment Terms </b></span>
+                                        <div class="slds-form-element__control" >
+                                            <div class="slds-form-element__static slds-truncate" >
+                                                <span >{!v.setSM.Payment_Terms__c}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </aura:set>
+                        </aura:if>
+                    </ul>
+                </div>
+            </article> 
+            
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom96" title="custom96" />
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                                            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">TSM Lines</h1>
+                                            
+                                            <aura:set attribute="else"> 
+                                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">RSM Lines</h1>
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div> 
+                <div  class="slds-card__header ">
+                    
+                    <table class="slds-table_bordered slds-table_col-bordered  rsmlinetable ">
+                        <thead>
+                            <tr class="trbg"  >
+                                <th scope="col" class="cell-breakAll">Line ID</th> 
+                                <th scope="col" class="cell-breakAll">Product Name</th>
+                                <th scope="col" class="cell-breakAll">Product Description</th>
+                                <th scope="col" class="cell-breakAll">Brand Name</th>
+                                <th scope="col" class="cell-breakAll">Shipment Qty</th>
+                                <th scope="col" class="cell-breakAll">Subtotal Price</th>
+                                <th scope="col" class="cell-breakAll">Qty Received</th>
+                                <th scope="col" class="cell-breakAll">Rejection Reason</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <!--### display all records of getRsmLines attribute one by one by aura:iteration ###-->
+                            <aura:if isTrue="{!not(empty(v.setRsmLines))}"> 
+                                <aura:iteration items="{!v.setRsmLines}" var="res" indexVar="index"> 
+                                    <tr >
+                                        <td class="cell-breakAll acolor"><div><a href="{!'/' + res.rsmlinesIL.Id}"  ><u>{!res.rsmlinesIL.Name}</u></a></div></td>
+                                        <td class="cell-breakAll">{!res.rsmlinesIL.Product_Name__r.Name}</td>
+                                        <td class="cell-breakAll">{!res.rsmlinesIL.Product_Description__c}</td>
+                                        <td class="cell-breakAll">{!res.rsmlinesIL.Producer_Name__c} </td>
+                                        <aura:if isTrue="{!res.rsmlinesIL.Picklist_Line__c!= NULL}">
+                                        <!--<aura:if isTrue="{!v.setSM.RecordType.Name=='RSM'}">-->
+                                            <td class="cell-breakAll"> <lightning:formattedNumber aura:id="passQty" value="{!res.rsmlinesIL.Shipment_Qty__c}"/></td>
+                                            <td class="cell-breakAll"> <ui:outputCurrency value="{!res.rsmlinesIL.Retail_Wholesale_Price__c}"/></td>
+                                            <td class="cell-breakAll">
+                                                <lightning:input aura:id="recQty" type="text" label="Enter a number" value="{!res.rsmlinesIL.Qty_Received__c}" /></td>
+                                            <td class="cell-breakAll"> 
+                                                <lightning:select   value="{!res.rsmlinesIL.Rejection_Reason__c}"    >
+                                                    <option value="">None</option>
+                                                    <option value="Damaged Products">Damaged Products</option>
+                                                    <option value="Denied Product">Denied Product</option>
+                                                    <option value="Expiration Date">Expiration Date</option>
+                                                    <option value="Incorrect Pricing">Incorrect Pricing</option>
+                                                    <option value="Incorrect Product">Incorrect Product</option>  
+                                                    <option value="Incorrect Qty Shipped">	Incorrect Qty Shipped</option>
+                                                    <option value="Labeling Issue">Labeling Issue</option>
+                                                    <option value="Non-Compliant">Non-Compliant</option>
+                                                    <option value="Not Ordered">Not Ordered</option>
+                                                    <!--option value="Wrong Product">Wrong Product</option-->  
+                                                </lightning:select>  
+                                            </td>
+                                            <aura:set attribute="else">
+                                                <td class="cell-breakAll"> 
+                                                    <aura:if isTrue="{!v.setSM.RecordType.Name=='Cash Collection'}">
+                                                        <lightning:formattedNumber aura:id="passQty"  value="{!res.rsmlinesIL.Shipment_Qty__c}"/>
+                                                        <aura:set attribute="else">
+                                                            <lightning:formattedNumber aura:id="passQty" value="{!res.rsmlinesIL.Qty_Ordered__c}"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </td>
+                                                <td class="cell-breakAll">
+                                                    
+                                                    <aura:if isTrue="{!v.setSM.RecordType.Name=='Cash Collection'}">
+                                                        <ui:outputCurrency value="{!res.rsmlinesIL.Retail_Wholesale_Price__c}"/>
+                                                        <aura:set attribute="else">
+                                                            <ui:outputCurrency value="{!res.rsmlinesIL.Unit_Cost__c}"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                
+                                                </td>
+                                                
+                                                <td class="cell-breakAll">
+                                                    <aura:if isTrue="{!v.setSM.RecordType.Name=='Cash Collection'}">
+                                                    	<lightning:input aura:id="recQty" type="number" label="Enter a number" value="{!res.rsmlinesIL.Qty_Received__c}" />
+                                                        <aura:set attribute="else">
+                                                         <lightning:formattedNumber aura:id="passQty" value="{!res.rsmlinesIL.Qty_Ordered__c}"/>
+                                                        </aura:set>
+                                                        </aura:if>
+                                                    </td>
+                                                <td class="cell-breakAll">
+                                                </td>
+                                            </aura:set>
+                                        </aura:if>
+                                    </tr>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <td>
+                                        <ui:outputText class="text-center" value="No data available in table"/>	
+                                    </td>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                </div>
+            </article> 
+            
+            <!-- current invoice -->
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom17" title="custom17" /> 
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Current Invoice- {!rsmShiptrDate}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="slds-is-relative slds-p-horizontal_small">
+                    
+                    <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small Inmaxhgt" >
+                        <table class=" datepicker__month datepicker-table datepicker-table  mydataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">
+                            <thead>
+                                <tr class="">
+                                    <th scope="col"> <div class="slds-truncate" title="Invoice">Invoice #</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Invoice Balance">Invoice Balance</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Product Balance">Product Balance</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Excise Tax Balance">Excise Tax Balance</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Due Date">Due Date</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Payment Form">Payment Form</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Product Amount">Product Amount</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Exclse Tax Amount">Excise Tax Amount</div> </th>
+                                    <th scope="col"> <div class="slds-truncate" title="Exclse Tax Amount">Payment Memo</div> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:if isTrue="{!not(empty(v.setOpenInvoiceLines)) }"> 
+                                    <aura:iteration items="{!v.setOpenInvoiceLines}" var="inv" indexVar="index"> 
+                                        <tr id="{!index}">
+                                            <td><div><a href="{!'/' + inv.allInvoices.Id}" class="acolor"  ><u>{!inv.allInvoices.Name} </u></a></div></td>
+                                            <td><div><ui:outputCurrency value="{!inv.allInvoices.Invoice_Balance__c}"/></div></td>
+                                            <td><div><ui:outputCurrency value="{!inv.allInvoices.Product_Balance__c}"/></div></td>
+                                            <td><div><ui:outputCurrency value="{!inv.allInvoices.Excise_Tax_Balance__c}"/></div></td>
+                                            <td><lightning:input   id="dueDate{index}" type="date" label="{!index}"  value="{!inv.allInvoices.Invoice_Due_Date__c}"  name="input1"  dateStyle="short"  data-row-index="{!index}" /></td>
+                                            <td>
+                                                <lightning:select  value="{!inv.paymentForm}" >
+                                                    <option value="">None</option>
+                                                    <aura:iteration items="{!v.rcpaymentData}" var="res" indexVar="key">
+                                                        <option value="{!res.value}" selected="{!res.key == inv.paymentForm}">{!res.key}</option>
+                                                    </aura:iteration>
+                                                </lightning:select>
+                                            </td>
+                                            <td><ui:inputCurrency aura:id="{!index}index" value="{!inv.productAmount}"   placeholder="0.0"  /></td>
+                                            <td><ui:inputCurrency  aura:id="exciseTax{!index}"  value="{!inv.exciseTax}"   placeholder="0.0"  /></td>
+                                            <td> <ui:inputTextArea  aura:id="payMemo{!index}"  value="{!inv.payMemo}"   rows="1"/></td>
+                                        </tr>
+                                    </aura:iteration>
+                                    <aura:set attribute="else">
+                                        <td>
+                                            <ui:outputText class="text-center" value="No data available in table2"/>	
+                                        </td>
+                                    </aura:set> 
+                                </aura:if>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article> 
+            
+            <!-- Open and Pending Invoices -->
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom41" title="Open and Pending Invoices" /> 
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Open and Pending Invoices</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small inmaxhgtwd" >
+                    <table class="datepicker__month datepicker-table datepicker-table mydataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">
+                        <thead>
+                            <tr class="">
+                                <th scope="col"> <div class="slds-truncate" title="Invoice">Invoice #</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Invoice Balance">Invoice Balance</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Product Balance">Product Balance</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Excise Tax Balance">Excise Tax Balance</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Due Date">Due Date</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Payment Form">Payment Form</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Product Amount">Product Amount</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Exclse Tax Amount">Excise Tax Amount</div> </th>
+                                <th scope="col"> <div class="slds-truncate" title="Exclse Tax Amount">Payment Memo</div> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:if isTrue="{!not(empty(v.setPendingInvoiceLines))}"> 
+                                <aura:iteration items="{!v.setPendingInvoiceLines}" var="inv" indexVar="index"> 
+                                    <tr id="{!index}">
+                                        <td><div><a href="{!'/' + inv.allInvoices.Id}" class="acolor" ><u>{!inv.allInvoices.Name} </u></a></div></td>
+                                        <td><div><ui:outputCurrency value="{!inv.allInvoices.Invoice_Balance__c}"/></div></td>
+                                        <td><div><ui:outputCurrency value="{!inv.allInvoices.Product_Balance__c}"/></div></td>
+                                        <td><div><ui:outputCurrency value="{!inv.allInvoices.Excise_Tax_Balance__c}"/></div></td>
+                                        <td><lightning:input   id="dueDate{index}" type="date" label="{!index}"  value="{!inv.allInvoices.Invoice_Due_Date__c}"  name="input1"   dateStyle="short" data-row-index="{!index}" /></td>
+                                        <td>
+                                            <lightning:select  value="{!inv.paymentForm}" >
+                                                <option value="">None</option>
+                                                <aura:iteration items="{!v.rcpaymentData}" var="res" indexVar="key">
+                                                    <option value="{!res.value}" selected="{!res.key == inv.paymentForm}">{!res.key}</option>
+                                                </aura:iteration>
+                                            </lightning:select>
+                                        </td>
+                                        <td><ui:inputCurrency aura:id="{!index}index" value="{!inv.productAmount}"   placeholder="0.0"  /></td>
+                                        <td><ui:inputCurrency  aura:id="exciseTax{!index}"  value="{!inv.exciseTax}"   placeholder="0.0"  /></td>
+                                        <td> <ui:inputTextArea  aura:id="payMemo{!index}"  value="{!inv.payMemo}"   rows="1"/></td>
+                                    </tr>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <td>
+                                        <ui:outputText class="text-center" value="No data available in table"/>	
+                                    </td>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+            
+            <!-- e-signature -->
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom83" title="e-signature" /> 
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">E-signature</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dcnf"> <lightning:input  aura:id="smRtypeName" type="text" value="{!v.setSM.RecordType.Name}" ></lightning:input> </div>
+                        <lightning:input  aura:id="shmainDate" type="text" class="dcnf" value="{!v.setSM.Planned_Ship_Transfer_Date__c}"></lightning:input>
+                        
+                            <div class="fltright">
+                                <lightning:button class="textCap" label=" Clear Signature" onclick="{!c.onErase}" />
+                            </div>
+                        <div class="btnSec">
+                            <!--<lightning:button class="textCap" label="Test Invoice PDF" onclick="{!c.testRedirect}"/>-->
+                            <lightning:button class="textCap" label="Ship Confirm" onclick="{!c.onShipConfirm}"/>
+                            <lightning:button class="textCap"  label="Cancel" onclick="{!c.onCancel}" />
+                      
+                        </div>
+                    </div>
+                </div>
+                
+                
+    <div class="flex-container">
+          <div class="boxCamera">
+                     <p class="slds-text-title slds-truncate" title="Receiver Contact">Receiver Contact</p>
+      					<p class="slds-form-element__static slds-truncate paddings" >
+                            <lightning:select aura:id="rcSelect" label=" Receiver Contact:" onchange="{!c.onChangeRcName}" >       
+                                <aura:iteration items="{!v.getReceiverContacts}" var="item">
+                                    <option value="{!item.Name}" text="{!item.Name}" selected="{!item.Name==actReceivername}"></option> 
+                                </aura:iteration>
+                            </lightning:select>
+                        </p>
+              
+              
+              
+              
+              		<div style="margin-top:5%;">
+              			<p class="slds-text-title slds-truncate" title="Order or Service #">{!v.setSM.Name}</p>
+                      <p class="slds-form-element__static slds-truncate paddings" >
+                          <canvas aura:id="can" class="cansig" id="can"></canvas>
+              			</p>
+                    </div>
+              </div>
+                     
+                     
+          <div class="boxOutput">
+                     <div style="margin-top:2.5%;">
+                     <p class="slds-form-element__static slds-truncate paddings" >
+                         <lightning:input   aura:id="actReceivername" type="text" value="{!v.setSM.Receiver_Contact__r.Name}" label="Receiver Name:"></lightning:input>
+              			</p>
+    				 <p class="slds-text-title slds-truncate slds-float_right">{!v.ccDate}</p>
+              		</div>
+              
+              		<div style="margin-top:3%;">
+               		  <p class="slds-text-title slds-truncate" title="Slack Notes">Slack Notes</p>
+                      <p class="slds-form-element__static slds-truncate paddings" >
+                         <lightning:input aura:id="actSlacknotes" type="text" value="{!v.setSM.Slack_Notes__c}" maxlength="100" onkeyup="{!c.countChar}" label="Slack Notes:"></lightning:input>
+                      </p>
+                     </div>
+            </div>
+        </div>
+                
+
+                
+                
+                
+                
+            </article>
+            
+        </div>
+    </ui:scrollerWrapper>
+</aura:component>

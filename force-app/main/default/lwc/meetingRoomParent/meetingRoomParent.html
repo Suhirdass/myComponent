@@ -1,0 +1,56 @@
+<template>
+    <!-- <lightning-card title="Meeting Rooms">
+        <ul>
+            <template for:each={meetingRoomsInfo} for:item="room">
+                <li key={room.roomName} style="padding: 10px">
+                    // show-room-info , passing true value from parent to child component 
+                    <c-meeting-room meeting-room-info={room} show-room-info></c-meeting-room>
+                </li>
+            </template>
+        </ul>
+    </lightning-card> -->
+
+    <!--Slot Examples-->
+    <!-- <lightning-card title="Meeting Rooms">
+        <ul>
+            <template for:each={meetingRoomsInfo} for:item="room">
+                <li key={room.roomName} style="padding: 10px">
+                    <c-meeting-room show-room-info>
+                        // slot is calling with name as attribute in parent component
+                        <lightning-tile label={room.roomName} slot="roomInfo">
+                            <p class="slds-truncate" title={room.roomCapacity}>Room Capacity:
+                                {room.roomCapacity}</p>
+                        </lightning-tile>
+                        // Calling Unnamed Slot 
+                        <div>Additional markup will go in unnamed slot</div>
+                    </c-meeting-room>
+                </li>
+            </template>
+        </ul>
+    </lightning-card> -->
+
+    <!-- Child to Parent Communication by using events-->
+    <lightning-card title="Meeting Rooms">
+        <lightning-layout>
+            <lightning-layout-item size="4" padding="around-small">
+                <ul>
+                    <template for:each={meetingRoomsInfo} for:item="room">
+                        <li key={room.roomName} style="padding: 10px">
+                            <!-- One Way of Communicating to child component by using on + event name (ex:ontileclick) 
+                            <c-meeting-room meeting-room-info={room} show-room-info ontileclick={onTileSelectHandler}></c-meeting-room> -->
+                            <!-- Second Way, the CC event handler can be define  by time of component creation itself - it can be done by using js file (constructor)-->
+                            <c-meeting-room meeting-room-info={room} show-room-info>
+                            </c-meeting-room>
+                        </li>
+                    </template>
+                </ul>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="4" padding="around-small">
+                <!-- selectedMeetingRoom - is a Property -->
+                You have Selected : {selectedMeetingRoom}
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-card>
+
+</template>

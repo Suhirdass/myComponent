@@ -1,0 +1,487 @@
+<aura:component extends="c:utility" implements="force:appHostable" controller="massInvoiceRP">
+ <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <aura:attribute name="loaded" type="Boolean" default="false"/>
+            <aura:attribute name="invoice" type="Boolean" default="false"/>
+            <aura:attribute name="SuppliersBill" type="Boolean" default="false"/>
+
+    <aura:attribute name="searchText" type="String" />
+        <aura:attribute name="invoiceList" type="List" default="[]" />
+            <aura:attribute name="PoList" type="List" default="[]" />
+
+    <aura:attribute name="paymentTypes" type="List" default="[{'label': 'Suppliers Bills', 'value': 'SuppliersBills'},{'label': 'Invoices', 'value': 'invoices'}]" />
+        <aura:attribute name="value" type="String" default="option1"/>
+ <aura:attribute name="options" type="List" default="[
+    {'label': 'apples', 'value': 'option1'},
+    {'label': 'oranges', 'value': 'option2'}
+    ]"/>
+    
+    
+  <aura:attribute name="poData" type="Purchase_Order__c" default="{'sobjectType': 'Purchase_Order__c', 'Name':'' }"/> 
+    <aura:attribute name="setBilPays" type="massInvoiceRP.BilPaysWrapper[]" default="[]"/>
+    <aura:attribute name="labTestMap" type="Map"/>
+    <aura:attribute name="getLabStatusData" type="Map"/>  
+    
+     <aura:attribute name="RPDatas" type="Receive_Payment__c" default="{'sobjectType': 'Receive_Payment__c', 'Name':'' }"/> 
+    <aura:attribute name="setinvoice" type="massInvoiceRP.RPWrapper[]" default="[]"/>
+    <aura:attribute name="getLabStatusDataRP" type="Map"/>  
+    
+    
+    
+    
+    
+    
+    
+    
+    <aura:html tag="style">
+        .cUtility .slds-form-element__label {
+            display: none;
+        }
+        .upperCase{
+        	text-transform: uppercase;
+        }
+        .cUtility button {
+    		text-transform: inherit;
+        }
+         .textCap {
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+        .slds-select_container {
+    position: relative;
+    !important; 
+}
+       
+    	.fg-new-table, .fg-cart-table {
+          font-family: 'Roboto', sans-serif !important;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        .fg-new-table td.fg-td, .fg-new-table th.fg-th {
+          border: none;
+          border-top: 1px solid #ddd;
+          border-bottom: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        .fg-cart-table td.fg-td, .fg-cart-table th.fg-th {
+          padding: 8px;
+        }
+        
+        .fg-new-table tr:nth-child(even){}
+        
+        .fg-new-table tr:hover {background-color: #E7E7E7;}
+        .fg-new-table > thead > tr:hover {background-color: white;}
+        
+        .fg-cart-table tr:nth-child(even){background-color: #E7E7E7;}
+        
+        .fg-cart-table tr:hover {background-color: #D8EEEC;}
+        
+        
+        .fg-span span, th.fg.th{
+          font-family: 'Montserrat', sans-serif !important;
+        }
+        .fg-search
+        .fg-search input {
+            outline: none;
+        }
+        .fg-search input[type=search] {
+            -webkit-appearance: textfield;
+            -webkit-box-sizing: content-box;
+            font-family: inherit;
+            font-size: 100%;
+        }
+        .fg-search input::-webkit-search-decoration,
+        .fg-search input::-webkit-search-cancel-button {
+            display: none; 
+        }
+        
+        
+        .fg-search input[type=search] {
+        background:  url('/resource/marketPlaceNewAssets/images/search-icon.png') no-repeat 9px center;
+            border: solid 2px #ccc;
+            padding: 0px 10px 2px 32px;
+            width: 55px;
+            
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+        .fg-search input[type=search]:focus {
+            width: 130px;
+            background-color: #fff;
+            border-color: #66CC75;
+            
+            -webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+            -moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+            box-shadow: 0 0 5px rgba(109,207,246,.5);
+        }
+        
+        
+        .fg-search input:-moz-placeholder {
+            color: #999;
+        }
+        .fg-search input::-webkit-input-placeholder {
+            color: #999;
+        }
+        .paymentOptions >label{
+        	display:none;
+        }
+     </aura:html>
+  
+    <lightning:card>
+     <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Invoice RP</h1> 
+      <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Invoice RP</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+            
+            
+         
+        <lightning:layoutItem size="4" class="slds-p-around_x-small">
+            <lightning:radioGroup label="Select Payment Type" options="{!v.paymentTypes}" aura:id="Payvalidate"  onchange="{!c.handleChange}" value="{!v.paymentType}"  type="button" required="true" />
+        </lightning:layoutItem>
+        <aura:if isTrue="{!v.invoice}">  
+         <div class="slds-page-header heightfix sty_mt18px" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Invoice RP</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        <div class="slds-grid sty_p20px">
+            <h2 title="Select Warehouse" class="sty_h2">Select Warehouse&nbsp;</h2> 
+             <lightning:select aura:id="warehouse"  name="selectItem" label="Select an item" >
+        <option value="">choose one...</option>
+        <option value="Product">Product</option>
+        <option value="Product">Tax</option>
+    </lightning:select>
+       
+          <h2 title="Select Warehouse" class="sty_h2">Filter&nbsp;</h2>   
+             <div >
+      <lightning:input 
+       aura:id="searchKnowledgeInput"
+       name="searchKnowledgeInput" 
+       label="" type="search" 
+       placeholder="Search"
+       />
+    </div>
+      <lightning:button variant="Neutral" class="textCap" label="Search" onclick="{!c.FetchRP}"></lightning:button>&nbsp;
+    <lightning:button type="submit"  class="submitButton slds-m-right_small" label="Submit" onclick="{!c.CreateRPinv}"></lightning:button>
+
+        </div>
+
+        <lightning:layout>  
+                
+     <lightning:layoutItem padding="around-small" size="12">
+                    <div class="tbl-header" style="overflow-y: auto;">
+                        <div class="slds-is-relative">
+                            <table class="fg-new-table">
+                                <thead class="fg-span">
+                                    <tr>
+                                          <th class="fg-th"></th>
+                                        <th class="fg-th">Invoice #</th>
+                                         <th class="fg-th">Total Invoice Amount</th>
+                                        <th class="fg-th">Collection Status</th>
+                                        <th class="fg-th" style="width: 8%;">Invoice Balance </th>
+                                        <th class="fg-th">Transaction Date</th>
+                                        <th class="fg-th">Record Type</th>
+                                        <th class="fg-th">Payment Form</th>
+                                        <th class="fg-th" >Payment Amount</th>
+                                        <th class="fg-th">Payment Memo</th>
+                                        <th class="fg-th">Reference</th>
+                                        <th class="fg-th">Post Date</th>
+                                         <th class="fg-th">Reconciliation Notes</th>
+                                        <th class="fg-th" style="width:10%">Select Bank Register</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+ 							<aura:if isTrue="{!v.setinvoice.length > 1}">
+                                       <aura:iteration items="{!v.setinvoice}" var="RPdata" indexVar="index" > 
+                                <tr id ="{!index}" >
+                                    <td class="fg-td">
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!RPdata.isSelected}" checked="{!RPdata.isSelected}"  />
+                                    </td>
+                                    <td class="fg-td">{!RPdata.RP.Invoice__r.Name}</td>
+                                    <td class="fg-td">
+                                       {!RPdata.RP.Invoice__r.Total_Invoice_Amount__c}
+                                    </td>
+                                     <td class="fg-td">
+                                    {!RPdata.RP.Invoice__r.Collections_Status__c}
+                                    </td>
+                                    <td class="fg-td">
+                                     {!RPdata.RP.Invoice__r.Invoice_Balance__c}
+                                    </td>
+ 
+                                      
+                                    <td class="fg-td">
+                              <lightning:input type="date"  required="true" name="inputDate" value="{!RPdata.TransactionDate}" aura:id="dates" />
+
+                                    </td>
+                                  <td class="fg-td">
+                                   {!RPdata.RP.Invoice__r.RecordType.Name}     
+                                    </td>
+
+                                    <td class="fg-td"> <div style="width: 120px;">
+                                                    <lightning:select aura:id="labTestPicklist" value="{!RPdata.labTestStat}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMap}" var="lab" indexVar="key">
+                                                            <option value="{!lab.value}" selected="{!lab.key == RPdata.labTestStat}">{!lab.key}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                        </div></td>
+                                    <td class="fg-td">
+                                        <lightning:input type="number" aura:id="recvQty" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.recQty}" class="ter"  />
+                                       
+                                    </td>
+                                    <td class="fg-td">
+                                   <lightning:input type="text" aura:id="paymemo" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.Paymentmemo}" class="ter"  />
+                                        
+                                    </td>
+                                    <td class="fg-td">
+                                    <lightning:input type="text" aura:id="payref" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.Reference}" class="ter"  />
+                                          
+                                    </td>
+                                   
+                                        
+                                        <td class="fg-td"><lightning:input type="date"  required="true" name="inputDate" value="{!RPdata.postdate}" aura:id="dates" />
+
+                                        </td>
+                                 
+                                    <td class="fg-td">
+                                       <lightning:input type="text" aura:id="RN" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.ReconcilitionNotes}" class="ter"  />
+                                      
+                                      </td>
+                                    <td class="fg-td">
+                                      <lightning:input type="text" aura:id="payrec" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.Reconciled}" class="ter"  />
+                                       
+                                    </td>
+                                   
+                                </tr>
+                            </aura:iteration>    
+                               <aura:set attribute="else">
+                                        	<tr style="height:40px">
+                                            	<td style="text-align:center" colspan="11">
+                                                	No Invoices Found.
+                                                </td>
+                                            </tr>
+                                        </aura:set>
+                                    </aura:if>         
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout> 
+        </aura:if>
+        
+        
+         <aura:if isTrue="{!v.SuppliersBill}">  
+         <div class="slds-page-header heightfix sty_mt18px" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Invoice RP</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid sty_p20px">
+            <h2 title="Select Warehouse" class="sty_h2">Select Warehouse&nbsp;</h2> 
+             <lightning:select aura:id="PORecTypes"  name="selectItem" label="Select an item" >
+        <option value="">choose one...</option>
+        <option value="Product">Product</option>
+        <option value="Product"> Invoice Only</option>
+    </lightning:select>
+       
+          <h2 title="Select Warehouse" class="sty_h2">Filter&nbsp;</h2>   
+             <div >
+      <lightning:input 
+       aura:id="searchKnowledgeInputSB"
+       name="searchKnowledgeInput" 
+       label="" type="search" 
+       placeholder="Search"
+       />
+    </div>
+      <lightning:button variant="Neutral" class="textCap" label="Search" onclick="{!c.SearchBillPay}"></lightning:button>&nbsp;
+         <lightning:button type="submit"  class="submitButton slds-m-right_small" label="Create Bill Pays" onclick="{!c.CreateBilpays}"></lightning:button>
+
+        </div>
+
+        <lightning:layout>  
+             <lightning:layoutItem padding="around-small" size="12">
+                    <div class="tbl-header" style="overflow-y: auto;">
+                        <div class="slds-is-relative">
+                            <table class="fg-new-table">
+                                <thead class="fg-span">
+                                    <tr>
+                                          <th class="fg-th"></th>
+                                          <th class="fg-th">Purchase order</th>
+                                        <th class="fg-th">Supplier Bill</th>
+                                         <th class="fg-th">Bill Amount</th>
+                                        <th class="fg-th">Bill Due Date</th>
+                                        <th class="fg-th">Transaction Date</th>
+                                        <th class="fg-th">Payment Form</th>
+                                        <th class="fg-th" >Payment Amount</th>
+                                        <th class="fg-th">Payment Memo</th>
+                                        <th class="fg-th">Reference</th>
+                                        <th class="fg-th">Post Date</th>
+                                         <th class="fg-th">Reconciliation Notes</th>
+                                         <th class="fg-th">Reconciled</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:if isTrue="{!v.setBilPays.length > 1}">
+                                       <aura:iteration items="{!v.setBilPays}" var="pol" indexVar="index" > 
+                                <tr id ="{!index}" >
+                                    <td class="fg-td">
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!pol.isSelected}" checked="{!pol.isSelected}" disabled="{!pol.isDisabled}" />
+                                    </td>
+                                    <td class="fg-td">{!pol.BillPays.Supplier_Bill__r.Purchase_Order__r.Name}</td>
+                                    <td class="fg-td"><a href="{!'/' + pol.BillPays.Supplier_Bill__c}" style="color:#0070D2;" ><u>{!pol.BillPays.Supplier_Bill__r.Name}</u></a></td>
+                                     <td class="fg-td">{!pol.BillPays.Supplier_Bill__r.Bill_Amount__c}</td>
+                                    <td class="fg-td">{!pol.BillPays.Supplier_Bill__r.Bill_Due_Date__c}</td>
+                                  <td class="fg-td">
+                                      <lightning:input type="date"  required="true" name="inputDate" value="{!pol.BillPays.Payment_Date__c}" aura:id="dates" />
+                                    </td>
+
+                                    <td class="fg-td"> <div style="width: 120px;">
+                                                    <lightning:select aura:id="labTestPicklist" value="{!pol.labTestStat}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMap}" var="lab" indexVar="key">
+                                                            <option value="{!lab.value}" selected="{!lab.key == pol.labTestStat}">{!lab.key}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                        </div></td>
+                                    <td class="fg-td">
+                                        <lightning:input type="number" aura:id="recvQty" variant="label-hidden" data-row-index="{!index}" value="{!pol.recQty}" class="ter"  />
+                                       
+                                    </td>
+                                    <td class="fg-td">
+                                   <lightning:input type="text" aura:id="paymemo" variant="label-hidden" data-row-index="{!index}" value="{!pol.Paymentmemo}" class="ter"  />
+                                        
+                                    </td>
+                                    <td class="fg-td">
+                                    <lightning:input type="text" aura:id="payref" variant="label-hidden" data-row-index="{!index}" value="{!pol.Reference}" class="ter"  />
+                                          
+                                    </td>
+                                   
+                                        
+                                        <td class="fg-td"><lightning:input type="date"  required="true" name="inputDate" value="{!pol.BillPays.Post_Date__c}" aura:id="dates" />
+
+                                        </td>
+                                 
+                                    <td class="fg-td">
+                                       <lightning:input type="text" aura:id="RN" variant="label-hidden" data-row-index="{!index}" value="{!pol.ReconcilitionNotes}" class="ter"  />
+                                      
+                                      </td>
+                                    <td class="fg-td">
+                                      <lightning:input type="text" aura:id="payrec" variant="label-hidden" data-row-index="{!index}" value="{!pol.Reconciled}" class="ter"  />
+                                       
+                                    </td>
+                                   
+                                </tr>
+                            </aura:iteration>    
+                               <aura:set attribute="else">
+                                        	<tr style="height:40px">
+                                            	<td style="text-align:center" colspan="11">
+                                                	No Invoices Found.
+                                                </td>
+                                            </tr>
+                                        </aura:set>
+                                    </aura:if>         
+                                        
+                                        
+                                        
+                                        
+                                        
+                                    <!--	<aura:iteration items="{!v.PoList}" var="po">
+                                        <tr>
+                                            <td class="fg-td">
+                                        <input type="checkbox" name="chk" id="{!po.Id}"/>
+                                    </td>
+                                            <td class="fg-td" data-id="{!po.Name}" style="cursor:pointer;color:rgba(27, 82, 151, 1)">
+                                             {!po.Supplier_Bill__r.Purchase_Order__r.Name}
+                                            </td>
+                                         
+                                             
+                                            <td class="fg-td">
+                                                 {!po.Supplier_Bill__r.Name}
+                                            </td>
+                                            <td class="fg-td">
+                                                 {!po.Supplier_Bill__r.Bill_Amount__c}
+                                            </td>
+                                            <td class="fg-td">
+                                               {!po.Supplier_Bill__r.Bill_Due_Date__c}
+                                            </td>
+                                            <td class="fg-td">
+												inv balance
+                                            </td>
+                                            <td class="fg-td">
+                            <lightning:input type="date"  required="true" name="inputDate" value="{!po.Payment_Date__c}" aura:id="dates" />
+
+                                            </td>
+                                            <td class="fg-td">
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!po.isSelected}" checked="{!pol.isSelected}"/>
+
+                                            </td>
+                                             <td class="fg-td" style="min-width:90px">
+                                               <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!po.Payment_Amount__c}"/>
+  
+                                            </td>
+                                            <td class="fg-td" style="max-width:170px;">
+                                           <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!po.Payment_Memo__c}"/>
+
+                                            </td>
+                                           
+                                            <td class="fg-td">
+                                           <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!po.Reference__c}"/>
+
+                                            </td>
+                                            <td class="fg-td">
+                                           <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!po.Post_Date__c}"/>
+
+                                            </td>
+                                            <td class="fg-td" style="width:10%">
+                                           <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!po.Reconciliation_Notes__c}"/>
+
+                                            </td>
+                                              <td class="fg-td" style="width:10%">
+                                               <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!po.Reconciled__c}"/>
+
+                                            </td>
+                                           
+                                        </tr>
+                                    </aura:iteration>-->
+                                    	
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning:layoutItem>    
+   
+            </lightning:layout> 
+        </aura:if>
+    </lightning:card>	
+</aura:component>

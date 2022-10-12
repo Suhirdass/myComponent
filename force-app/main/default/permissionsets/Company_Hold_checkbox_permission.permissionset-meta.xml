@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>under account level, Company &quot;Hold&quot; checkbox permission to Tristen and Isaiah</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Hold__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Company Hold checkbox permission</label>
+    <license>Salesforce</license>
+</PermissionSet>

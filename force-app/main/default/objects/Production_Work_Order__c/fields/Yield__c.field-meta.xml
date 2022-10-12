@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Yield__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(OR(
+ISPICKVAL(Service_Type__c ,&apos;Casing&apos;),
+ISPICKVAL(Service_Type__c,&apos;Sample Conversion&apos;),
+ISPICKVAL(Service_Type__c,&apos;Labeling&apos;)),
+ Completed_Qty__c /  Targeted_Converted_Qty__c ,
+(Consumed_Weight_or_Qty__c) /  Intake_Weight__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Calculated; Intake Weight divided by Consumed Weight. If error, validate fields for missing input to Batch Job</inlineHelpText>
+    <label>Yield (%)</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

@@ -1,0 +1,32 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - CloneBQ
+-->
+<apex:page standardController="Brand_Quote__c"  
+           extensions="CloneBQController"  
+           action="{!cloneBQAction}" 
+           title="Clone Brand Quote">
+    <apex:form >
+        <apex:pageBlock title="Clone Brand Quote">
+            <apex:actionStatus id="idRefreshingStatus" style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!redirectToBQ}" value="Return" status="idRefreshingStatus"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Warnings and Errors Associated with Clone Brand Quote" columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:pageMessages />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="71px" viewBox="0 0 34 71" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>C17A73B8-B2B9-4F82-BFE6-4FDAD7AE59D0</title>
+    <defs>
+        <filter x="-1.1%" y="-13.3%" width="102.2%" height="126.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.260462194 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Filigreen-2.5-Source" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Marketplace-Brand" transform="translate(-1078.000000, -269.000000)" stroke="#195458" stroke-width="1.11754386">
+            <g id="Group-2" filter="url(#filter-1)" transform="translate(256.000000, 264.000000)">
+                <g id="C--Flowers-Copy-8" transform="translate(789.000000, 0.000000)">
+                    <g id="black-icons-64px-11" transform="translate(42.428571, 14.000000)">
+                        <path d="M2.25789474,0.592298246 C2.69818421,1.85512281 3.16105263,3.10677193 3.56747368,4.38077193 C4.01230013,5.69269645 4.18134353,7.08082372 4.06421053,8.45980702 C4.05490428,9.06249676 3.67881625,9.59994781 3.11210173,9.82042428 C2.54538722,10.0409007 1.90027217,9.90074189 1.47892105,9.46559649 C0.801516615,8.61763279 0.578739467,7.49835489 0.880578947,6.45940351 C1.12894737,4.66015789 1.9305,2.55917544 2.25789474,0.592298246 Z" id="Path"></path>
+                        <rect id="Rectangle" x="2.81107895" y="13.9692982" width="1" height="2.15685965"></rect>
+                        <polyline id="Path" points="10.1943947 15.5897368 13.728 15.5897368 13.728 16.6625789 10.1943947 16.6625789"></polyline>
+                        <line x1="0.948315789" y1="21.7809298" x2="13.8296053" y2="21.7809298" id="Path"></line>
+                        <path d="M0.677368421,17.7465965 L10.1605263,17.7465965 L10.1605263,15.7126667 C10.1605435,14.6743777 9.7423368,13.6789371 8.99854793,12.9468565 C8.25475906,12.214776 7.24678762,11.8064885 6.19792105,11.8123745 L1.9305,11.8123745 C1.23659236,11.8185719 0.677368421,12.3771619 0.677368421,13.0640877 L0.677368421,50.2000702 C0.683575272,51.1585388 1.47025748,51.9322632 2.43852632,51.9322632 L12.2377895,51.9322632 C13.2060583,51.9322632 13.9927405,51.1585388 13.9989474,50.2000702 L13.9989474,19.4787895 C13.9927405,18.5203208 13.2060583,17.7465768 12.2377895,17.7465965 L0.677368421,17.7465965" id="Path"></path>
+                        <path d="M7.45105263,11.8347895 C8.08800667,11.1980001 9.05766095,11.0201214 9.88282674,11.3886913 C10.7079925,11.7572613 11.2148647,12.594648 11.154,13.4887544 C11.1123829,14.1291846 10.780392,14.716624 10.2508421,15.0868421" id="Path"></path>
+                        <line x1="12.1023158" y1="17.6013158" x2="12.1023158" y2="16.740807" id="Path"></line>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expense</fullName>
+    <active>true</active>
+    <description>New Expense for Review/Approval</description>
+    <label>Expense</label>
+    <picklistValues>
+        <picklist>Entity__c</picklist>
+        <values>
+            <fullName>Fuming Sparrow</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Thread Holdings</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Thread Property</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Thread Technology</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Headwater Farms</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Humboldt Headwaters</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incensed Iguana</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Irrational Raccoon</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yelling Yeti</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ExpenseStatus__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Draft</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Hold</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recalled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submitted</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

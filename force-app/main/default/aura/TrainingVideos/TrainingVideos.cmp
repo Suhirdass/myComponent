@@ -1,0 +1,28 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="trainingVideosData" type="Map" default="{}" />
+    <aura:attribute name="navigationConfig" type="Map" default="{}" />
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <div class="slds-is-relative slds-p-around_small">
+		<lightning:spinner
+			variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"
+		/>
+        <aura:if isTrue="{!not(empty(v.trainingVideosData))}">
+            <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                <aura:iteration items="{!v.trainingVideosData}" var="menu" indexVar="Mkey" >
+                    
+                    <div class="slds-size_1-of-4">
+                        <div class="menu-list__icon"><img src="{!menu.icon}" alt="" style="margin: 15px;" /></div>
+                        <h1 >{!menu.label}</h1> 
+                        <ul ><!--class="slds-is-nested "slds-list_dotted-->
+                            <aura:iteration items="{!menu.links}" var="subMenu" indexVar="SMkey" >
+                                <li><!--{!subMenu.label}&nbsp;--><a href="{!subMenu.URL}" target="_blank">{!subMenu.text}</a></li>
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </aura:iteration>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

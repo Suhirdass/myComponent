@@ -1,0 +1,240 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable" access="global"  extends="c:utility"  controller="InvoiceLockingScreenController">
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="next" type="boolean" />
+	<aura:attribute name="prev" type="boolean" />
+    <aura:attribute name="Year" type="Integer"  />
+    <aura:attribute name="Month" type="Integer" />
+    <aura:attribute name="isLocBtn" type="boolean" default="true"/>
+    <aura:attribute name="monthOptions" type="Map" default="{}" />
+    <aura:attribute name="monthMap" type="Map" default="{}" />
+    <aura:attribute name="Message" type="String" default=""/>
+    <aura:attribute name="isNoInvoices" type="boolean" default="false"/>
+    <aura:attribute name="isLockAllInvoices" type="boolean" default="false"/>
+    <aura:attribute name="isPendingInvoices" type="boolean" default="false"/>
+    <aura:attribute name="pageSize" type="Integer" default = "25"/>
+    
+    <aura:attribute name="InvoiceList" type="Invoice__c[]"/>
+    <aura:attribute name="PageNumber" type="integer" default="1"/>
+    <aura:attribute name="TotalPages" type="integer" default="0"/>
+    <aura:attribute name="TotalRecords" type="integer" default="0"/>
+    <aura:attribute name="RecordStart" type="integer" default="0"/>
+    <aura:attribute name="RecordEnd" type="integer" default="0"/>
+    
+    
+    <aura:html tag="style">
+        .textCap {
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+            .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+    </aura:html>
+    <aura:if isTrue="{!!v.isPendingInvoices}">
+    <!--header class="slds-modal__header" style="width: 470px !important;display: none;padding-top: 0px;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header-->
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 100%;height: 100%;padding-top: 0px;text-align: -webkit-center;">
+            <div class="slds-p-horizontal_xx-small" style="text-align: -webkit-center;width: 375px;padding-top: 30px;">
+                <div class="slds-grid slds-m-vertical_large" style="background: #e7e7e7;height: 63px;margin-bottom: 10px;">
+                    <div class="slds-col slds-size_2-of-2" style="font-size: 20px;text-align: center;">
+                        <span>Year</span><br/>
+                        <lightning:buttonIcon variant="bare" iconName="utility:left" alternativeText="left!" title="left" onclick="{!c.Previous}" disabled="{!v.prev}" size="large"/>
+                        <span>{!v.Year}</span>
+                        <lightning:buttonIcon variant="bare" iconName="utility:right" alternativeText="right!" title="right" onclick="{!c.Next}" disabled="{!v.next}" size="large"/>
+                    </div>
+                </div>
+                
+                <div class="slds-grid  slds-wrap"  aura:id="main" style="background: #ebebeb;height: 175px;padding: 10px;">
+                    <aura:iteration items="{!v.monthOptions}" var="m" indexVar="mIndex">
+                        
+                        <div class="slds-col slds-size_1-of-4" style="padding-top: 10px;" >
+                            
+                            <aura:if isTrue="{!m.isLockeded}">
+                                <div class="lockMonth " data-index="{!mIndex}" >{!m.monthName}
+                                    <lightning:buttonIcon variant="bare" class="lockBtn" iconName="utility:lock" alternativeText="lock!" title="" size="small"/>
+                                </div>
+                                <aura:set attribute="else">
+                                    <div class="monthName "  data-index="{!mIndex}" onclick="{!c.onClickMonth}" style="{!if(equals(v.Month+'',((mIndex+1)+'')),'background-color:#88dd88;','')}">{!m.monthName}</div>
+                                    
+                                </aura:set>
+                            </aura:if>
+                            
+                        </div>
+                        
+                    </aura:iteration>
+                </div>
+            </div>  <br/>
+            <!--div class="slds-p-horizontal_xx-small" style="text-align: -webkit-center;">
+                <div class="slds-col slds-size_2-of-2" style="font-size: 20px;text-align: center;">
+                    <button class="slds-button slds-button_neutral" Style="font-size: 14px;" onclick="{!c.onLocked}" disabled="{!v.isLocBtn}">Lock Month</button>
+                        
+                  </div>
+            </div-->
+        </div>
+        <!--footer class="slds-modal__footer"  style="width: 600px !important;">
+            <lightning:button class="slds-button_brand textCap" onclick="{!c.onClickOK}" label="Ok" />
+            <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="Cancel" />
+        </footer-->
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox1" class="slds-modal slds-modal_small">
+        <div class="slds-modal__container" style="width: 35%;align-items: center;">
+            <!--div class="slds-modal__header">
+                Massage
+            </div-->
+            <div class="slds-modal__content slds-p-around--small" style="width: 60%;border: 2px solid black;padding-bottom: 10px;padding: 35px;border-radius: 0px;background: #ebebeb;">
+                
+                <div style="font-size: 14px;text-align: -webkit-center;"><b>{!v.Message}</b></div>
+                <div style="padding-top: 22px;padding-left: 100px;">
+                	<aura:if isTrue="{!!v.isNoInvoices}">
+                	<lightning:button label="Yes" onclick="{!c.onClickOK}" class="msgbutton" />
+                </aura:if>
+                
+                <lightning:button label="{!if(v.isNoInvoices,'Cancel','No')}" onclick="{!c.cancel}" class="msgbutton" />
+                </div>
+            </div>
+            <!--div class="slds-modal__footer">
+                
+            </div-->
+        </div>
+    </div>
+    </aura:if>
+    <aura:if isTrue="{!v.isPendingInvoices}">
+    	<div style="width: initial;height: initial;margin: 0px;padding: 8px;background-color: white;">
+            <div class="slds-page-header heightfix" role="banner" style="margin-top: -1px;">
+                <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                        <div class="slds-media">
+                            <lightning:icon iconName="standard:product" title="product" /> 
+                            <div class="slds-media__body">
+                                <div class="slds-grid">
+                                    <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title" style="margin-left: 10px;">Invoice(s)</h1> 
+                                </div>
+                                
+                            </div>
+                            <div class="slds-float_right">            
+                    <button class="slds-button slds-button_brand" Style="font-size: 14px;" onclick="{!c.onBack}" >Back</button>
+                </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        <!--div class="slds-float_right">
+            <div class="slds-grid slds-m-vertical_small">
+                <div class="slds-col slds-size_2-of-3">
+                    <ui:inputSelect aura:id="pageSize" label="Display Invoices Per Page: " change="{!c.onSelectChange}">
+                        <ui:inputSelectOption text="10" label="10" value="true"/>
+                        <ui:inputSelectOption text="20" label="20"/>
+                        <ui:inputSelectOption text="30" label="30"/>
+                        <ui:inputSelectOption text="40" label="40"/>
+                        <ui:inputSelectOption text="50" label="50"/>
+                    </ui:inputSelect>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <button class="slds-button slds-button_brand" Style="font-size: 14px;margin: 17px;margin-bottom: 0px;" onclick="{!c.onBack}" >Back</button>
+                </div>
+            </div>
+            
+            
+            <br/>
+        </div-->
+         
+        <table class="order-table slds-table table--double-border slds-text-body">
+            <thead>
+                <tr >
+                    <th >
+                        Invoice Number
+                    </th>
+                    <th >
+                        AR Status
+                    </th>
+                    <th >
+                        Record Type
+                    </th>
+                    <th >
+                        Sales Order
+                    </th>
+                    <th >
+                        Balance
+                    </th>
+                    <th >
+                        Ship Confirm Date
+                    </th>
+                    <th >
+                        Collections Status
+                    </th>
+                    <th >
+                        RevRec Date
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.InvoiceList}" var="inv"> 
+                    <tr style="{!if(empty(inv.Revenue_Recognition_Date__c),'background-color: antiquewhite;','')}">
+                        <th>
+                            
+                            <div class="slds-truncate" title="{!inv.Name}"><a href="{!'/' + inv.Id}" style="color:#0070D2;" target="_blank">{!inv.Name}</a></div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" title="{!inv.AR_Status__c}">{!inv.AR_Status__c}</div>
+                        </th>
+                        <th >
+                            <div class="slds-truncate" title="{!inv.RecordType.Name}">{!inv.RecordType.Name}</div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" title="{!inv.Sales_Order__r.Name}"><a href="{!'/' + inv.Sales_Order__c}" style="color:#0070D2;" target="_blank">{!inv.Sales_Order__r.Name}</a></div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" title="{!inv.Invoice_Balance__c}"><lightning:formattedNumber style="currency" currencyCode="USD" value="{!inv.Invoice_Balance__c}" maximumFractionDigits="2"/></div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" title="{!inv.Ship_Confirmation_Date__c}"><ui:outputDate value="{!inv.Ship_Confirmation_Date__c}" format="MM/DD/YYYY"/></div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" title="{!inv.Collections_Status__c}">{!inv.Collections_Status__c}</div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" title="{!inv.Revenue_Recognition_Date__c}"><ui:outputDate value="{!inv.Revenue_Recognition_Date__c}" format="MM/DD/YYYY"/></div>
+                        </th>
+                    </tr>
+                </aura:iteration> 
+            </tbody>
+        </table>
+         
+        <div class="slds-clearfix">
+            <div class="slds-page-header" role="banner" style="height: 50px;font-weight: 500;">
+            <div style="display: flex;padding-left:25%;margin-top:0px;display: -webkit-inline-box;">
+                        <p style="">
+                            <lightning:button label="First" disabled="{!v.PageNumber == 1}" onclick="{!c.onFirst}"> </lightning:button>&nbsp;
+                            <lightning:button disabled="{!v.PageNumber == 1}"  aura:id="prevPage" label="Prev" onclick="{!c.handlePrev}" />            
+                            <!--Displaying {!v.startingRecord} to 
+                            {!v.endingRecord} of 
+                            {!v.totalRecountCount} records.-->
+                            Page {!v.PageNumber} of {!v.TotalPages}
+                            <lightning:button disabled="{!v.PageNumber == v.TotalPages}" aura:id="nextPage"  label="Next" onclick="{!c.handleNext}"/>
+                            <lightning:button disabled="{!v.PageNumber == v.TotalPages}" label="Last" onclick="{!c.onLast}"> </lightning:button>
+                            &nbsp; Page Size : &nbsp;</p>
+                        <div style="width:100px;margin-top: -18px;">
+                            <lightning:select aura:id="selectPageSize" name="selectPageSize" variant="label-hidden" onchange="{!c.onSelectChange}">
+                                <option value="25" selected="{!v.pageSize == 25}">25</option>
+                                <option value="50" selected="{!v.pageSize == 50}">50</option>
+                                <option value="75" selected="{!v.pageSize == 75}">75</option>
+                                <option value="100" selected="{!v.pageSize == 50}">100</option>
+                            </lightning:select>
+                        </div>
+                        <p style="margin-top:3px;margin-left:-8px">
+                        	&nbsp;Displaying {!v.RecordStart} to 
+                            {!v.RecordEnd} of 
+                            {!v.TotalRecords} records
+                        </p>
+                </div>
+                
+            </div>
+            
+        </div>
+        </div>
+    </aura:if>
+</aura:component>

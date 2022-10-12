@@ -1,0 +1,15 @@
+<apex:page standardController="Sales_Order__c"  extensions="CreateARfromSO"  action="{!createAR}"
+     title="Invoice: Create New Invoice" >  
+  <apex:form >
+  <apex:pageBlock title="New Invoice">
+  <apex:pageBlockButtons >
+      <apex:commandButton action="{!goBack}" value="Return"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection title="Warnings and Errors Associated with New Invoice record" columns="1">
+      <apex:pageBlockSectionItem >
+        <apex:pageMessages />
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

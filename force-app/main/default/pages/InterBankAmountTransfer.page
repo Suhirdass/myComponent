@@ -1,0 +1,90 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - InterBankAmountTransfer
+-->
+<apex:page standardController="Bank_Register__c"  
+           extensions="InterBankAmountTransferController"  
+           action="{!retrieveBankDetails}"
+           tabStyle="Bank_Register__c"
+           title="Inter Bank Transfer"
+           docType="html-5.0">
+    
+    <Script>function setFocusOnLoad() {}</Script>
+           
+    <apex:form >
+        <apex:actionStatus id="idRefreshingStatus" style="align:center">
+            <apex:facet name="start">
+                <div class="grey-background">
+                    &nbsp;
+                </div>
+                <div class="loading-image">
+                    <img src="/img/loading.gif" />
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:pageBlock title="Inter bank transfer">
+            <apex:pageMessages escape="false" id="errorBlockId"/>
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton value="Transfer Amount" action="{!transferAmount}" reRender="errorBlockId" status="idRefreshingStatus" />
+                <apex:commandButton value="Cancel" action="{!cancel}"  />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Information" columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    Source Bank: <apex:outputText value="{!Bank_Register__c.Bank_Name__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Account Name: <apex:outputLink value="/{!Bank_Register__c.Account__c}">{!Bank_Register__c.Account__r.Name}</apex:outputLink>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Available Balance: <apex:outputText value="{!Bank_Register__c.Total_Running_Balance_Amount__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Transaction Date: <apex:inputField value="{!dummyRegisterEntry.Entry_Date__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Amount to Transfer: <apex:inputText value="{!bankTransferObj.amountToTransfer}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Payment Notes: <apex:inputText value="{!bankTransferObj.paymentMemo}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Reference: <apex:inputText value="{!bankTransferObj.reference}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Select {!$Label.Target_Bank}" columns="" collapsible="false" id="bankRegisterSection">
+                <apex:actionStatus id="idBankSelectionStatus" style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:outputText value="" />
+                <apex:pageBlockTable value="{!bankDetails}" var="bankDetail">
+                    <apex:column >
+                        <input type="radio" name="bankId">
+                            <apex:actionSupport event="onclick" rerender="" status="idBankSelectionStatus">
+                                <apex:param name="bankDetailId" value="{!bankDetail.id}" assignTo="{!selectedBankRegisterId}"/>
+                                <apex:param name="bankPayee" value="{!bankDetail.Account__c}" assignTo="{!selectedPayee}"/>
+                            </apex:actionSupport>
+                        </input>
+                    </apex:column>
+                    <apex:column headerValue="Bank">
+                        <apex:outputLink value="/{!bankDetail.Id}" target="__blank">
+                        {!bankDetail.Account__r.DBA__c} - {!bankDetail.Bank_Name__c}
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!bankDetail.Register_Type__c}"/>
+                    <apex:column headerValue="Account Number">
+                         <apex:outputText value="{!if(bankDetail.Account_Number__c != null, 'XXXXXXXX' + RIGHT(bankDetail.Account_Number__c,4), '')}" />
+                    </apex:column>
+                    <apex:column value="{!bankDetail.Routing_Number__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

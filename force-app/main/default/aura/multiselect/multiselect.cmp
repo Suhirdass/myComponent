@@ -1,0 +1,189 @@
+<aura:component>
+    <aura:attribute name="isRequired" type="Boolean" default="false" />
+    <aura:attribute name="isMultiSelect" type="Boolean" default="true" />
+    <!-- Name of dropdown to display -->
+    <aura:attribute name="mslabel" type="String" default="" />
+    <!-- max selected item display -->
+    <aura:attribute name="maxSelectedShow" type="Integer" default="0" />
+    <!-- Option list to show in drop down -->
+    <aura:attribute name="msoptions" type="List" />
+    <!-- Show filter input box -->
+    <aura:attribute name="showFilterInput" type="Boolean" default="true" />
+    <!-- Show filter input box -->
+    <aura:attribute name="showRefreshButton" type="Boolean" default="false" />
+    <!-- Show filter input box -->
+    <aura:attribute name="showClearButton" type="Boolean" default="false" />
+    <!-- Selected options label -->
+    <aura:attribute name="msname" type="String" default="Select" />
+    
+    <aura:attribute name="hideLabel" type="Boolean" default="false" />
+    
+    <!-- Show filter input box -->
+    <aura:attribute name="disabledOption" type="Boolean" default="false" />
+    <aura:attribute name="selectedValuesName" type="String" default="" />
+    <aura:attribute name="selectedValuesId" type="String" default="" />
+    <aura:attribute name="showInRed" type="Boolean" default="false" />
+    <aura:attribute name="MSIndex" type="Integer" default="-1" />
+    <!-- Selected option list -->
+    <aura:attribute name="selectedOptions" type="List" />
+    <!-- Selected options label -->
+    <aura:attribute
+                    name="selectedLabel"
+                    type="String"
+                    default="Select"
+                    />
+    <aura:attribute name="selectedIds" type="String" />
+    <!-- Selected options label -->
+    <aura:attribute
+                    name="initializationCompleted"
+                    type="Boolean"
+                    default="false"
+                    />
+    
+    <!-- Render handler to execute on component initialization -->
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}" />
+    
+    <aura:handler name="change" value="{!v.msoptions}" action="{!c.onChange}"/>
+    
+    <!--Register the component level event-->
+    <aura:registerEvent name="multiSelectEvent" type="c:multiSelectEvent"/>
+    
+    <aura:method name="validate" />
+    <aura:method name="onChange" />
+    <!-- DROPDOWN Component Code Starts HERE-->
+    <div class="slds-form-element">
+        <aura:if isTrue="{! and(!empty(v.mslabel),!v.hideLabel)}">
+            <label class="slds-form-element__label">{!v.mslabel}</label>
+        </aura:if>
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container slds-size_full">
+                <div
+                     id="ms-picklist-dropdown"
+                     class="slds-dropdown-trigger slds-dropdown-trigger_click slds-picklist ms-picklist-dropdown"
+                     aria-expanded="false"
+                     aria-haspopup="listbox"
+                     role="listbox"
+                     >
+                    <!-- MAIN BUTTON CODE -->
+                    <div style="{! (v.showInRed ? 'border: solid 1px var(--lwc-colorTextError,rgb(194, 57, 52));border-radius:4px' : 'border: none;')}"
+                         class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right slds-select_container"
+                         role="none"
+                         >
+                        <input
+                               class="slds-combobox__input ms-input"
+                               id="ms-input"
+                               aria-controls="ms-dropdown-items"
+                               role="textbox"
+                               type="text"
+                               aura:id="validate"
+                               placeholder="{!v.selectedLabel}"
+                               value=""
+                               readonly="true" disabled="{!v.disabledOption}"
+                               style="{!v.showInRed ? 'border:none;' : ''}"
+                               />
+                        <div id="{!v.mslabel}" style="display:none;">{!v.selectedIds}</div>
+                    </div>
+                    <div style="color:rgb(194, 57, 52)" lightning-input_input="" id="help-message-77" data-help-message="true" role="alert" class="{!v.showInRed ?'slds-form-element__help':'slds-form-element__help slds-hide'}">Complete this field.</div>
+                    <!-- MAIN BUTTON CODE ENDS -->
+                    <!-- Drop down list -->
+                    <div id="ms-dropdown-items" role="listbox">
+                        <!-- Creating unordered list -->
+                        <ul
+                            class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid ms-dropdown no-padding-y"
+                            role="presentation"
+                            >
+                            <aura:if isTrue="{!v.showFilterInput}">
+                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                    <lightning:icon size="x-small" class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                                    <input
+                                           class="slds-listbox__item ms-filter-input"
+                                           id="ms-filter-input"
+                                           aria-controls="ms-dropdown-items"
+                                           role="textbox"
+                                           type="text"
+                                           placeholder="Search..."
+                                           value=""
+                                           oninput="{!c.onInputChange}"
+                                           />
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.showClearButton}">
+                                <lightning:buttonIcon
+                                                      iconName="utility:clear"
+                                                      alternativeText="Clear current filters"
+                                                      onclick="{!c.onClearClick}"
+                                                      />
+                            </aura:if>
+                            <aura:if isTrue="{!v.showRefreshButton}">
+                                <lightning:buttonIcon
+                                                      iconName="utility:refresh"
+                                                      alternativeText="Clear all selections and rebuild picklist"
+                                                      onclick="{!c.onRefreshClick}"
+                                                      />
+                            </aura:if>
+                            
+                            <!-- Generating list item by iterating over options -->
+                            <aura:if isTrue="{!!v.disabledOption}">
+                                <aura:iteration items="{!v.msoptions}" var="item">
+                                    <li
+                                        role="presentation"
+                                        class="{!'slds-listbox__item ms-list-item '+ (item.selected ? 'slds-is-selected' : '')}"
+                                        id="ms-list-item"
+                                        data-id="{!item.id}"
+                                        data-name="{!item.name}"
+                                        >
+                                        <div
+                                             class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center"
+                                             role="option"
+                                             >
+                                            <!-- Icon for each list item -->
+                                            <span class="slds-media__figure">
+                                                <lightning:icon
+                                                                iconName="utility:check"
+                                                                size="x-small"
+                                                                class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small fill__greenPrimary"
+                                                                />
+                                            </span>
+                                            <!-- Body of each list item -->
+                                            <span class="slds-media__body">
+                                                <span style="color:#42472a;" class="slds-truncate" title="{!item.name}">
+                                                    {!item.name}
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </aura:iteration>
+                                <li
+                                        role="presentation"
+                                        class="slds-listbox__item ms-list-item"
+                                        id="ms-list-item-no-record"
+                                    	style="display:none"
+                                        >
+                                    <div
+                                             class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center"
+                                             role="option"
+                                             >
+                                        <span class="slds-media__figure">
+                                                <lightning:icon
+                                                                iconName="utility:check"
+                                                                size="x-small"
+                                                                class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small fill__greenPrimary"
+                                                                />
+                                            </span>
+                                            <!-- Body of each list item -->
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate">
+                                                    No results
+                                                </span>
+                                            </span>
+                                    </div>
+                                </li>
+                            </aura:if>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DROPDOWN Component Code Ends HERE-->
+</aura:component>

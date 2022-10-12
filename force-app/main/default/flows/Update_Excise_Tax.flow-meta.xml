@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Update_Excise_Taxes</name>
+        <label>Update Excise Taxes</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>No Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Update_Excise_Tax</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Order__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Excise_Taxs</targetReference>
+            </connector>
+            <label>Update Excise Tax</label>
+        </rules>
+    </decisions>
+    <formulas>
+        <name>RecordId</name>
+        <dataType>Currency</dataType>
+        <expression>IF({!$Record.Order__r.Exclude_Excise_Tax__c} || TEXT({!$Record.Product__r.Apply_Excise_Tax__c}) = &quot;No&quot;,0,
+
+IF({!$Record.Order__r.Request_Ship_Date__c} &lt;= Date( 2019,12,31),
+{!$Record.UnitPrice__c}* (1.6) *(0.15) ,
+{!$Record.UnitPrice__c}* (1.8) *(0.15) ) )</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>Update Excise Tax {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update Excise Tax</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Excise_Taxs</name>
+        <label>Update Excise Tax</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Unit_Excise_Tax__c</field>
+            <value>
+                <elementReference>RecordId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Order_Line_Item__c</object>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_Excise_Taxes</targetReference>
+        </connector>
+        <object>Order_Line_Item__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,4 @@
+<design:component label="Brands List">
+    <design:attribute name="brandsTitle" label="Title" description="What brands are listed?" />
+    <design:attribute name="perPage" min="1" max="50000" default="8" label="Brands Per Page" description="Brands per page" />
+</design:component>

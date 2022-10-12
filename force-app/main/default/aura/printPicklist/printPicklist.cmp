@@ -1,0 +1,12 @@
+<aura:component   extends="c:utility"	controller="PicklistController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" > 
+	 <aura:attribute name="recordId" type="String" />
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+     <aura:html tag="style">
+        .modal-body{
+        	display : none;
+        }
+        .slds-modal__close{
+        	display : none !important ;
+        }
+    </aura:html>
+</aura:component>

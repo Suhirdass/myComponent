@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Converted_Single_Qty__c</fullName>
+    <description>Total_Cannabis_Weight_g__c / 
+CASE(Desired_Retail_Ready_Form__c, 
+&apos;1 (each)&apos;, 1,
+&apos;0.05(g)&apos;, 0.05,
+&apos;0.25(g)&apos;, 0.25,
+&apos;0.50(g)&apos;, 0.50,
+&apos;0.70(g)&apos;, 0.70,
+&apos;0.71(g)&apos;, 0.71,
+&apos;0.75(g)&apos;, 0.75,
+&apos;1.00(g)&apos;, 1,
+&apos;3.54(g)&apos;, 3.54,
+&apos;3.55(g)&apos;, 3.55,
+&apos;3.60(g)&apos;, 3.60,
+&apos;7.10(g)&apos;, 7.10,
+&apos;14.18(g)&apos;, 14.18,
+&apos;14.25(g)&apos;, 14.25,
+&apos;28.35(g)&apos;, 28.35,
+&apos;28.50(g)&apos;, 28.50, 1)</description>
+    <externalId>false</externalId>
+    <formula>IF(OR(
+ISPICKVAL(Package_Type__c,&apos;Sample Conversion&apos;),
+ISPICKVAL(Package_Type__c,&apos;Product Conversion&apos;),
+ISPICKVAL(Package_Type__c,&apos;Pre-Rolling&apos;),
+ISPICKVAL(Package_Type__c,&apos;Labeling&apos;)),
+Total_Units__c,
+IF(OR(
+ISPICKVAL(Package_Type__c,&apos;Casing&apos;)),
+Total_Units__c,
+Total_Cannabis_Weight_g__c / New_Packaged_Product__r.Cannabis_Weight__c ))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Target Qty</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

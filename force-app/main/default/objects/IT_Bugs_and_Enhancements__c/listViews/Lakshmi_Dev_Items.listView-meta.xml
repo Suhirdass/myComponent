@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lakshmi_Dev_Items</fullName>
+    <columns>NAME</columns>
+    <columns>Type__c</columns>
+    <columns>Order__c</columns>
+    <columns>Priority__c</columns>
+    <columns>Status__c</columns>
+    <columns>Planned_Release_Date__c</columns>
+    <columns>Short_Description__c</columns>
+    <columns>Related_To__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>Days_Open__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>notEqual</operation>
+        <value>Hold,Cancelled,Closed_Live_in_PROD</value>
+    </filters>
+    <filters>
+        <field>Assigned_To_Dev__c</field>
+        <operation>contains</operation>
+        <value>Lakshmi</value>
+    </filters>
+    <label>Lakshmi Dev Items</label>
+    <sharedTo>
+        <role>Admin</role>
+    </sharedTo>
+</ListView>

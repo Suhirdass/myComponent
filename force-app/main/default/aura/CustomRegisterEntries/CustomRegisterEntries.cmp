@@ -1,0 +1,90 @@
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global"
+                controller="CustomRegisterEntriesCtlr">
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="isVF" type="Boolean" default="false"/>
+    <aura:attribute name="allData" type="List"/>
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="duration" type="String" default="THIS_MONTH"/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    
+    <div class="">
+        <lightning:card title="Register Entry Lines">
+            <aura:if isTrue="{!v.isVF}">
+                <a class="setMargin" href="#" onclick="{!c.goBack}">Go Back</a>
+            </aura:if>
+            <lightning:select name="mySelect" value="{!v.duration}" label="Duration" class="slds-size_1-of-3 setMargin" aura:id="mySelect" onchange="{!c.durationChange}" >
+                <option value="THIS_MONTH">Current Month</option>
+                <option value="60">Last 60 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="all">All</option>
+            </lightning:select>
+            
+            <aura:if isTrue="{!greaterthan(v.totalPages,0)}">
+                <lightning:layout multipleRows="true" horizontalAlign="center">
+                    <lightning:layoutItem padding="around-small" size="12">
+                        <lightning:datatable
+                                             aura:id="accountDataTable"
+                                             columns="{! v.columns }"
+                                             data="{! v.data }"
+                                             keyField="Id"
+                                             hideCheckboxColumn="true"
+                                             onsort="{!c.updateColumnSorting}"
+                                             sortedBy="{!v.sortedBy}"  
+                                             sortedDirection="{!v.sortedDirection}"/>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!v.allData.length > 20}">
+                        <lightning:layoutItem padding="around-small" flexibility="auto">
+                            <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                              onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                            <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                              onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                            <span class="slds-p-horizontal_x-small">
+                                <a onclick="{!c.processMe}" name="1" 
+                                   class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                            </span>
+                            <span class="slds-p-horizontal_xxx-small">
+                                <a>...</a>
+                            </span>
+                            
+                            <aura:iteration items="{!v.pageList}" var="item">
+                                <span class="slds-p-horizontal_x-small">
+                                    <a onclick="{!c.processMe}" name="{!item}"
+                                       class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                                </span>
+                            </aura:iteration>
+                            
+                            <span class="slds-p-horizontal_xxx-small">
+                                <a>...</a>
+                            </span>
+                            <span class="slds-p-horizontal_x-small">
+                                <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                                   class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                            </span>
+                            <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                              disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                            <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                              disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/>
+                        </lightning:layoutItem>
+                    </aura:if>
+                    
+                </lightning:layout>
+                <aura:set attribute="else">
+                    <div style="margin-left:16px;margin-top: 8px;">
+                        No records available for Selected Duration.
+                    </div>
+                </aura:set>
+            </aura:if>
+            
+        </lightning:card>
+    </div>
+    
+</aura:component>

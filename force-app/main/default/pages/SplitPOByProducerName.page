@@ -1,0 +1,66 @@
+<apex:page standardController="Brand_Quote__c" extensions="SplitPOCtlr" lightningStylesheets="true">
+
+    <apex:outputPanel id="errors">
+    	<apex:pageMessages />
+    </apex:outputPanel>
+    <apex:form >
+        
+    <apex:pageBlock >
+        <apex:facet name="header"> 
+            <apex:outputPanel layout="none">
+                <div class="pbHeader">
+                    <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td class="pbTitle">
+                                <h2 class="mainTitle"><a href="/{!bq.Id}">{!bq.Name}</a></h2>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </apex:outputPanel>
+        </apex:facet>
+        
+    	<apex:pageBlockTable value="{!items}" var="item" rendered="{!isValid}">
+        	<apex:column headerValue="Producer Name" width="20%">
+            	<apex:outputText value="{!item.Name}"/>
+            </apex:column>
+            
+            <apex:column headerValue="Brand Quote Line Item">
+            	<apex:pageBlockTable value="{!item.lines}" var="oli">
+                    
+                    <apex:column headerValue="Product Name"  width="15%">
+                        <apex:outputText value="{!oli.quoteLine.Product_Name__r.Name}"/>
+                    </apex:column>
+                    <apex:column headerValue="Product Description" width="30%">
+                        <apex:outputText value="{!oli.quoteLine.Product_Description__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity" width="15%">
+                        <apex:outputText value="{!oli.quoteLine.Line_Total_Qty__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Qty Billed" width="10%">
+                        <apex:outputText value="{!IF(oli.quoteLine.Invoiced_Quantity__c==null,0.0,oli.quoteLine.Invoiced_Quantity__c)}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.Qty_To_Bill}" width="10%">
+                        <apex:inputText value="{!oli.qtyToBill}" 
+                                        size="5"
+                                        rendered="{!!oli.isDisabled}"/>
+                        <apex:outputText value="{!oli.qtyToBill}" 
+                                         rendered="{!oli.isDisabled}"/>
+                    </apex:column>
+                    <apex:column headerValue="Is Sample?" width="15%">
+                        <apex:outputText value="{!IF(oli.quoteLine.Is_Sample__c,'Yes','No')}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons location="bottom">
+            <apex:inputCheckbox value="{!isMulti}" id="MyCheckbox" rendered="{!isValid}">
+            </apex:inputCheckbox>
+            <apex:outputLabel value="Split PO By Producer Name" for="MyCheckbox" rendered="{!isValid}"/>
+            <apex:commandButton value="Create PO" action="{!createOrder}" reRender="errors" rendered="{!isValid}"/>
+            <apex:commandButton value="Cancel" action="{!backToQuote}" />
+            
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+        </apex:form>
+</apex:page>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Production_Work_Order__c</fullName>
+    <externalId>false</externalId>
+    <label>Production Work Order</label>
+    <referenceTo>Production_Work_Order__c</referenceTo>
+    <relationshipLabel>Production Batch Jobs</relationshipLabel>
+    <relationshipName>Production_Batch_Jobs</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

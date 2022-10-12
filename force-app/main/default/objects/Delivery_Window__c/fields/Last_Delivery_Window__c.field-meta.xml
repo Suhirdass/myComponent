@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Delivery_Window__c</fullName>
+    <externalId>false</externalId>
+    <label>Last Delivery Window</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>06:00 AM PST</fullName>
+                <default>false</default>
+                <label>06:00 AM PST</label>
+            </value>
+            <value>
+                <fullName>06:30 AM PST</fullName>
+                <default>false</default>
+                <label>06:30 AM PST</label>
+            </value>
+            <value>
+                <fullName>07:00 AM PST</fullName>
+                <default>false</default>
+                <label>07:00 AM PST</label>
+            </value>
+            <value>
+                <fullName>07:30 AM PST</fullName>
+                <default>false</default>
+                <label>07:30 AM PST</label>
+            </value>
+            <value>
+                <fullName>08:00 AM PST</fullName>
+                <default>false</default>
+                <label>08:00 AM PST</label>
+            </value>
+            <value>
+                <fullName>08:30 AM PST</fullName>
+                <default>false</default>
+                <label>08:30 AM PST</label>
+            </value>
+            <value>
+                <fullName>09:00 AM PST</fullName>
+                <default>false</default>
+                <label>09:00 AM PST</label>
+            </value>
+            <value>
+                <fullName>09:30 AM PST</fullName>
+                <default>false</default>
+                <label>09:30 AM PST</label>
+            </value>
+            <value>
+                <fullName>10:00 AM PST</fullName>
+                <default>false</default>
+                <label>10:00 AM PST</label>
+            </value>
+            <value>
+                <fullName>10:30 AM PST</fullName>
+                <default>false</default>
+                <label>10:30 AM PST</label>
+            </value>
+            <value>
+                <fullName>11:00 AM PST</fullName>
+                <default>false</default>
+                <label>11:00 AM PST</label>
+            </value>
+            <value>
+                <fullName>11:30 AM PST</fullName>
+                <default>false</default>
+                <label>11:30 AM PST</label>
+            </value>
+            <value>
+                <fullName>12:00 Noon</fullName>
+                <default>false</default>
+                <label>12:00 Noon</label>
+            </value>
+            <value>
+                <fullName>12:30 PM PST</fullName>
+                <default>false</default>
+                <label>12:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>01:00 PM PST</fullName>
+                <default>false</default>
+                <label>01:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>01:30 PM PST</fullName>
+                <default>false</default>
+                <label>01:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>02:00 PM PST</fullName>
+                <default>false</default>
+                <label>02:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>02:30 PM PST</fullName>
+                <default>false</default>
+                <label>02:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>03:00 PM PST</fullName>
+                <default>false</default>
+                <label>03:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>03:30 PM PST</fullName>
+                <default>false</default>
+                <label>03:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>04:00 PM PST</fullName>
+                <default>false</default>
+                <label>04:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>04:30 PM PST</fullName>
+                <default>false</default>
+                <label>04:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>05:00 PM PST</fullName>
+                <default>false</default>
+                <label>05:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>05:30 PM PST</fullName>
+                <default>false</default>
+                <label>05:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>06:00 PM PST</fullName>
+                <default>false</default>
+                <label>06:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>06:30 PM PST</fullName>
+                <default>false</default>
+                <label>06:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>07:00 PM PST</fullName>
+                <default>false</default>
+                <label>07:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>07:30 PM PST</fullName>
+                <default>false</default>
+                <label>07:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>08:00 PM PST</fullName>
+                <default>false</default>
+                <label>08:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>08:30 PM PST</fullName>
+                <default>false</default>
+                <label>08:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>09:00 PM PST</fullName>
+                <default>false</default>
+                <label>09:00 PM PST</label>
+            </value>
+            <value>
+                <fullName>09:30 PM PST</fullName>
+                <default>false</default>
+                <label>09:30 PM PST</label>
+            </value>
+            <value>
+                <fullName>10:00 PM PST</fullName>
+                <default>false</default>
+                <label>10:00 PM PST</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

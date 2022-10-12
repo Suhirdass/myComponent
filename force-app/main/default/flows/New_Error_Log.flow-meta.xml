@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>New_ErrorLog</name>
+        <label>New_Error_Log</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <actionName>Error_Log__c.New_Error_Log</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>New_Error_Logs</name>
+        <label>New Error Log</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>No Outcome</defaultConnectorLabel>
+        <rules>
+            <name>New_Error_Log</name>
+            <conditionLogic>1 AND 2 AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Additional_Information__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Please submit Brand Quote for Approval and try again to Create Sales Order.</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Additional_Information__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Please submit Brand Quote for Approval and try again to create Purchase Order.</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>New_ErrorLog</targetReference>
+            </connector>
+            <label>New Error Log</label>
+        </rules>
+    </decisions>
+    <interviewLabel>New Error Log {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>New Error Log</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>New_Error_Logs</targetReference>
+        </connector>
+        <object>Error_Log__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

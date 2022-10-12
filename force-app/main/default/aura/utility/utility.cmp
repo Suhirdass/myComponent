@@ -1,0 +1,15 @@
+<aura:component extensible="true" controller="Utility">
+ 	<aura:attribute name="selectedCategory" type="String" default="All" />
+    <aura:attribute name="processingMessage" type="String" default="Loading..." />
+    <aura:attribute name="isProcessing" type="Boolean" default="false" />
+    <aura:attribute name="baseUrl" type="String" default="" />
+    <aura:attribute name="records" type="List" default="" />
+    <aura:attribute name="families" type="List" default="[]" />
+    <aura:attribute name="selectedFamilies" type="List" default=""/>
+    <aura:attribute name="isBrand" type="Boolean" default="false"/>
+    <aura:attribute name="isHybrid" type="Boolean" default="false"/>
+    <aura:attribute name="sortAsc" type="Boolean" default="true" />
+    <aura:attribute name="sortField" type="String" default="" />
+    <aura:attribute name="searchTerm" type="String" default="" />
+    {!v.body}
+</aura:component>

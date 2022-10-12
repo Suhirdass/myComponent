@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Cultivation_Tax_Amount__c</fullName>
+    <externalId>false</externalId>
+    <label>Total Cultivation Tax Amount</label>
+    <summarizedField>Cultivation_Tax_Receipt_Line__c.Line_Total_CT_Amount__c</summarizedField>
+    <summaryForeignKey>Cultivation_Tax_Receipt_Line__c.Cultivation_Tax_Receipt__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

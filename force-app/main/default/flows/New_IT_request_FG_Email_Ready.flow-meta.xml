@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Company Swag!</description>
+        <name>Company_Swag</name>
+        <label>Company Swag!</label>
+        <locationX>50</locationX>
+        <locationY>575</locationY>
+        <actionName>IT_On_Boarding_Request__c.Company_Swag</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>IT_Onboarding_Request_FG_Email_Ready</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>IT_Onboarding_Request_FG_Email_Ready</name>
+        <label>IT-Onboarding Request - FG Email Ready</label>
+        <locationX>50</locationX>
+        <locationY>695</locationY>
+        <actionName>IT_On_Boarding_Request__c.New_IT_Onboarding_Request_Email_Ready</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <description>New Company Email Signature!</description>
+        <name>New_Company_Email_Signature</name>
+        <label>New Company Email Signature!</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <actionName>IT_On_Boarding_Request__c.New_Company_Email_Signature</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Company_Swag</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>New_IT_request_FG_Email_Ready1</name>
+        <label>New IT request - FG Email Ready</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>No Outcome</defaultConnectorLabel>
+        <rules>
+            <name>New_IT_request_FG_Email_Ready</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Filigreen_Email__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Filigreen_Email_ID__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Filigreen_Email_ID__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>New_Company_Email_Signature</targetReference>
+            </connector>
+            <label>New IT request - FG Email Ready</label>
+        </rules>
+    </decisions>
+    <interviewLabel>New IT request - FG Email Ready {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>New IT request - FG Email Ready</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>New_IT_request_FG_Email_Ready1</targetReference>
+        </connector>
+        <object>IT_On_Boarding_Request__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

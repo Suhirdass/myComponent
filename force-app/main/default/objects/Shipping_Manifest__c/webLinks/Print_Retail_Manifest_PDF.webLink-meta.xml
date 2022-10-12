@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Print_Retail_Manifest_PDF</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Print Retail Manifest (PDF)</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/shippingManifestRetailPdf?id={!Shipping_Manifest__c.Id}&amp;QueryId=[rsmline]a1u4o000001PE4LAAW?pv0={!Shipping_Manifest__c.Id}&amp;TemplateId=a1v4o00000128rXAAQ&amp;TemplateGroup=ShippingManifestRSM</url>
+</WebLink>

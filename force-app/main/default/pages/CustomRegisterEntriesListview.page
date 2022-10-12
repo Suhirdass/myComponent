@@ -1,0 +1,41 @@
+<apex:page standardController="Bank_Register__c"
+           lightningStylesheets="true">
+    <apex:slds />
+    <style>
+        .slds-card__body{
+        	height: 592px !important;
+        }
+    </style>
+    <apex:includeLightning />
+    <div id="registerEntriesId"> </div>
+    <script>
+    var duration = '{!$CurrentPage.parameters.duration}';
+    var isVF = '{!$CurrentPage.parameters.duration}' != ''? true : false;
+    console.log('on VF:','{!Bank_Register__c.Id}');
+    var myUserContext = "{!$User.UITheme}"; 
+        $Lightning.use("c:CustomRegisterEntriesApp", function() {
+        $Lightning.createComponent(
+            "c:CustomRegisterEntries",{recordId:'{!Bank_Register__c.Id}',isVF:isVF,duration:duration},
+            "registerEntriesId",
+            function(cmp) {
+                $A.eventService.addHandler({
+                    event: 'force:navigateToURL',
+                    handler: function (event) {
+                        var userUIContext = "{!$User.UITheme}";
+                        if (userUIContext == 'Theme4t' || userUIContext == 'Theme4d') {
+                            // The Visualforce page is in S1 or Lightning Experience
+                            sforce.one.navigateToURL(event.getParams().url);
+                        } else if (userUIContext == 'Theme3') {
+                            // The Visualforce page is  running in Classic
+                            window.parent.location.href=event.getParams().url;
+                        } else {
+                            console.log("Unsupported theme");   
+                        }
+                    }
+                })
+                console.log('component created');
+                console.log(cmp);
+            });
+        });
+     </script>
+</apex:page>

@@ -1,0 +1,58 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+  access="global">
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+  <aura:attribute name="brands" type="List" default="[]" />
+  <aura:attribute name="isBrand" type="Boolean" default="false" />
+    <aura:attribute name="isPublic" type="Boolean" default="false" />
+  <lightning:overlayLibrary aura:id="overlay" />
+  <aura:if isTrue="{!!v.isBrand}">
+    <div class="slds-is-relative">
+      <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />
+      <aura:if isTrue="{!!empty(v.brands)}">
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+          <lightning:layoutItem flexibility="grow" size="12" padding="around-small slds-is-relative">
+            <div class="{!'productName '+if(v.isPublic,'emergingHeader','')}">Emerging Brands</div>
+          </lightning:layoutItem>
+          <lightning:layoutItem flexibility="grow" size="12" padding="around-small slds-is-relative">
+            <div class="slds-is-absolute clickable scrollLeft scrollIcon deepJade" onclick="{!c.scrollLeft}">
+              <lightning:icon iconName="utility:chevronleft" class="whiteIcons" size="small" />
+            </div>
+            <div class="slds-is-absolute clickable scrollRight scrollIcon deepJade" onclick="{!c.scrollRight}">
+              <lightning:icon iconName="utility:chevronright" class="whiteIcons" size="small" />
+            </div>
+            <ul class="slds-list_horizontal scroller" aura:id="scroller">
+              <aura:iteration items="{!v.brands}" var="brand" indexVar="brandIndex">
+                <li>
+                  <article class="slds-card productArticle slds-p-around_small slds-m-right_small" style="width: 210px;">
+                    <div class="slds-grid">
+                      <header class="slds-media slds-has-flexi-truncate max200">
+                        <img src="{!brand.imageUrl}" style="display: table; margin: 0 auto;max-height:100%;max-width:100%" class="responsive clickable" 
+                            data-index="{!brandIndex}" onclick="{!c.onBrandClick}"   />
+                      </header>
+                    </div>
+                    <div class="">
+                      <ul class="slds-has-inline-block-links">
+                        <li class="productName slds-truncate" title="{!brand.name}">{!brand.name}</li>
+                      </ul>
+                    </div>
+                  </article>
+                </li>
+              </aura:iteration>
+              <li>
+                <article class="slds-card productArticle slds-p-around_small slds-m-right_small" style="width: 210px; height: 100%;">
+                  <div class="slds-grid">
+                    <header class="slds-media slds-has-flexi-truncate max200 clickable" onclick="{!c.onViewAll}" style="align-items:center;justify-content: center;">
+                      <div class="viewAll">VIEW ALL</div>
+                    </header>
+                  </div>
+                </article>
+              </li>
+            </ul>
+          </lightning:layoutItem>
+        </lightning:layout>
+      </aura:if>
+    </div>
+  </aura:if>
+</aura:component>

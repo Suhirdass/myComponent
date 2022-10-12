@@ -1,0 +1,32 @@
+<aura:component>
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <aura:attribute name="id" type="String" default="confirm-modal" />
+    <aura:attribute name="title" type="String" default="" />
+    <aura:attribute name="header" type="String" default="" />
+    <aura:attribute name="description" type="String" default="" />
+    <aura:attribute name="newLabel" type="String" default="" />
+    <aura:attribute name="viewLabel" type="String" default="" />
+    <aura:attribute name="removeIdsFromCache" type="String" default="" />
+    <aura:attribute name="buttons" type="List" default="[]" />
+    
+    <aura:registerEvent name="confirmModalEvent" type="c:confirmModalEvent"/>
+    
+    <aside id="{! v.id }">
+        <div class="success-modal slds-text-align_center">
+            <img src="{!$Resource.BrigadeResources + '/assets/success-icon.svg'}" alt="Success icon" style="max-width: 20%;font-family:Alliance Neue;"/>
+            <aura:if isTrue="{! v.header.length > 0 }">
+                <h2 class="">{! v.header }</h2>
+            </aura:if>
+            <aura:if isTrue="{! v.title.length > 0 }">
+                <h2>{! v.title }</h2>
+            </aura:if>
+            <aura:if isTrue="{! v.description.length > 0 }">
+                <p>{! v.description }</p>
+            </aura:if>
+            <div class="slds-text-align_center slds-m-top_large">
+                <lightning:button label="Yes" class="yesBtn" onclick="{!c.handleClick}" variant="brand" value="OK"/>
+                <lightning:button label="No" class="noBtn" onclick="{!c.onCancel}" variant="neutral" value="Cancel"/>
+            </div>
+        </div>
+    </aside>
+</aura:component>

@@ -1,0 +1,19 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute name="url" type="String" default="https://filigreen.com/" />
+	<aura:handler action="{!c.resizeIframe}" value="{!this}" name="init"/>
+    <!--<ltng:require 
+                  scripts="{!$Resource.ResizeIframe}"/>-->
+    <!--br/-->
+    <div class="slds-is-relative" >
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" class="slds-text-align_right" size="12">
+                <center style="width:100%">
+                    <!--iframe id="websiteId" style="width:100%; min-height:600px; border:none;  max-width:100%;"  src="{!v.url}" onload="{!c.resizeIframe}" /-->
+                    <div id="websiteId" style="{!'min-height:500px;height:500px;width:100%;background-position: center;background-size: cover;background-image:url('+$Label.c.Community_Right_Panel_Url+')'}"></div>
+
+                </center>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

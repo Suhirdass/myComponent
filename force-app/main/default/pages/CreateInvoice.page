@@ -1,0 +1,188 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - CreateInvoice
+-->
+<apex:page standardController="Sales_Order__c" 
+           extensions="CreateInvoiceController"
+           action="{!retrieveSalesOrderAndLines}"
+           title="{!$Label.Create_Invoice}">
+    
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            if('{!invoices}' != ''){
+                var invoices = JSON.parse('{!invoices}');
+                var spanEle = document.getElementsByClassName('invoicesData')[0];
+                var htmlData = [];
+                for(var i=0;i<invoices.length;i++){
+                    htmlData.push('<a href="/'+invoices[i].Id+'" target="_blank" >'+invoices[i].Name+'</a>');
+                }
+                spanEle.innerHTML = htmlData.join(', ');
+            }
+        }, false);
+        
+        function selectAllCheckboxes(obj){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(!inputCheckBox[i].disabled){          
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+            updateQtyToBillForAllSOLines();
+        }
+    </script>
+    
+    <style>
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+    </style>
+    
+    <apex:form >
+        <apex:actionFunction name="resetSalesOrderLinesPageSize" 
+                             action="{!doResetSalesOrderLinesPageSize}" 
+                             reRender="invoiceBlock"
+                             status="idRefreshingStatus" />
+                             
+        <apex:actionFunction name="updateQtyToBillForAllSOLines" 
+                             action="{!updateQtyToBillForAllSOLines}" 
+                             reRender="invoiceBlock"
+                             status="idRefreshingStatus" />
+    
+        <apex:pageBlock title="{!$Label.Invoice_Detail}" id="invoiceBlock">
+            <apex:pageMessages />
+            <apex:outputPanel rendered="{!hasSalesOrderLines}">
+                <apex:actionStatus id="idRefreshingStatus" 
+                                   style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:pageBlockSection columns="2">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Sales_Order__c.Fields.Name.Label}"/>
+                        <apex:outputLink value="/{!salesOrderSO.Id}">{!salesOrderSO.Name}</apex:outputLink>
+                    </apex:pageBlockSectionItem>
+                    <apex:outputField value="{!salesOrderSO.SO_Date__c}" />
+                    <apex:outputField value="{!salesOrderSO.Customer_PO_or_Quote__c}" />
+                    <apex:outputField value="{!salesOrderSO.Opportunity_Name__c}" />
+                    <apex:outputField value="{!salesOrderSO.Site__c}" />
+                    <apex:outputField value="{!salesOrderSO.Total_Price__c}" />
+                    <apex:outputField value="{!salesOrderSO.Total_Line_Items__c}" />
+                    <apex:outputPanel ></apex:outputPanel>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Invoices"/>
+                        <apex:outputText styleClass="invoicesData"></apex:outputText>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockTable value="{!setSalesOrderLines}" var="salesOrderLine">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" /> 
+                            </apex:facet>
+                            <apex:inputCheckbox value="{!salesOrderLine.isSelected}" 
+                                                disabled="{!salesOrderLine.isDisabled}" />
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.Sales_Order_Line__c.Fields.Name.Label}">
+                           <apex:outputLink value="/{!salesOrderLine.salesOrderLineSO.Id}">
+                           {!salesOrderLine.salesOrderLineSO.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Product_Name__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Product_Description__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.UID__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Producer_Name__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.MOQ__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Qty_Ordered__c}"/>
+                        <apex:column headerValue="{!$Label.Qty_To_Bill}">
+                            <apex:inputText value="{!salesOrderLine.qtyToBill}" 
+                                            size="5"
+                                            rendered="{!!salesOrderLine.isDisabled}"/>
+                            <apex:outputText value="{!salesOrderLine.qtyToBill}" 
+                                             rendered="{!salesOrderLine.isDisabled}"/>
+                        </apex:column>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Qty_To_Invoiced__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Quantity_Cases__c}"/>
+                        <apex:column value="{!salesOrderLine.salesOrderLineSO.Line_Total_Price__c}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                <apex:outputPanel >
+                    <div style="text-align:center">
+                        &lt;<apex:outputLabel rendered="{!Not(hasPreviousSalesOrderLines)}">{!$Label.First}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousSalesOrderLines}" 
+                                          action="{!firstSalesOrderLines}" 
+                                          reRender="invoiceBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.First}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasPreviousSalesOrderLines)}">{!$Label.Previous}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousSalesOrderLines}" 
+                                          action="{!previousSalesOrderLines}" 
+                                          reRender="invoiceBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Previous}
+                        </apex:commandLink>
+                        &nbsp; {!$Label.Page} {!salesOrderLinesIterable.currentPage} {!$Label.Of} {!salesOrderLinesIterable.totalPages} &nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextSalesOrderLines)}">{!$Label.Next}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextSalesOrderLines}" 
+                                          action="{!nextSalesOrderLines}" 
+                                          reRender="invoiceBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Next}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextSalesOrderLines)}">{!$Label.Last}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextSalesOrderLines}" 
+                                          action="{!lastSalesOrderLines}" 
+                                          reRender="invoiceBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Last}
+                        </apex:commandLink>&gt;
+                        &nbsp;&nbsp;&nbsp;
+                        <b><apex:outputText value="{!$Label.Page_Size}"/></b> &nbsp;
+                        <apex:selectList value="{!pageSize}" size="1" 
+                                         onchange="resetSalesOrderLinesPageSize()">
+                            <apex:selectOptions value="{!pageSizeOptions}" />
+                        </apex:selectList>
+                     </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!hasSalesOrderLines && !isValidationError}">
+                <b>{!$Label.No_Record_Found}</b>
+            </apex:outputPanel> 
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Create_Invoice}" 
+                                    action="{!createInvoiceAndLines}" 
+                                    reRender="invoiceBlock"
+                                    status="idRefreshingStatus"
+                                    rendered="{!hasSalesOrderLines}"/>
+                <apex:commandButton value="{!$Label.Cancel}"
+                                    action="{!cancelAction}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

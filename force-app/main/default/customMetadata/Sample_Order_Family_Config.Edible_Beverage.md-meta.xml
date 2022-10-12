@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Edible: Beverage</label>
+    <protected>false</protected>
+    <values>
+        <field>Name__c</field>
+        <value xsi:type="xsd:string">Edible: Beverage</value>
+    </values>
+    <values>
+        <field>Parent_Family__c</field>
+        <value xsi:type="xsd:string">Manufactured/Non-Manufactured</value>
+    </values>
+    <values>
+        <field>Qty_Limit_Per_Order_Line__c</field>
+        <value xsi:type="xsd:double">5.0</value>
+    </values>
+</CustomMetadata>

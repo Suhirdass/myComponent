@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Email_PO</fullName>
+    <availability>online</availability>
+    <description>deleted param..&amp;CongaEmailTemplateId=a046A00000CjmxF&amp;TemplateId=a0F6A000001kH6Y
+2/3/19 - &amp;ReportId=[poli]00O6A0000061EQ2?pv0={!Purchase_Order__c.Id}</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Email PO</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/APXTConga4__Conga_Composer
+?serverUrl={!API.Partner_Server_URL_370}
+&amp;Id={!Purchase_Order__c.Id}
+&amp;QueryId=[poline]a056A00000W8Fa1?pv0={!Purchase_Order__c.Id}
+&amp;EmailRelatedToId={!Purchase_Order__c.Id}
+&amp;DefaultPDF=1
+&amp;EmailSubject=Your+WOVN+{!Purchase_Order__c.Name}
+&amp;EmailToId={!Purchase_Order__c.Supplier_ContactId__c}
+&amp;EmailCC=inbound@wearewovn.com
+&amp;LG3=1
+&amp;LG4=1
+&amp;AC0=1
+&amp;AC1=Sent+Purchase+Order+{!Purchase_Order__c.Name}
+&amp;TemplateGroup=PrintPO
+&amp;TemplateId=a0F6A000001kH6Y
+&amp;CongaEmailTemplateId=a046A00000CjmxF
+&amp;CongaEmailTemplateGroup=EmailPO</url>
+    <width>900</width>
+</WebLink>

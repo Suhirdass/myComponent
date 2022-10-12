@@ -1,0 +1,108 @@
+<aura:component extends="c:utility" controller="HomeController"
+                implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <ltng:require scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}"
+                  afterScriptsLoaded="{!c.onScriptsLoaded}"/>    
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="coldAccountList" type="List" default="[]"/>
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchColdAccounts}"/>    
+    <aura:attribute name="filters" type="Map" default="{}" /> 
+    <aura:attribute name="selectedExportFormat" type="String" default="" />
+    <aura:attribute name="disableExport" type="Boolean" default="true" />
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:spinner variant="brand"
+                           alternativeText="{!v.processingMessage}"
+                           class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>        
+        	<lightning:layout multipleRows="true">
+            	<div class="flex slds-size_full">
+                	<div class="slds-m-right_x-large">
+                    	<h2 class="slds-text-heading_medium slds-p-top_small slds-p-bottom_small" style="margin-top: -15px;margin-bottom: 20px;">
+                        	Cold Accounts
+                    	</h2>
+                    </div>
+                    <div class="flex m-left_auto">
+						<div class="slds-m-right_medium select__hidden-label">
+                            <lightning:select aura:id="exportSelect" value="{!v.selectedExportFormat}" label="" variant="label-hidden" onchange="{!c.onPrintSelect}" disabled="{!v.disableExport}">
+                                <option value="" style="color:rgb(6, 94, 102);font-size:14px;">Export</option>
+                                <option value="csv" style="color:rgb(6, 94, 102);font-size:14px;" >CSV</option>
+                                <option value="pdf" style="color:rgb(6, 94, 102);font-size:14px;">PDF</option>
+                            </lightning:select>
+                        </div>
+                	</div>
+            	</div>                
+                <lightning:layoutItem size="12">
+                	<aura:if isTrue="{!v.coldAccountList.length > 0}">
+                    	<div class="table-container">
+                        	<table class="slds-table slds-table_cell-buffer">
+                            	<thead>
+                                	<tr>
+                                    	<th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Order__r.Retailer__r.DBA__c">
+                                        	Retailer DBA
+                                        	<aura:if isTrue="{!v.filters.orderByField=='Order__r.Retailer__r.DBA__c'}">
+                                            	<span class="sortIcon">
+                                                	<aura:if isTrue="{!v.filters.isASC}">
+                                                    	&#8593;
+                                                    	<aura:set attribute="else">
+                                                        	&#8595;
+                                                    	</aura:set>
+                                                	</aura:if>
+                                            	</span>
+                                        	</aura:if>
+                                    	</th>
+                                        <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Order__r.Retailer__r.BillingCity">
+                                            City
+                                            <aura:if isTrue="{!v.filters.orderByField=='Order__r.Retailer__r.BillingCity'}">
+                                                <span class="sortIcon">
+                                                    <aura:if isTrue="{!v.filters.isASC}">
+                                                        &#8593;
+                                                        <aura:set attribute="else">
+                                                            &#8595;
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </span>
+                                            </aura:if>
+                                        </th>
+                                    	<th>Ship Date</th>
+                                    	<th>Total Product Price</th>
+                                	</tr>
+                            	</thead>
+                            	<tbody>
+                                	<aura:iteration items="{!v.coldAccountList}" var="order" indexVar="index">
+                                    	<tr>
+                                        	<td>
+                                            	<div class="ticketNumber slds-truncate sortable" title="{!order.Retailer__r.DBA__c}">
+                                                	<a data-id="{!order.Retailer__c}" data-retailername="{!order.Retailer__r.DBA__c}" onclick="{!c.onViewAccount}" style="color:#006DCC">{!order.Retailer__r.DBA__c}</a>
+                                            	</div>
+                                        	</td>
+                                            <td>
+                                                {!order.Retailer__r.BillingCity}
+                                            </td>
+                                            <td><lightning:formattedDateTime value="{!order.Order_Date__c}" year="numeric" month="numeric" day="numeric"/></td>
+                                            <td>
+                                                <ui:outputCurrency  value="{!order.Total_Product_Price__c}" />
+                                            </td>                                    
+                                    	</tr>
+                                	</aura:iteration>
+                            	</tbody>
+                        	</table>
+                    	</div>
+                    	<aura:set attribute="else">
+                            <lightning:layoutItem
+                                                  flexibility="grow"
+                                                  size="12"
+                                                  class="slds-p-horizontal_small slds-m-top_small">
+                                <h3
+                                    class="slds-section-title_divider slds-text-align_center"
+                                    style="font-weight: 700">
+                                    NO RECORDS FOUND.
+                                </h3>
+                            </lightning:layoutItem>
+                    	</aura:set>
+                	</aura:if>
+                <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+            </lightning:layoutItem>               
+        </lightning:layout>
+    </div>		
+</aura:component>

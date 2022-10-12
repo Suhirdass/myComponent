@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prior_Month_Completed</fullName>
+    <columns>NAME</columns>
+    <columns>Brand_Quote__c</columns>
+    <columns>Service_Ticket_Line__c</columns>
+    <columns>Brand_Quote_Status__c</columns>
+    <columns>Service_Type__c</columns>
+    <columns>Brand_Name__c</columns>
+    <columns>New_Packaged_Product__c</columns>
+    <columns>Targeted_Converted_Qty__c</columns>
+    <columns>Completed_Qty__c</columns>
+    <columns>Yield__c</columns>
+    <columns>Actual_Completion_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Packaging_Status__c</field>
+        <operation>equals</operation>
+        <value>Completed</value>
+    </filters>
+    <filters>
+        <field>Actual_Completion_Date__c</field>
+        <operation>equals</operation>
+        <value>LAST_MONTH</value>
+    </filters>
+    <label>Prior Month Completed</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

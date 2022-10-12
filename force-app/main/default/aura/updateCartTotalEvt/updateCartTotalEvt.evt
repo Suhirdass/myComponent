@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Update cart total products.">
+    <aura:attribute name="cartTotal" type="Integer" default="0" />
+    <aura:attribute name="action" type="String" default="" />
+</aura:event>

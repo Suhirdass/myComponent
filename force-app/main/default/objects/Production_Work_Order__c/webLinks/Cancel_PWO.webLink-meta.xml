@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cancel_PWO</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Cancel PWO</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&apos;//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js&apos;)} 
+{!REQUIRESCRIPT(&apos;https://cdn.jsdelivr.net/npm/sweetalert2@8&apos;)} 
+Swal.fire({
+              title: &apos;{!Production_Work_Order__c.Name}&apos;,
+              text: &quot;Cancel PWO. Are you sure ?&quot;,
+              type: &apos;&apos;,
+              showCancelButton: true,
+              confirmButtonColor: &apos;#3085d6&apos;,
+              cancelButtonColor: &apos;#6b6161&apos;,
+              focusCancel: true,
+              confirmButtonText: &apos;Yes&apos;,
+              cancelButtonText: &apos;No&apos;
+            }).then((result) =&gt; {
+              if (result.value) {
+                window.location.replace(&apos;/apex/cancelPWO?id={!Production_Work_Order__c.Id}&apos;); 
+              }
+            });</url>
+</WebLink>

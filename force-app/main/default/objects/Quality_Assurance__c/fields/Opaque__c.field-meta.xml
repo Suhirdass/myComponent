@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opaque__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>For edibles only - The package is not transparent; cannot see product through the packaging. Amber-colored bottles are considered opaque. Opaque bottles used for beverages may use a single, vertical, clear strip less than 0.25” wide to indicate servings.</inlineHelpText>
+    <label>Opaque</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>QA_Result</valueSetName>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,26 @@
+<apex:page lightningStylesheets="true" standardController="Sales_Order__c"  extensions="AllocationProcessforSO"  
+    action="{!AllocationProcess}" title="Allocation SO" >  
+    <apex:slds />
+  <apex:form >
+  <apex:pageBlock title="Sales Order Detail">
+  <apex:actionStatus id="idRefreshingStatus" style="align:center">
+             <apex:facet name="start">
+                <div class="grey-background">
+                  &nbsp;
+                </div>
+                 <div class="loading-image">
+                  <img src="/img/loading.gif" />
+                </div>
+              </apex:facet>
+          </apex:actionStatus>
+      <apex:pageBlockButtons styleClass="slds-button slds-button--brand buttonclass"/>
+      <apex:pageMessages />
+      <apex:commandButton action="{!goBack}" value="Return to Sales Order" status="idRefreshingStatus"/>
+  <!--<apex:pageBlockSection title="Warnings and Errors Associated with Allocation of SO" columns="1" >
+      <apex:pageBlockSectionItem labelStyleClass="">
+        
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>-->
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

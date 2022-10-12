@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Routes</fullName>
+    <columns>NAME</columns>
+    <columns>Route_Date__c</columns>
+    <columns>VehicleId__c</columns>
+    <columns>Site__c</columns>
+    <columns>Route_Start_Time__c</columns>
+    <columns>Route_End_Time__c</columns>
+    <filterScope>Mine</filterScope>
+    <label>Routes</label>
+</ListView>

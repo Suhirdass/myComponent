@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WOVN</fullName>
+    <fields>Name</fields>
+    <fields>Variety_Name__c</fields>
+    <fields>Strain__c</fields>
+    <fields>Genotype_ID__c</fields>
+    <fields>OwnerId</fields>
+    <label>WOVN</label>
+</CompactLayout>

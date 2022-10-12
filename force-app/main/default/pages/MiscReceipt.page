@@ -1,0 +1,46 @@
+<apex:page standardController="Product2" extensions="MiscReceiptController" sidebar="false" id="pp1">
+ 
+<apex:form id="pf1"> 
+<apex:pageBlock id="pb1">
+  <!--  <apex:pageBlockButtons location="top">
+
+<apex:commandButton action="{!redirectItemDetail}" value="Item Detail"/>
+
+    </apex:pageBlockButtons> -->
+  
+<apex:pageBlockSection columns="2" collapsible="true" title="Product Details">
+        <apex:outputField label="Product Name" value="{!prod.Name}"/>
+        <apex:outputField label="Active" value="{!prod.IsActive}"/>
+        <apex:outputField label="Product Description" value="{!prod.Description}"/>
+        <apex:outputField label="Product Family" value="{!prod.Family}"/>
+        <apex:outputField label="Producer Name" value="{!prod.Producer_Name__c}"/>
+        <apex:outputField label="Quantity Type" value="{!prod.Quantity_Type__c}"/>
+        <apex:outputText label="Cannabis Weight/UOM" value="{!prod.Cannabis_Weight__c} {!prod.Cannabis_Weight_UOM__c}"/>
+        <apex:outputField label="Supplier UOM" value="{!prod.Supplier_UOM__c}"/>
+        <apex:outputField label="Strain" value="{!prod.Strain__c}"/>
+        <apex:outputField label="MOQ" value="{!prod.MOQ__c}"/>
+        <apex:outputField label="Strain Type" value="{!prod.Strain_Type__c}"/> 
+        <apex:outputText label="Total Inventory" value="{!totalInventory}"/>          
+        </apex:pageBlockSection>
+     </apex:pageBlock>
+  </apex:form>  
+  
+<apex:form id="pf2"> 
+    <apex:pageBlock id="pb2">
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton action="{!SaveRecord}" value="Save"/>
+            <apex:commandButton action="{!cancelRedirect}" value="Cancel" immediate="true"/>
+        </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="2" collapsible="true" title="New Inventory Position ">
+            <apex:inputField value="{!invPerAdj.Type__c}" required="true"/>
+            <apex:inputField value="{!invPerAdj.Reason_for_Adjustments__c}" required="true"/>   
+            <apex:inputField label="Qty"  value="{!invPositionRec.Qty_On_Hand__c}" required="true"/>
+            <apex:inputField value="{!invPositionRec.Ownership__c}" required="true"/>
+            <apex:inputField value="{!invPositionRec.Site__c}" required="true"/>
+    <!--        <apex:inputField value="{!invPositionRec.Receiving_Line__c}"/> -->
+    <!--        <apex:inputField value="{!invPositionRec.Rack__c}"/> -->
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form> 
+   
+</apex:page>

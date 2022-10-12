@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>MP Retailer Access</label>
+    <protected>false</protected>
+    <values>
+        <field>Account_Types__c</field>
+        <value xsi:type="xsd:string">Branding Agency,Central Procurement,Factoring Partner,Microbusiness,Other,Partner,Press,Processor,Reseller,Retailer,Retailer NonStoreFront,Test Laboratory</value>
+    </values>
+    <values>
+        <field>MP_Access_Type__c</field>
+        <value xsi:type="xsd:string">Retailer</value>
+    </values>
+</CustomMetadata>

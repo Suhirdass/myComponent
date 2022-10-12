@@ -1,0 +1,22 @@
+.THIS .setFont{
+    font-size: .9rem;
+    line-height: 2rem; 
+}
+.THIS .productPrice{
+    color:#000;/*#f5e6d8;*/
+}
+.THIS .noData{
+    margin: 0 auto;
+    height: 100%;
+    padding-top: 10%;
+}
+.THIS .ps{
+  height: 500px;
+}
+.THIS .jumptotop{
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}

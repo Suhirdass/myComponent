@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70px" height="69px" viewBox="0 0 70 69" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>0990F513-FCF6-47A3-A96D-EE82E17B41E4</title>
+    <defs>
+        <filter x="-1.1%" y="-13.3%" width="102.2%" height="126.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.260462194 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Filigreen-2.5-Source" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linejoin="round">
+        <g id="Marketplace-Brand" transform="translate(-369.000000, -269.000000)" stroke="#195458" stroke-width="1.63333333">
+            <g id="Group-2" filter="url(#filter-1)" transform="translate(256.000000, 264.000000)">
+                <g id="C--Flowers-Copy" transform="translate(99.000000, 0.000000)">
+                    <g id="black-icons-64px-03" transform="translate(24.750000, 15.925000)">
+                        <path d="M46.0845,6.14133333 C46.0845,6.14133333 44.9295,3.087 46.332,1.764 C47.322,0.833 47.883,0.212333333 47.883,0.212333333 L48.609,0.947333333 C48.609,0.947333333 47.19,2.401 46.7445,2.72766667 C45.21,3.85466667 42.603,2.597 41.3325,2.41733333 C39.534,2.13966667 37.785,4.05066667 37.785,4.05066667 L0.066,44.7533333 L3.465,48.02 L14.058,38.4976667 L45.111,10.5676667 C46.3042868,9.41977267 46.687714,7.67639673 46.0845,6.14133333 L46.0845,6.14133333 Z" id="Path"></path>
+                        <line x1="9.768" y1="34.3" x2="14.058" y2="38.4486667" id="Path"></line>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

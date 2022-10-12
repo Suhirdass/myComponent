@@ -1,0 +1,70 @@
+<aura:component access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="isRequired" type="Boolean" default="false" />
+    <aura:attribute name="selectedTime" type="String" default=""/>
+    <aura:attribute name="selectedTimeLabel" type="String" default="None"/>
+    <aura:attribute name="fieldName" type="String" default=""/>
+    <aura:attribute name="startTime" type="String" default="09:00"/>
+    <aura:attribute name="endTime" type="String" default="06:00"/>
+    <aura:attribute name="label" type="String" default=""/>
+    <aura:attribute name="timeSlots" type="List" default="[]"/>
+    <aura:attribute name="isFixed" type="Boolean" default="true" />
+    <aura:attribute name="iconName" type="string" default="standard:drafts" description="complete icon name eg. standard:account" />
+    <aura:method name="validate" />
+    <aura:html tag="style">
+        .timeSlot{
+            width:133px!important;
+        }
+        .timeSlot label{
+            display:none!important;
+        }
+    </aura:html>
+    <!--Register the component level event-->
+    <aura:registerEvent name="timePickerEvt" type="c:timePickerEvent"/>
+    <div class="slds-form-element">
+    	<div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div onclick="{!c.openCloseDropdown}">
+                    <div class="slds-is-relative">
+                        <div class="slds-input">
+                            {!v.selectedTimeLabel}
+                        </div>
+                        <span class="slds-is-absolute calendarIcon slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                            <lightning:icon iconName="utility:clock" size="x-small" alternativeText="search"/> 
+                        </span>
+                    </div>
+                    
+                    
+                </div>
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" aura:id="resultsDiv" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        
+                        <!-- Dropdown List -->
+                    <div style="{!v.isFixed ? 'z-index: 9999; position: absolute; top: 0;' : ''}">
+                        <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox" style="max-height:208px;position:relative;">
+                            <ul class="slds-listbox slds-listbox_vertical recordListBox" role="presentation">
+                                <aura:iteration items="{!v.timeSlots}" var="rec" >
+                                    <li data-value="{!rec.value}" data-label="{!rec.label}" class="slds-listbox__item record" onmousedown="{!c.selectItem}">
+                                        <div class="slds-media slds-listbox__option_entity">
+                                            <span class="verticalAlign">
+                                                <span class="slds-truncate" style="width:100%;">{!rec.label}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </aura:iteration>
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--lightning:select aura:id="timeSlot" class="timeSlot" label="{!v.label}" required="{!v.isRequired}" variant="label-hidden" value="{!v.selectedTime}" onchange="{!c.onChangeTime}" >
+        <option value="">None</option>
+        <aura:iteration items="{!v.timeSlots}" var="ts">
+            <option value="{!ts.value}">{!ts.label}</option>
+        </aura:iteration>
+    </lightning:select-->
+</aura:component>

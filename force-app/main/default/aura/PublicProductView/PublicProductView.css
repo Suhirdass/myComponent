@@ -1,0 +1,160 @@
+.THIS {
+    font-family: 'Alliance Neue';
+    color: token(fontColor);
+}
+.THIS .text__greenPrimary{
+    color: token(Rangitoto);
+    font-family: token(salesforceSans);
+    font-weight: 600;
+}
+.THIS .shortDescription{
+    height: 20px;
+    width: 326px;
+    color: token(fontColor);
+    font-family: token(salesforceSans);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 20px;
+    
+}
+.THIS .productPrice{
+    height: 34px;
+  color: token(fontColor);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 34px;
+}
+.THIS .unitcases{
+  height: 31px;
+  color: token(fontColor);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 31px;
+}
+.THIS .NOWRAP{
+    white-space: nowrap;
+}
+.THIS .max300{
+    height: 300px !important;
+    width: 300px !important;
+}
+.THIS .max250{
+    height: 250px !important;
+    width: 250px !important;
+}
+.THIS .resetSize .slds-form-element__icon{
+  padding-top: 0 !important;
+}
+.THIS #overlay{
+  border:1px solid token(fontColor);
+  width:350px;
+  height:350px;
+  position:absolute;
+  background-repeat:no-repeat;
+  left:100%;
+}
+.THIS * {box-sizing: border-box;}
+
+.THIS .img-zoom-container {
+  position: relative;
+}
+
+.THIS .img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 40px;
+  height: 40px;
+}
+
+.THIS .img-zoom-result {
+
+    border:1px solid token(fontColor);
+  width:350px;
+  height:350px;
+    display:none;
+  position:absolute;
+  background-repeat:no-repeat;
+  left:100%;
+}
+.THIS .img-zoom-lens{
+    display:none;
+}
+
+.THIS .zoom {
+    display:inline-block;
+    position: relative;
+}
+
+/* magnifying glass icon */
+.THIS .zoom:after {
+    content:'';
+    display:block;
+    width:33px;
+    height:33px;
+    position:absolute;
+    top:0;
+    right:0;
+    background:url(icon.png);
+}
+.THIS .zoom img {
+    display: block;
+}
+.THIS .estric{
+    font-size: 17px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: token(fontColor);
+    display: inline-block;
+    vertical-align: top;
+}
+.THIS .zoom img::selection { background-color: transparent; }
+
+.THIS .slds-text-heading_medium a {
+  color: token(fontColor);
+  outline: none;
+}
+
+.THIS .details-separator {
+  border-left: 1px solid token(grayAccent);
+}
+
+.THIS .flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 0.5rem 0 1rem;
+}
+.THIS .flex-grid__left {
+  margin: 0.25rem 2rem 0.25rem 0;
+}
+.THIS .flex-grid__right {
+  margin: 0.25rem 0;
+}
+
+@media (min-width: 52rem) {
+  .THIS .flex-grid-to-table {
+    display: table;
+  }
+  .THIS .flex-grid-to-table .flex-grid {
+    display: table-row;
+  }
+  .THIS .flex-grid-to-table p {
+    display: table-cell;
+  }
+}
+
+@media (min-width: 68rem) {
+  .THIS .flex-grid-to-table p + p {
+    padding-left: 2rem;
+  }
+}
+.THIS .viewCompliance{
+    color:token(wovnlink);
+}
+.THIS .fromBrand{
+    margin-right: 15%;
+}

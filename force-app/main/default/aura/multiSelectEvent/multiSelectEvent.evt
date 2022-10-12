@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="">
+    <aura:attribute name="selectedIds" type="String"/>
+	<aura:attribute name="fieldName" type="String"/> 
+    <aura:attribute name="index" type="Integer"/> 
+</aura:event>

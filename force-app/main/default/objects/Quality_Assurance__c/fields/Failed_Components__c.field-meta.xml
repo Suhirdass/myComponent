@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Failed_Components__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(  ISPICKVAL(Clear_and_Legible__c  , &apos;Failed&apos;),&quot;Clear and Legible : Failed&quot;+ BR() ,&quot; &quot;) + 
+IF(  ISPICKVAL(Net_weight__c  , &apos;Failed&apos;),&quot;Net weight : Failed&quot;+ BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Product_Identification__c , &apos;Failed&apos;),&quot;Product Identification : Failed&quot;+ BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Net_Weight_Threshold__c  , &apos;Failed&apos;),&quot;Net Weight Threshold : Failed&quot;+ BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Universal_Symbol__c   , &apos;Failed&apos;),&quot;Universal Symbol : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Licensee_Contact_Information__c  , &apos;Failed&apos;),&quot;Licensee Contact Information : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Product_Ingredients__c , &apos;Failed&apos;),&quot;Product Ingredients : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(UID__c , &apos;Failed&apos;),&quot;UID : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Manufacture_and_Packaging_Date__c , &apos;Failed&apos;),&quot;Manufacture and Packaging Date : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Batch_ID__c , &apos;Failed&apos;),&quot;Batch ID : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Packaging_Date__c  , &apos;Failed&apos;),&quot;Packaging Date : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Cannabis_Government_Warning__c  , &apos;Failed&apos;),&quot;Cannabis Government Warning : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Best_or_Use_by_Date__c  , &apos;Failed&apos;),&quot;Best or Use by Date : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Harvest_Date__c  , &apos;Failed&apos;),&quot;Harvest Date : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Cannabinoid_Threshold__c  , &apos;Failed&apos;),&quot;Cannabinoid Threshold : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Cannabis_Cannabinoid_Content__c , &apos;Failed&apos;),&quot;Cannabis Cannabinoid Content : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Cannabis_Product_Cannabinoid_Content__c  , &apos;Failed&apos;),&quot;Cannabis Product Cannabinoid Content : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Tamper_Evident__c  , &apos;Failed&apos;),&quot;Tamper Evident : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Multi_Layered_Packaging__c , &apos;Failed&apos;),&quot;Multi-Layered Packaging : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Child_Resistant_Packaging__c , &apos;Failed&apos;),&quot;Child Resistant Packaging : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Resealable_for_Multi_Servings__c  , &apos;Failed&apos;),&quot;Resealable for Multiple Uses : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Prop65_Warning__c , &apos;Failed&apos;),&quot;Prop65 Government Warning : Failed&quot;+BR(),&quot; &quot;)+
+IF(  ISPICKVAL(Opaque__c , &apos;Failed&apos;),&quot;Opaque : Failed&quot;,&quot; &quot;)</formula>
+    <label>Failed Components</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

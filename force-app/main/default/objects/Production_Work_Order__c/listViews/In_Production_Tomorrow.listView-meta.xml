@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>In_Production_Tomorrow</fullName>
+    <columns>Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Packaging_Status__c</columns>
+    <columns>Service_Ticket_Line__c</columns>
+    <columns>Brand_Quote_Status__c</columns>
+    <columns>Service_Type__c</columns>
+    <columns>Released_Date__c</columns>
+    <columns>Priority__c</columns>
+    <columns>Requested_Pick_Date__c</columns>
+    <columns>RLB_Location__c</columns>
+    <columns>Pick_Complete__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Product__c</columns>
+    <columns>Desired_Net_Weight_or_Qty__c</columns>
+    <columns>Targeted_Converted_Qty__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Released_Date__c</field>
+        <operation>equals</operation>
+        <value>TOMORROW</value>
+    </filters>
+    <label>In Production Tomorrow</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,14 @@
+.THIS .height50{
+    height: 50px;
+}
+.THIS .fullWidth{
+    width: 100%;
+}
+.THIS .setCheckbox input{
+    float: left;
+    margin-right: .25rem;
+}
+
+.THIS .selected{
+    border: 1px solid #43654b;
+}

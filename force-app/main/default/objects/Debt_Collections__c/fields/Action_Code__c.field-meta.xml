@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Action_Code__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Select action code for last worked date</inlineHelpText>
+    <label>Action Code</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Debt_Collection_Action_Code</valueSetName>
+    </valueSet>
+</CustomField>

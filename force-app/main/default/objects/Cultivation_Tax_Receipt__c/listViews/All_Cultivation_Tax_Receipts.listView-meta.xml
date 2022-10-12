@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Cultivation_Tax_Receipts</fullName>
+    <columns>CTR_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Cultivation_Tax_Acceptance_Date__c</columns>
+    <columns>Transfer_Shipping_Manifest__c</columns>
+    <columns>Brand_Quote__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Supplier_Name__c</columns>
+    <columns>Supplier_License_Number__c</columns>
+    <columns>Supplier_License_Expiration_Date__c</columns>
+    <columns>Receiver_Name__c</columns>
+    <columns>Receiver_License_Number__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Cultivation_Tax_Amount__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All Cultivation Tax Receipts</label>
+</ListView>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Accept_Order</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Accept Order</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/23.0/connection.js&quot;)} 
+
+try {
+var url = parent.location.href; 
+var updateRecords = []; 
+var oStatus = &quot;{!Order__c.Status__c}&quot;;
+var update_Order = new sforce.SObject(&quot;Order__c&quot;); 
+if(oStatus != &apos;Approved&apos;)
+{
+update_Order.id = &quot;{!Order__c.Id}&quot;; 
+update_Order.Status__c = &quot;Approved&quot;;
+updateRecords.push(update_Order); 
+result = sforce.connection.update(updateRecords); 
+parent.location.href = url; 
+}
+else
+{
+alert(&quot;Order already converted to Opportunity/BQ&quot;);
+}
+
+} catch (e) {
+alert (e);
+}</url>
+</WebLink>

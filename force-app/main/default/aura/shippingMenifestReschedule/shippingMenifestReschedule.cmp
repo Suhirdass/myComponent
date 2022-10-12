@@ -1,0 +1,188 @@
+<aura:component  extends="c:utility"  implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="SMRescheduleController">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="status" type="String" />
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="error" type="String" default=""/> 
+    <aura:attribute name="isCancelled" type="Boolean" default="false"/>
+    <aura:attribute name="isDisplayPopup" type="Boolean" default="false"/>
+    <aura:attribute name="isDisplayPopupOfRBC" type="Boolean" default="false"/>
+    <aura:attribute name="isDisplayConfirm" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="messagelightning" type="String" />
+    <aura:attribute name="isDisabledRBW" type="Boolean" default="false"/>
+    <aura:attribute name="isDisabledRBC" type="Boolean" default="false"/>
+    <aura:attribute name="isDisplayPopupOfYN" type="Boolean" default="false"/>
+    <aura:attribute name="isDisplayPopupOfShipDate" type="Boolean" default="false"/>
+    <aura:attribute name="ReasonCodes" type="List" default="[]" />
+    <aura:attribute name="ReasonCodeName" type="String" default=""/>
+    <aura:attribute name="ReasonCodeId" type="String" />
+     <aura:attribute name="Notes" type="String" />
+    <aura:attribute name="SM_Type" type="String" default=""/>
+    <aura:attribute name="Planned_Ship_Transfer_Date" type="Date" default=""/>
+    <aura:attribute name="requestDate" type="Date" default=""/>
+    <aura:attribute name="requestDateShow" type="Date" default=""/>
+    <aura:attribute name="hasDateError" type="Boolean" default="false"/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    
+    <aura:attribute name="Missed_Delivery_Window_Reason_Code" type="String" default=""/> 
+    <aura:attribute name="Requires_METRC_Adjustments_Reason_Code" type="String" default=""/> 
+    <aura:attribute name="Route_Compromised_Reason_Code" type="String" default=""/> 
+    <aura:attribute name="Clerical_Error_Reason_Code" type="String" default=""/> 
+    <aura:attribute name="Err_Msg_For_Past_Date" type="String" default=""/>
+    <aura:attribute name="Incorrectly_Entered_Order_config" type="String" default=""/>
+    <aura:attribute name="Incorrectly_Packed_Order_config" type="String" default=""/>
+    
+    <aura:attribute name="EARLIEST_DELIVERY_TIME" type="String" default="08:00" />
+    <aura:attribute name="LATEST_DELIVERY_TIME" type="String" default="06:00" />
+     <aura:attribute name="requestEarTime" type="String" default=""/>
+    <aura:attribute name="requestLatTime" type="String" default=""/>
+     <aura:attribute name="hasEarliestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="hasLatestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="latesDateAfterEarliestDateError" type="Boolean" default="false"/>
+    <aura:handler name="timePickerEvt" event="c:timePickerEvent" action="{!c.handleTimePickerEvent}"/>
+    
+    <ltng:require 
+                  styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" 
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                           $Resource.ratingPlugin + '/js/jquery-ui.js')}" 
+                  afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    <!--aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/-->
+    
+    <aura:html tag="style">
+        .textCap {
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+            .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+        #ui-datepicker-div{
+    z-index:99999 !important;
+}
+    </aura:html>
+    
+    <!--aura:if isTrue="{!v.isDisplayConfirm}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+            <aura:if isTrue="{!v.isCancelled}">
+                <ui:outputText value="{!v.error}" aura:id="errorMsg"/>
+                <aura:set attribute="else">
+                    <p>Reschedule! Are you sure?</p>
+                </aura:set>
+            </aura:if>
+        </div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;">
+            <aura:if isTrue="{!!v.isCancelled}">
+                <lightning:button class="slds-button_brand textCap" onclick="{!c.rescheduleSmLinesConfirm}" label="Yes" />
+            </aura:if>
+            <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="{!if(v.isCancelled,'Ok','No')}" />
+        </footer>
+    </aura:if-->
+ 
+    <aura:if isTrue="{!v.isDisplayPopup}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;"></div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;margin-top:5%;">
+        	<lightning:button class="slds-button_brand textCap" onclick="{!c.rescheduleSmLinesByFiligreen}" label="Reschedule by WOVN" disabled="{!v.isDisabledRBW}"/>
+            <lightning:button class="slds-button_brand textCap" onclick="{!c.rescheduleSmLinesByCustomer}" label="Reschedule by Customer" disabled="{!v.isDisabledRBC}"/>
+        </footer>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isDisplayPopupOfRBC}">
+        <header class="slds-modal__header" style="width: 600px !important;padding: 7px;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;padding: 0px;">
+            <div class="slds-grid slds-m-vertical_large">
+                <div class="slds-col slds-size_1-of-3">
+                    <!--c:multiselect mslabel="Reason Code" isRequired="true" aura:id="multiSelect" disabledOption="{!v.recordName == ''}" isMultiSelect="false" msoptions="{! v.ReasonCodes }" selectedValuesName="{!v.ReasonCodeName}" selectedValuesId="{!v.ReasonCodeId}"/-->
+                    <lightning:select value="{!v.ReasonCodeName}"  label="Reason Code" required="true" messageWhenValueMissing="Complete this field.">       
+                        <option value="">--Select--</option> 
+                        <aura:iteration items="{!v.ReasonCodes}" var="s">
+                            <option value="{!s}">{!s}</option>
+                        </aura:iteration> 
+                    </lightning:select> 
+    			</div>
+                <!--aura:if isTrue="{!equals(v.SM_Type,'customer')}"-->
+                    <div class="slds-col slds-size_2-of-3">
+                        <lightning:textarea label="Notes" value="{!v.Notes}" maxlength="2000"
+                                            placeholder="{!if(equals(v.SM_Type,'customer'),'Optional note for Reschedule by Customer.','Optional note for Reschedule by WoVN.')}"/>
+                    </div>
+            </div>  
+        </div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;padding: 10px;">
+            <lightning:button class="slds-button_brand textCap" onclick="{!c.onClickOK}" label="Ok" />
+            <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="Cancel" />
+        </footer>
+    </aura:if>
+    <aura:if isTrue="{!v.isDisplayPopupOfYN}">
+        <header class="slds-modal__header" style="width: 600px !important;padding: 7px;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="{!if(v.isDisplayPopupOfShipDate,'width: 600px !important;','width: 600px !important;padding: 30px;')}">
+            <aura:if isTrue="{!v.isDisplayPopupOfShipDate}">
+
+                <div style="text-align: left;min-width: 50px;"><b>Planned Ship/Transfer Date</b></div>
+                <!--div class="slds-is-relative" style="text-align: left;"-->
+                    <div class="{!'form-element'+(v.hasDateError?' hasError':'')}">
+                        <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:65%">
+                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                <input type="text" class="slds-input slds-show_inline-block " id="datepickerId" style="vertical-align:top" value="{!v.requestDateShow}"/>
+                                <button style="padding-left: 10px;" class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}">
+                                    <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="error-message">Complete this field.</div>
+                    </div>
+                <!--/div-->
+                <div class="slds-grid slds-m-vertical_large">
+                    <div class="slds-col slds-size_1-of-3">
+                        <div style="text-align: left;min-width: 50px;"><b>Window Start</b></div>
+                        <div class="{!v.hasEarliestTimeError?' hasError':''}" style="text-align: left;margin-top: 10px;min-width: 125px;max-width:125px;">
+                            <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="true" fieldName="requestEarTime" label="Window Start"/>
+                            <div class="error-message">Complete this field.</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div style="text-align: left;min-width: 50px;"><b>Window End</b></div>
+                        <div class="{!v.hasLatestTimeError || v.latesDateAfterEarliestDateError ?' hasError':''}" style="text-align: left;margin-top: 10px;min-width: 125px;">
+                            <div style="max-width:125px;">
+                                <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="true" fieldName="requestLatTime" label="Window End"/>
+                            </div>
+                            <aura:if isTrue="{!v.hasLatestTimeError}">
+                                <div class="error-message">Complete this field.</div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.latesDateAfterEarliestDateError}">
+                                <div class="error-message">Window End Time cannot be before Window Start Time.</div>
+                            </aura:if>
+                        </div>
+                    </div>
+                </div>
+                    
+               
+                    
+                
+                <!--lightning:input label="Planned Ship/Transfer Date" style="font-weight: bold;font-size: 14px;width: 230px;" class="slds-show_inline-block" type="date" name="input1" required="true" value="{!v.Planned_Ship_Transfer_Date}" /-->                    
+                <aura:set attribute="else">
+                    <span style="font-weight: bold;font-size: 14px;">Do you have a new Shipping Date?</span>
+                </aura:set>
+            </aura:if>
+            
+        </div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;margin-top:2%;padding: 10px;">
+            <aura:if isTrue="{!!v.isDisplayPopupOfShipDate}">
+        		<lightning:button class="slds-button_brand textCap" onclick="{!c.onClickYes}" label="Yes" />
+            </aura:if>
+            <lightning:button class="slds-button_brand textCap" onclick="{!c.onClickNo}" label="{!if(v.isDisplayPopupOfShipDate,'Ok','No')}" disabled="{!v.isDisabledRBC}"/>
+        </footer>
+    </aura:if>
+</aura:component>

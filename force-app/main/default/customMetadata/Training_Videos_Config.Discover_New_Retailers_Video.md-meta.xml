@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Discover New Retailers Video</label>
+    <protected>false</protected>
+    <values>
+        <field>Menu_Name__c</field>
+        <value xsi:type="xsd:string">Retailers</value>
+    </values>
+    <values>
+        <field>Menu_Sort_Order__c</field>
+        <value xsi:type="xsd:double">5.0</value>
+    </values>
+    <values>
+        <field>Sort_Order__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Sub_Menu_Name__c</field>
+        <value xsi:type="xsd:string">Discover New Retailers</value>
+    </values>
+    <values>
+        <field>URL_Label__c</field>
+        <value xsi:type="xsd:string">Discover New Retailers</value>
+    </values>
+    <values>
+        <field>Url__c</field>
+        <value xsi:type="xsd:string">https://share.getcloudapp.com/geuAZv8x</value>
+    </values>
+</CustomMetadata>

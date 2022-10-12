@@ -1,0 +1,28 @@
+.THIS .slds-form-element__label{
+  
+   
+   display : none; 
+}
+.THIS.c-container {
+    border: 1px solid #d8dde6;
+    margin: 10px 0 20px 0;
+}
+.THIS .header-column {
+    padding: 0 2rem;
+}
+.THIS .field-title {
+    font-size: .75rem;
+    line-height: 1.25;
+    margin-bottom: .25rem;
+}
+.THIS .widthClass {
+     width : 300px;
+    color:red;
+}
+.THIS .header-columns1 {
+       margin-bottom: .25rem;
+ 
+}
+ .THIS .buttonSm {
+         text-transform: capitalize !important;
+         }

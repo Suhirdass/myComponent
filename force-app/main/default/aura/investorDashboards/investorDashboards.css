@@ -1,0 +1,40 @@
+.THIS{
+    /*font-family:'Salesforce Sans' !important;*/
+    font-family:token(salesforceSans);
+}
+.THIS .clickable:hover{
+    text-decoration:underline;
+    cursor:pointer;
+}
+.THIS .width225{
+    width: 225px !important;
+}
+.THIS .sortable{
+    cursor:pointer;
+}
+.THIS .sortIcon{
+    color: token(greenJade);
+    font-size: 13px;
+}
+
+.THIS .jumptotop{
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}
+.THIS .select__hidden-label label {
+  display: none;
+}
+.THIS .eyeIcon{
+    fill: token(greenPrimary);
+}
+.THIS #searchInput::-webkit-input-placeholder {
+  color: rgb(6, 94, 102);
+  opacity: 1; /* Firefox */
+}
+.THIS .slds-select {
+    color: token(greenPrimary);
+    font-size: 14px;
+}

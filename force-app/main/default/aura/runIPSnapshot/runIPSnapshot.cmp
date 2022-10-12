@@ -1,0 +1,26 @@
+<aura:component controller="RunIPSnapshotController" extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    
+    <aura:html tag="style">
+        .cUtility button {
+        text-transform: initial;
+        border-radius: var(--lwc-buttonBorderRadius,.25rem);
+        }
+    </aura:html>
+    
+    <header class="slds-modal__header" style="width:600px !important;padding-top: 20px;">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Run Inventory Snapshot</h2>
+    </header>
+    
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width:600px !important;">
+        <p class="slds-m-left_xx-large" style="margin-left: 0;">You won't be able to revert this! Are you sure?</p>
+    </div>
+    
+    <footer class="slds-modal__footer" style="width:600px !important;">
+        <span style="height: 50px !important; width: 560px  !important; z-index: 1;">
+            <lightning:button class="slds-button_brand textCap"  label="Yes" title="Yes"  onclick="{! c.runIps }"/>
+            <lightning:button class="slds-button_neutral textCap"  label="No" title="No"  onclick="{! c.closeModel }"/>
+        </span>
+    </footer>
+</aura:component>

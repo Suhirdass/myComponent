@@ -1,0 +1,110 @@
+<aura:component extends="c:utility" controller="ReportsAndDashBoardController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchReports}" />
+    <aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:attribute name="searchTerm" type="String" default="" />
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false" />
+    <aura:attribute name="disableExport" type="Boolean" default="false" />
+    <aura:attribute name="selectedExportFormat" type="String" default="" />
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <div data-gr-c-s-loaded="true" class="slds-is-relative slds-p-around_small" >
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <lightning:layout multipleRows="true">
+        	<div class="flex slds-size_full">
+            <div class="slds-m-right_xx-large">
+				<h2 class="slds-text-heading_medium slds-p-top_small slds-p-bottom_small" style="margin-top: -15px;margin-bottom: 20px;font-family:'Alliance Neue';color:#42472a;">
+                    All Reports
+                </h2>
+            </div>
+            
+            <div class="flex m-left_auto">
+                <div class="slds-m-right_medium">
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                        <input type="text" style="color:#42472a;font-size:14px;" aura:id="searchInput" id="searchInput" oninput="{!c.onSearchReports}" placeholder="Search" variant="label-hidden" class="slds-input searchAndExport" value="{!v.searchString}"/>
+                    </div>
+                </div>
+                <div class="slds-m-right_medium select__hidden-label">
+                    <!-- @dev - export csv or pdf -->
+                    <lightning:select aura:id="exportSelect" class="searchAndExport"  value="{!v.selectedExportFormat}" label="" variant="label-hidden" onchange="{!c.onPrintSelect}" disabled="{!v.disableExport}">
+                        <option value="" style="color:#42472a;font-size:14px;">Export</option>
+						<option value="csv" style="color:#42472a;font-size:14px;" >CSV</option>
+						<option value="pdf" style="color:#42472a;font-size:14px;">PDF</option>
+                    </lightning:select>
+                </div>
+                <!--<lightning:button class="theme" variant="brand" label="Create New Ticket" onclick="{!c.onNewServiceTicket}" />-->
+            </div>
+        </div>  
+        <div class="ps slds-is-relative" id="psContainer" aura:id="psContainer" style="width:100%;margin-top:10px;">
+            <aura:if isTrue="{!v.records.length >0}">
+                <div class="table-container slds-m-top_small">
+                    <table class="slds-table slds-table_cell-buffer">
+                        <thead>
+                            <tr>
+                                <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Name" style="background-color:#d1cdb0;">
+                                    Report Name
+                                    <aura:if isTrue="{!v.filters.orderByField=='Name'}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!v.filters.isASC}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Description" style="background-color:#d1cdb0;">
+                                    Description
+                                    <aura:if isTrue="{!v.filters.orderByField=='Description'}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!v.filters.isASC}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.records}" var="r" indexVar="index">
+                                <tr>
+                                    <td>
+                                        <div class="slds-truncate clickable" data-name="{!r.name}" id="{!r.id}" onclick="{!c.onGotoReport}" style="color:#518397">
+                                            {!r.name}
+                                        </div> 
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate">
+                                            {!r.description}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.isDataLoaded}">
+                        <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small slds-m-top_small">
+                            <h3 class="slds-section-title_divider slds-text-align_center" style="font-weight: 700;font-family:'Alliance Neue';color:#42472a;">No Reports.</h3>
+                        </lightning:layoutItem>
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+            </div>
+            
+            
+        </lightning:layout>
+        <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+    </div>
+    <!--<a id="scroll-top" href="#top" title="Top" role="button"><i class="icon-angle-up"></i></a>-->
+</aura:component>

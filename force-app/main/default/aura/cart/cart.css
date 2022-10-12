@@ -1,0 +1,170 @@
+.THIS {
+    font-family:token(salesforceSans);
+    color :token(fontColor);
+}
+.THIS .cLabelWithHelpText{
+    font-family:token(salesforceSans);
+    color :token(fontColor);
+}
+.THIS .slds-box {
+	padding: 0;
+	background-color: white;
+}
+.THIS .ticket-header{
+    background-color:token(tableHeaderColor);
+}
+.THIS .headerBackground{
+    background: #e5e5e5;
+}
+.THIS .sl-ticket-header{
+    background-color:token(tableHeaderColor);
+    border-bottom: 2px solid token(grayAccent);
+}
+.THIS .STHeader{
+    font-size:13px;
+    font-weight:600;
+}
+.THIS .cart-upsell {
+	padding: 0.75rem 1rem;
+	border-radius: 4px;
+	font-size: 12px;
+}
+.THIS .cart-upsell--active {
+	background: #dff1ee;
+}
+.THIS .cart-upsell--empty {
+	background: #eaeaea;
+	text-align: center;
+}
+.THIS .slds-box__header {
+	background: token(tan);
+	border-bottom: 2px solid token(grayAccent);
+}
+.THIS .height50{
+    height: 50px;
+    min-width:55px;
+}
+.THIS .remove{
+    cursor:pointer;
+    margin-left:2px;
+}
+.THIS .remove.slds-icon-action-delete{
+    background-color: #065e66;
+    padding: 0.3rem;
+}
+.THIS .saveDraft{
+    color: #88CBC1;
+    font-family: "Salesforce Sans";
+    font-size: 12px;
+    text-align: center;
+    background-color: #0F110F;
+    border-color: aliceblue;
+}
+.THIS .filigreenContents{
+    padding:0!important;
+}
+.THIS .no-border{
+    border:none;
+}
+.THIS .termsbutton{
+    margin-top:5px;
+    color: #518397;
+    cursor:pointer;
+}
+.THIS .submitOrder{
+    color: #25282A;
+    font-family: "Salesforce Sans";
+    font-size: 12px;
+    text-align: center;
+    background-color: #B0B1B2;
+}
+
+.THIS .inline-block{
+    display:inline-block!important;
+}
+.THIS .slds-input[disabled]{
+    /*text-align: right!important;*/
+}
+
+.THIS .rightText{
+    text-align: right;
+}
+
+.THIS .slds-icon{
+    fill: gray;
+}
+.THIS .slds-cell-fixed{
+	min-height: 1rem;
+    top: 10px;
+}
+.THIS #help :hover{
+    position: sticky;
+}
+
+.THIS .active-order-tooltip {
+	position: absolute;
+	bottom: calc(100% + 16px);
+	left: 50%;
+	line-height: 1.25em;
+	width: 120px;
+	transform: translateX(-50%);
+	display: none;
+}
+
+.THIS .active-order-btn{
+    color:token(fontColor);
+}
+
+.THIS .active-order-btn:hover .active-order-tooltip {
+    background-color:token(land);
+    color:token(daze);
+	display: block;
+}
+.THIS .activeAllPrd{
+    background-color:token(land);
+    color:token(daze);
+}
+.THIS .inactiveAllPrd{
+    color:token(fontColor);
+}
+.THIS .activeReviewOrd{
+    background-color:token(land);
+    color:token(daze);
+}
+
+.THIS #searchRec::-webkit-input-placeholder {
+  color :token(fontColor);
+  opacity: 1; /* Firefox */
+}
+
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}
+.THIS .addBtn{
+	background-color:token(land);
+    color:token(daze);
+}
+.THIS .removeBtn{
+	background-color:token(land);
+    color:token(daze);
+}
+.THIS .submitBtn{
+    font-size:12px;
+	background-color:token(land);
+	color:token(daze);
+    border: 0.5px solid #dcdac6;
+}
+.THIS .cancelButton{
+    font-size:12px;
+	background-color:token(land);
+	color:token(daze);
+    border: 0.5px solid #dcdac6;
+}
+.THIS .inactiveIcon svg {
+	width: 18px;
+	fill: #32402A;
+}
+.THIS .activeIcon svg {
+	width: 18px;
+	fill: #dcdac6;
+}

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset__c</fullName>
+    <externalId>false</externalId>
+    <label>Asset</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Mac</fullName>
+                <default>false</default>
+                <label>Mac</label>
+            </value>
+            <value>
+                <fullName>PC - Desktop</fullName>
+                <default>false</default>
+                <label>PC - Desktop</label>
+            </value>
+            <value>
+                <fullName>PC - Laptop</fullName>
+                <default>false</default>
+                <label>PC - Laptop</label>
+            </value>
+            <value>
+                <fullName>iPad</fullName>
+                <default>false</default>
+                <label>iPad</label>
+            </value>
+            <value>
+                <fullName>Laptop charger</fullName>
+                <default>false</default>
+                <label>Laptop charger</label>
+            </value>
+            <value>
+                <fullName>Dock</fullName>
+                <default>false</default>
+                <label>Dock</label>
+            </value>
+            <value>
+                <fullName>Key board</fullName>
+                <default>false</default>
+                <label>Key board</label>
+            </value>
+            <value>
+                <fullName>Monitor</fullName>
+                <default>false</default>
+                <label>Monitor</label>
+            </value>
+            <value>
+                <fullName>Mouse</fullName>
+                <default>false</default>
+                <label>Mouse</label>
+            </value>
+            <value>
+                <fullName>Mobile</fullName>
+                <default>false</default>
+                <label>Mobile</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

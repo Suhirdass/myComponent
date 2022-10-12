@@ -1,0 +1,76 @@
+<aura:component extends="c:utility" controller="NewContactController">
+	<aura:attribute name="lineCardId" type="String" default="" />
+    <aura:attribute name="retailerId" type="string" default="" />
+    <aura:attribute name="types" type="List" default="[]" />
+    <aura:attribute name="contacts" type="List" default="[]" />
+    <aura:attribute name="customerInsight" type="Object" />
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false" />
+    <aura:attribute name="isRetailer" type="Boolean" default="true" />
+    <aura:attribute name="isUpdate" type="Boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/>
+    <aura:html tag="style">
+    	.slds-modal__content {
+            padding: 1em 3em 3em 4em!important;
+        }
+    </aura:html>
+    <lightning:overlayLibrary aura:id="overlay"/>
+    <div class="slds-box slds-box_small" style="border-radius: 0;border: none; box-shadow: none;">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    	
+        <lightning:layout multipleRows="true" horizontalAlign="left">
+            <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                <span class="productName">
+                    <aura:if isTrue="{!v.isUpdate}">
+                        <h3 class="boxHeader text__greenPrimary" style="margin-bottom:1px;">
+                        Edit Customer Insight
+                        </h3>
+                    	<aura:set attribute="else">
+                            <h3 class="boxHeader text__greenPrimary" style="margin-bottom:1px;">
+                        	New Customer Insight
+                            </h3>
+                        </aura:set>
+                    </aura:if>
+                    
+                </span>
+                
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <!--lightning:select aura:id="fieldId" label="Type" value="{!v.customerInsight.Insight_Type__c}" required="true" >
+                    <option value="">None</option>
+                    <aura:iteration items="{!v.types}" var="p">
+                        <option value="{!p.value}" selected="{!v.customerInsight.Insight_Type__c == p.value}">{!p.label}</option>
+                    </aura:iteration>
+                </lightning:select-->
+                <aura:if isTrue="{!v.isDataLoaded}">
+                    <c:multiselect mslabel="Type" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.types }" selectedValuesName="{!v.customerInsight.Insight_Type__c}" selectedValuesId="{!v.customerInsight.Insight_Type__c}"/>
+                </aura:if>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <!--lightning:select aura:id="fieldId" label="Contact" value="{!v.customerInsight.Contact__c}" required="true" >
+                    <option value="">None</option>
+                    <aura:iteration items="{!v.contacts}" var="p">
+                        <option value="{!p.Id}" selected="{!v.customerInsight.Contact__c == p.Id}">{!p.Name}</option>
+                    </aura:iteration>
+                </lightning:select-->
+                <aura:if isTrue="{!v.isDataLoaded}">
+                    <c:multiselect mslabel="Contact" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.contacts }" selectedValuesName="{!v.customerInsight.Contact__r.Name}" selectedValuesId="{!v.customerInsight.Contact__c}"/>
+                </aura:if>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <label class="slds-form-element__label cLabelWithHelpText">Date and Time</label>
+                <lightning:input aura:id="fieldId"  type="DateTime" variant="label-hidden" label="Date and Time" value="{!v.customerInsight.Date_Time__c}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:textarea aura:id="fieldId" label="Memo" maxlength="255" value="{!v.customerInsight.Memo__c}" required="true" />
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input type="checkbox" tabindex="2" label="Completed" checked="{!v.customerInsight.Completed__c}" value="{!v.customerInsight.Completed__c}" name="Completed"/>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <div class="slds-show_inline-block slds-float_right" style="margin-top: 0.8rem;padding-right: .8rem;">
+                    <lightning:button class="theme workSansSemiBold uppserCase saveBtn" variant="brand" onclick="{!c.onSave}" label="{!(v.isUpdate ? 'Update' : 'Save')}" />
+                    <lightning:button class="theme workSansSemiBold uppserCase cancelBtn" onclick="{!c.onCancel}" label="Cancel" />
+                </div>
+    </div>
+</aura:component>

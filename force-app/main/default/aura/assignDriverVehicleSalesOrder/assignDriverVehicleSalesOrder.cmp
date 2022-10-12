@@ -1,0 +1,356 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="AssignDriverVehicleToSalesOrderCtlr">
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="recordId" type="String"/>    
+    <aura:attribute name="rsmObj" type="Map" default="{}"/>
+    <aura:attribute name="vehicleObj" type="Object"/>
+    <aura:attribute name="driverObj" type="Object"/>
+    <aura:attribute name="rsmList" type="Object"/>
+    <aura:attribute name="tsmList" type="Object"/>
+    <aura:attribute name="selectedDriver" type="Object" default="" description="selected Driver Details"/>
+    <aura:attribute name="selectedVehicle" type="Object" default="" description="selected Vehicle Details"/>
+    <aura:attribute name="selectedRecord" type="Object" default="" description="selected Record Details" />
+    <aura:method name="validate" />    
+    <aura:handler name="change" value="{!v.selectedVehicle}" action="{!c.retrieveDriverVehicleAndRelatedRSMTSMs}"/> 
+    <aura:handler name="change" value="{!v.selectedDriver}" action="{!c.retrieveDriverVehicleAndRelatedRSMTSMs}"/> 
+    <aura:attribute name="rsmColumns" type="List"/>
+    <aura:attribute name="tsmColumns" type="List"/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    <aura:attribute name="totalProduct" type="String"/>
+    <aura:attribute name="refProductCount" type="Integer"/>
+    <aura:attribute name="totalCubicVolume" type="Decimal"/>
+    <aura:attribute name="totalOrderCubicVolumeCapacity" type="Decimal"/> 
+    <aura:attribute name="estimatedVehiclUtilized" type="Decimal"/> 
+    <aura:attribute name="assignedVehicleId" type="String"/> 
+    <aura:attribute name="assignedDriverId" type="String"/> 
+    <aura:attribute name="assignedDate" type="Date"/> 
+    <aura:attribute name="totalCubicVolumePer" type="String"/> 
+    <aura:attribute name="totalOrderCubicVolumeCapacityPer" type="String"/> 
+    <aura:attribute name="estimatedVehiclUtilizedPer" type="String"/> 
+    <aura:attribute name="dataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="Err_Msg_Select_Vehicle_Name" type="String"/> 
+    <aura:attribute name="Err_Msg_Select_Driver_Name" type="String"/> 
+    <aura:attribute name="Err_Msg_Select_Planned_Ship_Date" type="String"/> 
+    <aura:attribute name="Success_Msg_Assigned_Driver_Vehicle" type="String"/> 
+    <aura:attribute name="requestDate" type="Date" default=""/>
+    <aura:attribute name="requestDateShow" type="Date" default=""/>
+    <aura:attribute name="hasDateError" type="Boolean" default="false"/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+   <aura:handler name="change" value="{!v.requestDate}" action="{!c.onChange}"/>   
+     <aura:attribute name="cutOffTime" type="String" default=""/>
+     <aura:attribute name="EARLIEST_DELIVERY_TIME" type="String" default="08:00" />
+    <aura:attribute name="LATEST_DELIVERY_TIME" type="String" default="06:00" />
+     <aura:attribute name="requestEarTime" type="String" default=""/>
+    <aura:attribute name="requestLatTime" type="String" default=""/>
+    <aura:attribute name="hasEarliestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="hasLatestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="latesDateAfterEarliestDateError" type="Boolean" default="false"/>
+    <aura:handler name="timePickerEvt" event="c:timePickerEvent" action="{!c.handleTimePickerEvent}"/>
+        <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+
+    
+     <ltng:require 
+                  styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" 
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                           $Resource.ratingPlugin + '/js/jquery-ui.js')}" 
+                  afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        	min-width: 90%;
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .slds-card{
+        	margin-top: 9px;
+        	margin-left: 17px;
+        	margin-right: 17px;
+        	margin-bottom: 14px;
+        }
+        .slds-grid_align-end{
+        	justify-content: right;
+        }
+        .slds-pill-container{
+        	width: 183px;
+        	margin-top: 9px;
+        }
+        .slds-m-right--xx-small {
+        	margin-left: 9px;
+        }
+        .slds-text-heading--label{
+        	margin-left: 10px;
+        }
+        .high{
+        	height: 129px;
+        }        
+        .paddings{
+        	font-size: 14px;
+        	padding: 13px;
+        }
+        .heightfix{
+        	height:55px;
+        }
+        .slds-m-right--small {        
+        	margin-left: 9px;
+        }
+        .fixheight{
+        	margin-top: 23px;
+        	margin-left: -18px;
+        }        
+        .slds-page-header__detail-block{
+        	max-width: 30%;
+        }
+        .slds-icon-custom-custom29, .slds-icon-custom-29 {
+        	margin-bottom: 10px;
+        }
+        .margin{
+        	margin-top: 8px;
+        	padding: 0px;        
+        }
+        .cLightningLookup .inputBox input {
+        	padding-left: 30px;
+        	margin-top: 8px;
+        }
+        .slds-combobox__input-entity-icon .slds-icon {        
+        	margin-top: 2px;
+        }
+        button {
+        	text-transform: capitalize !important;
+        }
+        <!-- refrigerator style -->        
+        #containerIntro{
+        	padding-top: 9px;
+        	margin-left: 25%;
+        }
+        #containerIntro h1{
+        	color:red;
+        	display: inline;
+        	font-weight: 800;
+        }
+        #containerIntro p {
+        	display: inline;
+        }  
+        .cLightningLookup .inputBox input{
+        	margin-top:0px !important;
+        	height : 31px !important;
+        }
+        .cUtility .slds-input{
+        	margin-top:0px !important;
+        	height : 31px !important;
+        }
+        .slds-pill-container{
+        	margin-top:0px !important;
+        	height : 31px !important;
+        }
+                   #ui-datepicker-div{
+    z-index:99999 !important;
+}
+    </aura:html> 
+       <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    <article class="slds-card " >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom31" title="Route Assignment" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Route Assignment </h1><!--Assign Driver &amp; Vehicle-->
+                                <aura:if isTrue="{!v.refProductCount > 0}">
+                                    <div id="containerIntro">
+                                        <h1>NOTE:</h1>
+                                        <p> Delivery must be made in a refrigerated vehicle!</p>
+                                    </div>
+                                </aura:if>    
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        <aura:If isTrue="{!not(empty(v.rsmObj.Id))}">
+                            <lightning:button class="slds-button slds-button--neutral" label="{!$Label.c.Save}" onclick="{!c.assignDriverVehicleValues}"/>
+                            <lightning:button class="slds-button slds-button--neutral" label="{!$Label.c.Cancel}" onclick="{!c.onCancel}"/> 
+                        </aura:If>  
+                    </div>
+                </div>
+            </div>            
+        </div>        
+        <div class="slds-card__header" style="padding-left: 0px;padding-right: 0px;">    
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container">
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_2-of-5 colMargin" style="text-align: right;"><b>Sales Order</b></div>
+                        <div class="slds-size_3-of-5 colMargin" style="text-align: left;padding-left: 8%;"><a data-id="{!v.rsmObj.Id}" onclick="{!c.onSalesOrderClick}" style="color:#006DCC">{!v.rsmObj.Name}</a></div>
+                        <div class="slds-size_1-of-1" style="height: 6px;">&nbsp;</div>
+                        <div class="slds-size_2-of-5 colMargin" style="text-align: right;">
+                        	<b>Planned Ship Date</b>
+                        </div>
+                        <div class="slds-size_3-of-5 colMargin" style="text-align: left;padding-left: 8%;margin-top:0">
+                             <div class="{!'form-element'+(v.hasDateError?' hasError':'')}">
+                                <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:100%">
+                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                        <input type="text" class="slds-input slds-show_inline-block "  aura:id="dateValue" id="datepickerId" style="vertical-align:top" value="{!v.requestDateShow}" />
+                                        <button style="padding-left: 10px;" class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}" >
+                                            <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <div class="slds-size_2-of-5 colMargin" style="text-align: right;"><b>Window Start &#38; End</b></div>
+                        <div class="slds-size_3-of-5 colMargin" style="text-align: left;padding-left: 8%;">
+                            <div class="slds-show_inline-block" style="width:50%">
+                                <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}"  aura:id="fieldId" isRequired="true" fieldName="{!v.requestEarTime}" selectedTimeLabel="{!v.requestEarTime}" label=""/>
+                            </div>
+                            <div  class="slds-show_inline-block" style="width:50%">
+                                <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}"  aura:id="fieldId" isRequired="true" fieldName="{!v.requestEarTime}" selectedTimeLabel="{!v.requestLatTime}" label=""/>
+                            </div>
+                            <!--div class="slds-grid slds-wrap slds-text-align_center custom-container">
+                                <div class="slds-size_1-of-1">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-size_2-of-4 colMargin" style="max-width:100px;margin-right: 3px;">
+                                            <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}"  aura:id="fieldId" isRequired="true" fieldName="{!v.requestEarTime}" selectedTimeLabel="{!v.requestEarTime}" label=""/>
+                                        </div>
+                                        <div class="slds-size_2-of-4 colMargin" style="max-width:100px;">
+                                            <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}"  aura:id="fieldId" isRequired="true" fieldName="{!v.requestEarTime}" selectedTimeLabel="{!v.requestLatTime}" label=""/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div-->
+                        </div>
+                        
+                        <div class="slds-size_2-of-5 colMargin" style="text-align: right;"><b>Total Lines</b></div>
+                        <div class="slds-size_3-of-5 colMargin" style="text-align: left;padding-left: 8%;">{!v.rsmObj.Total_Line_Items__c}</div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>Driver Name</b></div>	
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;margin-top:0">
+                        	<c:lightningLookup objectName="Drivers__c" fieldName="Name" label="" value="{!v.rsmObj.Driver__c}" selectedRecord="{!v.selectedDriver}" isRequired="false"  hideLabel="true"  allowCreate="true"/>	
+                        </div>
+                        <div class="slds-size_1-of-1" style="height: 6px;">&nbsp;</div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>License Number</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;">{!v.driverObj.Driver_License_Number__c}</div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>Expiration Date</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;">
+                            <lightning:formattedDateTime value="{!v.driverObj.Expiration_Date__c}" year="numeric" month="numeric" day="numeric" timeZone="UTC" hour12="false"/>
+                        </div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>State - Class</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;">
+                            {!v.driverObj.State_Issued__c} - {!v.driverObj.Driver_License_Class__c}
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>Vehicle</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;margin-top:0">
+                            <c:lightningLookup objectName="Vehicles__c" fieldName="Name" label="" value="{!v.rsmObj.Vehicle__c}" selectedRecord="{!v.selectedVehicle}" isRequired="false"  hideLabel="true"  allowCreate="true"/>
+                        </div>
+                        <div class="slds-size_1-of-1" style="height: 6px;">&nbsp;</div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>Vehicle Model</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;">{!v.vehicleObj.Vehicle_Model__c}</div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>Make</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;">{!v.vehicleObj.Vehicle_Make__c}</div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: right;"><b>LPN</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-left: 8%;">{!v.vehicleObj.Vehicle_License_Plate_Number__c}</div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: right;"><b>Vehicle CV Capacity</b></div>
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: left;padding-left: 8%;">
+                            <lightning:formattedNumber value="{!v.vehicleObj.Vehicle_Cubic_Volume_Capacity__c}"/>
+                        </div>
+                        <div class="slds-size_1-of-1" style="height: 6px;">&nbsp;</div>
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: right;"><b>Total Utilized CV</b></div>
+                        <div class="{!greaterthan(v.totalOrderCubicVolumeCapacity,v.vehicleObj.Vehicle_Cubic_Volume_Capacity__c) ? 'slds-size_1-of-2 colMargin showInRed' : 'slds-size_1-of-2 colMargin' }" style="text-align: left;padding-left: 8%;white-space: nowrap">
+                            <lightning:formattedNumber value="{!v.totalOrderCubicVolumeCapacity}"/> ({!v.totalOrderCubicVolumeCapacityPer}%)
+                        </div>
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: right;"><b>Additional Order CV</b></div>
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: left;padding-left: 8%;white-space: nowrap">
+                            <lightning:formattedNumber value="{!v.totalCubicVolume}"/> ({!v.totalCubicVolumePer}%)
+                        </div>
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: right;"><b>Estimated Vehicle CV</b></div>
+                        <div class="slds-size_1-of-2 colMargin" style="text-align: left;padding-left: 8%;white-space: nowrap">
+                            <lightning:formattedNumber value="{!v.estimatedVehiclUtilized}"/> ({!v.estimatedVehiclUtilizedPer}%)
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </article>
+    <article class="slds-card">
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom29" title="custom29" />
+                        <div class="slds-media__body">
+                            <p class="slds-text-heading--label"> <span class="assign drivers"><b></b></span></p>
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Outbound Schedules Associated with {!v.vehicleObj.Name}</h1>                               
+                            </div>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>           
+            <aura:if isTrue="{!not(empty(v.rsmList))}">
+                <div class="slds-scrollable_y" style="height:10rem;">                    
+                    <lightning:datatable aura:id="rsmTable"
+                                         keyField="Id"
+                                         minColumnWidth ="100"
+                                         columnWidthsMode="auto"
+                                         hideCheckboxColumn="true"
+                                         columns="{!v.rsmColumns}"
+                                         data="{!v.rsmList}"
+                                         onsort="{!c.updateColumnSorting}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         sortedDirection="{!v.sortedDirection}"/>
+                </div>
+                <aura:set attribute="else">
+                    <center><p>{!$Label.c.No_Record_Found}</p></center>
+                </aura:set>
+            </aura:if>
+        </div>
+    </article>    
+    <article class="slds-card">
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom29" title="custom29" />
+                        <div class="slds-media__body">
+                            <p class="slds-text-heading--label"> <span class="assign drivers"><b></b></span></p>
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Inbound Schedules Associated with {!v.vehicleObj.Name}</h1>                                
+                            </div>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>            
+            <aura:if isTrue="{!not(empty(v.tsmList))}">   
+                <div class="slds-scrollable_y" style="height:10rem;">                    
+                    <lightning:datatable aura:id="rsmTable1"
+                                         keyField="Id"
+                                         minColumnWidth ="100"
+                                         columnWidthsMode="auto"
+                                         hideCheckboxColumn="true"
+                                         columns="{!v.tsmColumns}"
+                                         data="{!v.tsmList}"
+                                         onsort="{!c.updateColumnSortingtsm}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         sortedDirection="{!v.sortedDirection}"/>
+                </div>
+                <aura:set attribute="else">
+                    <center><p>{!$Label.c.No_Record_Found}</p></center>
+                </aura:set>
+            </aura:if>   
+        </div>
+    </article>    
+</aura:component>

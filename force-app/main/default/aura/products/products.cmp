@@ -1,0 +1,138 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    
+    <ltng:require scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchProducts}" />
+    <aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+    
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="warehouseTotalOrderedMap" type="Map" default="" />
+    <aura:attribute name="selectedFilter" type="String" default="Product2.Emerging_Product_Order__c ASC" />
+    <aura:attribute name="hasFilter" type="Boolean" default="false" />
+    <aura:attribute name="isList" type="Boolean" default="false" />
+    <aura:attribute name="categories" type="List" default="[]"/>
+    <aura:dependency resource="markup://c:productDetails" />
+    <aura:attribute name="hasLoaded" type="Boolean" default="false" />
+    <aura:attribute name="activeCategory" type="String" default="" />
+    <aura:attribute name="termsAndConditions" type="List" default="[]"/>
+    <aura:attribute name="companyCustomSetting" type="Map" default="" />
+    <aura:attribute name="STName" type="String" default="C11-0000371-LIC" />
+    <aura:attribute name="STFiles" type="String" default="" />
+    <aura:attribute name="brandId" type="String" default="" />
+    <lightning:overlayLibrary aura:id="overlay" />
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-text-align_center slds-m-bottom_large slds-p-around_xx-large banner">
+                <h1 class="slds-text-heading_large" style="font-family:Alliance Neue;color: #dcdac6;">The Marketplace</h1><!--Filigreen-->
+                <div class="slds-m-top_large market-search" onkeyup="{!onSearchProducts}">
+                    <!-- @dev: search input needs to be connected -->
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                            <span class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" style="margin-right: 38px;color: #42472a;padding-top: 1px;font-weight: bold;font-size: 12px;">SEARCH</span><!--lightning:icon size="x-small" class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon-->
+                            <input type="text" placeholder="Search by brand, name, category or sku" class="search-input slds-input" id="productSearch" aura:id="productSearch"  oninput="{!c.onSearchProducts}"/>
+                        </div>
+                    </div>
+                    <!--form onkeydown="{!c.validateKeys}" onkeyup="{!c.onSearchProducts}">
+            <lightning:input aura:id="productSearch"
+              class="search-input"
+              placeholder="Search by brand, name, category or sku"
+              variant="label-hidden"
+              type="search" value="" label=""
+            />
+            </form-->
+                </div>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small slds-text-align_center products-menu">
+                <div class="categoryContainer">
+                    <aura:iteration items="{!v.categories}" var="record">
+                        <div class="categoryIcon" data-category="{!record.Product_Families__c}" onclick="{!c.onCategoryClick}">
+                            <a data-category="{!record.Product_Families__c}" class="{!(v.activeCategory == record.Product_Families__c ? 'is-active' : '')}" >
+                                <img
+                                     class="default-icon product-menu-img"
+                                     data-category="{!record.Product_Families__c}"
+                                     src="{!$Resource.Marketplace + '/default/' + record.Category__c + '.svg'}"
+                                     />
+                                <img
+                                     class="active-icon product-menu-img"
+                                     data-category="{!record.Product_Families__c}"
+                                     src="{!$Resource.Marketplace + '/active/' + record.Category__c + '.svg'}"
+                                     />
+                                <span class="product-menu-img" data-category="{!record.Product_Families__c}">{!record.Category__c}</span>
+                            </a>
+                        </div>
+                    </aura:iteration>
+                </div>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="grow" size="12">
+                <lightning:layout class="slds-m-horizontal_large slds-m-top_large">
+                    <lightning:layoutItem size="6">
+                        
+                        <!--h2 class="productsHeading slds-m-top_small">Trending Products</h2-->
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" class="slds-text-align--right">
+                        <aura:if isTrue="{!v.isBrand}">
+                            <a onclick="{!c.createShortLink}" >
+                                <img src="{!$Resource.MP_Share_Icon }" style="height:24px;width:24px;margin-right: 10px;margin-top: 5px; filter: grayscale(1);"/>
+                                <!--lightning:icon style="margin-right: 10px;margin-top: 5px;" class="utility:preview" iconName="utility:preview" size="small" /-->
+                            </a>&nbsp;
+                        </aura:if>
+                        <lightning:select class="sort-select" label="" aura:id="sortOrder" value="{!v.selectedFilter}" onchange="{!c.onOrderChange}">
+                            <option value="Product2.Emerging_Product_Order__c ASC" style="color:#42472a;">Trending</option>
+                            <option value="Product2.Product_Short_Description__c ASC" style="color:#42472a;">Name A-Z</option>
+                            <option value="Product2.Product_Short_Description__c DESC" style="color:#42472a;">Name Z-A</option>
+                            <option value="Product2.Family ASC" style="color:#42472a;">Product Family A-Z</option>
+                            <option value="Product2.Family DESC" style="color:#42472a;">Product Family Z-A</option>
+                            <option value="UnitPrice ASC" style="color:#42472a;">Price: Low to High</option>
+                            <option value="UnitPrice DESC" style="color:#42472a;">Price: High to Low</option>
+                        </lightning:select>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                
+                <div class="product-list">
+                    <aura:if isTrue="{!v.records.length > 0 &amp;&amp; not(v.isProcessing)}">
+                        <aura:iteration items="{!v.records}" var="record">
+                            <c:product
+                                       isBrand="{!v.isBrand}"
+                                       product="{!record}"
+                                       isList="{!v.isList}"
+                                       warehouseTotalOrderedMap="{!v.warehouseTotalOrderedMap}"
+                                       largeSize="false"
+                                       />
+                        </aura:iteration>
+                        <aura:set attribute="else">
+                            <div class="noData">No Products Found.</div>
+                        </aura:set>
+                    </aura:if>
+                </div>
+                
+                <aura:if isTrue="{!v.showScrollToTop}">
+                    <lightning:icon class="jumptotop" iconName="utility:jump_to_top" onclick="{!c.scrollToTop}" />
+                </aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>
+        
+        <!-- @dev: paginator not displaying -->
+        <div class="{!if(equals(v.records.length,0),'paginatorCls','')}">
+        	<c:paginator aura:id="paginator" perPage="{!v.perPage}"/>
+        </div>
+        
+        <!-- @dev: footer links unknown -->
+        <div class="marketplace-footer slds-p-around_xx-large">
+            <table>
+                <tr>
+                    <td style="width:15%;"><a href="" onclick="{!c.onTermsAndCondition}">Terms and Conditions</a></td>
+                    <td style="width:65%;text-align: center;">WOVN Distro 2021 All Right Reserved</td>
+                    <td style="width:20%;text-align: right;"><a href="" data-id="{!v.companyCustomSetting.State_License_File_Id__c}" onclick="{!c.openStateLicenseFile}">State License: {!v.STName}</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</aura:component>

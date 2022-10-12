@@ -1,0 +1,40 @@
+.THIS .slds-card__footer{
+    border-color: #dddbda;
+}
+.THIS .max250{
+    height: 250px !important;
+    width: 250px !important;
+}
+.THIS .scroller{
+    width: 100%;
+    overflow: hidden;
+}
+.THIS .productPrice{
+    color:#000;/*#f5e6d8;*/
+}
+.THIS .scrollIcon{
+    background: #FFF;
+    z-index: 1;
+    top: 45%;
+    height: 40px;
+    width: 40px;   
+}
+.THIS .scrollLeft{
+    left: -15px;
+}
+.THIS .scrollRight{
+	right: -15px;   
+}
+.THIS .scroller{
+    transition: all 0.5s ease 1s;
+}
+.THIS .deepJade{
+    background-color:#065E66;
+    border-radius:100%;
+    text-align: center;
+    padding-top: 8px;
+}
+.THIS .viewAll{
+    color:#065E66;
+    font-size:18px;
+}

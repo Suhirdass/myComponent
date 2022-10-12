@@ -1,0 +1,253 @@
+<aura:component extends="c:utility" controller="RetailDeliveryTicketsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	<ltng:require scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}"
+		afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+     
+    <aura:attribute name="Delete_Outbound_Transfer_Tooltip" type="String" default="" />
+    <aura:attribute name="isShowConfirm" type="Boolean" default="false" />
+    <aura:attribute name="isShowRecallConfirm" type="Boolean" default="false" />
+    <aura:attribute name="orderIdForDelete" type="String" default="" />
+    <aura:attribute name="orderIdForRecall" type="String" default="" />
+    <aura:attribute name="orderNameForDelete" type="String" default="" />
+	<aura:attribute name="selectedExportFormat" type="String" default="" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="selectedStatus" type="String" default="All" />
+    <aura:attribute name="searchString" type="String" default="" />
+    <aura:attribute name="disableExport" type="Boolean" default="true" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="Order_Recall_Confirm_Message" type="String" default="" />
+    <aura:attribute name="Transfer_Order_Delete_Confirm_Message" type="String" default="" />
+    <aura:attribute name="Transfer_Order_Deleted_Message" type="String" default="" />
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+	<aura:handler name="confirmModalEvent" event="c:confirmModalEvent" action="{!c.handleConfirmEvent}"/>
+	<aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchRetailDeliveryTickets}"/>
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+
+	<aura:attribute name="filters" type="Map" default="{}" />
+
+	<div class="slds-is-relative slds-p-around_small">
+		<lightning:spinner variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+
+        <lightning:layout multipleRows="true">
+            <div class="flex slds-size_full">
+                <div class="slds-m-right_xx-large">
+                    <lightning:buttonGroup>
+                        <lightning:button class="{!if(equals(v.selectedStatus,'All'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'All'),'brand','neutral')}" label="All" onclick="{!c.changeOrder}"/>
+                        <lightning:button class="{!if(equals(v.selectedStatus,'Draft'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Draft'),'brand','neutral')}" label="Draft" onclick="{!c.changeOrder}"/>
+                        <lightning:button class="{!if(equals(v.selectedStatus,'Pending'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Pending'),'brand','neutral')}" label="Pending" onclick="{!c.changeOrder}" />
+                        <lightning:button class="{!if(equals(v.selectedStatus,'Approved'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Approved'),'brand','neutral')}" label="Approved" onclick="{!c.changeOrder}" />
+                        <lightning:button class="{!if(equals(v.selectedStatus,'Shipped'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Shipped'),'brand','neutral')}" label="Shipped" onclick="{!c.changeOrder}" />
+                        <lightning:button class="{!if(equals(v.selectedStatus,'Cancelled'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Cancelled'),'brand','neutral')}" label="Cancelled" onclick="{!c.changeOrder}" />
+                    </lightning:buttonGroup>
+                </div>
+
+				<div class="flex m-left_auto">
+					<div class="slds-m-right_medium">
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                            <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                            <input type="text" style="color:#42472a;font-size:14px;" aura:id="searchRec" id="searchRec" oninput="{!c.onChangeSearchProduct}" placeholder="Search" variant="label-hidden" class="slds-input searchAndExport" value="{!v.searchString}"/>
+                        </div>
+					</div>
+					<div class="slds-m-right_medium select__hidden-label">
+						<!-- @dev - export csv or pdf -->
+					<lightning:select aura:id="exportSelect" class="searchAndExport" value="{!v.selectedExportFormat}" label="" variant="label-hidden" onchange="{!c.onPrintSelect}" disabled="{!v.disableExport}">
+						<option value="" style="color:#42472a;font-size:14px;">Export</option>
+						<option value="csv" style="color:#42472a;font-size:14px;" >CSV</option>
+						<option value="pdf" style="color:#42472a;font-size:14px;">PDF</option>
+					</lightning:select>
+					</div>
+					<lightning:button
+						class="theme selectBtn"
+						variant="brand"
+						label="New"
+						onclick="{!c.onNewRetailDeliveryTicket}"
+					/>
+				</div>
+			</div>
+
+			<div
+				class="ps slds-is-relative"
+				id="psContainer"
+				aura:id="psContainer"
+				style="{!'width:100%;margin-top:10px;min-height:550px;'}"
+			>
+				<aura:if isTrue="{!v.records.length > 0}">
+					<div class="table-container slds-m-top_small">
+						<table class="slds-table slds-table_cell-buffer">
+							<thead>
+								<tr>
+									<th width="140" class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Name" style="background-color:#d1cdb0;">
+										Transfer #
+										<aura:if isTrue="{!v.filters.orderByField=='Name'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Retailer__r.Name" style="background-color:#d1cdb0;">
+                                        Receiver Name
+                                        <aura:if isTrue="{!v.filters.orderByField=='Retailer__r.Name'}">
+                                            <span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+                                            </span>
+                                        </aura:if>
+                                    </th>
+									<th style="background-color:#d1cdb0;" >
+										Transferred Date
+										<!--aura:if isTrue="{!v.filters.orderByField=='Request_Ship_Date__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if-->
+									</th>
+									<th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Status__c" style="background-color:#d1cdb0;">
+										Status
+										<aura:if isTrue="{!v.filters.orderByField=='Status__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+									<th style="background-color:#d1cdb0;"># Products</th>
+									<th onclick="{!c.onSortOrders}" data-sortfield="Total__c" style="background-color:#d1cdb0;">
+										Transfer Total
+										<aura:if isTrue="{!v.filters.orderByField=='Total__c'}">
+                                            <span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+                                            </span>
+                                        </aura:if>
+									</th>
+									<th width="120" class="" style="text-align: center;background-color:#d1cdb0;padding-left: 30px;">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<aura:iteration items="{!v.records}" var="rdt" indexVar="index">
+									<tr>
+										<td>
+											<div class="ticketNumber slds-truncate" data-id="{!rdt.id}" data-ordername="{!rdt.name}" onclick="{!c.onViewTicket}" style="color:#518397">
+												{!rdt.name}
+											</div>
+										</td>
+										<td>
+											<div class="slds-truncate">{!rdt.retailerDBA }</div>
+										</td>
+										<td>
+                                            <div class="slds-truncate">{!rdt.deliveredDate}</div>
+										</td>
+										<td>{!rdt.status}</td>
+										<td>{!rdt.totalLineItems }</td>
+										<td>
+											<ui:outputCurrency value="{!rdt.total}" />
+										</td>
+										<td class="slds-text-align_right">
+                                            <!--<aura:if isTrue="{!!equals(rdt.status, 'Draft')}">
+                                                <lightning:icon iconName="utility:preview" size="small" alternativeText="Edit"/>
+                                                <aura:set attribute="else">
+                                                    <div data-productId="{!rdt.id}" onclick="{!c.onEdit}">
+                                                        <lightning:icon class="{!!equals(rdt.status, 'Draft') ? '' : 'some-indicator'}" disabled="{!!equals(rdt.status, 'Draft')}" iconName="utility:preview" size="small" alternativeText="Edit"/>
+                                                    </div>
+                                                </aura:set>
+                                            </aura:if>-->
+                                            <lightning:buttonIcon
+												value="{!rdt.id}"
+												iconName="utility:refresh"
+                                                iconClass="eyeIcon"                  
+												size="large"
+												onclick="{!c.onRecall}"
+												alternativeText="{!rdt.name}"
+												disabled="{!!equals(rdt.status, 'Pending')}"
+											/>
+                                            <lightning:buttonIcon
+                                                          iconClass="eyeIcon"
+												value="{!rdt.id}"
+												iconName="utility:edit"
+												size="large"
+												onclick="{!c.onEdit}"
+												alternativeText="{!rdt.name}"
+												disabled="{!!equals(rdt.status, 'Draft')}"
+											/>
+                                            <lightning:buttonIcon
+												value="{!rdt.id}"
+												iconName="utility:delete"
+                                                iconClass="eyeIcon"                  
+												size="large"
+												onclick="{!c.onDelete}"
+												alternativeText="{!rdt.name}"
+												disabled="{!!equals(rdt.status, 'Draft')}"
+											/>
+											<!--lightning:buttonIcon
+												value="{!rdt.id}"
+												iconName="utility:preview"
+												size="large"
+												onclick="{!c.onEdit}"
+												alternativeText="Edit"
+												disabled="{!!equals(rdt.status, 'Draft')}"
+											/-->
+										</td>
+									</tr>
+								</aura:iteration>
+							</tbody>
+						</table>
+					</div>
+					<aura:set attribute="else">
+						<lightning:layoutItem
+							flexibility="grow"
+							size="12"
+							class="slds-p-horizontal_small slds-m-top_small"
+						>
+							<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700;font-family:'Alliance Neue'"
+							>
+								No Outbound Transfers.
+							</h3>
+						</lightning:layoutItem>
+					</aura:set>
+				</aura:if>
+                <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+			</div>
+			<aura:if isTrue="{!v.showScrollToTop}">
+				<lightning:icon
+					class="jumptotop"
+					iconName="utility:jump_to_top"
+					onclick="{!c.scrollToTop}"
+				/>
+			</aura:if>
+		</lightning:layout>
+	</div>
+    
+    <aura:if isTrue="{!v.isShowRecallConfirm}">
+        <c:confirmModal title="{!v.Order_Recall_Confirm_Message}" header="{!v.orderNameForDelete}"/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isShowConfirm}">
+        <c:confirmModal title="{!v.Transfer_Order_Delete_Confirm_Message}" header="{!v.orderNameForDelete}"/>
+    </aura:if>
+</aura:component>

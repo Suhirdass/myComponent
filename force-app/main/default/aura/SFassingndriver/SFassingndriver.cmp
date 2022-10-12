@@ -1,0 +1,247 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="AssignDriverToPurchaseOrderCtlr">
+	 <aura:handler name="init" action="{!c.retrieveDriverAndRelatedRSMTSMs1}" value="{!this}" access="global" />
+
+    <aura:attribute name="recordId" type="String"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="selectedDriver" type="Object" default="" description="selected Driver Details"/>
+    <aura:attribute name="rsmList" type="Object"/>
+    <aura:attribute name="tsmList" type="Object"/>
+    <aura:attribute name="driverObj" type="Object"/>
+    <aura:attribute name="tsmObj" type="Purchase_Order__c"/>
+    <aura:attribute name="mouseStart" type="string" />
+    <aura:attribute name="newWidth" type="string" />
+    <aura:attribute name="currentEle" type="Object" />    
+    <aura:handler name="change" value="{!v.selectedDriver}" action="{!c.retrieveDriverAndRelatedRSMTSMs1}"/> 
+    <aura:attribute name="tsmColumns" type="List"/>
+      <aura:attribute name="rsmColumns" type="List"/>
+    <aura:attribute name="accountData" type="Object"/>
+   <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    
+	<aura:html tag="style">
+        .slds-modal__container {
+        	min-width: 90%;
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+       .slds-card
+ 		{
+		margin-top: 9px;
+		margin-left: 17px;
+		margin-right: 17px;
+		margin-bottom: 14px;
+		}
+       .slds-grid_align-end
+        {
+    		justify-content: right;
+		}
+        .slds-pill-container
+        {
+       	  width: 183px;
+        margin-top: 9px;
+        }
+        .slds-m-right--xx-small {
+   				 margin-left: 9px;
+        }
+        .slds-text-heading--label
+        {
+        margin-left: 10px;
+        }
+        .high
+        {
+        height: 129px;
+        }
+      
+        .paddings  
+        {
+   			 font-size: 14px;
+         padding: 13px;
+        }
+        .heightfix
+        {
+            height:55px;
+        }
+       .slds-m-right--small {
+   
+    margin-left: 9px;
+}
+        .fixheight
+        {
+        margin-top: 23px;
+    margin-left: -18px;
+        }
+     
+        .slds-page-header__detail-block
+        {
+            max-width: 30%;
+        }
+        .slds-icon-custom-custom29, .slds-icon-custom-29 {
+    margin-bottom: 10px;
+        }
+        .margin
+        {
+        margin-top: 8px;
+            padding: 0px;
+
+        }
+      .cLightningLookup .inputBox input {
+    padding-left: 30px;
+    margin-top: 8px;
+}
+            .slds-combobox__input-entity-icon .slds-icon {
+   
+    margin-top: 2px;
+}
+        button {
+    text-transform: capitalize !important;
+        }
+        
+    </aura:html>
+  
+    
+  
+
+   <article class="slds-card " >
+       <div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom83" title="custom83" />
+        <div class="slds-media__body">
+         
+          <div class="slds-grid">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Assign Driver</h1>
+           
+          </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+           <aura:If isTrue="{!not(empty(v.tsmObj.Id))}">
+                                <lightning:button class="slds-button slds-button--neutral" label="{!$Label.c.Assign_Driver_Label}" onclick="{!c.assignDriverValues}"/>
+                                <lightning:button class="slds-button slds-button--neutral" label="{!$Label.c.Cancel}" onclick="{!c.onCancel}"/> 
+                            </aura:If>
+       
+              
+      </div>
+    </div>
+           </div>
+   
+  </div>
+          
+    <div class="slds-card__header ">
+    
+<ul class="slds-grid slds-wrap list">
+                  <li class="slds-page-header__detail-block lstpadding" >
+    
+          <p class="slds-text-title slds-truncate" title="Driver Name">Driver Name</p>
+     <c:lightningLookup objectName="Drivers__c" fieldName="Name" label="" value="{!v.tsmObj.Driver__c}" selectedRecord="{!v.selectedDriver}" isRequired="false"  hideLabel="true"  allowCreate="true"/>
+      
+    </li >
+     <li class="slds-page-header__detail-block lstpadding" >
+    
+        <p class="slds-text-title slds-truncate" title="Driver Name">Planned Ship Date(RSM)/Transfer Date(TSM)</p>
+        <lightning:input class="slds-input margin" type="date" name="input1" value="{!v.tsmObj.Planned_Ship_Transfer_Date__c}" onchange="{!c.retrieveDriverAndRelatedRSMTSMs1}"/>
+      
+    </li >
+       <li class="slds-page-header__detail-block lstpadding" >
+      <p class="slds-text-title slds-truncate" title="Driver Name">Driver License Number</p>
+      <p class="slds-text-body--regular slds-truncate paddings" >{!v.driverObj.Driver_License_Number__c}</p>
+    </li>
+       <li class="slds-page-header__detail-block lstpadding"  >
+      <p class="slds-text-title slds-truncate " title="Driver Name">Expiration Date</p>
+      <p class="slds-text-body--regular slds-truncate paddings" ><lightning:formattedDateTime value="{!v.driverObj.Expiration_Date__c}" year="numeric" month="numeric" day="numeric" timeZone="UTC" hour12="false"/></p>
+    </li>
+       <li  class="slds-page-header__detail-block lstpadding" >
+      <p class="slds-text-title slds-truncate" title="Driver Name">DL Class</p>
+            <p class="slds-text-body--regular slds-truncate paddings" >{!v.driverObj.Driver_License_Class__c}</p>
+    </li>
+        <li  class="slds-page-header__detail-block lstpadding">
+      <p class="slds-text-title slds-truncate" title="Driver Name">State Issued</p>
+      <p class="slds-text-body--regular slds-truncate paddings" >{!v.driverObj.State_Issued__c}</p>
+    </li>
+    
+    
+               </ul>        
+     
+           
+           </div>  
+    </article>  
+             <br/>
+      <article class="slds-card">
+         <div class="slds-page-header" role="banner">
+              <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media">
+              <lightning:icon iconName="custom:custom29" title="custom29" />
+        <div class="slds-media__body">
+          <p class="slds-text-heading--label"> <span class="assign drivers"><b></b></span></p>
+          <div class="slds-grid">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Inbound Schedules Associated with {!v.driverObj.Name}</h1>
+           
+          </div>
+        </div>	
+     
+    </div>
+               </div>
+    
+  </div>
+      <aura:if isTrue="{!not(empty(v.tsmList))}">         
+    <div class="slds-scrollable_y" style="height:10rem;">
+     <lightning:datatable aura:id="accountTable"
+                         keyField="Id"
+                         hideCheckboxColumn="true"
+                         columns="{!v.tsmColumns}"
+                         data="{!v.tsmList}"
+                        onsort="{!c.updateColumnSortingtsm}"
+                         sortedBy="{!v.sortedBy}"  
+                         sortedDirection="{!v.sortedDirection}"/>
+             </div>
+             <aura:set attribute="else">
+                        <center><p>{!$Label.c.No_Record_Found}</p></center>
+                    </aura:set>
+             </aura:if>
+        </div>
+       </article>
+    <article class="slds-card">
+         <div class="slds-page-header" role="banner">
+           <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media">
+              <lightning:icon iconName="custom:custom29" title="custom29" />
+        <div class="slds-media__body">
+          <p class="slds-text-heading--label"> <span class="assign drivers"><b></b></span></p>
+          <div class="slds-grid">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Outbound Schedules Associated with {!v.driverObj.Name}</h1>
+           
+          </div>
+        </div>	
+     
+    </div>
+               </div>
+    
+  </div>
+                   <aura:if isTrue="{!not(empty(v.rsmList))}">         
+
+     <div class="slds-scrollable_y" style="height:10rem;">
+         
+     <lightning:datatable aura:id="accountTable1"
+                         keyField="Id"
+                         hideCheckboxColumn="true"
+                         columns="{!v.rsmColumns}"
+                         data="{!v.rsmList}"
+                         onsort="{!c.updateColumnSorting}"
+                         sortedBy="{!v.sortedBy}"  
+                         sortedDirection="{!v.sortedDirection}"/>
+        </div>
+             <aura:set attribute="else">
+                        <center><p>{!$Label.c.No_Record_Found}</p></center>
+                    </aura:set>
+             </aura:if>
+        </div>
+    </article>
+
+ 
+</aura:component>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Financial_Statement__c</fullName>
+    <externalId>false</externalId>
+    <label>Financial Statement</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Register_Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Balance Sheet</fullName>
+                <default>false</default>
+                <label>Balance Sheet</label>
+            </value>
+            <value>
+                <fullName>Income Statement</fullName>
+                <default>false</default>
+                <label>Income Statement</label>
+            </value>
+            <value>
+                <fullName>Cash Flow Statement</fullName>
+                <default>false</default>
+                <label>Cash Flow Statement</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Long Term Liabilities</controllingFieldValue>
+            <controllingFieldValue>Equity</controllingFieldValue>
+            <controllingFieldValue>Current Assets</controllingFieldValue>
+            <controllingFieldValue>Current Liabilities</controllingFieldValue>
+            <controllingFieldValue>Long Term Assets</controllingFieldValue>
+            <valueName>Balance Sheet</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Revenue</controllingFieldValue>
+            <controllingFieldValue>Clearing Account</controllingFieldValue>
+            <controllingFieldValue>Cost of Goods Sold</controllingFieldValue>
+            <controllingFieldValue>Expenses</controllingFieldValue>
+            <valueName>Income Statement</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

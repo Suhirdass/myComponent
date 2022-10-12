@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Cannabis_Weight_g__c</fullName>
+    <description>Total_Units__c  *
+CASE(Per_Unit_Weight_g__c, 
+&apos;453.60 (g)&apos;, 453.60,
+&apos;0.50 (g)&apos;, 0.50,
+&apos;1 (g)&apos;, 1,
+&apos;1 (each)&apos;, 1,
+&apos;3.54 (g)&apos;, 3.54,
+&apos;3.60 (g)&apos;, 3.60, 1)
+
+IF(OR(
+ISPICKVAL(Package_Type__c,&apos;Jarring&apos;),
+ISPICKVAL(Package_Type__c,&apos;Blending&apos;),
+ISPICKVAL(Package_Type__c,&apos;Cannabis Waste&apos;),
+ISPICKVAL(Package_Type__c,&apos;Sorting&apos;),
+ISPICKVAL(Package_Type__c,&apos;Bagging&apos;),
+ISPICKVAL(Package_Type__c,&apos;Preroll Packing&apos;),
+ISPICKVAL(Package_Type__c,&apos;Pre-Rolling&apos;)),
+Total_Units__c * New_Packaged_Product__r.Cannabis_Weight__c , 
+Null)
+
+IF(OR(
+ISPICKVAL(Package_Type__c,&apos;Casing&apos;),
+ISPICKVAL(Package_Type__c,&apos;Sample Conversion&apos;),
+ISPICKVAL(Package_Type__c,&apos;Labeling&apos;)),
+0 ,
+Total_Units__c * 
+New_Packaged_Product__r.Cannabis_Weight__c *
+CASE(Per_Unit_Weight_g__c, 
+&apos;453.60 (g)&apos;, 453.60,
+&apos;1 (each)&apos;, 1, 
+0))</description>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(TEXT(Per_Unit_Weight_g__c)), Total_Units__c * New_Packaged_Product__r.Cannabis_Weight__c,
+Total_Units__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Total Cannabis Weight</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

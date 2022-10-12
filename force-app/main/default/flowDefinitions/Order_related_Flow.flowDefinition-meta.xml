@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionNumber>21</activeVersionNumber>
+    <description>When we change OPPTY to Closed Lost Order and Order line has to be canceled.</description>
+    <masterLabel>Opp to closed Lost - Order and Order line status update</masterLabel>
+</FlowDefinition>

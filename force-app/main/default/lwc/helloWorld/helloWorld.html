@@ -1,0 +1,12 @@
+<template>
+    <lightning-card tile="Hello World LWC">
+       <!-- <div> Hello World</div> -->
+       <!-- Dynamic Data Binding from js to html-->
+       <!-- <div> Hello {dynamicGreeting}</div> -->
+ <!-- Based On Input need to display the data through onchange event from html to js-->
+ <div class="greeting-class"> Hello {dynamicGreeting}</div>
+ <div style="color:white; background:black;"> Inline CSS Style</div>
+ <div> styling with element tag name </div>
+ <lightning-input label="Greeting" onchange={greetingChangeHandler}> </lightning-input>
+    </lightning-card>
+</template>

@@ -1,0 +1,15 @@
+<apex:page standardController="Shipping_Manifest__c"  extensions="CreateCTRfromTSM"  
+    action="{!createCTR}" title="Cultivation Tax Receipt: Create New CTR" >  
+  <apex:form >
+  <apex:pageBlock title="TSM Detail">
+  <apex:pageBlockButtons >
+      <apex:commandButton action="{!goBack}" value="Return"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection title="Warnings and Errors Associated with Create Cultivation Tax Receipt" columns="1">
+      <apex:pageBlockSectionItem >
+        <apex:pageMessages />
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

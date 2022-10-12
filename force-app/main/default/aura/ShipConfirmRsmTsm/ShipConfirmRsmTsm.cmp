@@ -1,0 +1,317 @@
+<aura:component	extends="c:utility" controller="RSMTSMShipConfirmCotroller" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global">   
+    <!--attributes-->
+    <aura:attribute name="res" type="Shipping_Manifest__c[]"/>
+    <aura:attribute name="ShippingManifestValues" type="Shipping_Manifest__c[]" />
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="selectedIds" type="String" />
+    <aura:attribute name="selectedDCId" type="String" />
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="smLinecount" type="Integer" default="0"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/> 
+    <aura:handler name="init" action="{!c.doInit}"  value="{!this}"/>
+    <aura:attribute name="shDate" type="String"  />
+    <aura:attribute name="shredirectDate" type="String"  />
+    <aura:attribute name="selectedDay" type="string" /> 
+    <aura:attribute name="dateValues" type="String[]" /> 
+    <aura:attribute name="checkClick" type="Boolean" default="false"/>
+    <aura:attribute name="shipUrl" type="String" />
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="addVal" type="String" default="" />
+      <aura:attribute name="soId" type="String" default="" />
+    <aura:attribute name="baseUrl" type="String" default=""></aura:attribute>
+    
+    <!-- aura attributes to store Map component information -->
+    <aura:attribute name="showFooter" type="Boolean" default="true"/>
+    <aura:attribute name="setShipLines" type="RSMTSMShipConfirmCotroller.ShipLineWrapper[]" /> 
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+    
+     <aura:html tag="style">
+        .datetile{
+         display: inline-block; 
+         margin-right:10px;
+        }
+         .dateoption{
+         display: inline-block;
+         margin-top: -20px;
+         }
+         .smlinestop{
+         max-height: 100% !important;
+         width: 100% !important;
+         padding-bottom: 10px;
+         }
+         .smlinestrbg{
+         background-color:#F5F5F5;
+         height:35px;
+         }
+         .wdsevenfive{
+         width:75px;
+         }
+         .wd70{
+        width: 70px;
+         }
+         .wd101{
+         width: 101px;
+         }
+         .wd107{
+         width: 107px;
+         }
+         .wd150{
+            width: 150px;
+         }
+         .wd77{
+         width: 77px;
+         }
+
+         .wd158{
+          width: 158px;
+         }
+         .wd119{
+         width: 119px;
+         }
+         .tr40{
+         width: 40px;
+         }
+         .trrem{
+         width:3.25rem;
+         }
+         .tcenter{
+         text-align: center;
+         }
+         .acolor{
+         color:#0070D2;
+         }
+         #block_container{
+          text-align:center;
+         }
+         .dcnf{
+         display:block;
+             display:inline;
+         }
+         .tipBlock{
+         display:inline;
+         margin-left: -15px;
+         }
+    </aura:html>
+    
+    <ui:scrollerWrapper class="scrollerSize">
+        <div class="innerDivWrapper">
+            <!-- Shipmainfest Start -->
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom98" title="ShipConfirm RST/TSM" />
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Ship Confirm RSM/TSM</h1>
+                                        </div>                                                            
+                                        <div class="slds-col">
+                                            <div class="datetile" >Date: </div>
+                                            <div class="dateoption">
+                                                <lightning:select  onchange="{!c.onDateChange}" label=""   >
+                                                    <aura:iteration items="{!v.dateValues}" var="date">
+                                                        <option value="{!date}"  selected="{!date==v.shDate}"   >{!date}</option>
+                                                    </aura:iteration>
+                                                </lightning:select></div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-float_right dcbtn-" >
+                                                <lightning:button aura:id="dcbtns" class="dft" variant="neutral" label="Depart Confirm" title="Brand action" onclick="{!c.onDepartConfirm}"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div  class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small smlinestop"  >
+                    <table class="slds-table_bordered slds-table_col-bordered  ">
+                        <thead>
+                            <tr  class="smlinestrbg"  >
+                                <th class=" cell-breakAll wdsevenfive">
+                                    <div id="block_container">
+                                        <div class="tipBlock">    
+                                            <lightning:helptext content="Depart Confirm" iconName="utility:preview"/>
+                                        </div>
+                                        <aura:if isTrue="{!v.smLinecount > 0 }">
+                                            <div class="slds-form-element dcnf" >
+                                                <div class="slds-form-element__control">
+                                                    <label class="slds-checkbox">
+                                                        <ui:inputCheckbox aura:id="box3" change="{!c.selectAll}" label="" />
+                                                        <span class="slds-checkbox--faux"></span>
+                                                        <span class="slds-form-element__label text"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </aura:if>   
+                                    </div>
+                                    <!--Depart Confirm -->
+                                </th>
+                                <th class="cell-breakAll wdsevenfive" >
+                                    Ship Confirm 
+                                </th>
+                                <th class="cell-breakAll wd70" >
+                                    Priority 
+                                </th>
+                                <th class="cell-breakAll wd107" >
+                                    Window Start &amp; End   
+                                </th>
+                                <th class="cell-breakAll wd150" >
+                                    Manifest#
+                                </th>
+                                <th class="cell-breakAll wdsevenfive" >
+                                    Metrc#
+                                </th>
+                                <th class="cell-breakAll wd101" >       
+                                    Order#
+                                </th>
+                                <th class="cell-breakAll wd77" >       
+                                    Payment Terms
+                                </th>
+                                <th class="cell-breakAll wd150" >
+                                    Business Name
+                                </th>
+                                <th class="cell-breakAll wd158" >
+                                    Address
+                                </th>
+                                <th class="cell-breakAll wd150">
+                                    Contact
+                                </th>
+                                <th class="cell-breakAll wd119" >
+                                    Phone
+                                </th>
+                                <th class="cell-breakAll wd70" >
+                                    Box Count
+                                </th>
+                                <th class="cell-breakAll wdsevenfive" >
+                                    Pending Invoice
+                                </th> 
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <aura:iteration items="{!v.setShipLines}" var="con"  indexVar="index">
+                                <tr  class="tr40">
+                                    <td scope="row" class="slds-text-align-right trrem" >
+                                        <div class="slds-form-element tcenter" >                                       
+                                            <aura:if isTrue="{!con.shipLine.Status__c!='In-Transit'}">
+                                                <label class="slds-checkbox">
+                                                    <ui:inputCheckbox text="{!con.shipLine.Id}" class="{!con.shipLine.Id +'|'+ con.shipLine.Receiver_Address__c +', '+ con.shipLine.Receiver_City_State_Zip__c }"  aura:id="boxPack" value="" label="" change="{!c.selectSmLine}" />
+                                                    <span class="slds-checkbox--faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                                <aura:set attribute="else">
+                                                    <label class="slds-checkbox" style="display:none">
+                                                        <ui:inputCheckbox text="{!con.shipLine.Id}" class="{!con.shipLine.Id +'|'+ con.shipLine.Receiver_Address__c +', '+ con.shipLine.Receiver_City_State_Zip__c }"  aura:id="boxPack" value="" label="" change="{!c.selectSmLine}" />
+                                                        <span class="slds-checkbox--faux"></span>
+                                                        <span class="slds-form-element__label text"></span>
+                                                    </label>
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </td>
+                                    <td scope="row" class="slds-text-align-right cell-breakAll tcenter"  >
+                                        <aura:if isTrue="{!con.shipLine.Status__c!='In-Transit'}">
+                                            <lightning:input onchange="{!c.dcError}" type="radio" label=""  />
+                                            <aura:set attribute="else">
+                                                <lightning:input onchange="{!c.getSmDetail}" type="radio" label="{!aSalutation}"  name="options" value="{!con.shipLine.Id +'#'+con.shipLine.Sales_Order__c}"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </td> 
+                                    <td scope="row" class="cell-breakAll">
+                                          {!con.shipLine.Priority__c}  
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        {!con.shipLine.Window_Start_End__c}
+                                    </td>
+                                    <td scope="row"  class="cell-breakAll">
+                                        <a href="{!'/' + con.shipLine.Id}" class="acolor" >{!con.shipLine.Name}</a>
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        {!con.shipLine.Metrc_Manifest__c}
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        <a href="{!'/' + con.shipLine.Order_Number__c}" class="acolor"  >{!con.shipLine.Order_Number__r.Name}</a>
+                                    </td>
+                                    
+                                    <td scope="row" class="cell-breakAll">
+                                        {!con.shipLine.Payment_Terms__c}
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        <aura:if isTrue="{!con.shipLine.RecordType.Name=='Product TSM'}">
+                                            <a href="{!'/' + con.shipLine.Supplier_Name__r.Id}" class="acolor"  >{!con.shipLine.Supplier_Name__r.DBA__c}</a> 
+                                            <aura:set attribute="else">
+                                                <a href="{!'/' + con.shipLine.Receiver_Name__r.Id}" class="acolor"  >{!con.shipLine.Receiver_Name__r.DBA__c}</a> 
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        {!con.shipLine.Receiver_Address__c}, {!con.shipLine.Receiver_City_State_Zip__c} 
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        
+                                        <aura:if isTrue="{!con.shipLine.RecordType.Name=='Product TSM'}">
+                                            <a href="{!'/' + con.shipLine.Supplier_Contact__r.Id}" class="acolor"  >{!con.shipLine.Supplier_Contact__r.Name}</a> 
+                                            <aura:set attribute="else">
+                                        <a href="{!'/' + con.shipLine.Receiver_Contact__r.Id}" class="acolor"  >{!con.shipLine.Receiver_Contact__r.Name}</a> 
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                        
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                      
+                                       <a href="{!'tel:' + con.shipLine.Receiver_Name__r.Phone}" class="acolor" >{!con.shipLine.Receiver_Name__r.Phone}</a>
+
+                                    </td>
+                                    <td scope="row" class="cell-breakAll" >
+                                        {!con.shipLine.Box_Count__c}
+                                    </td>
+                                    <td scope="row" class="cell-breakAll tcenter" >
+                                        {!con.pendingInvoice}
+                                    </td>
+                                </tr>
+                            </aura:iteration> 
+                        </tbody>
+                    </table>
+                </div>
+            </article> 
+            <!-- Shipmainfest end -->
+            
+            <!-- Google Map Card Start-->
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom106" title="Delivery Location" label=""/>
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Delivery Locations</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-no-flex slds-align-bottom">
+                            <div class="slds-button-group" role="group">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-card__header ">
+                    <iframe src="{!'/apex/RsmTsmRouteMap?Id='+v.addVal}" width="100%" height="500px;" frameBorder="0"/>
+                </div>
+            </article> 
+            <!-- Google Map Card End-->
+        </div>
+    </ui:scrollerWrapper>
+</aura:component>

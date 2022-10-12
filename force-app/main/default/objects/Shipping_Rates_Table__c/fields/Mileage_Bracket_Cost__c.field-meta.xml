@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mileage_Bracket_Cost__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Company Calculated Mileage Bracket Cost based SG&amp;A and Work Center Load</inlineHelpText>
+    <label>Mileage Bracket Cost</label>
+    <precision>15</precision>
+    <required>false</required>
+    <scale>3</scale>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

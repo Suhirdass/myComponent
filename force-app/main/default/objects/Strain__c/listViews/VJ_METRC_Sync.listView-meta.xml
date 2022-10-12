@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VJ_METRC_Sync</fullName>
+    <columns>NAME</columns>
+    <columns>Strain_Type__c</columns>
+    <columns>CbdLevel__c</columns>
+    <columns>isActive__c</columns>
+    <columns>IndicaPercentage__c</columns>
+    <columns>Metrc_StrainID__c</columns>
+    <columns>Metrc_HttpResponse__c</columns>
+    <columns>SativaPercentage__c</columns>
+    <columns>ThcLevel__c</columns>
+    <columns>Track_Trace_Sync__c</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>THIS_MONTH</value>
+    </filters>
+    <label>VJ - METRC Sync</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

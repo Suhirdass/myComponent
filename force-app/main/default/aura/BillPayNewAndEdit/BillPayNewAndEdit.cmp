@@ -1,0 +1,444 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride,force:lightningQuickActionWithoutHeader,force:hasSObjectName,force:appHostable,force:LightningQuickAction,lightning:isUrlAddressable,lightning:hasPageReference" access="global" controller="billPayNewAndEditCtrl">
+	    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="SBObjName" type="string"/>
+        <aura:attribute name="POObjName" type="string"/>
+    <aura:attribute name="showdivBank" type="boolean" default="false" />
+
+    <aura:attribute name="recordId" type="String"/>
+       <aura:attribute name="SBID" type="String" />
+        <aura:attribute name="selectedSB" type="Object" default="" description="selected sb"/>
+
+     <aura:attribute name="billPayObj" type="Receive_Payment__c"/>	
+    <aura:attribute name="SBObj" type="Supplier_Bill__c"/>	
+    
+    
+        <aura:attribute name="bankDetails" type="Object" />
+    <aura:attribute name="selectedBankRegisterId" type="String" />
+    <aura:attribute name="selectedInvoice" type="Object" default="" description="selected Invoice"/>
+    <aura:attribute name="selectedBill" type="Object" default="" description="selected Bill"/>
+    
+     <aura:attribute name="SupplierId" type="String" />
+        <aura:attribute name="associatedBank" type="Bank_Register__c"/>
+    <aura:attribute name="paymentForms" type="Map" />
+     <aura:attribute name="validation" type="Boolean"/>
+    <aura:attribute name="nameError" type="String"/> 
+    <aura:attribute name="CreditError" type="String"/> 
+    <aura:attribute name="Montherror" type="String"/> 
+    <aura:attribute name="payError" type="String"/> 
+    <aura:attribute name="invError" type="String"/> 
+    <aura:attribute name="yearerror" type="String"/> 
+    <aura:attribute name="CodeError" type="String"/> 
+      <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="creditmemo" type="boolean" default="false" />
+
+     <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js',
+                           $Resource.datatable+ '/js/jquery.dataTables.min.js',$Resource.DymoFramework)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+   
+    <aura:html tag="style">
+        buttonSm {
+        text-transform: capitalize !important;
+            
+
+        }
+        .slds-m-right--xx-small {
+        margin-left: 9px;
+        }
+        .slds-text-heading--label
+        {
+        margin-left: 10px;
+        }
+        .slds-textarea {
+   
+    height: 38px;
+}
+        .slds-m-right--small {
+        margin-left: 6px;
+            margin-top:8px;
+
+        }
+        .cReceivePaymentEditOverride .header-column {
+        padding: 9px 2rem;
+        }
+        .slds-card
+        {
+        margin-top: 9px;
+        margin-left: 17px;
+        margin-right: 17px;
+        margin-bottom: 14px;
+        }
+        
+        .slds-button__icon {
+        margin-top: -8px;
+        color: rgba(0, 0, 0, 0.29);
+        
+        }
+        .slds-grid_align-end
+        {
+        justify-content: right;
+        }  
+        .slds-icon-custom-custom87, .slds-icon-custom-87 {
+        margin-bottom: 10px;
+        }
+        .slds-gutters .slds-col {
+        
+        margin-left: -276px;
+        }
+        .slds-icon-custom-custom87, .slds-icon-custom-87 {
+        margin-top: 12px;
+        }
+        
+         .mtstle {
+        
+           margin-top: 20px;
+        }
+         .dataTables_wrapper .dataTables_filter input {
+    margin-bottom: 13px !important;
+} 
+          .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+        margin-top: 17px;
+} 
+   .pull-left{float:left!important;}
+.pull-right{float:right!important;}    
+        .slds-align-bottom {
+    vertical-align: bottom;
+    align-self: flex-end;
+    margin-bottom: -14px;
+}	
+    </aura:html>
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+
+    
+     <div class="slds-grid slds-wrap slds-col slds-size_1-of-1 row row-main">
+    
+   
+    <div class="column slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12 region-sidebar-left">
+      <article class="slds-card " style="height:492px;">
+              <div class="slds-page-header heightfix" role="banner" style="padding: 10px;">
+            <div class="slds-grid" >
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom83" />
+                        <div class="slds-media__body">
+                            
+                            <div class="slds-grid">
+                                <h1 class="slds-card__header-title baseCard__header-title-container slds-m-right--small slds-truncate slds-align-middle" title="Record Title" style="margin-top: 5px;">Bill Pay</h1>
+                                
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+        
+            </div>            
+        </div>
+ <div class="slds-card__header">
+            <div class="c-container">
+                
+  <aura:if isTrue="{!and(v.billPayObj.Id == null, v.SBObjName != null)}">                            
+                            <p class="field-title mtstle" title="Payment Received Date">Supplier Bill</p>
+                            <p>    
+                                <lightning:input type="text"  name="InvoiceName" value="{!v.SBObjName}" disabled="true"/>
+                                
+                            </p>
+                        </aura:if>
+                        <aura:if isTrue="true">
+                        <aura:if isTrue="{!and(v.billPayObj.Supplier_Bill__c != null, v.SBObjName == null)}"  >
+                            <p class="field-title mtstle" title="Invoice" >Supplier Bill</p>
+                            <p>
+                                
+                                <c:lightningLookup objectName="Supplier_Bill__c" fieldName="Name" label="" value="{!v.billPayObj.Supplier_Bill__c}"   selectedRecord="{!v.selectedSB}"  hideLabel="true"  allowCreate="true" />
+                            </p>
+                        </aura:if>
+                             <aura:if isTrue="{!and(v.billPayObj.Supplier_Bill__c == null, v.SBObjName == null)}"  >
+                            <p class="field-title mtstle" title="Supplier Bill" >Supplier Bill</p>
+                            <p>
+                                
+                                <c:lightningLookup objectName="Supplier_Bill__c" fieldName="Name" label="" value="{!v.billPayObj.Supplier_Bill__c}"   selectedRecord="{!v.selectedSB}"  hideLabel="true"  allowCreate="true"  aura:id="inv"  />
+                            </p>
+
+                        </aura:if>
+                        </aura:if> 
+                        <aura:if isTrue="true">
+                            <aura:if isTrue="{!and(v.billPayObj.Id != null ,v.SBObjName != null)}"  >
+                                <p class="field-title mtstle" title="Invoice" >Supplier Bill</p>
+                                <p>
+                                    
+                                    <c:lightningLookup objectName="Supplier_Bill__c" fieldName="Name" label="" value="{!v.billPayObj.Supplier_Bill__c}"   selectedRecord="{!v.selectedSB}"  hideLabel="true"  allowCreate="true" />
+                                </p>
+                            </aura:if>
+                        </aura:if>
+                                    
+                
+                
+                
+                
+                
+                
+                    <div>
+                        <p class="field-title mtstle" title="Payment Recevied Date">Payment Date 
+                            <lightning:helptext iconName="utility:info" content="Date in which payment was received. Default value is today. "/>                    
+                        </p>
+                        <p>  
+
+                            <lightning:input type="date"  required="true" name="inputDate" value="{!v.billPayObj.Payment_Date__c}" aura:id="dates" />
+ 	
+                        </p> 
+                    </div>
+                
+                
+                        <div  >
+                            <p class="field-title mtstle" title="Payment Amount">
+                                Payment Amount
+                            </p>
+                            <p>
+                      <lightning:input type="number"  required="true" value="{!v.billPayObj.Payment_Amount__c}" formatter="currency" aura:id="amounts" step="0.01"/>
+
+
+                            </p>
+                        </div>
+                    
+              
+                
+                
+                
+                
+                
+                        <div>
+                          
+                        </div>
+                                   
+              
+                        <div >
+                            <p class="field-title mtstle" >Payment Form
+                                <lightning:helptext iconName="utility:info" content="Enter details about payment if any"/>                            
+                            </p>                        
+                            <p>                    
+ 						<lightning:select name="mySelect" value="{!v.billPayObj.Payment_Form__c}"  aura:id="Payvalidate" >
+                            <option value="">None</option>      
+                            <aura:iteration items="{!v.paymentForms}" var="ind" indexVar="key">
+                                        <option text="{!ind.value}" value="{!ind.key}" selected="{!ind.key == v.billPayObj.Payment_Form__c}" />
+                                    </aura:iteration>
+                                </lightning:select>                             </p>
+                        </div>
+                
+                     
+                   
+                        <div >
+                            <p class="field-title mtstle" >Payment Memo
+                                <lightning:helptext iconName="utility:info" content="Enter details about payment if any"/>                            
+                            </p>                        
+                            <p>                    
+                                <lightning:textarea name="input1" value="{!v.billPayObj.Payment_Memo__c}"/>
+                            </p>
+                        </div>
+                  
+                    
+                                                          
+                            	
+            </div>
+        </div>
+        </article>
+    </div>
+ <div class="column slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_8-of-12  region-sidebar-left" >
+<article class="slds-card slds-card_boundary"  style="height:492px;">
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom83" />
+                        <div class="slds-media__body">
+                            
+                            <div class="slds-grid">
+                                <h1 class="slds-card__header-title baseCard__header-title-container slds-m-right--small slds-truncate slds-align-middle" title="Record Title" style="margin-top: 5px;">Bank Registry</h1>
+                                
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+  <div class="slds-button-group" role="group">                        
+                        <div class="slds-show_inline-block slds-float_right">
+                            <lightning:button class="slds-button slds-button--neutral buttonSm" aura:id="Save" onclick="{!c.doSaveAction}"  label="Save" />
+                            <lightning:button class="slds-button slds-button--neutral buttonSm" aura:id="SaneNew"   label="Save &amp; New" onclick="{!c.doSaveAction}"/>
+                            <lightning:button label="{!$Label.c.Cancel}" onclick="{!c.onCancel}" class="newProductButton buttonSm"/> 
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="slds-card__header ">
+            
+            <div class="c-container">
+                <div class="slds-grid slds-wrap slds-grid--pull-padded">
+                    
+                    <div class="slds-col--padded slds-size--1-of-4 slds-medium-size--1-of-1 slds-large-size--1-of-4"> <div  >
+                        
+                        <p class="field-title" style ="width:246px;">Post Date
+                            <lightning:helptext iconName="utility:info" content="Finance to enter date payment was reconciled and added to general fund."/>
+                            
+                        </p>
+                        <p style ="width:246px;">                    
+                            <lightning:input type="date" value="{!v.billPayObj.Post_Date__c}" />
+                        </p>
+                        </div></div>
+                   <aura:if isTrue="{!v.billPayObj.Supplier_Bill__c != null}"  >
+
+                     <div style="margin-left:80px;margin-top:-17px;">
+                           
+                                <p class="field-title mtstle" title="Invoice" style ="width:246px;" >Purchase Order</p>
+                         
+                         <aura:if isTrue="{!v.POObjName != null}"  >
+                             <p style ="width:246px;">
+                                 <lightning:input type="text"  name="InvoiceName" value="{!v.POObjName}" disabled="true"/>
+                                 
+                             </p>
+                             <aura:set attribute="else">
+                                 <aura:If isTrue="{!v.billPayObj.Purchase_Order__c != null}">  
+                                     <p style ="width:246px;">
+                                         <lightning:input type="text"  name="InvoiceName" value="{!v.billPayObj.Purchase_Order__c}" disabled="true"/>
+                                     </p>
+                                 </aura:If>
+                             </aura:set>
+                         </aura:if>
+                         
+                         
+                           
+                        </div>
+                                                  </aura:if>
+                    <div class="slds-col--padded slds-size--1-of-4 slds-medium-size--1-of-1 slds-large-size--1-of-4" style="margin-left: 74px;"><div >
+                        <p class="field-title" >Reconciliation Notes</p>
+                        <p style ="width:246px;">                    
+                         <lightning:textarea name="input1" value="{!v.billPayObj.Reconciliation_Notes__c}"/> 
+                        </p>
+                        </div>
+                    </div>
+                    
+                </div>
+                   <div class="slds-page-header heightfix" role="banner" style="margin-top: 11px;">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom83" />
+                        <div class="slds-media__body">
+                            
+                            <div class="slds-grid">
+                             <h4 class="slds-card__header-title baseCard__header-title-container slds-m-right--small slds-truncate slds-align-middle" title="Record Title" >Search by Bank Register, Account, Account Number
+								</h4>
+                                
+                                
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom"> 
+                    <div class="slds-button-group" role="group">
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+                <aura:if isTrue="{!v.associatedBank.Id != null}">
+                    <lightning:layout class="paddings" >
+                        <lightning:layoutItem >
+                            <div class="header-column" style="width: 299px;">
+                                
+                                <p class="field-title"  style="margin-top:46px;">Bank Register </p>
+                                <p>                    
+                                    <a href="{!'/' + v.associatedBank.Id}" ><u>{!v.associatedBank.Account__r.DBA__c} - {!v.associatedBank.Bank_Name__c}</u></a>
+                                </p>
+                                
+                            </div>
+                            
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem >
+                           
+                             
+                             <div class="header-column " >
+                                
+                                
+                                <p class="field-title"  style="margin-top:46px;">Account</p>
+                                <p>                    
+                                 {!v.associatedBank.Account__r.Name} 
+                                </p>
+                                
+                            </div>
+								
+                        </lightning:layoutItem>
+                       
+                        <lightning:layoutItem class="paddings">
+                            <div class="header-column "  >
+                                
+                                
+                                <p class="field-title" style="margin-top:46px;" >Register Type</p>
+                                <p>                    
+                                    {!v.associatedBank.Register_Type__c}  
+                                </p>
+                                
+                            </div>
+                            
+                            
+                           
+                        </lightning:layoutItem>
+                         <lightning:layoutItem class="paddings">
+                           
+                            
+                            
+                            <div class="header-column "  >
+                                <p class="field-title" style="margin-left: 63px;margin-top:46px;">Total Running Balance</p>
+                                <p style="margin-left: 66px;">   
+                                    <ui:outputCurrency value="{!v.associatedBank.Total_Running_Balance_Amount__c}"/>
+                                       
+                                </p>
+                                
+                            </div>
+                        </lightning:layoutItem>
+                    </lightning:layout> 
+                </aura:if>
+            </div>
+            
+            <aura:if isTrue="{!v.associatedBank.Id == null}">
+<div class="slds-table--header-fixed_container slds-scrollable--x" style="margin-top:6px;">
+            <div class="slds-scrollable_y" style="height:300px;margin-top:-44px;width:125%;">  
+                <table class="mydataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">
+                                     <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Bank Register</th>
+                                <th>Account </th>
+                                <th>Account Number</th>
+                                <th>Register Type</th>
+                               <th>Total Running Balance</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.bankDetails}" var="itm">
+                                <tr>
+                                     <td style="width:8px;">
+                                          <div onclick="{!c.handleRadioClick}" data-value="{!itm.bankRegisterSO.Id}">
+                                        <lightning:input type="radio" aura:id="{!itm.bankRegisterSO.Id}" name="select" value="{!itm.bankRegisterSO.id}"/>
+                                    </div>
+                                    </td>
+                                    <td>
+                                        <a href="{!'/' + itm.bankRegisterSO.Id}" style="color:black;"><u>{!itm.bankRegisterSO.Account__r.DBA__c} - {!itm.bankRegisterSO.Bank_Name__c}</u></a>
+                                    </td>
+                                    <td>{!itm.bankRegisterSO.Account__r.Name}</td>
+                                    <td>XXXXXXXX{!itm.bankRegisterSO.Account_Number__c}</td>
+                                       <td>{!itm.bankRegisterSO.Register_Type__c}</td>
+                                    <td>${!itm.bankRegisterSO.Total_Running_Balance_Amount__c}</td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </aura:if> 
+        </div>  
+    </article>    
+    </div>   
+    </div>
+</aura:component>

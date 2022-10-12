@@ -1,0 +1,47 @@
+<aura:component extends="c:utility">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+	<aura:attribute name="retailOrderLineItem" type="Map" default="{}" />
+    <aura:attribute name="returnCode" type="List" default="[]" />
+    <aura:method name="validate" />
+    <lightning:layout multipleRows="true" horizontalAlign="left">
+        <!--lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="1" padding="around-small">
+            <lightning:input type="checkbox" disabled="{!v.retailOrderLineItem.rquantity == 0 }" checked="{!v.retailOrderLineItem.isSelected}" variant="label-hidden"/>
+        </lightning:layoutItem-->
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <div class="slds-show_inline-block RMASelect">
+            <lightning:input type="checkbox" disabled="{!v.retailOrderLineItem.rquantity == 0 }" checked="{!v.retailOrderLineItem.isSelected}" variant="label-hidden" />
+            </div><img src="{!v.retailOrderLineItem.imageUrl}" class="responsive height50 slds-show_inline-block" />
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:input disabled="true" label="Product" value="{!v.retailOrderLineItem.name}"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:input disabled="true" type="currency" label="Unit Price" value="{!v.retailOrderLineItem.unitPrice}"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:input disabled="true" type="number" label="Ordered Qty" value="{!v.retailOrderLineItem.quantity}"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:input disabled="true" type="number" label="Total Returned Qty" value="{!v.retailOrderLineItem.totalReturnQty}"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:input aura:id="validate" type="number" max="{!(v.retailOrderLineItem.quantity-v.retailOrderLineItem.totalReturnQty)}" label="Return Qty" value="{!v.retailOrderLineItem.rquantity}"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:select aura:id="validate" label="Return Code" value="{!v.retailOrderLineItem.returnCode}"
+                              required="{!v.retailOrderLineItem.isSelected}">
+                <option value="">None</option>
+                <aura:iteration items="{!v.returnCode}" var="r">
+                    <option value="{!r.value}">{!r.label}</option>
+                </aura:iteration>
+            </lightning:select>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+            <lightning:textarea aura:id="validate" label="Additional Note" value="{!v.retailOrderLineItem.additionalNotes}"/>
+        </lightning:layoutItem>
+        
+        <lightning:layoutItem flexibility="grow" size="12">
+            <hr class="hrst"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

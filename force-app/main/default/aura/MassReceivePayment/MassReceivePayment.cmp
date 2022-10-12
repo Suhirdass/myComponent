@@ -1,0 +1,676 @@
+<aura:component extends="c:utility" implements="flexipage:availableForAllPageTypes" controller="massInvoiceRP" access="global">
+ <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    <aura:attribute name="loaded" type="Boolean" default="false"/>
+    <aura:attribute name="invoice" type="Boolean" default="false"/>
+    <aura:attribute name="SuppliersBill" type="Boolean" default="false"/>
+    <aura:attribute name="tableerror" type="Boolean" default="false"/>
+    <aura:attribute name="orderField" type="String" default="Purchase_Order__r.Name"/>
+    <aura:attribute name="searchTextvalidation" type="String" />
+    <aura:attribute name="searchTextvalidationrectype" type="String" />
+    <aura:attribute name="searchText" type="String" />
+    <aura:attribute name="invoiceList" type="List" default="[]" />
+    <aura:attribute name="PoList" type="List" default="[]" />
+    <aura:attribute name="invlength" type="Boolean"  default="false"/>
+    <aura:attribute name="billlength" type="Boolean"  default="false"/>
+    <aura:attribute name="paymentTypes" type="List" default="[{'label': 'Suppliers Bills', 'value': 'SuppliersBills'},{'label': 'Invoices', 'value': 'invoices'}]" />
+    <aura:attribute name="products" type="List" default="[]" />   
+    <aura:attribute name="poData" type="Purchase_Order__c" default="{'sobjectType': 'Purchase_Order__c', 'Name':'' }"/> 
+    <aura:attribute name="setBilPays" type="massInvoiceRP.BilPaysWrapper[]" default="[]"/>
+    <aura:attribute name="labTestMap" type="Map"/>
+    <aura:attribute name="getLabStatusData" type="Map"/>  
+    <aura:attribute name="labTestMapRP" type="Map"/>
+    <aura:attribute name="labTestMapbank" type="Map"/>
+    <aura:attribute name="getbank" type="Map"/> 
+    <aura:attribute name="getRecordTypesRP" type="Map"/> 
+    <aura:attribute name="RPDatas" type="Receive_Payment__c" default="{'sobjectType': 'Receive_Payment__c', 'Name':'' }"/> 
+    <aura:attribute name="setinvoice" type="massInvoiceRP.RPWrapper[]" default="[]"/>
+    <aura:attribute name="getLabStatusDataRP" type="Map"/>  
+    <aura:attribute type="String" name="sortField" />
+    <aura:attribute name="sortAsc" type="boolean"  />
+    <aura:attribute name="Name" type="boolean" default="true"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="direction" type="String" default="ASC"/>
+    <aura:attribute name="arrowDirection" type="string" default="arrowup" description="Use for change arrow sign direction on header based on click"/>  
+    <aura:attribute name="isAsc" type="boolean" default="true" description="boolean flag for pass sorting condition to apex class"/>   
+    <aura:attribute name="selectedTabsoft" type="string" default="Name" description="Use for show/hide arraow sign on header based on conditions"/>   
+    <aura:attribute name="SLIndex" type="Integer" default="-1" />
+    <aura:attribute name="isSortByPO" type="Boolean" default="false"/>
+    <aura:attribute name="isSortAsc" type="Boolean" default="true"/>
+    <aura:attribute name="selectedSortingField" type="String" default="Name"/>
+    <aura:attribute name="BankRegister" type="List" default="[]"/>
+    
+    
+    <!-- Attribute Declration For Pagination -->
+    <aura:attribute name="PaginationList" type="Contact"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecords" type="Integer"/>p
+    <aura:attribute name="pageSize" type="Integer" default="25"/>
+    <!-- Attribute Declration For Pagination End-->
+    <aura:attribute name="alldata" type="List" default="[]" />	
+    <aura:attribute name="cpydata" type="List" default="[]" />	
+    <aura:attribute name="alldataPO" type="List" default="[]" />	
+    <aura:attribute name="endingRecord" type="Integer" default = "0"/>
+    
+    <aura:attribute name="startingRecord" type="Integer" default = "1"/>
+    
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="page" type="Integer" default = "1"/>
+    
+    
+    
+    
+    
+    <aura:html tag="style">
+        .cUtility .slds-form-element__label {
+        display: none;
+        }
+        .upperCase{
+        text-transform: uppercase;
+        }
+        .cUtility button {
+        text-transform: inherit;
+        }
+        .textCap {
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+        .textCapb {
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        margin-left: 9px !important;
+        
+        }
+        .bt{
+        margin-left: 617px !important;
+        
+        }
+        .slds-select_container {
+        position: relative;
+        !important; 
+        }
+       
+        .fg-new-table, .fg-cart-table {
+        font-family: 'Roboto', sans-serif !important;
+        border-collapse: collapse;
+        width: 100%;
+        }
+        
+        .fg-new-table td.fg-td, .fg-new-table th.fg-th {
+        border: none;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 8px;
+        }
+        
+        .fg-cart-table td.fg-td, .fg-cart-table th.fg-th {
+          padding: 8px;
+        }
+        
+        .fg-new-table tr:nth-child(even){}
+        
+        .fg-new-table tr:hover {background-color: #E7E7E7;}
+        .fg-new-table > thead > tr:hover {background-color: white;}
+        
+        .fg-cart-table tr:nth-child(even){background-color: #E7E7E7;}
+        
+        .fg-cart-table tr:hover {background-color: #D8EEEC;}
+        
+        
+        .fg-span span, th.fg.th{
+          font-family: 'Montserrat', sans-serif !important;
+        }
+        .fg-search
+        .fg-search input {
+            outline: none;
+        }
+        .fg-search input[type=search] {
+            -webkit-appearance: textfield;
+            -webkit-box-sizing: content-box;
+            font-family: inherit;
+            font-size: 100%;
+        }
+        .fg-search input::-webkit-search-decoration,
+        .fg-search input::-webkit-search-cancel-button {
+            display: none; 
+        }
+        
+        
+        .fg-search input[type=search] {
+        background:  url('/resource/marketPlaceNewAssets/images/search-icon.png') no-repeat 9px center;
+            border: solid 2px #ccc;
+            padding: 0px 10px 2px 32px;
+            width: 55px;
+            
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+        .fg-search input[type=search]:focus {
+            width: 130px;
+            background-color: #fff;
+            border-color: #66CC75;
+            
+            -webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+            -moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+            box-shadow: 0 0 5px rgba(109,207,246,.5);
+        }
+        
+        
+        .fg-search input:-moz-placeholder {
+            color: #999;
+        }
+        .fg-search input::-webkit-input-placeholder {
+            color: #999;
+        }
+        .paymentOptions >label{
+        	display:none;
+        }
+        
+        .slds-truncate.slds-align_absolute-center.slds-cell-fixed.fifthRow, .slds-truncate.slds-align_absolute-center.slds-cell-fixed.firstRow {
+    cursor: pointer;
+}
+        
+ .slds-truncate {
+
+}      
+        .slds-radio_button [type=radio]:checked+.slds-radio_faux, .slds-radio_button [type=radio]:checked+.slds-radio--faux, .slds-radio_button [type=radio]:checked~.slds-radio_faux, .slds-radio_button [type=radio]:checked~.slds-radio--faux, .slds-radio_button [type=radio]:checked+.slds-radio_button__label, .slds-radio_button [type=radio]:checked+.slds-radio--button__label, .slds-radio--button [type=radio]:checked+.slds-radio_faux, .slds-radio--button [type=radio]:checked+.slds-radio--faux, .slds-radio--button [type=radio]:checked~.slds-radio_faux, .slds-radio--button [type=radio]:checked~.slds-radio--faux, .slds-radio--button [type=radio]:checked+.slds-radio_button__label, .slds-radio--button [type=radio]:checked+.slds-radio--button__label {
+
+    text-align: center;
+}
+        .slds-radio_button .slds-radio_faux, .slds-radio_button .slds-radio--faux, .slds-radio--button .slds-radio_faux, .slds-radio--button .slds-radio--faux {
+   
+    padding: 21px;
+}
+     </aura:html>
+  
+    <lightning:card>
+
+            
+         
+        <lightning:layoutItem size="4" class="slds-p-around_x-small">
+            <lightning:radioGroup label="Select Payment Type" options="{!v.paymentTypes}" aura:id="Payvalidate"  onchange="{!c.handleChange}" value="{!v.paymentType}"  type="button" required="true" />
+        </lightning:layoutItem>
+     <br/>
+        <aura:if isTrue="{!v.invoice}">  
+           
+              <div class="slds-page-header heightfix" role="banner" style="margin-top: -7px;">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                            </div>
+                             <div class="slds-grid" style="padding: 20px;margin-left: 206px;margin-top: -9px;">
+            <h2 title="Select Warehouse" style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">Type&nbsp;</h2> 
+            <lightning:select aura:id="warehouse"  name="selectItem" label="Select an item" >
+                                            <option value="">choose one...</option>
+                                            <option value="Product">Product</option>
+                                            <option value="Tax">Tax</option>
+                                            <option value="Service">Service</option>
+                                        </lightning:select>
+            &nbsp;&nbsp;
+ 				<lightning:input aura:id="searchKnowledgeInput"  name="searchKnowledgeInput" label="" type="search"  placeholder="Search"/>                             
+                                 <lightning:button variant="Neutral" class="textCapb" label="Search" onclick="{!c.FetchRP}"></lightning:button>&nbsp;
+                                 <lightning:helptext style="margin-top: 3px;" content="* Search keyword will look for Receiver and receiver DBA for service record type, ownership and ownership DBA for tax and product"/>&nbsp;
+
+            <!--lightning:button variant="Neutral" class="" label="Search" onclick="{!c.searchRecords}"></lightning:button-->
+            
+        </div>
+                        </div>	
+                        
+         
+                    </div>
+                    <div class="slds-col slds-no-flex slds-align-bottom" style="float:right;margin-top: -48px;">
+                    <div class="slds-button-group" role="group">
+                          <aura:if isTrue="{!v.invlength}"> 
+                                        <lightning:button type="submit"  class="bt"  variant="brand" label="Create RP" onclick="{!c.CreateRPinv}"></lightning:button>&nbsp;&nbsp;
+                                         <lightning:button type="submit" variant="brand"   label="Cancel" onclick="{!c.Cancel}"></lightning:button>
+                                        </aura:if>
+                    </div>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+   
+        
+        <!--div class="slds-is-relative slds-p-horizontal_small slds-m-top_small slds-scrollable heightfix">-->
+        <!--<div class="slds-card__body slds-card__body_inner"> <aura:if isTrue="{!empty(v.setInventoryPositions)}">-->  
+       <aura:if isTrue="{!v.invlength}">  
+           <aura:if isTrue="{!v.spinner}">
+    <lightning:spinner class="spins" size="large" variant="brand" alternativeText="Loading" />
+             
+</aura:if>
+         <!-- <aura:if isTrue="{!v.spiner }">
+           <lightning:spinner alternativeText="Loading" />
+           </aura:if>  --> 
+         <div class="slds-is-relative slds-p-horizontal_small slds-table--header-fixed_container slds-scrollable_x" style="height:400px;">
+            <div class = "slds-scrollable_y" style="width:2150px;height:90%;margin-top: 19px;">
+            <table class=" slds-table slds-table_bordered slds-table_col-bordered slds-table--header-fixed" id="invoiceTable" >
+               
+                <thead>
+                    <tr>
+
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"><lightning:input type="checkbox" aura:id="selectAll" name="selectAll" value="{!v.isAllSelected}" onchange="{!c.onSelectAllChange}"/> </div></th>
+                                                 <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Ownership</div></th>
+  
+                        <th><div  class="slds-truncate slds-align_absolute-center slds-cell-fixed firstRow" title="Check Box" onclick="{!c.invoiceSorting}"  data-id="firstRow" aura:id="firstRow">Invoice#
+                               
+                             
+                               <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                             
+                               </div></th>
+
+                        <th  class="slds-truncate" ><div class=" slds-align_absolute-center slds-cell-fixed" title="Check Box">Invoice Amount</div></th>
+                        <th  > <div  class="slds-truncate slds-align_absolute-center slds-cell-fixed">Coll.Status</div></th>
+                        <th > <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Balance</div></th>
+                         <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed fifthRow"  onclick="{!c.invoiceSorting}" data-id="fifthRow" aura:id="fifthRow">Due Date 
+                             <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                             </div></th>
+                        
+                        <th > <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Transaction Date </div></th>
+                        <th > <div  class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Record Type  </div></th>
+                        <th id="invoicepay"> <div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Payment Form  &nbsp; &nbsp; <lightning:icon iconName="utility:copy" style="margin-left:-12px;" size="Small"  onclick="{!c.invcpyForm}" > </lightning:icon></div></th>
+                        <th> <div  class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Payment Amount </div></th>
+                        <th> <div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Payment Memo  &nbsp; &nbsp; <lightning:icon iconName="utility:copy" size="Small" style="margin-left:-10px;"  onclick="{!c.invcpymemo}" > </lightning:icon></div></th>
+                        <th><div  class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Reference &nbsp; &nbsp; <lightning:icon iconName="utility:copy" size="Small" style="margin-left:-9px;"  onclick="{!c.invcpyRef}" > </lightning:icon></div></th>
+                        <th ><div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Post Date</div></th>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed"  aura:id="dates" title="Check Box" >Bank Register &nbsp; &nbsp; <lightning:icon iconName="utility:copy" size="Small"  onclick="{!c.invcpyclientbank}" > </lightning:icon></div></th>
+
+                    </tr>
+                </thead>
+               
+                        <tbody>
+ 							<aura:if isTrue="{!v.invlength}">
+                                       <aura:iteration items="{!v.setinvoice}" var="RPdata" indexVar="index" > 
+                                <tr id ="{!index}" >
+                                                         
+                                    <td >
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!RPdata.isSelected}" checked="{!RPdata.isSelected}"  />
+                                    </td>
+                                      <td  style="width: 143px;">
+                                         
+                                         <a href="{!'/' + RPdata.inv.Ownership__r.Id}">{!RPdata.inv.Ownership__r.Name}</a>
+                                         
+                                         </td>
+                                    <td ><a href="{!'/' + RPdata.inv.Id}">{!RPdata.inv.Name}</a></td>
+                                   
+                                    
+                                         <td  style="width: 134px;">
+                                       
+                                        <ui:outputCurrency value="{!RPdata.inv.Total_Invoice_Amount__c}"/>
+                                     
+                                    </td>
+                                     <td style="width: 134px;">
+                                        
+                                    {!RPdata.inv.Collections_Status__c}
+                                            
+                                    </td>
+                                    <td style="width: 113px;">
+                                        <div>
+                                        <ui:outputCurrency value="{!RPdata.inv.Invoice_Balance__c}"/>
+                                     </div>
+                                    </td>
+ 								 <td  style="width: 175px;" >
+                                     <span class='slds-hide'>{!index}</span>
+                                     
+  										 <ui:outputDate value="{!RPdata.inv.Ship_Confirmation_Date__c}" format="MM/dd/YYYY" /></td>                                      
+                                      
+                                      
+                                    <td >
+                                       <lightning:input type="date"  required="true" name="inputDate" value="{!RPdata.TransactionDate}" aura:id="dates" format=" YYYY/MM/dd"  date-style="short"  />
+                                    </td>
+                                  <td >
+                                    <div >
+                                                    <lightning:select aura:id="labTestPicklists" value="{!RPdata.RecordType}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMapRP}" var="lab" indexVar="key">
+                                                            <option value="{!lab.value}" selected="{!lab.key == RPdata.RecordType}">{!lab.key}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                        </div> 
+                                      
+                                      
+                                      
+                                      <!--  <lightning:input variant="label-hidden" data-row-index="{!index}" value="{!RPdata.RecordType}" class="ter"  />-->
+                                    </td>
+
+                                    <td> <div>
+                                                    <lightning:select aura:id="labTestPicklist" value="{!RPdata.labTestStat}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMap}" var="lab" indexVar="key">
+                                                            <option value="{!lab.value}" selected="{!lab.key == RPdata.labTestStat}"  aura:id="checkProduct">{!lab.key}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                        </div></td>
+                                    <td >
+                                        <lightning:input type="Number" step =".01" aura:id="recvQty" formatter="currency" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.recQty}" class="ter"  />
+                                       
+                                    </td>
+                                    <td >
+                                   <lightning:input type="text" aura:id="paymemo" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.Paymentmemo}" class="ter"  />
+                                        
+                                    </td>
+                                    <td>
+                                    <lightning:input type="text" aura:id="payref" variant="label-hidden" data-row-index="{!index}" value="{!RPdata.Reference}" class="ter"  />
+                                          
+                                    </td>
+                                   
+                                        
+                                        <td><lightning:input type="date"  required="false" name="inputDate" value="{!RPdata.postdate}" aura:id="dates" />
+
+                                        </td>
+                                 
+                                   
+                                         <!--  <td  style="width:200px;">
+                                        <div data-sortfield="{!RPdata.Id}" >
+                                  <c:customLookup isViewLabel="false" objectName="Bank_Register__c" iconName="standard:article" fieldName="Name"  isFixed="true"  value="{!RPdata.BankRegRP}"/>
+                                        </div>
+                                    </td>-->
+                                     <td >
+ 								<lightning:select aura:id="bankPicklist" value="{!RPdata.BankRegRP}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMapbank}" var="lab" indexVar="key">
+                                                            <option value="{!lab.key}" selected="{!lab.key == RPdata.BankRegRP}"  aura:id="checkbank">{!lab.value}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                    </td>
+                                </tr>
+                                </aura:iteration> 
+                                  <aura:set attribute="else">
+                                        	<tr style="height:40px">
+                                            	<td style="text-align:center" colspan="11">
+                                                	No Invoices Found.
+                                                </td>
+                                            </tr>
+                                        </aura:set>
+                            </aura:if>         
+                </tbody>
+                </table>
+ 
+            </div> 
+           </div> 
+           <br/>
+             <div style="width:98%;margin-left: 13px;">
+            <lightning:layout>
+                
+                <lightning:layoutItem flexibility="grow">
+                    <div style="display: flex;padding-left:25%;">
+                        <p style="">
+                   
+                            <lightning:button label="Previous" disabled="{!v.startPage == 0}"  onclick="{!c.previous}" iconName='utility:back'> </lightning:button>&nbsp;
+                              Page {!v.page} of {!v.totalPages} 
+                            <lightning:button label="Next"  disabled="{!v.endPage >= v.totalRecords}"  onclick="{!c.next}"  iconName='utility:forward' iconPosition='right'> </lightning:button>
+                            
+                         
+                        
+                            &nbsp; Page Size : &nbsp;</p>
+                         <div style="width:100px;">
+                            <lightning:select aura:id="selectPageSize" name="selectPageSize" variant="label-hidden" onchange="{!c.onPageSizeChange}">
+                                <option value="25" selected="{!v.pageSize == 25}">25</option>
+                                <option value="50" selected="{!v.pageSize == 50}">50</option>
+                                <option value="75" selected="{!v.pageSize == 75}">75</option>
+                                <option value="100" selected="{!v.pageSize == 50}">100</option>
+                            </lightning:select>
+                        </div>
+                       
+                    </div>
+                </lightning:layoutItem>
+               
+            </lightning:layout>
+        </div>
+    
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+          
+            </aura:if>
+                    <br/>
+              <aura:if isTrue="{!v.tableerror}">
+        <div>
+        <p style="font-size:13px;text-align:center;">No invoice Records Found</p>
+        </div>
+           
+        </aura:if>
+        </aura:if>
+        
+        
+         <aura:if isTrue="{!v.SuppliersBill}">  
+             
+                  <div class="slds-page-header heightfix" role="banner" style="margin-top: -9px;">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                            </div>
+                             <div class="slds-grid" style="padding: 20px;margin-left: 206px;margin-top: -9px;">
+            <h2 title="Select Warehouse" style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">Type&nbsp;</h2> 
+            <lightning:select aura:id="PORecTypes"  name="selectItem" label="Select an item" >
+        <option value="">choose one...</option>
+        <option value="Product">Product</option>
+        <option value="Invoice Only"> Invoice Only</option>
+    </lightning:select>
+            &nbsp;&nbsp;
+ 				<lightning:input   aura:id="searchKnowledgeInputSB"  name="searchKnowledgeInput"   label="" type="search"   placeholder="Search"  />  
+                                 <lightning:button variant="Neutral" class="textCapb" label="Search" onclick="{!c.SearchBillPay}"></lightning:button>&nbsp; 
+                                 <lightning:helptext style="margin-top: 3px;" content="* Search keyword will look for PO Ownership and PO Ownership DBA"/>&nbsp;
+
+            <!--lightning:button variant="Neutral" class="" label="Search" onclick="{!c.searchRecords}"></lightning:button-->
+            
+        </div>
+                        </div>	
+                        
+         
+                    </div>
+                    <div class="slds-col slds-no-flex slds-align-bottom" style="float:right;margin-top: -48px;">
+                    <div class="slds-button-group" role="group">
+                          <aura:if isTrue="{!v.billlength}">
+      <lightning:button type="submit" variant="brand" class="bt"  label="Create Bill Pays" onclick="{!c.CreateBilpays}"></lightning:button>&nbsp;
+      <lightning:button type="submit" variant="brand"   label="Cancel" onclick="{!c.Cancel}"></lightning:button>
+      </aura:if>                    </div>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+     
+        
+        <!--div class="slds-is-relative slds-p-horizontal_small slds-m-top_small slds-scrollable heightfix">-->
+        <!--<div class="slds-card__body slds-card__body_inner"> <aura:if isTrue="{!empty(v.setInventoryPositions)}">-->  
+       <aura:if isTrue="{!v.billlength}">  
+        <div class="slds-is-relative slds-p-horizontal_small slds-table--header-fixed_container slds-scrollable_x" style="height:400px;">
+            <div class = "slds-scrollable_y" style="width:2150px;height:90%;">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-table--header-fixed" id="poTable" >
+               
+                <thead>
+                    <tr>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"><lightning:input type="checkbox" aura:id="selectAll" name="selectAll" value="{!v.isAllSelected}" onchange="{!c.onSelectAllChangesupplier}"/> </div></th>
+            
+                        
+                                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Receipt Date">Ownership</div></th>
+
+                        
+                       <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Receipt Date" onclick="{!c.poSorting}" data-id="firstRow" aura:id="firstRow"> Purchase Order
+                                <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                              </div>
+                             
+                            
+                        
+                        </th>
+
+                        <th><div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Receipt Date">Supplier Bill</div></th>
+
+                        <th ><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Bill Amount</div></th>
+                        <th > <div  class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"  onclick="{!c.poSorting}" data-id="fourthRow" aura:id="fourthRow"> Due Date
+                             <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                            </div></th>
+                        <th > <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Balance</div></th>
+                        <th > <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Transaction Date </div></th>
+                        <th> <div  class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Payment Form&nbsp; &nbsp; <lightning:icon iconName="utility:copy" size="Small"  onclick="{!c.POcpyForm}" > </lightning:icon> </div></th>
+                        <th > <div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Payment Amount </div></th>
+                        <th> <div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" >Payment Memo&nbsp; &nbsp; <lightning:icon iconName="utility:copy" size="Small" style="margin-left: -9px;" onclick="{!c.POcpymemo}" > </lightning:icon> </div></th>
+                        <th > <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Post Date </div></th>
+                        <th ><div   class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Reconciliation Notes&nbsp; &nbsp; <lightning:icon iconName="utility:copy" size="Small"  onclick="{!c.POcpyRef}" > </lightning:icon></div></th>
+                        <!--<th ><div  class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Reconciled</div></th>-->
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Select Bank Register&nbsp; &nbsp; <lightning:icon iconName="utility:copy" style="margin-left:-10px;" size="Small"  onclick="{!c.POcpybank}" > </lightning:icon></div></th>
+                    </tr>
+                </thead>
+               
+                        <tbody>
+ 							  <aura:if isTrue="{!v.billlength}">
+                                       <aura:iteration items="{!v.setBilPays}" var="pol" indexVar="index" > 
+                                <tr id ="{!index}" >
+                                    <td>
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!pol.isSelected}" checked="{!pol.isSelected}" disabled="{!pol.isDisabled}" />
+                                    </td>
+                                                                            <td  style="width: 114px;"><a href="{!'/' + pol.SB.Purchase_Order__r.Ownership__r.Id}">{!pol.SB.Purchase_Order__r.Ownership__r.Name}</a></td>
+
+                                    <td style="width:131px;"><a href="{!'/' + pol.SB.Purchase_Order__r.Id}">{!pol.SB.Purchase_Order__r.Name}</a></td>
+                                       
+                                      <td ><a href="{!'/' + pol.SB.Id}">{!pol.SB.Name}</a></td>
+
+                                     <td style="width:93px;"><ui:outputCurrency value="{!pol.SB.Bill_Amount__c}"/></td>
+                                    <td  style="width:123px;">  <span class='slds-hide'>{!index}</span>
+                                        <ui:outputDate value="{!pol.SB.Bill_Due_Date__c}" format="MM/dd/YYYY" /></td>
+                                    <td style="width:104px;"><ui:outputCurrency value="{!pol.SB.Outstanding_Balance__c}"/></td>
+
+                                  <td >
+                                      <lightning:input type="date"  required="true" name="inputDate" value="{!pol.TransactionDate}" aura:id="dates" />
+                                    </td>
+
+                                    <td > <div >
+                                                    <lightning:select aura:id="labTestPicklist" value="{!pol.labTestStat}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMap}" var="lab" indexVar="key">
+                                                            <option value="{!lab.value}" selected="{!lab.key == pol.labTestStat}">{!lab.key}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                        </div></td>
+                                    <td >
+                                        <lightning:input type="Number" step =".01" aura:id="recvQty" formatter="currency" variant="label-hidden" data-row-index="{!index}" value="{!pol.recQty}" class="ter"  />
+                                       
+                                    </td>
+                                    <td >
+                                   <lightning:input type="text" aura:id="paymemo" variant="label-hidden" data-row-index="{!index}" value="{!pol.Paymentmemo}" class="ter"  />
+                                        
+                                    </td>
+                                  
+                                        
+                                        <td ><lightning:input type="date"  required="true" name="inputDate" value="{!pol.postdate}" aura:id="dates" />
+
+                                        </td>
+                                 
+                                    <td  >
+                                       <lightning:input type="text" aura:id="RN" variant="label-hidden" data-row-index="{!index}" value="{!pol.ReconcilitionNotes}" class="ter"  />
+                                      
+                                      </td>
+                                    <!--<td style="width: 92px;">
+                                        <lightning:input type="checkbox" aura:id="checkContact" checked="{!pol.Reconciled}" value="{!pol.Reconciled}" />
+
+                                       
+                                    </td>-->
+                                   <td>
+                                        <div data-sortfield="{!pol.Id}" style="position:relative;width:200px;" >
+                                               
+                                            <lightning:select aura:id="bankPicklist" value="{!pol.BankReg}" >
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.labTestMapbank}" var="lab" indexVar="key">
+                                                            <option value="{!lab.key}" selected="{!lab.key == pol.BankReg}"  aura:id="checkProduct">{!lab.value}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                            
+                                          <!--  <c:customLookup isViewLabel="false" objectName="Bank_Register__c" iconName="standard:article" isFixed="true" fieldName="Name"  value="{!pol.BankReg}"/>-->
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                            </aura:iteration>    
+                              
+                                    </aura:if>         
+                                        
+                                
+                </tbody>
+                </table>
+            </div> 
+           </div> 
+             <br/>
+           
+    <div style="width:98%;margin-left: 13px;">
+            <lightning:layout>
+                
+                <lightning:layoutItem flexibility="grow">
+                    <div style="display: flex;padding-left:25%;">
+                        <p style="">
+                   
+                            <lightning:button label="Previous" disabled="{!v.startPage == 0}"  onclick="{!c.previousPO}" iconName='utility:back'> </lightning:button>&nbsp;
+                              Page {!v.page} of {!v.totalPages} 
+                            <lightning:button label="Next"  disabled="{!v.endPage >= v.totalRecords}"  onclick="{!c.nextPO}"  iconName='utility:forward' iconPosition='right'> </lightning:button>
+                            
+                         
+                        
+                            &nbsp; Page Size : &nbsp;</p>
+                         <div style="width:100px;">
+                            <lightning:select aura:id="selectPageSize" name="selectPageSize" variant="label-hidden" onchange="{!c.onPageSizeChange}">
+                                <option value="25" selected="{!v.pageSize == 25}">25</option>
+                                <option value="50" selected="{!v.pageSize == 50}">50</option>
+                                <option value="75" selected="{!v.pageSize == 75}">75</option>
+                                <option value="100" selected="{!v.pageSize == 50}">100</option>
+                            </lightning:select>
+                        </div>
+                       
+                    </div>
+                </lightning:layoutItem>
+               
+            </lightning:layout>
+        </div>
+    
+            </aura:if>  
+               <br/>
+              <aura:if isTrue="{!v.tableerror}">
+        <div>
+        <p style="font-size:13px;text-align:center;">No Search Records Found</p>
+        </div>
+           
+        </aura:if>
+        </aura:if>
+            
+         
+    </lightning:card>	
+</aura:component>

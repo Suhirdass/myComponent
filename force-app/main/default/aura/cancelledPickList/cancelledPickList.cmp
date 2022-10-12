@@ -1,0 +1,46 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="CancelledPickListCtrl">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="status" type="String" />
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="isOpenStatus" type="Boolean" default="false"/>
+    <aura:attribute name="isQAReview" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+                   <aura:attribute name="errormsgSite" type="String" />
+
+    <aura:html tag="style">
+        .slds-modal__content {
+        border-radius: 0 !important;
+        }
+        .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+    </aura:html>
+    
+         
+    <aura:if isTrue="{!v.isOpenStatus}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+            <h1 class="slds-text-heading--medium font-bold">{!v.recordName}</h1>
+        </header>
+        <div class="slds-modal__content slds-p-around--medium" style="width: 600px !important;">
+            This action will delete picklist and picklist line
+        </div>
+        <footer class="slds-modal__footer" style="width: 600px !important;">
+            <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.deletePicklist}'/>
+            <lightning:button name='No' label='No' onclick='{!c.closeModelBox}'/>
+        </footer>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isQAReview}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+        	<h1 class="slds-text-heading--medium font-bold">{!v.recordName}</h1>
+        </header>
+        <div class="slds-modal__content slds-p-around--medium" style="display: none;width: 600px !important;height: 140px !important;"></div>
+        <footer class="slds-modal__footer" style="width: 600px !important;margin-top: 6%;">
+            <lightning:button variant="brand" name='Release Inventory' label='Release Inventory' onclick='{!c.calcelPicklistAndSOLines}'/>
+            <lightning:button variant="brand" name='Cancel Order' label='Cancel Order' onclick='{!c.cancelOrderPickList}'/>
+        </footer>           
+    </aura:if>
+    
+</aura:component>

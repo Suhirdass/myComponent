@@ -1,0 +1,51 @@
+.THIS .slds-form-element {
+    position: relative;
+    min-width: 0;
+    padding-right: 10px;
+}
+
+.THIS .lockMonth{
+    border: solid 1px;
+    text-align: center;
+    width: 60px;
+    height: 30px;
+    font-size: 18px;
+    cursor: not-allowed;
+    background:#88dd88;
+}
+.THIS .monthName {
+    border: solid 1px;
+    text-align: center;
+    width: 60px;
+    padding: 2px;
+    height: 30px;
+    font-size: 18px;
+}
+.THIS .monthName:hover {
+    border: solid 1px;
+    text-align: center;
+    width: 60px;
+    height: 30px;
+    font-size: 18px;
+    background-color:#88dd88;
+ cursor:pointer;
+}
+.THIS .monthName.selectedRow {
+    border: solid 1px;
+    text-align: center;
+    width: 60px;
+    height: 30px;
+    font-size: 18px;
+    background-color:#54698d;
+  color:white;
+}
+.THIS .msgbutton{
+    background-color: #ebebeb;
+    color: #1badc5;
+    font-weight: 600;
+}
+.THIS .lockBtn{
+    padding-left: 2px;
+    filter: brightness(0.5) grayscale(1);
+    cursor: not-allowed;
+}

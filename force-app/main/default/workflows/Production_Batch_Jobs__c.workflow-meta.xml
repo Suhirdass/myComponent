@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Email_Notification_After_1_Hour</fullName>
+        <description>Email Notification After 1 Hour</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>anthony@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>john@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>phong@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>ravi@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>tristen@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Batch_Job_Completion_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>PBJ_Completed_Alert</fullName>
+        <description>PBJ Completed Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>PBJ_Alert_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>lakshmi@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>satheesh@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/PBJ_Completed_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>X2nd_Reminder_Alert_After_1_Day</fullName>
+        <description>2nd Reminder Alert After 1 Day</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>FG_Order_Admin</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>tracey@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Batch_Job_Completion_Alert</template>
+    </alerts>
+    <rules>
+        <fullName>Batch Job Completion Alert</fullName>
+        <active>false</active>
+        <formula>NOT(ISNULL(Actual_Completion_Date__c)) &amp;&amp; (Actual_Converted_Qty__c &lt;&gt; 0)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Email_Notification_After_1_Hour</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

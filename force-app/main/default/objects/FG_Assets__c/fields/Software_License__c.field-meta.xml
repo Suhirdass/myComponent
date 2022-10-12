@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Software_License__c</fullName>
+    <externalId>false</externalId>
+    <label>Software License</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>MS Office</fullName>
+                <default>false</default>
+                <label>MS Office</label>
+            </value>
+            <value>
+                <fullName>MS Office- MAC</fullName>
+                <default>false</default>
+                <label>MS Office- MAC</label>
+            </value>
+            <value>
+                <fullName>PDF writer</fullName>
+                <default>false</default>
+                <label>PDF writer</label>
+            </value>
+            <value>
+                <fullName>Lucid Chart</fullName>
+                <default>false</default>
+                <label>Lucid Chart</label>
+            </value>
+            <value>
+                <fullName>Adobe - Photography</fullName>
+                <default>false</default>
+                <label>Adobe - Photography</label>
+            </value>
+            <value>
+                <fullName>AntiVirus - Bitdefender</fullName>
+                <default>false</default>
+                <label>AntiVirus - Bitdefender</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>9</visibleLines>
+</CustomField>

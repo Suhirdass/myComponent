@@ -1,0 +1,105 @@
+.THIS {
+    font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+.THIS .ticket-header {
+  padding: 6px 72px 4px;
+  border-bottom: 2px solid token(tableHeaderColor);
+    background:token(tableHeaderColor);
+}
+
+.THIS .slds-icon-text-error {
+    fill: gray;
+} 
+.THIS .sortIcon{
+    color: #065e66;
+    font-size: 13px;
+    filter: brightness(0.5) grayscale(1);
+}
+.THIS .ticket-body {
+  padding: 40px 72px;
+}
+
+.THIS .slds-icon-text-default{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+} 
+
+.THIS #searchRec::-webkit-input-placeholder {
+  color: rgb(6, 94, 102);
+  opacity: 1; /* Firefox */
+}
+
+.THIS .totalText{
+    color: #080707;
+    font-family: 'Alliance Neue';
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 21px;
+    text-align: right;
+}
+
+.THIS .totalTextLabel{
+    color: #080707;
+    font-family: 'Alliance Neue';
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 21px;
+}
+
+.THIS .sortable{
+    cursor:pointer;
+}
+
+.THIS .rectangleRli {
+  box-sizing: border-box;
+  height: 50.5px;
+  width: 50.5px;
+  border: 0.5px solid #B9BEC5;
+  border-radius: 2.25px;
+  background-color: #FFFFFF;
+}
+          
+.THIS .rectangle {
+  box-sizing: border-box;
+  height: 60.5px;
+  width: 60.5px;
+  border: 0.5px solid #B9BEC5;
+  border-radius: 2.25px;
+  background-color: #FFFFFF;
+}
+.THIS .delIcon{
+                border:none;
+                height: 25px;
+	width: 30px;
+	line-height: 13px;
+	text-align: right;
+    padding-top: 0px;
+	float: right;
+   	margin-top: -4px;
+            }
+.THIS .print-export{
+	height: 25px;
+	width: max-content;
+	color: #195458;
+	font-family:'Alliance Neue';
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+    padding-top: 0px;
+	float: right;
+   	margin-top: -6px;
+    /*filter: brightness(0.5);  */
+    
+}
+.THIS .print-export .slds-button{
+        color:token(land);    
+            }
+.THIS .text__blue{
+                color:token(wovnlink);
+            }
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}

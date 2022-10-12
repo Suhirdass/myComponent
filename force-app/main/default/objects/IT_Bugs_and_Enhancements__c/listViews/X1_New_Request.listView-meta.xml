@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_New_Request</fullName>
+    <columns>NAME</columns>
+    <columns>Days_Open__c</columns>
+    <columns>Type__c</columns>
+    <columns>Status__c</columns>
+    <columns>Order__c</columns>
+    <columns>Priority__c</columns>
+    <columns>Planned_Release_Date__c</columns>
+    <columns>Assigned_To_Dev__c</columns>
+    <columns>Short_Description__c</columns>
+    <columns>Related_To__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>New</value>
+    </filters>
+    <filters>
+        <field>Assigned_To_Dev__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>1. New Request</label>
+</ListView>

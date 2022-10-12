@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Calculate_UCT_1</fullName>
+        <field>Unit_Cultivation_Tax_1__c</field>
+        <formula>IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Flower&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;GM&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 9.25/28.35 *Cannabis_Ratio_1__c, IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Flower&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;OZ&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 9.25 *Cannabis_Ratio_1__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Flower&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;LB&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 148 *Cannabis_Ratio_1__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Leaves&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;GM&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 2.75/28.35 *Cannabis_Ratio_1__c, IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Leaves&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;OZ&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 2.75 *Cannabis_Ratio_1__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Leaves&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;LB&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 44 *Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Fresh&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;GM&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 1.29/28.35 *Cannabis_Ratio_1__c, IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Fresh&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;OZ&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 1.29 *Cannabis_Ratio_1__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_1__c, &apos;Fresh&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;LB&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_1__c * 20.64 *Cannabis_Ratio_1__c, Null)))))))))</formula>
+        <name>Calculate UCT 1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_UCT_2</fullName>
+        <field>Unit_Cultivation_Tax_2__c</field>
+        <formula>IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Flower&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;GM&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 9.25/28.35 *Cannabis_Ratio_2__c, IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Flower&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;OZ&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 9.25 *Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Flower&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;LB&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 148 *Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Leaves&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;GM&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 2.75/28.35 *Cannabis_Ratio_2__c, IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Leaves&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;OZ&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 2.75 *Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Leaves&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;LB&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 44 *Cannabis_Ratio_2__c,
+IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Fresh&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;GM&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 1.29/28.35 *Cannabis_Ratio_2__c, IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Fresh&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;OZ&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 1.29 *Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c, &apos;Fresh&apos;),
+CONTAINS(Cannabis_Weight_UOM__c, &quot;LB&quot;),
+CONTAINS(Apply_Cultivation_Tax__c, &quot;Yes&quot;)), 
+Unit_Cannabis_Weight_2__c * 20.64 *Cannabis_Ratio_2__c, Null)))))))))</formula>
+        <name>Calculate UCT 2</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+</Workflow>

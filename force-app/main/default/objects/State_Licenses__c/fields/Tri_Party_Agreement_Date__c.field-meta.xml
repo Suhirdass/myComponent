@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tri_Party_Agreement_Date__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Date in which a tri-party agreement was signed by license holder, financial interest and or controlling party along with distributor.</inlineHelpText>
+    <label>Tri-Party Agreement Date</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

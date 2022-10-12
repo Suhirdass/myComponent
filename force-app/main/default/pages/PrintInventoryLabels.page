@@ -1,0 +1,281 @@
+<!-- 
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - PrintInventoryLabels
+ -->
+<apex:page standardController="Product2" 
+           extensions="PrintInventoryLabelsController" 
+           sidebar="false"
+           action="{!retrieveInventoryPositions}"
+           id="pageId">
+
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryDataTablesZip, 'css/jquery.dataTables.css')}"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <style type="text/css">
+        .sorting {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_both.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_asc {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_desc {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_asc_disabled {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc_disabled.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_desc_disabled {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc_disabled.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        table.dataTable tr.odd { background-color: white; }
+        table.dataTable tr.even { background-color: white; }
+        table.dataTable tr.odd td.sorting_1 { background-color: white; }
+        table.dataTable tr.odd td.sorting_2 { background-color: white; }
+        table.dataTable tr.odd td.sorting_3 { background-color: white; }
+        table.dataTable tr.even td.sorting_1 { background-color: white; }
+        table.dataTable tr.even td.sorting_2 { background-color: white; }
+        table.dataTable tr.even td.sorting_3 { background-color: white; }
+        .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+            padding: 3px;
+        }
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+    </style>
+
+    <apex:includeScript value="{!$Resource.DymoFramework}"/>
+    <apex:form id="formId">
+        <apex:inputhidden id="PreviewTextImageSrc" value="{!imageTextSrc}"/>
+        <apex:actionFunction name="updatePreviewImage" rerender="PreviewPanel, dymoId" status="idRefreshingStatus"/>
+        <apex:actionStatus id="idRefreshingStatus" 
+                          style="align:center">
+            <apex:facet name="start">
+                <div class="grey-background">
+                    
+                </div>
+                <div class="loading-image">
+                    <img src="/img/loading.gif" />
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+        
+        <div>
+            <apex:outputLabel id="dymoId">
+                <apex:commandButton action="{!redirectItemDetail}" value="Back to Product" style="margin-left: 4rem;"/>
+                <apex:commandButton id="buttonPreview" 
+                                    value="Preview" 
+                                    rerender="dymoId"
+                                    style="margin-left: 1rem;"
+                                    status="idRefreshingStatus"
+                                    action="{!generateImageXml}"
+                                    oncomplete="return updatePreview('{!imageXml}', 
+                                                              '{!selectedDymoLabelLayout}',
+                                                              {!isSelectedInventory})"/>
+                
+                <apex:commandButton id="buttonPrint" 
+                                    value="Print Label"
+                                    title="Prints label on selected DYMO LabelWriter printer"
+                                    style="margin-left: 1rem;"
+                                    action="{!generateImageXml}"                                    
+                                    oncomplete="return printLabel('{!imageXml}', 
+                                                           '{!selectedDymoLabelLayout}',
+                                                           {!isSelectedInventory},
+                                                           '{!JSENCODE(inventoryInfo)}')"/>
+            
+            </apex:outputLabel>
+        </div>
+        <br/><br/>
+        <div>
+            <!-- Display Print Dymo Label section -->
+            <apex:outputLabel style="font-weight:bold" value="Please select label layout"/>
+            <apex:selectList size="1"
+                             value="{!selectedDymoLabelLayout}"
+                             style="margin-left: 3rem;">
+                <apex:selectOptions value="{!dymoLabelLayouts}"/>
+                <apex:actionSupport event="onchange" reRender="dymoId" status="idRefreshingStatus" />
+            </apex:selectList>
+            <br/><br/>
+            <!-- Dymo Printer selection -->
+            <apex:outputLabel style="font-weight:bold" value="List of Dymo Printers"/>
+                <!--<apex:selectList id="Printers" size="1" style="margin-left: 3rem;"/>-->
+                <select id="Printers" size="1" style="margin-left: 3rem;">
+                    <option>Select Printer</option>
+                </select>
+                <apex:actionSupport event="onchange" reRender="dymoId" status="idRefreshingStatus" />
+            <script>
+                var PreviewTextImageSrc = document.getElementById("{!$Component.PreviewTextImageSrc}");
+            </script>
+        </div>
+        <br/><br/>
+        <apex:outputPanel id="PreviewPanel">
+           <div>
+               <apex:image id="previewTextImage" url="{!imageTextSrc}"/>
+            </div>
+        </apex:outputPanel>
+        <br/><br/>
+            
+        <apex:pageBlock id="pb1">
+            <apex:pageBlockSection columns="2" collapsible="true" title="Product Details">
+                <apex:outputField label="Product Name" value="{!productObj.Name}"/>
+                <apex:outputField label="Active" value="{!productObj.IsActive}"/>
+                <apex:outputField label="Product Description" value="{!productObj.Description}"/>
+                <apex:outputField label="Product Family" value="{!productObj.Family}"/>
+            </apex:pageBlockSection>
+         
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="pb2">
+
+            <apex:pageBlockSection columns="1" collapsible="true" title="Inventory Positions">
+                <apex:pageBlockTable value="{!invPositionWrappList}" var="item" styleClass="dataTable">
+                    <apex:column headerValue="Action"> 
+                        <apex:inputCheckbox value="{!item.isSelected}"/>
+                    </apex:column>
+                    <apex:column headerValue="Inventory Position Name">
+                    <apex:outputlink value="/{!item.invPos.Id}">{!item.invPos.Name}</apex:outputlink>
+                    </apex:column>
+ 
+                    <apex:column value="{!item.invPos.Site__c}"/>
+                    <apex:column value="{!item.invPos.Inventory_Location__c}"/>
+                    <apex:column value="{!item.invPos.Rack__c}"/>
+                    <apex:column value="{!item.invPos.Rack_Level__c}"/>
+                    <apex:column value="{!item.invPos.Bin_Location__c}"/>
+                    <apex:column value="{!item.invPos.Ownership__c}"/>
+                    <apex:column value="{!item.invPos.Qty_On_Hand__c}" headerValue="Qty Available"/>
+                    <apex:column value="{!item.invPos.Qty_Allocated__c}" headerValue="Qty Allocated"/>
+                    <apex:column value="{!item.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}"/>
+                    <apex:column value="{!item.invPos.Sales_Order_Line__c}"/>
+                    <apex:column value="{!item.invPos.Date_Received__c}"/>
+                    <apex:column value="{!item.invPos.Harvest_Batch_Code__c}" />
+                    <apex:column value="{!item.invPos.UID_New__c}" />
+                    <apex:column value="{!item.invPos.Lab_Test_Status__c}" headerValue="Lab Test Status"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+    </apex:form>
+    
+    <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.js')}"></script>
+    <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.dataTables.js')}"></script>
+    <script type="text/javascript" language="javascript">
+        var j$ = jQuery.noConflict();
+        j$('table.dataTable').dataTable({
+            sPaginationType: "full_numbers"
+        });
+        function showSwal(msg){
+            Swal.fire({
+                text: msg
+                    });
+            return false;
+        }
+        var PrintersCtrl;
+        function enumPrinters(){
+            var plist = new Array();
+            var printers = dymo.label.framework.getPrinters();
+            if (printers.length == 0){
+                showSwal("No DYMO printers are installed. Install DYMO printers.");
+            }
+            else{
+                for (var i = 0; i < printers.length; i++){
+                    if (printers[i].printerType == "LabelWriterPrinter")
+                        plist[i] = printers[i].name;
+                }
+            }
+            return plist;
+        }
+        
+        function printLabel(imageXml, selectedLayout, isSelectedInventory, inventoryInfo){
+            selectedPrinter = PrintersCtrl.value;
+            //selectedPrinter = 'DYMO LabelWriter 450 Turbo';
+            if(selectedPrinter == ''){
+                showSwal('Please Select the Printer');
+                return false;
+            }
+            if(selectedLayout == 'Select Layout'){
+                showSwal('Please Select the layout');
+                return false;
+            }
+            if(isSelectedInventory == false){
+                showSwal('Please Select inventory position to print');
+                return false;
+            }
+            try{
+                var inventoryRecords = JSON.parse(inventoryInfo);
+                console.log(inventoryRecords.length);
+                for(var i=0; i<inventoryRecords.length; i++){
+                    
+                    var label = dymo.label.framework.openLabelXml(inventoryRecords[i].replace(/\\/g, ""));
+                    label.print(selectedPrinter);
+                }
+            }
+            catch(e){
+                console.log(e.message);
+            }
+            return true;
+        }
+        
+        function updatePreview(imageXml, selectedLayout, isSelectedInventory){
+            PreviewTextImageSrc.value = "";
+            try{
+                if(selectedLayout == ''){
+                    showSwal('Please Select the layout');
+                    updatePreviewImage();
+                    return false;
+                }
+                if(isSelectedInventory == false){
+                    showSwal('Please Select inventory position to print');
+                    updatePreviewImage();
+                    return false;
+                }
+                
+                var label = dymo.label.framework.openLabelXml(imageXml);
+                var pngData = label.render();
+                PreviewTextImageSrc.value = "data:image/png;base64," + pngData;
+            }
+            catch(e){
+                console.log(e.message);
+            }
+            updatePreviewImage();
+            return true;
+        }
+     
+        window.onload = new function(){
+            loadPrinters();
+        }
+        
+        function loadPrinters(){
+            PrintersCtrl = document.getElementById("Printers");
+            var plist = enumPrinters();
+            
+            if (plist.length > 0){
+                for (var i = 0; i < plist.length; i++){
+                    option = document.createElement("OPTION");
+                    option.text = plist[i];
+                    option.value = plist[i];
+                    PrintersCtrl.options.add(option);
+                }
+            }
+        }
+    </script>
+</apex:page>

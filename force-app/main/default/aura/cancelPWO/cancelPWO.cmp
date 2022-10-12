@@ -1,0 +1,16 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="CancelPWOController">
+    <ltng:require scripts="{!join(',',$Resource.sweetalertJS)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="isSuccess" type="Boolean" default="true"/>
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="message" type="String" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:renderIf isTrue="{!!v.isSuccess}">
+        <div style="width:100%">
+            <div style="color:red;font-weight:bold">
+                {!v.message}
+            </div>
+            <lightning:button label="Cancel" title="Cancel" onclick="{!c.cancel}"/>
+        </div>
+    </aura:renderIf>
+</aura:component>

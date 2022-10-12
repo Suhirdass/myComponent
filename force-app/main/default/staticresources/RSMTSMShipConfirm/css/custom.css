@@ -1,0 +1,48 @@
+#directionsPanel {
+	margin-top: 10px;
+	background-color: #FFEE77;
+	padding: 10px;
+	overflow: scroll;
+	height: 174px;
+}
+.grey-background{
+	position: fixed; 
+	top: 0; 
+	left: 0; 
+	right: 0; 
+	bottom: 0; 
+	opacity: 0.75; 
+	z-index: 9000; 
+	background-color: grey;
+}
+.loading-image{
+	position: fixed; 
+	left: 0; 
+	top: 0; 
+	bottom: 0; 
+	right: 0; 
+	z-index: 1001; 
+	margin: 30% 50%
+}
+.datePicker {
+	z-index: 9999;/*Changed this css property which was 100 prior*/
+	position: absolute;
+	display: none;
+	top: 0;
+	left: 0;
+	width: 17em;
+	border-bottom: 1px solid #000;
+	border-right: 1px solid #000;
+	margin: 0;
+	padding: 1px 1px 2px 2px;
+}
+.modal-backdrop {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1030;
+	background-color: #333333;
+	opacity:0.5; // I ADDED THIS LINE 
+}

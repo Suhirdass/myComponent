@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <interviewLabel>Update State License Future Expiry {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update State License Future Expiry</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_State_License_Inactive_0_0_0</name>
+        <label>Update State License Inactive</label>
+        <locationX>308</locationX>
+        <locationY>288</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>License_Expiration_Date__c</field>
+            <operator>GreaterThan</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>License_Status__c</field>
+            <value>
+                <stringValue>Expired</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <object>State_Licenses__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Update_State_License_Future</name>
+            <connector>
+                <targetReference>Update_State_License_Inactive_0_0_0</targetReference>
+            </connector>
+            <label>Update State License Future</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>License_Expiration_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Email_Notification_for_RSM_Cancellation_Notice</fullName>
+        <description>Email Notification for RSM Cancellation Notice</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>ASR</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>cayla@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>daniel@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>dave@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>emma@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>john@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>madeline@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>ryan@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sinatra@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>will@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/RSM_Cancellation_Notice</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Update_Qty_Received</fullName>
+        <field>Qty_Received__c</field>
+        <formula>0</formula>
+        <name>Update Qty Received</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_subtotal_cannabis_weight</fullName>
+        <field>Subtotal_Cannabis_Weight__c</field>
+        <formula>IF( Act_Unit_Cannabis_Weight__c = Null, Product_Name__r.Cannabis_Weight__c * Qty_Ordered__c, 
+Act_Unit_Cannabis_Weight__c * Qty_Ordered__c)</formula>
+        <name>Update subtotal cannabis weight</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Updated_Unit_Cultivation_Tax</fullName>
+        <field>Unit_Cultivation_Tax__c</field>
+        <formula>IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Flower&quot;),(Cannabis_Weight_UOM__c=&quot;GM&quot;)), Act_Unit_Cannabis_Weight__c*9.25/28.35, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Flower&quot;), 
+(Cannabis_Weight_UOM__c=&quot;OZ&quot;)), Act_Unit_Cannabis_Weight__c*9.25, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Flower&quot;), 
+(Cannabis_Weight_UOM__c=&quot;LB&quot;)), Act_Unit_Cannabis_Weight__c*148, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Leaves&quot;),(Cannabis_Weight_UOM__c=&quot;GM&quot;)), Act_Unit_Cannabis_Weight__c*2.75/28.35, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Leaves&quot;), 
+(Cannabis_Weight_UOM__c=&quot;OZ&quot;)), Act_Unit_Cannabis_Weight__c*2.75, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Leaves&quot;), 
+(Cannabis_Weight_UOM__c=&quot;LB&quot;)), Act_Unit_Cannabis_Weight__c*44, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Fresh&quot;), 
+(Cannabis_Weight_UOM__c=&quot;GM&quot;)), Act_Unit_Cannabis_Weight__c*1.29/28.35, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Fresh&quot;), 
+(Cannabis_Weight_UOM__c=&quot;OZ&quot;)), Act_Unit_Cannabis_Weight__c*1.29, 
+IF(AND(ISPICKVAL(Lot_Cannabis_Category__c,&quot;Fresh&quot;), 
+(Cannabis_Weight_UOM__c=&quot;LB&quot;)), Act_Unit_Cannabis_Weight__c*20.64,null)))))))))</formula>
+        <name>Updated Unit Cultivation Tax</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>RSM Cancellation Notice</fullName>
+        <actions>
+            <name>Email_Notification_for_RSM_Cancellation_Notice</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>Update_Qty_Received</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>To include text to mobile phone: 
+@vtext.com
+@tmomail.net
+@txt.att.net
+ISCHANGED(SMLine_Status__c)&amp;&amp; OR(ISPICKVAL(SMLine_Status__c, &apos;Cancelled&apos;),ISPICKVAL(SMLine_Status__c, &apos;Rejected&apos;))</description>
+        <formula>ISCHANGED(SMLine_Status__c)&amp;&amp; ISPICKVAL(SMLine_Status__c, &apos;Cancelled&apos;)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update TSM Line Details</fullName>
+        <actions>
+            <name>Update_subtotal_cannabis_weight</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Updated_Unit_Cultivation_Tax</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Updating Subtotal Cannabis Weight, Unit Cultivation Tax and Actual Unit Cannabis Weight</description>
+        <formula>RecordType.Name = &apos;TSM Line&apos; &amp;&amp; ISCHANGED( LastModifiedDate )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

@@ -1,0 +1,85 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" extends="c:utility" controller="OrderController">
+    <aura:attribute name="alreadyApproved" type="boolean" default="false" />
+    <aura:attribute name="isStatusApproved" type="boolean" default="false" />
+    <aura:attribute name="draft" type="boolean" default="false" />
+    <aura:attribute name="order" type="Map" default="{}" />
+    <aura:attribute name="sites" type="List" default="[]" />
+    <aura:attribute name="selectedSite" type="String" default="" />
+    <aura:attribute name="sitesOptions" type="List" default="[]" />
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="Err_Msg_of_Ship_To_and_Origin_Site" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+      <aura:html tag="style">
+        
+        .cUtility button {
+        border-radius: 4px !important;
+        }  
+       .runtime_platform_actionsQuickActionWrapper {
+    display: flex;
+    flex-direction: unset !important;
+    max-height: 100%;
+}
+    </aura:html>
+    <aura:if isTrue="{!!v.alreadyApproved}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                <aura:if isTrue="{!equals(v.order.RecordType.Name,'Transfer')}">
+                    Please select origin site where inventory will allocate from!
+                    <aura:set attribute="else">
+                        {!v.recordName}
+                    </aura:set>
+                </aura:if>                
+            </h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+            <aura:if isTrue="{!equals(v.order.RecordType.Name,'Transfer')}">
+                <lightning:radioGroup name="radioGroup" label="Warehouse" options="{!v.sitesOptions}"
+                                      value="{! v.selectedSite}" type="radio"/>
+                <aura:set attribute="else">
+                    <p>Accept Order. Are you sure?</p>
+                </aura:set>
+            </aura:if>
+        </div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;">
+            <aura:if isTrue="{!equals(v.order.RecordType.Name,'Transfer')}">
+                <lightning:button class="slds-button_brand textCap" onclick="{!c.onSubmit}" label="Submit" />
+                <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="Cancel" />
+                <aura:set attribute="else">
+                    <lightning:button class="slds-button_brand textCap" onclick="{!c.acceptOrder2}" label="Yes" />
+                    <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="No" />
+                </aura:set>
+            </aura:if>
+        </footer> 
+    </aura:if>     
+    <aura:if isTrue="{!v.alreadyApproved}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+            <p style="text-align: left;"> 
+                <aura:if isTrue="{!v.isStatusApproved}">
+                	Order already converted to Opportunity
+                    <aura:set attribute="else">
+                    	Accept Order allowed only when order status is "Pending"
+                    </aura:set>
+                </aura:if>
+            </p>
+        </div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;">       
+            <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="Ok" />
+        </footer>         
+    </aura:if>
+    <aura:if isTrue="{!v.draft}">
+        <header class="slds-modal__header" style="width: 600px !important;">        
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">                   
+            <p>Accept the Order. Are you sure?</p>
+        </div>
+        <footer class="slds-modal__footer"  style="width: 600px !important;">
+            <lightning:button class="slds-button_brand textCap" onclick="{!c.yess}" label="Yes" />
+            <lightning:button class="slds-button_neutral textCap" onclick="{!c.cancel}" label="No" />
+        </footer>  
+    </aura:if>
+</aura:component>

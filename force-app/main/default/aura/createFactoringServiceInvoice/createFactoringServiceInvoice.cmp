@@ -1,0 +1,31 @@
+<aura:component extends="c:utility" controller="CreateFactoringServiceInvoiceController" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="record" type="Map" default="{}"/>
+    <aura:attribute name="hasFactoringDetails" type="Boolean" default="false"/>
+    <lightning:navigation aura:id="navService"/>
+    <aura:html tag="style">
+        .textCap{
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+        
+        .modal-body{
+        max-height: 250px !important;
+        height:  250px !important;
+        }
+    </aura:html>
+    
+    <header class="slds-modal__header" style="width: 600px !important;">
+        
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.record.Name}</h2>
+    </header>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+        <p>Create Factoring Invoice. Are you sure?</p>
+    </div>
+    <footer class="slds-modal__footer"  style="width: 600px !important;">
+        <lightning:button class="slds-button_brand textCap" onclick="{!c.onCreateServiceInvoice}" label="Yes" />
+        <lightning:button class="slds-button_neutral textCap" onclick="{!c.onCancel}" label="No" />
+    </footer>
+    
+</aura:component>

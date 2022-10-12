@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Excise_Tax_Amount__c</fullName>
+    <externalId>false</externalId>
+    <label>Total Excise Tax Amount</label>
+    <summarizedField>Brand_Quote_Line__c.Excise_Tax_Amount__c</summarizedField>
+    <summaryFilterItems>
+        <field>Brand_Quote_Line__c.Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled, Rejected</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Brand_Quote_Line__c.Brand_Quote_Number__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

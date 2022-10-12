@@ -1,0 +1,130 @@
+<!--**************************************************************************************
+Apex Class Name    : ShipmentManifestPrintLabel 
+Test Class Name    :ShipmentManifestPrintLabelTest
+Components Name    :ShipmentManifestPrintLabeCmp
+Created Date       : July 20 2020
+Function           : Used to generate Labels for Shipping Manifest related Shipping ManifestLine.
+Developer          :Saranya
+
+*******************************************************************************-->
+
+<aura:component extends="c:utility" controller="ShipmentManifestPrintLabel" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="prodRec" type="Object"/>
+    <aura:attribute name="Obj" type="Object"/>
+    <aura:attribute name="searchStr" type="String"/>
+    <aura:attribute name="selectedDymoLabelLayout" type="String" default=''/>
+    <aura:attribute name="selectedPrinter" type="String" default=''/>
+    <aura:attribute name="imageXml" type="String" default=''/>
+    <aura:attribute name="printers" type="List" default='[]'/>
+    <aura:attribute name="imagetext" type="String" default=''/>
+    <aura:attribute name="isSelectedInventory" type="Boolean"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js', $Resource.datatable+ '/js/jquery.dataTables.min.js',$Resource.DymoFramework)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    <aura:html tag="style">
+        .slds-page-header__name h1 {
+        
+        margin-left: 8px;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .swal2-container{z-index:10000;}
+        
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        margin-bottom:7px;
+        }
+        .slds-modal__content slds-p-around--medium
+        {
+        height: 600px !important;
+        max-height: None  !important; 
+        
+        }
+        .modal-body{
+        max-height:500px !important;
+        height: 600px !important;
+        }
+        .slds-table td {
+        width: 172px;
+        }
+        .heightfix { 	
+        width: 629px;
+        margin-left: -32px;
+        margin-top: -15px;
+        }  
+        .textCap {
+        text-transform: capitalize !important; 
+        } 
+    </aura:html>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    
+    <article class="slds-card " >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom29" title="custom29" />
+                        <div class="slds-media__body">
+                            
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span>Shipment Manifest</span>
+                                        <span class="slds-page-header__title slds-truncate" title="Print Label">Print Label</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        <lightning:button class="textCap" label="Preview" onclick="{!c.updatePreview}"/>
+                        <lightning:button class="textCap"  label="Print Label" onclick="{!c.printLabel}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-card__header ">
+            <div >
+                <table class="slds-table">
+                    <thead ></thead>
+                    <tbody>
+                        <tr>
+                            <td class="slds-float_left lay" style="width:175px;bottom:-5px;"><b>Please select Dymo Label</b>
+                            </td>
+                            <td class="slds-float_left"> 
+                                <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.selectedDymoLabelLayout}">
+                                    <aura:iteration items="{!v.prodRec.dymoLabelLayouts}" var="proTitle">
+                                        <option value="{!proTitle.label}" selected="{!proTitle.label == v.prodRec.selectedDymoLabelLayout}">{!proTitle.value}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="slds-float_left"  style="width:175px;bottom:-5px;"><b>List of Dymo Printers </b></td>
+                            <td class="slds-float_left"> 
+                                <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.printers.selectedPrinter}">
+                                    <option value="">Select Printer</option>
+                                    <aura:iteration items="{!v.printers}" var="p">
+                                        <option value="{!p.label}">{!p.value}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <img src="{!v.imagetext}"/>
+            </div>
+        </div>  
+    </article>  
+    
+    
+    
+</aura:component>

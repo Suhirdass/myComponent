@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rack_Level__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <inlineHelpText>Rack Level in the Rack</inlineHelpText>
+    <label>Rack Level</label>
+    <lookupFilter>
+        <active>true</active>
+        <filterItems>
+            <field>Rack_Level__c.Rack__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Rack__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Rack_Level__c</referenceTo>
+    <relationshipLabel>Inventory Positions</relationshipLabel>
+    <relationshipName>Inventory_Positions</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

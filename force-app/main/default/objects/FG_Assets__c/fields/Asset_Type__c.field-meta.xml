@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Asset Type</label>
+    <required>true</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>PC - Laptop</fullName>
+                <default>false</default>
+                <label>PC - Laptop</label>
+            </value>
+            <value>
+                <fullName>PC - Desktop</fullName>
+                <default>false</default>
+                <label>PC - Desktop</label>
+            </value>
+            <value>
+                <fullName>Mac</fullName>
+                <default>false</default>
+                <label>Mac</label>
+            </value>
+            <value>
+                <fullName>Printer</fullName>
+                <default>false</default>
+                <label>Printer</label>
+            </value>
+            <value>
+                <fullName>Projector</fullName>
+                <default>false</default>
+                <label>Projector</label>
+            </value>
+            <value>
+                <fullName>iPad</fullName>
+                <default>false</default>
+                <label>iPad</label>
+            </value>
+            <value>
+                <fullName>Software</fullName>
+                <default>false</default>
+                <label>Software</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

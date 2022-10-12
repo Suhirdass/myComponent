@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Print_Service_Invoice_PDF</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Print Service Invoice(PDF)</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/invoiceServicePdf?id={!Invoice__c.Id}&amp;QueryId=[invline]a1u4o000001P6qIAAS?pv0={!Invoice__c.Id}&amp;TemplateId=a1v4o00000127sfAAA&amp;TemplateGroup=InvService</url>
+</WebLink>

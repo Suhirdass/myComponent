@@ -1,0 +1,209 @@
+<aura:component  extends="c:utility" controller="HeatMapGeneratorCtlr" implements="force:appHostable,force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="sites" type="List"/>
+    <aura:attribute name="locations" type="List"/>
+    <aura:attribute name="levels" type="List"/>
+    <aura:attribute name="result" type="List"/>
+    
+    <ltng:require scripts="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"/>
+    <ltng:require scripts="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"/>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    
+    <aura:html tag="style">
+        .cUtility .slds-form-element__label {
+            display: none;
+        }
+        html, body{
+        margin:0;
+        padding:0;
+        height:100%;
+        }
+        .divsection {
+        position: relative;
+        border: 1px solid #000;
+        padding-top: 37px;
+        background: grey;
+        }
+        .divsection.positioned {
+        position: absolute;
+        top:100px;
+        left:100px;
+        width:800px;
+        box-shadow: 0 0 15px #333;
+        }
+        .container {
+        overflow-y: auto;
+        min-height: 50px;
+    	max-height: 500px;
+        }
+        table {
+        border-spacing: 0;
+        width:100%;
+        background: white;
+        }
+        td + td {
+        border-left:1px solid #eee;
+        }
+        td, th {
+        border-bottom:1px solid #eee;
+        background: #ddd;
+        color: #000;
+        padding: 10px 25px;
+        }
+        th {
+        height: 0;
+        line-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        color: transparent;
+        border: none;
+        white-space: nowrap;
+        }
+        th div{
+        position: absolute;
+        background: transparent;
+        color: #fff;
+        padding: 9px 25px;
+        top: 0;
+        margin-left: -25px;
+        line-height: normal;
+        border-left: 1px solid #fff;
+        }
+        th:first-child div{
+        border: none;
+        }
+        .recks{
+        background-color: #ffcd7a;
+        }
+        
+        .slds-scope td, .slds-scope th{
+        	padding-left: 25px;
+        }
+        
+        .blkBG{
+        background-color: black;
+        height: 16px;
+        }
+        
+        .redBG{
+        background-color: #f87e7d;
+        }
+        .greenBG{
+        background-color: #7ed085;
+        }
+        .whiteBG{
+        background-color: #fff;
+        }
+        .blkBG td{
+        background : black !important;
+        }
+        .mrgnFont{
+        margin: 12px;
+        font-size: 15px;
+        }
+        
+        #frm{
+        display:flex;
+        }
+        .grey-background{
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        bottom: 0; 
+        opacity: 0.75; 
+        z-index: 1000; 
+        background-color: grey;
+        }
+        .loading-image{
+        position: fixed; 
+        left: 0; 
+        top: 0; 
+        bottom: 0; 
+        right: 0; 
+        z-index: 1001; 
+        margin: 30% 50%
+        }
+        html body.sfdcBody {
+        	overflow-x: hidden !important;
+    		overflow-y: hidden !important;
+        }
+    </aura:html>
+    
+    
+    <div class="slds-page-header" role="banner" style="overflow: hidden;">
+        <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <div class="slds-grid">
+                            <h2 style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">Select Warehouse:&nbsp;&nbsp;</h2>
+                            <lightning:select aura:id="warehouse" name="selectSite" variant="label-hidden" onchange="{!c.onSiteChange}">
+                                <aura:iteration items="{!v.sites}" var="proTitle">
+                                    <option value="{!proTitle.label}">{!proTitle.value}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <h2 style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">Inventory Location:&nbsp;&nbsp;</h2>
+                            <lightning:select aura:id="location" name="selectLocation" variant="label-hidden" onchange="{!c.onLocationChange}">
+                                <aura:iteration items="{!v.locations}" var="proTitle">
+                                    <option value="{!proTitle.label}">{!proTitle.value}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="divsection" id="secId">
+            <div class="container" id="mainBody">
+                <table>
+                    <thead>
+                        <tr class="header" id="tHeader">
+                            <th>Rack Number <div>Rack Number</div></th>
+                            <aura:iteration items="{!v.levels}" var="lev">
+                                <th>Rack Number <div class="trDiv">{!lev.Name}</div></th>
+                            </aura:iteration>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <aura:iteration items="{!v.result}" var="res" indexVar="key">
+                            <aura:iteration items="{!res.value}" var="bin" indexVar="key">
+                                <tr class="mainRacks">
+                                    <td class="recks" style="padding: 10px;">{!res.key} | {!bin.key}</td>
+                                    <aura:iteration items="{!bin.value}" var="level" indexVar="key">
+                                        <aura:if isTrue="{!level == ''}">
+                                            <td class="whiteBG" style="padding: 10px;"> </td>
+                                            <aura:set attribute="else">
+                                                <aura:if isTrue="{!level == 'Open'}">
+                                                    <td class="greenBG" style="padding: 10px;">Open</td>
+                                                    <aura:set attribute="else">
+                                                        <td class="redBG" style="padding: 10px;">{!res.key} | {!level} | {!bin.key}</td>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:iteration>
+                                </tr>
+                            </aura:iteration>
+                            <tr class="blkBG">
+                                <td></td>
+                                <aura:iteration items="{!v.levels}" var="lev">
+                                    <td></td>
+                                </aura:iteration>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="noData" class="mrgnFont" style="text-align: center;">
+            No Data available for current selections.
+        </div>
+        <br/><br/><br/><br/>
+    </div>
+</aura:component>

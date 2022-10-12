@@ -1,0 +1,30 @@
+.THIS.backclr
+{
+    background-color: #16325c;
+    color: white;
+}
+.THIS .lstpadding
+{
+ padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;   
+}
+.THIS .showInRed{
+    color : red;
+}
+.THIS .paddings{
+    padding-left: 0px;
+}
+.THIS .font-bold{
+    font-weight:600;
+}
+.THIS .plain-text{
+    margin-top:8px;
+}
+.THIS .colMargin{
+    margin: 5px 0 10px 0;
+    height : 25px;
+}
+.THIS .showInRed{
+    color : red;
+}

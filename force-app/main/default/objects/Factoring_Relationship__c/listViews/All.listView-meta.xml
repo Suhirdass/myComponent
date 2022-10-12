@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Buyer_Account__c</columns>
+    <columns>Buyer_DBA__c</columns>
+    <columns>Factoring_Assignee__c</columns>
+    <columns>Factoring_Assignee_DBA__c</columns>
+    <columns>Master_Assignment_Date__c</columns>
+    <columns>Seller_Account__c</columns>
+    <columns>Seller_DBA__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

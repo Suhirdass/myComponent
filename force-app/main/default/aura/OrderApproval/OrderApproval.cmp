@@ -1,0 +1,394 @@
+<aura:component implements="force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global"  extends="c:utility"  controller="OrderController">
+    <aura:attribute name="status" type="String" default="" />
+    <aura:attribute name="requestDate" type="Date" default=""/>
+    <aura:attribute name="requestDateShow" type="Date" default=""/>
+    <aura:attribute name="requestEarTime" type="String" default=""/>
+    <aura:attribute name="requestLatTime" type="String" default=""/>
+    <aura:attribute name="alreadyApproved" type="Boolean" default="false"/>
+    <aura:attribute name="allowedToApproved" type="Boolean" default="false"/>
+    <aura:attribute name="hasDateError" type="Boolean" default="false"/>
+    <aura:attribute name="approved" type="Boolean" default="false"/>
+    <aura:attribute name="isSample" type="Boolean" default="false"/>
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+    <aura:attribute name="earTime" type="String" default=""/>
+    <aura:attribute name="letTime" type="String" default=""/>
+    <aura:attribute name="order" type="Object" />
+    <aura:attribute name="EARLIEST_DELIVERY_TIME" type="String" default="08:00" />
+    <aura:attribute name="LATEST_DELIVERY_TIME" type="String" default="06:00" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="timePickerEvt" event="c:timePickerEvent" action="{!c.handleTimePickerEvent}"/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+    <aura:attribute name="hasEarliestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="hasLatestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="latesDateAfterEarliestDateError" type="Boolean" default="false"/>
+    <aura:attribute name="Reschedule" type="Boolean" default="false"/>
+    <aura:attribute name="isCancel" type="Boolean" default="false"/>
+    <aura:attribute name="isCancelMsg" type="Boolean" default="false"/>
+    <aura:attribute name="inActiveCalendar" type="Boolean" default="false"/>
+    <aura:attribute name="isApproveOrRequestDate" type="Boolean" default="false"/>
+    <aura:attribute name="Msg_for_Reschedule_Shipment_Complete" type="String" default=""/>
+    <aura:attribute name="Err_Msg_For_Past_Date" type="String" default=""/>
+    <aura:attribute name="isLinkAlreadyUsed" type="Boolean" default="false"/>
+    <ltng:require 
+                  styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" 
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                           $Resource.ratingPlugin + '/js/jquery-ui.js')}" 
+                  afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <div style="font-weight: bold;font-size: medium;margin-top:1%">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show ': 'slds-hide')}" />
+        
+        <aura:if isTrue="{!!v.allowedToApproved}">
+            <div style="text-align:left;">
+                <aura:if isTrue="{!v.inActiveCalendar}">
+                    <aura:if isTrue="{!equals(v.order.Request_Ship_Date__c,v.order.Planned_Ship_Date__c)}">
+                        This request has been completed.<br/><br/>To View Order Status and Shipment Tracking, login to <a href="https://www.wearewovn.com/b2b" target="_Blank">WOVN</a>
+                        <aura:set attribute="else">
+                            <aura:if isTrue="{!v.isLinkAlreadyUsed}">
+                                This request has been completed.<br/><br/>To View Order Status and Shipment Tracking, login to <a href="https://www.wearewovn.com/b2b" target="_Blank">WOVN</a>
+                                <aura:set attribute="else">
+                                    {!v.Msg_for_Reschedule_Shipment_Complete}
+                                </aura:set>
+                            </aura:if>
+                            
+                        </aura:set>
+                    </aura:if>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!and(v.order.RecordType.Name == 'Transfer',!v.order.Sample_Order__c)}">
+                    Accept Outbound Transfer allowed only when Outbound Transfer status is "Pending"
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.order.Status__c == 'Shipped'}">
+                            Order already Shipped.
+                            <aura:set attribute="else">
+                                Accept Order allowed only when order status is "Pending"
+                            </aura:set>
+                        </aura:if>
+                        
+                    </aura:set>
+                </aura:if>
+                    </aura:set>
+                </aura:if>
+                
+            </div>
+            <aura:set attribute="else">
+                <aura:if isTrue="{!v.alreadyApproved}">
+                    <div style="text-align:left;">
+                        <aura:if isTrue="{!v.Reschedule}">
+                            <aura:if isTrue="{!v.isCancel}">
+                                Order already cancelled.
+                            </aura:if>
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{!and(v.order.RecordType.Name == 'Transfer',!v.order.Sample_Order__c)}">
+                                    Outbound Transfer already accepted.<br/><br/>To View Outbound Transfer Status and Shipment Tracking, login to <a href="https://www.wearewovn.com/b2b" target="_Blank">WOVN</a>
+                                    <aura:set attribute="else">
+                                        This request has been completed.<br/><br/>To View Order Status and Shipment Tracking, login to <a href="https://www.wearewovn.com/b2b" target="_Blank">WOVN</a>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.approved}">
+                            <div style="text-align:left;">
+                                <aura:if isTrue="{!v.Reschedule}">
+                                    <aura:if isTrue="{!v.isCancel}">
+                                        Thanks you for canceling your order!<br/>
+                                        <aura:set attribute="else">
+                                            <div>
+                                            <aura:if isTrue="{!and(v.isApproveOrRequestDate,or(v.requestDate == 'undefined',or(v.requestDate == '',v.requestDate == null)))}">
+                                                	Thank you for approving your order!<br/>
+                                                <aura:set attribute="else">
+                                                    Thank you for submitting!<br/>
+                                                </aura:set>
+                                            </aura:if>
+                                                </div>
+                                            
+                                        </aura:set>
+                                    </aura:if>
+                                    <aura:set attribute="else">
+                                        <aura:if isTrue="{!and(v.order.RecordType.Name == 'Transfer',!v.order.Sample_Order__c)}">
+                                            Thank you for approving your Transfer!<br/> 
+                                            <aura:set attribute="else">
+                                                Thank you for approving your order!<br/>  
+                                            </aura:set>
+                                        </aura:if>  
+                                    </aura:set>
+                                </aura:if>
+                                <div style="height: 25px;margin-bottom: 20px;">
+                                    <aura:if isTrue="{!and(v.order.RecordType.Name == 'Transfer',!v.order.Sample_Order__c)}">
+                                        Below are your Outbound Transfer details:<br/>
+                                        <aura:set attribute="else">
+                                                    <span style="font-size:20px;">
+                                                        ORDER DETAILS<br/>
+                                                    </span>
+                                            
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </div>
+                                
+                                <!--a href="https://www.filigreen.com/b2b" target="_Blank">Filigreen</a-->
+                                <div style="margin-top:-1%;">
+                                                              
+                                    <div class="slds-is-relative slds-p-horizontal_small" style="padding-right: 0;padding-left: 0;">
+                                        
+                                        <div class="slds-grid custom-container">
+                                            <div style="text-align: left;min-width: 215px;"><!--lightning:icon iconName="utility:record" size="x-small"/--><b>Order Number</b></div>
+                                            <div style="text-align: left;">{!v.order.Name}</div>
+                                        </div>
+                                        <!--aura:if isTrue="{!v.Reschedule}"-->
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 215px;"><b>Receiver DBA</b></div>
+                                                <div style="text-align: left;">{!v.order.Retailer_DBA__c}</div>
+                                            </div>
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 215px;text-shadow: 0 0 black;"><b>Receiver License</b></div>
+                                                <div style="text-align: left;text-shadow: 0 0 black;">{!v.order.State_License__r.License_Number__c}</div>
+                                            </div>
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 215px;"><b>Receiver License Address</b></div>
+                                                <div style="text-align: left;">{!v.order.State_License__r.License_Address__c}, {!v.order.State_License__r.License_City__c}, {!v.order.State_License__r.License_State__c}, {!v.order.State_License__r.License_Zip__c}</div>
+                                            </div>
+                                            <!--aura:set attribute="else">
+                                                <div class="slds-grid custom-container">
+                                                    <div style="text-align: left;min-width: 215px;"><b>Order Date</b></div>
+                                                    <div style="text-align: left;">
+                                                        <ui:outputDateTime value="{!v.order.Order_Date__c}" format="MM/dd/yyyy hh:mm a" timezone="America/Los_Angeles"></ui:outputDateTime>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid custom-container">
+                                                    <div style="text-align: left;min-width: 215px;"><b>Business Name</b></div>
+                                                    <div style="text-align: left;">{!v.order.Account__r.Name}</div>
+                                                </div>
+                                                
+                                                <div class="slds-grid custom-container">
+                                                    <div style="text-align: left;min-width: 215px;"><b>Contact</b></div>
+                                                    <div style="text-align: left;">{!v.order.Customer__r.Name}</div>
+                                                </div>
+                                            </aura:set>
+                                        </aura:if-->
+                                        
+                                        <div class="slds-grid custom-container">
+                                            <div style="text-align: left;min-width: 215px;"><!--lightning:icon iconName="utility:record" size="x-small"/--><b>Total Product Price</b></div>
+                                            <div style="text-align: left;"><ui:outputCurrency value="{!v.order.Total_Product_Price__c}"/></div>
+                                        </div>
+                                        <div class="slds-grid custom-container">
+                                            <div style="text-align: left;min-width: 215px;"><!--lightning:icon iconName="utility:record" size="x-small"/--><b>Total Excise Tax</b></div>
+                                            <div style="text-align: left;"><ui:outputCurrency value="{!v.order.Total_Excise_Tax_Amount__c}"/></div>
+                                        </div>
+                                        <div class="slds-grid custom-container">
+                                            <div style="text-align: left;min-width: 215px;"><!--lightning:icon iconName="utility:record" size="x-small"/--><b>Total Order Price</b></div>
+                                            <div style="text-align: left;"><ui:outputCurrency value="{!v.order.Total__c}"/></div>
+                                        </div>
+                                        <div class="slds-grid custom-container">
+                                            <div style="text-align: left;min-width: 215px;text-shadow: 0 0 black;"><!--lightning:icon iconName="utility:record" size="x-small"/--><b>Payment Terms</b></div>
+                                            <div style="text-align: left;text-shadow: 0 0 black;"><b>{!v.order.Payment_Terms__c}</b></div>
+                                        </div>
+                                        <aura:if isTrue="{!v.Reschedule}">
+                                            <div class="slds-grid custom-container">
+                                                <div style="text-align: left;min-width: 215px;text-shadow: 0 0 black;"><b>Delivery Date</b></div>
+                                                <div style="text-align: left;text-shadow: 0 0 black;">
+                                                    <aura:if isTrue="{!v.isApproveOrRequestDate}">
+                                                        <b><ui:outputDate format="EEEE, MM/dd/yyyy" value="{!if(or(v.requestDate == 'undefined',or(v.requestDate == '',v.requestDate == null)),v.order.Planned_Ship_Date__c,v.order.Request_Ship_Date__c)}"/>&nbsp; @ &nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Earliest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/>&nbsp;-&nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Latest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/></b>
+                                                        <aura:set attribute="else">
+                                                            <ui:outputDate format="EEEE, MM/dd/yyyy" value="{!v.order.Request_Ship_Date__c}"/>&nbsp; @ &nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Earliest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/>&nbsp;-&nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Latest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                            <aura:set attribute="else">
+                                                <aura:if isTrue="{!or(and(!v.order.Sample_Order__c,!v.order.Retailer__r.Third_Party_Scheduler__c),and(equals(v.order.RecordType.Name,'Transfer'),and(!v.order.Retailer__r.Third_Party_Scheduler__c,and(!v.order.isPreapproved__c,!v.order.Piggyback_sample__c))))}">
+                                                    <div class="slds-grid custom-container">
+                                                        <div style="text-align: left;min-width: 215px;text-shadow: 0 0 black;"><b>Delivery Date</b></div>
+                                                        <div style="text-align: left;text-shadow: 0 0 black;">
+                                                            <ui:outputDate format="EEEE, MM/dd/yyyy" value="{!v.order.Request_Ship_Date__c}"/>&nbsp; @ &nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Earliest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/>&nbsp;-&nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Latest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/>
+                                                        </div>
+                                                    </div>
+                                                    <aura:set attribute="else">
+                                                        <aura:if isTrue="{!and(v.order.Sample_Order__c,!v.order.Retailer__r.Third_Party_Scheduler__c)}">
+                                                            <br/> WOVN will confirm the delivery date for this sample shipment via email. <br/>
+                                                            <aura:set attribute="else">
+                                                                <br/> WOVN will book the delivery date on your calendar system. <br/>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                    </div>
+                                    <!--div class="slds-float_right">
+                                <br/>
+                                <lightning:button variant="brand" onclick="{!c.onClose}" label="Close this window" />
+                            </div-->
+                                </div>
+                            </div>
+                            <aura:set attribute="else">
+                                <div style="margin-top:-1%;">
+                                    <div style="font-size:20px;margin-bottom: 10px">
+                                        <aura:if isTrue="{!and(v.order.RecordType.Name == 'Transfer',!v.order.Sample_Order__c)}">
+                                            OUTBOUND TRANSFER DETAILS<br/>
+                                            <aura:set attribute="else">
+                                                ORDER DETAILS<br/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                    
+                                    <div class="slds-is-relative slds-p-horizontal_small" style="padding-right: 0;padding-left: 0;">
+                                        <div class="slds-grid slds-text-align_center custom-container">
+                                            <div style="text-align: left;min-width: 225px;"><b>Order Number</b></div>
+                                            <div style="text-align: left;">{!v.order.Name}</div>
+                                        </div>
+                                        <!--aura:if isTrue="{!v.Reschedule}"-->
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;"><b>Receiver DBA</b></div>
+                                                <div style="text-align: left;">{!v.order.Retailer_DBA__c}</div>
+                                            </div>
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;text-shadow: 0 0 black;"><b>Receiver License</b></div>
+                                                <div style="text-align: left;text-shadow: 0 0 black;">{!v.order.State_License__r.License_Number__c}</div>
+                                            </div>
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;"><b>Receiver License Address</b></div>
+                                                <div style="text-align: left;">{!v.order.State_License__r.License_Address__c}, {!v.order.State_License__r.License_City__c}, {!v.order.State_License__r.License_State__c}, {!v.order.State_License__r.License_Zip__c}</div>
+                                            </div>
+                                            <!--aura:set attribute="else">
+                                                <div class="slds-grid slds-text-align_center custom-container">
+                                                    <div style="text-align: left;min-width: 225px;"><b>Order Date</b></div>
+                                                    <div style="text-align: left;">
+                                                        <ui:outputDateTime value="{!v.order.Order_Date__c}" format="MM/dd/yyyy hh:mm a" timezone="America/Los_Angeles"></ui:outputDateTime>
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid slds-text-align_center custom-container">
+                                                    <div style="text-align: left;min-width: 225px;"><b>Business Name</b></div>
+                                                    <div style="text-align: left;">{!v.order.Account__r.Name}</div>
+                                                </div>
+                                                <div class="slds-grid slds-text-align_center custom-container">
+                                                    <div style="text-align: left;min-width: 225px;"><b>Contact</b></div>
+                                                    <div style="text-align: left;">{!v.order.Customer__r.Name}</div>
+                                                </div>
+                                            </aura:set>
+                                        </aura:if-->
+                                        
+                                        
+                                        
+                                        <div class="slds-grid slds-text-align_center custom-container">
+                                            <div style="text-align: left;min-width: 225px;"><b>Total Product Price</b></div>
+                                            <div style="text-align: left;"><ui:outputCurrency value="{!v.order.Total_Product_Price__c}"/></div>
+                                        </div>
+                                        <div class="slds-grid slds-text-align_center custom-container">
+                                            <div style="text-align: left;min-width: 225px;"><b>Total Excise Tax</b></div>
+                                            <div style="text-align: left;"><ui:outputCurrency value="{!v.order.Total_Excise_Tax_Amount__c}"/></div>
+                                        </div>
+                                        <div class="slds-grid slds-text-align_center custom-container">
+                                            <div style="text-align: left;min-width: 225px;"><b>Total Order Price</b></div>
+                                            <div style="text-align: left;"><ui:outputCurrency value="{!v.order.Total__c}"/></div>
+                                        </div>
+                                        <div class="slds-grid slds-text-align_center custom-container">
+                                            <div style="text-align: left;min-width: 225px;text-shadow: 0 0 black;"><b>Payment Terms</b></div>
+                                            <div style="text-align: left;text-shadow: 0 0 black;"><b>{!v.order.Payment_Terms__c}</b></div>
+                                        </div>
+                                        <aura:if isTrue="{!v.isApproveOrRequestDate}">
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;"><b>Delivery Date</b></div>
+                                                <div style="text-align: left;text-shadow: 0 0 black;">
+                                                    <aura:if isTrue="{!v.order.Planned_Ship_Date__c}">
+                                                        <b><ui:outputDate format="EEEE, MM/dd/yyyy" value="{!v.order.Planned_Ship_Date__c}"/>&nbsp; @ &nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Earliest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/>&nbsp;-&nbsp;<lightning:formattedDateTime value="{!v.order.Requested_Delivery_Latest_Time__c}" hour="2-digit" minute="2-digit" hour12="true" timeZone="{!$Locale.timezone }"/></b>
+                                                        
+                                                    </aura:if>
+                                                	
+                                                </div>
+                                            </div>
+                                            <br/>
+                                            <div Style="margin-left: 140px;">
+                                            <lightning:button  variant="brand" onclick="{!c.onApprove}" label="Approve" disabled="{!or(v.isProcessing,if(v.order.Planned_Ship_Date__c == null,true,false))}" />
+                                            </div>
+                                            <br/><br/>
+                                            
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!or(!v.isSample,and(equals(v.order.RecordType.Name,'Transfer'),and(!v.order.Retailer__r.Third_Party_Scheduler__c,and(!v.order.isPreapproved__c,!v.order.Piggyback_sample__c))))}">
+                                            
+                                        <aura:if isTrue="{!or(and(!v.order.Sample_Order__c,!v.order.Retailer__r.Third_Party_Scheduler__c),and(equals(v.order.RecordType.Name,'Transfer'),and(!v.order.Retailer__r.Third_Party_Scheduler__c,and(!v.order.isPreapproved__c,!v.order.Piggyback_sample__c))))}">
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;"><b>Requested Delivery Date</b></div>
+                                                <div style="text-align: left;">
+                                                    <div class="{!'form-element'+(v.hasDateError?' hasError':'')}">
+                                                        <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:65%">
+                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                                                <input type="text" class="slds-input slds-show_inline-block" id="datepickerId" style="vertical-align:top" value="{!v.requestDateShow}"/>
+                                                                <button style="padding-left: 10px;" class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}">
+                                                                    <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="error-message">Complete this field.</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;"><b>Earliest Delivery Time</b></div>
+                                                <div class="{!v.hasEarliestTimeError?' hasError':''}" style="text-align: left;margin-top: 10px;min-width: 125px;max-width:125px;">
+                                                    <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="true" fieldName="requestEarTime" label="Requested Delivery Earliest Time"/>
+                                                    <div class="error-message">Complete this field.</div>
+                                                    <!--lightning:input required="true" style="width: 65%;" type="time" variant="label-hidden" aura:id="fieldId" value="{!v.requestEarTime}" name="reqETime" label="Requested Delivery Earliest Time" /-->
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid slds-text-align_center custom-container">
+                                                <div style="text-align: left;min-width: 225px;"><b>Latest Delivery Time</b></div>
+                                                <div class="{!v.hasLatestTimeError || v.latesDateAfterEarliestDateError ?' hasError':''}" style="text-align: left;margin-top: 10px;min-width: 125px;">
+                                                    <div style="max-width:125px;">
+                                                        <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="true" fieldName="requestLatTime" label="Requested Delivery Latest Time"/>
+                                                    </div>
+                                                    <aura:if isTrue="{!v.hasLatestTimeError}">
+                                                        <div class="error-message">Complete this field.</div>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.latesDateAfterEarliestDateError}">
+                                                        <div class="error-message">Delivery Latest Time cannot be before  Delivery Earliest Time.</div>
+                                                    </aura:if>
+                                                    <!--lightning:input required="true" style="width: 65%;" type="time" variant="label-hidden" aura:id="fieldId" value="{!v.requestLatTime}" name="reqLTime" label="Requested Delivery Latest Time" /-->
+                                                </div>
+                                            </div>
+                                            <!--aura:set attribute="else">
+                                                
+                                                <br/> WOVN will confirm the delivery date for this sample shipment via email. <br/>
+                                            </aura:set-->
+                                        </aura:if>
+                                            </aura:if>
+                                    </div>
+                                    
+                                    <div>
+                                        <br/>
+                                        <div Style="margin-left: 100px;">
+                                            <aura:if isTrue="{!v.isCancel}">
+                                                <lightning:button  variant="brand" onclick="{!c.onCancel}" label="Cancel Order" disabled="{!v.isProcessing}" />
+                                                <aura:set attribute="else">
+                                                    <lightning:button  variant="brand" onclick="{!c.onSubmit}" label="{!if(v.isApproveOrRequestDate ,'Request New Date','Approve')}" disabled="{!v.isProcessing}" />
+                                                
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        
+        <!-- 
+        <aura:if isTrue="{!v.status=='1'}">
+            Thanks for Approving the Order.<br/> To View Order Status and Shipment Tracking, log in to <a href="https://www.filigreen.com/b2b" target="_Blank">Filigreen</a>
+            <aura:set attribute="else">
+                <aura:if isTrue="{!v.status=='0'}">
+                    Order is already Accepted.<br/>To View Order Status and Shipment Tracking, log in to <a href="https://www.filigreen.com/b2b" target="_Blank">Filigreen</a>
+                    <aura:set attribute="else">
+                        Processing
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>-->
+    </div>
+</aura:component>

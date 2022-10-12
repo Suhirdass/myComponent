@@ -1,0 +1,72 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - SODeliveryWindow
+-->
+<apex:page standardController="Sales_Order__c"  
+           extensions="SODeliveryWindowController"
+           action="{!getDeliveryTime}">
+    
+
+    <apex:dataTable value="{!deliveryWindata}" var="bk" id="theTable" headerClass="theHead"
+        rowClasses="odd,even" styleClass="tableClass">       
+      
+        <apex:column >
+            <apex:facet name="header">Delivery Day</apex:facet>            
+            <apex:outputText value="{!bk.Delivery_Day__c}"/>
+            <apex:facet name="footer"></apex:facet>
+        </apex:column>
+        <apex:column >
+            <apex:facet name="header">Earliest Delivery Window</apex:facet>            
+            <apex:outputText value="{!bk.Earliest_Delivery_Window__c}"/>
+            <apex:facet name="footer"></apex:facet>
+        </apex:column>
+         <apex:column >
+            <apex:facet name="header">Last Delivery Window</apex:facet>            
+            <apex:outputText value="{!bk.Last_Delivery_Window__c}"/>
+            <apex:facet name="footer"></apex:facet>
+        </apex:column>
+        <apex:column >
+            <apex:facet name="header">Full Day Delivery</apex:facet>            
+            <apex:outputText value="{!IF(bk.Full_Day_Delivery__c == true, 'Yes', 'No')}"/>
+            <apex:facet name="footer"></apex:facet>
+        </apex:column>
+    </apex:dataTable>
+    
+    
+    <style>
+
+.tableClass {
+   font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 2px solid #aaa;
+}
+ .theHead {
+  background-color:rgb(68 68 68 / 38%);  
+  color:#fff;
+ }
+ .theHead, .col, t2 {
+  border: 1px solid #bbb;
+    text-align: left;
+    padding: 8px;
+ }
+ h2 {
+  font-size: 120%;
+  margin-left: 10px;
+  padding: 30px;
+ }
+ .even {
+    background-color: #ddd;
+    border: 2px solid #ccc;
+}
+.even:hover {
+ border: 1px solid #222;
+}
+ .body, td {
+   
+    padding: 7px;
+}
+</style>
+   
+</apex:page>

@@ -1,0 +1,83 @@
+<aura:component extends="c:utility" controller="ProductsCtlr">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="brand" type="Map" default="" required="true" />
+    
+    <div class="slds-box slds-box_small" style="border-radius: 0;">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="7">
+                <div class="slds-card__body slds-card__body_inner">
+                    <ul class="slds-has-inline-block-links">
+                        <li class="slds-text-heading_large productName">{!v.brand.DBA}</li>
+                    </ul>
+                    <table style="width:100%" class="slds-table adjustPadding">
+                        <tr>
+                            <th class="workSans uppercase">
+                                Brand Name:</th>
+                            <td>{!v.brand.brandName}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Phone:</th>
+                            <td>{!v.brand.Phone}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Fax:</th>
+                            <td>{!v.brand.Fax}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Website:</th>
+                            <td>
+                                <ui:outputURL value="{!v.brand.Website}" label="{!v.brand.Website}" target="_blank"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Brand Account Rating:</th>
+                            <td>{!v.brand.AccountRating}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Mutual Payment Terms:</th>
+                            <td>{!v.brand.PaymentTerms}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Onboard Date:</th>
+                            <td>
+                                <ui:outputDate value="{!v.brand.onBoardDate}" format="MM-dd-yyyy"/>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="workSans uppercase">
+                                Billing Address:</th>
+                            <td>{!v.brand.billingAddress}
+                            </td>
+                        </tr>
+                        
+                    </table>
+                </div>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="5" class="slds-text-align_right">
+                <div class="max250" style="margin: 0 auto;float:right">
+                    <img src="{!v.brand.imageUrl}" alt="{!v.brand.DBA}" class="responsive" style="max-width:100%;max-height:100%;" />
+                </div>
+                <div class="slds-p-vertical_small slds-text-align_center">
+                    <lightning:layoutItem flexibility="grow" size="12" class="slds-p-vertical_x-small">
+                        <lightning:button class="slds-show_inline-block addToCardButton fullWidth detailButton" label="DETAILS" title="Details"
+                                          onclick="{!c.onBrandDetails}" />
+                    </lightning:layoutItem>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

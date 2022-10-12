@@ -1,0 +1,100 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<!-- <template>
+   <lightning-card>
+       <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" style="font-size: 30px; padding: 5px;margin: 5px;"> Management Details </h1>
+   </lightning-card>
+<br>
+<lightning-card title="Management Database">
+    <div class="slds-m-vertical_medium">
+     <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th><div class="slds-truncate"> Id </div></th>
+            <th><div class="slds-truncate"> Name </div></th>
+            <th><div class="slds-truncate"> Contact Number </div></th>
+            <th><div class="slds-truncate"> Email </div></th>
+            <th><div class="slds-truncate"> Subject Handling </div></th>
+            <th><div class="slds-truncate"> Class </div></th>
+          </tr>
+        </thead>
+        <tbody>
+            <template if:true={teacherData.data}>
+           <template for:each={teacherData} for:item="iterate">
+              <tr key={iterative.Id}>
+               <td><div class="slds-truncate">{iterate.Name}</div></td>
+               <td><div class="slds-truncate">{iterate.Teacher_Name__c}</div></td>
+               <td><div class="slds-truncate">{iterate.Contact_Number__c}</div></td>
+               <td><div class="slds-truncate">{iterate.Email__c}</div></td>
+               <td><div class="slds-truncate">{iterate.Subject_Handling__c}</div></td>
+               <td><div class="slds-truncate">{iterate.Class__r.Name}</div></td>
+              </tr>
+           </template>
+        </template>
+        </tbody>
+     </table>
+    </div>
+</lightning-card>
+
+</template> -->
+
+<template>
+    <lightning-card>
+        <div class="slds-modal__header rwd-table">
+            <h1 class="slds-modal__title slds-hyphenate slds-align_absolute-center portal">Teacher's Profile</h1>
+            <div class="slds-clearfix">
+                <div class="slds-float_right">
+                    <button class="slds-button slds-button_brand" onclick={createNewRecord} title="New">Create
+                        Teacher</button>
+                </div>
+            </div>
+        </div>
+        <template if:true={teacherData}>
+            <div style="height: 300px; margin:auto; padding:5px;">
+                <lightning-datatable key-field="id" data={items} columns={columns} hide-checkbox-column=true>
+                </lightning-datatable>
+            </div>
+        </template>
+        <template if:true={isDisplayNoRecords}>
+            <div class="slds-align_absolute-center">
+                <br/>
+                No records found
+            </div>
+        </template>
+
+        <br />
+
+        <div class="slds-align_absolute-center">
+            <div class="slds-p-right_xx-small">
+
+                <lightning-button label="Prev" disabled={isPrev} onclick={previousHandler} variant="brand"
+                    icon-name="utility:back" name="prev"></lightning-button>
+            </div>
+            <span class="slds-badge slds-badge_lightest">
+                {startingRecord}-{endingRecord} of {totalRecountCount} | Page {page} of {totalPage}
+            </span>
+            <div class="slds-p-left_xx-small">
+                <lightning-button label="Next" disabled={isNext} onclick={nextHandler} variant="brand"
+                    icon-name="utility:forward" icon-position="right" name="next"></lightning-button>
+            </div>
+        </div>
+
+    </lightning-card>
+
+    <template if:true={teacherRecordForm}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h3 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Create New Teacher</h3>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                    <lightning-record-form record-id='' fields={fields} object-api-name="Teacher__c" columns="2"
+                        mode="edit" onsuccess={handleSuccess} oncancel={onCancel}>
+                    </lightning-record-form>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

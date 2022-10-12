@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="67px" height="64px" viewBox="0 0 67 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>890AEAD0-E9AC-4678-9BFD-9B57044533B9</title>
+    <defs>
+        <filter x="-1.1%" y="-13.3%" width="102.2%" height="126.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.260462194 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Filigreen-2.5-Source" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Marketplace-Brand" transform="translate(-1162.000000, -272.000000)" stroke="#195458" stroke-width="1.44892473">
+            <g id="Group-2" filter="url(#filter-1)" transform="translate(256.000000, 264.000000)">
+                <g id="C--Flowers-Copy-9" transform="translate(888.000000, 0.000000)">
+                    <g id="black-icons-64px-09" transform="translate(28.285714, 18.000000)">
+                        <path d="M7.77229839,36.5998387 C7.62592742,33.8758602 8.78225806,31.8473656 11.9877823,29.2537903 C14.4321774,27.2832527 14.9152016,25.1968011 15.9251613,23.2117742 C17.1747748,20.9581181 19.5783672,19.5706495 22.1752016,19.6039516 C25.2239502,19.2526734 28.2111341,20.6385966 29.8889516,23.1827957 C32.069879,26.3559409 30.7964516,27.1383602 33.9580645,28.8046237 C36.4317339,30.0941667 39.1981452,34.2670699 38.1881855,38.0197849 C37.0318548,42.2506452 34.1044355,43.3083602 31.0599194,43.4967204 C26.2443145,43.7865054 25.3807258,40.9031452 22.9070565,41.0480376 C20.4333871,41.1929301 18.6915726,43.4677419 14.7541935,43.4677419 C12.8969539,43.5114318 11.1020651,42.803333 9.78429018,41.5070731 C8.46651522,40.2108132 7.73988109,38.4385574 7.77229839,36.5998387 Z" id="Path"></path>
+                        <ellipse id="Oval" transform="translate(5.521685, 20.291432) rotate(-16.220000) translate(-5.521685, -20.291432) " cx="5.5216853" cy="20.2914321" rx="3.80268139" ry="5.94533016"></ellipse>
+                        <ellipse id="Oval" transform="translate(15.392210, 7.972084) rotate(-13.700000) translate(-15.392210, -7.972084) " cx="15.3922101" cy="7.97208446" rx="4.21312486" ry="6.63988095"></ellipse>
+                        <ellipse id="Oval" transform="translate(30.773721, 7.968050) rotate(-77.980000) translate(-30.773721, -7.968050) " cx="30.7737205" cy="7.96804989" rx="6.61002664" ry="4.25755186"></ellipse>
+                        <ellipse id="Oval" transform="translate(39.918909, 19.568159) rotate(-73.610000) translate(-39.918909, -19.568159) " cx="39.918909" cy="19.568159" rx="5.94542726" ry="3.80262059"></ellipse>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

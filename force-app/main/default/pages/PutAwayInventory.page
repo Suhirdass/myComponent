@@ -1,0 +1,323 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - PutAwayInventory
+-->
+<apex:page controller="PutAwayInventoryController" 
+           action="{!retrieveInventoryPositions}" 
+           title="{!$Label.Put_Away_Inventory}"
+           id="formId">
+    
+    <script>
+        function selectAllCheckboxes(obj){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){          
+                inputCheckBox[i].checked = obj.checked;
+            }
+        }
+        function redirectToHM(){
+            var myUserContext = "{!$User.UITheme}";
+            if(myUserContext == 'Theme4d')
+                window.open('/one/one.app#/alohaRedirect/apex/HeatMapGenerator');
+            else
+                window.open('/apex/HeatMapGenerator');
+                
+        }
+        function doSearch() {
+            var searchText = document.getElementById("searchText").value;
+            if(searchText != ''){
+                searchInvPositions(searchText);
+            }else{
+                alert('Please provide search keyword!!');
+                return false;
+            }
+        }
+    </script>
+    
+    <style>
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+    </style>
+    <apex:form id="frm">
+        <apex:actionFunction name="searchInvPositions" 
+                             action="{!runSearch}" 
+                             rerender="invPositionBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="searchText" value="" assignTo="{!searchText}" />
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="resetSearch" 
+                             action="{!resetSearch}" 
+                             rerender="invPositionBlock"
+                             status="idRefreshingStatus" />
+        
+        <apex:actionFunction name="resetInventoryPositionPageSize" 
+                             action="{!doResetInventoryPositionsPageSize}" 
+                             reRender="invPositionBlock"
+                             status="idRefreshingStatus" />
+                             
+        <apex:actionFunction name="loadRackLevels" 
+                             action="{!loadRackLevels}" 
+                             reRender="invPositionBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedInvPositionId" assignTo="{!selectedInvPositionId}" value=""/>
+            <apex:param name="selectedRackId" assignTo="{!selectedRackId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="loadBinLocations" 
+                             action="{!loadBinLocations}" 
+                             reRender="invPositionBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedInvPositionId" assignTo="{!selectedInvPositionId}" value=""/>
+            <apex:param name="selectedRackLevelId" assignTo="{!selectedRackLevelId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="loadBalanceQtyToPutAway" 
+                             action="{!loadBalanceQtyToPutAway}" 
+                             reRender="invPositionBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedInvPositionId" assignTo="{!selectedInvPositionId}" value=""/>
+            <apex:param name="selectedBinLocationId" assignTo="{!selectedBinLocationId}" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="reloadInventoryPositions" 
+                             action="{!retrieveInventoryPositions}" 
+                             reRender="frm"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedSiteId" assignTo="{!selectedSiteId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:pageBlock title="{!$Label.Items_To_Put_Away}" 
+                        id="invPositionBlock">
+            <apex:actionStatus id="idRefreshingStatus" 
+                              style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:outputPanel >
+                <apex:pageMessages />
+                <apex:outputPanel >
+                    <b>Select Warehouse&nbsp;</b>
+                	<apex:selectList size="1" label="Site"
+                                         value="{!selectedSiteId}"
+                                     onchange="reloadInventoryPositions(this.value);">
+                            <apex:selectOptions value="{!siteOptions}"/>
+                        </apex:selectList>
+                </apex:outputPanel><br/><br/>
+                <apex:outputPanel >
+                    <b>Search</b> <input type="text" id="searchText" /> 
+                    <apex:commandButton value="Search" onclick="return doSearch()" 
+                                                       reRender="invPositionBlock"
+                                                       status="idRefreshingStatus" />
+                    <apex:commandButton value="Reset" action="{!resetSearch}" 
+                                                       reRender="invPositionBlock"
+                                                       status="idRefreshingStatus" />&nbsp;&nbsp;
+                    <i>* Search keyword will look for Supplier, Product name, Producer name or PO number</i><BR/><BR/>
+                </apex:outputPanel>
+                <apex:pageBlockTable value="{!setInventoryPositions}" var="inventotyPosition">
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')"/> 
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!inventotyPosition.isSelected}" />
+                    </apex:column>
+                    
+                    <!-- Receipt Date -->
+                    <apex:column headerValue="Receipt Date">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Date_Received__c}"/>
+                    </apex:column>
+                    
+                    <!-- PO Number (sortable column) -->
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="PO Number" 
+                                              action="{!toggleSort}" 
+                                              rerender="invPositionBlock"
+                                              status="idRefreshingStatus"
+                                              style="color:blue">
+                                <apex:param name="sortField" value="Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}"/>
+                    </apex:column>
+                    
+                    <!-- Product Name (sortable column) -->
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="{!$ObjectType.Inventory_Position__c.Fields.Product_Name__c.Label}" 
+                                              action="{!toggleSort}" 
+                                              rerender="invPositionBlock"
+                                              status="idRefreshingStatus"
+                                              style="color:blue">
+                                <apex:param name="sortField" value="Product_Name__r.Name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Product_Name__c}"/>
+                    </apex:column>
+                    
+                    <!-- Product Description -->
+                    <apex:column value="{!inventotyPosition.invPositionSO.Product_Name__r.Description}"/>
+                    
+                    <!-- Supplier Name -->
+                    <apex:column headerValue="Supplier Name">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Supplier_Name__r.Name}"/>
+                    </apex:column>
+
+                    <!-- Harvest Batch Code -->
+                    <apex:column headerValue="Harvest Batch Code">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Harvest_Batch_Code__r.Name}"/>
+                    </apex:column>
+                    <!-- UID -->
+                    <apex:column headerValue="UID">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.UID_New__r.Name}"/>
+                    </apex:column>
+                    
+                    <!-- Received Qty -->
+                    <apex:column headerValue="Received Qty">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Qty_On_Hand__c}"/>
+                    </apex:column>
+                    
+                    <!-- Qty to put away -->
+                    <apex:column headerValue="{!$Label.Qty_To_Put_Away}">
+                        <apex:inputText value="{!inventotyPosition.qtyToPutAway}" size="5"/>
+                    </apex:column>
+                    
+                    <!-- Current Site -->
+                    <apex:column headerValue="Site" value="{!inventotyPosition.invPositionSO.Site__c}"/>
+                    
+                    <!-- Ownership (sortable column) -->
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="{!$ObjectType.Inventory_Position__c.Fields.Ownership__c.Label}" 
+                                              action="{!toggleSort}" 
+                                              rerender="invPositionBlock"
+                                              status="idRefreshingStatus"
+                                              style="color:blue">
+                                <apex:param name="sortField" value="Ownership__r.Name" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Ownership__c}"/>
+                    </apex:column>
+                    
+                    <!-- Current Location -->
+                    <apex:column headerValue="{!$Label.Current_Location}" 
+                                 value="{!inventotyPosition.invPositionSO.Inventory_Location__c}"/>
+                    
+                    <!-- Rack -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Rack__c.Label}">
+                        <apex:selectList size="1" 
+                                         value="{!inventotyPosition.invPositionSO.Rack__c}"
+                                         onchange="loadRackLevels('{!inventotyPosition.invPositionSO.Id}', 
+                                                                  this.value)">
+                            <apex:selectOptions value="{!inventotyPosition.rackOptions}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <!-- Rack Level -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Rack_Level__c.Label}">
+                        <apex:selectList size="1" 
+                                         value="{!inventotyPosition.invPositionSO.Rack_Level__c}"
+                                         onchange="loadBinLocations('{!inventotyPosition.invPositionSO.Id}', 
+                                                                    this.value)">
+                            <apex:selectOptions value="{!inventotyPosition.rackLevelOptions}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <!-- Bin Location -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Bin_Location__c.Label}">
+                        <apex:selectList size="1" 
+                                         value="{!inventotyPosition.invPositionSO.Bin_Location__c}"
+                                         onchange="loadBalanceQtyToPutAway('{!inventotyPosition.invPositionSO.Id}', 
+                                                                          this.value)">
+                            <apex:selectOptions value="{!inventotyPosition.binLocationOptions}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <!-- Max Put-away Qty to Bin -->
+                    <apex:column headerValue="Max Put-away Qty to Bin" 
+                                 value="{!inventotyPosition.balanceQtyToPutAway}"/>
+                </apex:pageBlockTable>
+                
+                <apex:outputPanel >
+                    <div style="text-align:center">
+                        &lt;<apex:outputLabel rendered="{!Not(hasPreviousInventoryPositions)}">{!$Label.First}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousInventoryPositions}" 
+                                          action="{!firstInventoryPositions}" 
+                                          reRender="invPositionBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.First}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasPreviousInventoryPositions)}">{!$Label.Previous}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousInventoryPositions}" 
+                                          action="{!previousInventoryPositions}" 
+                                          reRender="invPositionBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Previous}
+                        </apex:commandLink>
+                        &nbsp; {!$Label.Page} {!inventoryPositionsIterable.currentPage} {!$Label.Of} {!inventoryPositionsIterable.totalPages} &nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextInventoryPositions)}">{!$Label.Next}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextInventoryPositions}" 
+                                          action="{!nextInventoryPositions}" 
+                                          reRender="invPositionBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Next}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextInventoryPositions)}">{!$Label.Last}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextInventoryPositions}" 
+                                          action="{!lastInventoryPositions}" 
+                                          reRender="invPositionBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Last}
+                        </apex:commandLink>&gt;
+                        &nbsp;&nbsp;&nbsp;
+                        <b><apex:outputText value="{!$Label.Page_Size}"/></b> &nbsp;
+                        <apex:selectList value="{!pageSize}" size="1" 
+                                         onchange="resetInventoryPositionPageSize()">
+                            <apex:selectOptions value="{!pageSizeOptions}" />
+                        </apex:selectList>
+                     </div>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!!hasInventoryPosition}">
+                    <b>{!$Label.No_Record_Found}</b>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Update_Inventory_Locations}" 
+                                    action="{!updateInventoryLocations}" 
+                                    reRender="invPositionBlock"
+                                    status="idRefreshingStatus"
+                                    rendered="{!hasInventoryPosition}"/>
+                <apex:commandButton value="Heat Map View" 
+                                     oncomplete="redirectToHM();"  />
+                <apex:commandButton value="{!$Label.Cancel}" 
+                                    action="{!cancelAction}"/>
+
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

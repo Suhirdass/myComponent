@@ -1,0 +1,12 @@
+<aura:component>
+	<aura:attribute name="imageUrl" type="String" default="" />
+	<aura:attribute name="name" type="String" default="" />
+
+	<div>
+		<img
+			src="{! v.imageUrl }"
+			class="brand-img__logo"
+			alt="{! v.name + ' logo' }"
+		/>
+	</div>
+</aura:component>

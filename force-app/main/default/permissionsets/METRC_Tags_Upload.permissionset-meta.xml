@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>MetrcTagUploadCtlr</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <description>Permission to mass upload METRC tags</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>METRC Tags Upload</label>
+    <license>Salesforce</license>
+    <tabSettings>
+        <tab>Metrc_Tag_Upload</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+</PermissionSet>

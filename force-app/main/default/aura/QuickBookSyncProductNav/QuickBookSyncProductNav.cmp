@@ -1,0 +1,44 @@
+<aura:component extends="c:utility"   controller="QuickBookConncetion" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="recordId" type="String" />
+ <aura:attribute name="status" type="String" />
+     <aura:attribute name="messages" type="boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:html tag="style">
+        
+        
+        .slds-modal__content slds-p-around--medium
+        {
+        height: 270px !important;
+        max-height: None  !important; 
+        
+        }
+        .modal-body{
+        max-height: 240px !important;
+        height:  240px !important;
+        }
+        
+        .textCap {
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+        
+    </aura:html>
+    
+    <header class="slds-modal__header" style="width:600px !important;">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"></h2>
+    </header>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+       <aura:if isTrue="{!v.messages}">
+             <p>Product is inactive Do you want to Sync Product? </p>
+    <aura:set attribute="else">
+        <p>Do you want to Sync Product? </p>
+           </aura:set>
+        </aura:if>
+    </div>
+    <footer class="slds-modal__footer"  style="width: 600px !important;">
+        <lightning:button class="slds-button_brand buttonSm" label="Yes" onclick="{!c.CreateProduct}"/>
+        <lightning:button class="slds-button_neutral buttonSm"  label="No" onclick="{!c.cancel}" />
+    </footer>
+
+</aura:component>

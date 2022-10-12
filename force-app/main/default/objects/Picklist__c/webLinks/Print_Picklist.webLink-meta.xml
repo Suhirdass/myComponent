@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Print_Picklist</fullName>
+    <availability>online</availability>
+    <description>Using Conga</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Print Picklist</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>https://composer.congamerge.com
+?sessionId={!API.Session_ID}
+&amp;serverUrl={!API.Partner_Server_URL_290}
+&amp;id={!Picklist__c.Id}
+&amp;OFN={!Picklist__c.Name}+|+{!Picklist__c.Receiver_DBA__c}+|+Pick+Date:{!Picklist__c.Scheduled_Pick_Date__c}
+&amp;DS4=0
+&amp;LG3=1
+&amp;LG4=1
+&amp;PS0=0
+&amp;DefaultPDF=1
+&amp;ReportId=[pkli]00O6A000006Om83?pv0={!Picklist__c.Id}
+&amp;TemplateId=a0F6A000002npna</url>
+</WebLink>

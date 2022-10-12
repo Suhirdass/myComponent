@@ -1,0 +1,35 @@
+<template>
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning-icon icon-name="custom:custom83" title="custom83"></lightning-icon>
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1>Receivings</h1>
+                                <!--<h1 class="slds-page-header__title slds-m-right_x-small slds-truncate slds-align-middle title-align" title="Receivings"> &nbsp; Receivings</h1> -->
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-top">
+                    <div class="slds-button-group" role="group">
+                        <lightning-button label="Create Receipts" onclick={createReceipts}></lightning-button>
+                        <lightning-button label="Cancel" onclick={onCancel}></lightning-button>   
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+
+        
+        <div class="slds-card__header ">
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container" > 
+              <!-- <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Purchase Order</b></div>
+                     <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">  <a href={poRecord.Id} style="color:#0070D2;" >{poRecord.Name}</a> </div> -->
+                   <!-- <template if:true={true}>-->
+                        {poRecord.poData.Name}
+            </div>  
+        </div>
+
+</template>

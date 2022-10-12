@@ -1,0 +1,104 @@
+.THIS {
+    font-family:token(salesforceSans);
+}
+.THIS .slds-card {
+    border: 1px solid token(tan);
+    border-radius: 4px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: 0.2s ease;
+    transition-property: border-color, box-shadow;
+}
+.THIS .line-through{
+    text-decoration: line-through;
+}
+.THIS .productFamily {
+    color: token(Rangitoto);
+}
+.THIS .slds-card:hover {
+    border-color: token(greenMint);
+    box-shadow: rgba(0, 0, 0, 0.2) 0 2px 12px;
+    cursor: pointer;
+}
+
+.THIS .slds-card__header:hover .eyeball {
+    opacity: 1;
+    filter: grayscale(1) brightness(0.1);
+}
+
+.THIS .slds-card__header {
+    position: relative;
+    border-bottom: 1px solid token(tan);
+    height: 210px;
+    flex-shrink: 0;
+}
+
+.THIS .eyeball {
+    content: '';
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    width: 2em;
+    height: 1.35em;
+    background-image: url(/filigreenb2b/resource/BrigadeResources/assets/preview.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top right;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.THIS .eyeballforipad {
+    content: '';
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    width: 1.7em;
+    height: 1.35em;
+    background-image: url(/filigreenb2b/resource/BrigadeResources/assets/preview.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top right;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.THIS .slds-card__header img {
+    width: 100%;
+    height: calc(210px - 1.5rem);
+    object-fit: contain;
+}
+
+.THIS .slds-card__body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.THIS .slds-text-body_small {
+    flex-grow: 1;
+}
+
+.THIS .slds-card__footer{
+    border-color: #dddbda;
+}
+
+.THIS .add-to-card .slds-button {
+    font-size: 10px;
+}
+
+/* double wide */
+.THIS.productBox--large {
+    grid-column: auto / span 2;
+}
+
+.THIS.productBox--large .slds-card__header {
+    height: 260px;
+}
+
+.THIS.productBox--large .slds-card__header img {
+    height: calc(260px - 1.5rem);
+}

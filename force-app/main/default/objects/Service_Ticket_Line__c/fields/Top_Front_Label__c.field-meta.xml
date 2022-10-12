@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Top_Front_Label__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Please select the type of label to apply: (Small &lt;= 1H x 1W x 2L), (Medium &lt;= 2H x 2W x 3L), (Large &gt;= 3H x 3W x 3L</inlineHelpText>
+    <label>Top | Front Label</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Label_Type</valueSetName>
+    </valueSet>
+</CustomField>

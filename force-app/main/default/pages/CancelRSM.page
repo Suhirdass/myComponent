@@ -1,0 +1,53 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - CancelRSM
+-->
+<apex:page standardController="Shipping_Manifest__c"  
+           extensions="CancelRSMController"  
+           action="{!retrieveRSMLines}" 
+           title="Cancel RSM">
+           
+    <script type="text/javascript">
+        function selectAllCheckboxes(obj){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(!inputCheckBox[i].disabled){
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+    
+    <apex:form >
+        <apex:pageBlock title="Cancel RSM">
+            <apex:pageMessages escape="false"/>
+            <apex:actionStatus id="idRefreshingStatus" style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            
+            <!-- RSM record attributes -->
+            <apex:pageBlockSection columns="2" title="RSM Information" rendered="{!!isError}">
+                <apex:outputField value="{!rsmObj.Name}" />
+                <apex:outputField value="{!rsmObj.Status__c}" />
+                <apex:outputField value="{!rsmObj.Site__c}" />
+                <apex:outputField value="{!rsmObj.Customer_PO_or_Quote__c}" />
+            </apex:pageBlockSection>
+            
+            <!-- RSM Lines to cancel -->
+            <c:CancelRSMLinesComponent rsmLinesToDisplay="{!rsmLines}" isErrorFlag="{!isError}" />
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!cancelRSMAction}" value="Cancel RSM" status="idRefreshingStatus" rendered="{!!isError}"/>
+                <apex:commandButton action="{!redirectToRSM}" value="Return" status="idRefreshingStatus"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transfer_Line</fullName>
+    <active>true</active>
+    <compactLayoutAssignment>WOVN</compactLayoutAssignment>
+    <description>Used for Outbound Transfer Non-Retail Channel - Ship Confirm to &quot;Transferred&quot; Inventory Location</description>
+    <label>Transfer Line</label>
+    <picklistValues>
+        <picklist>Lot_Cannabis_Category__c</picklist>
+        <values>
+            <fullName>Flower</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fresh</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Leaves</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>None</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Product_Title__c</picklist>
+        <values>
+            <fullName>Distributor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Supplier</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Rejection_Reason__c</picklist>
+        <values>
+            <fullName>Damaged Products</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Denied Product</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Expiration Date</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect License</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Pricing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Product</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Qty Shipped</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Labeling Issue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Compliant</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>None</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Not Ordered</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SMLine_Status__c</picklist>
+        <values>
+            <fullName>Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Draft</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shipment Complete</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

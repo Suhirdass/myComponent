@@ -1,0 +1,519 @@
+<template>
+  <article class="slds-card">
+    <div class="slds-page-header banner-header" role="banner" style="padding-top: 2px;">
+      <div class="slds-col slds-has-flexi-truncate">
+        <!--style="margin-top:-14px"-->
+        <div class="slds-media">
+          <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account" class="icon-height">
+          </lightning-icon>
+          <div class="slds-media__body">
+            <p class="slds-text-heading--label">
+            </p>
+            <div class="slds-medium-size--12-of-12">
+              <div class="slds-medium-size--7-of-12 slds-button-group" role="group"
+                style="float: right; margin-top:-4px">
+                <div class="slds-medium-size--1-of-12" style="text-align: center;margin-top: 5px;">
+                  From:
+                </div>
+                <div class="slds-medium-size--3-of-12">
+                  <lightning-input variant="label-hidden" value={dat} type="date" label="From:"
+                    onchange={handleFromDateCahngeEvent} style="margin-top: 1px;"></lightning-input>
+                </div>
+                <div class="slds-medium-size--1-of-12" style="text-align: center;margin-top: 5px;">
+                  To:
+                </div>
+                <div class="slds-medium-size--3-of-12">
+                  <lightning-input variant="label-hidden" value={datTwo} type="date" label="To:"
+                    onchange={handleToDateCahngeEvent} style="margin-top: 1px;"></lightning-input>
+                </div>
+
+                <div class="slds-medium-size--1-of-12">
+                  <lightning-button class="slds-button" label="Search" title="Search" onclick={searchDate}
+                    style="margin-left:1px"></lightning-button>
+
+                </div>
+                <div class="slds-medium-size--1-of-12">
+                  <lightning-button class="slds-button" label="Save" title="Save" onclick={updateShipManifestData}
+                    style="margin-left:50px"></lightning-button>
+                </div>
+                <div class="slds-medium-size--1-of-12">
+                  <lightning-button class="slds-button" label="Reset" title="Reset" onclick={globalReset}
+                    style="margin-left:45px"></lightning-button>
+                </div>
+              </div>
+              <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle"
+                title="Record Title" style="margin-top: 10px;">
+                &nbsp;Route Schedule
+              </h1>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="slds-col slds-no-flex slds-align-bottom">
+
+      </div>
+
+    </div>
+  </article>
+
+  <!--**********************************************************************************************************************-->
+  <!--Inbound-->
+  <article class="slds-card">
+    <div class="slds-page-header banner-header" role="banner" style="padding-top: 2px;">
+      <div class="slds-col slds-has-flexi-truncate">
+        <!--style="margin-top:-14px"-->
+        <div class="slds-media">
+          <lightning-icon icon-name="standard:address" alternative-text="Address" title="Address" class="icon-height">
+          </lightning-icon>
+          <div class="slds-media__body">
+            <div class="slds-medium-size--12-of-12">
+              <div class="slds-medium-size--2-of-12 slds-button-group" role="group"
+                style="float: right;margin-top: -6px;">
+
+                <div class="slds-medium-size--11-of-12">
+                  <lightning-input type="text" placeholder="Search" value={strSearchProdName} onchange={handleSearchTSM}
+                    style="margin-top: -18px; margin-right: 8px; float:right">
+                  </lightning-input>
+                </div>
+                <div class="slds-medium-size--1-of-12">
+                  <lightning-helptext style="float:right" content="* Search keyword will look for Site, Driver">
+                  </lightning-helptext>
+                </div>
+              </div>
+              <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle"
+                title="Record Title" style="margin-top: 10px;">
+                &nbsp;Inbound Schedule
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slds-col slds-no-flex slds-align-bottom">
+
+      </div>
+    </div>
+
+    <!---model dialog-->
+
+
+
+    <template if:true={isOpenModalTsm}>
+      <div>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+          aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+            <header class="slds-modal__header">
+              <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                onclick={handleCloseModal}>
+                <lightning-icon icon-name="utility:close" variant="inverse" alternative-text="Close" size="medium">
+                </lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+              </button>
+              <h3 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Navigation Confirmation</h3>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+              <div class="slds-text-heading_small slds-text-align_center">
+                Navigate the page it's lost the updated values.
+              </div>
+            </div>
+            <footer class="slds-modal__footer">
+              <lightning-button label="Ok " variant="neutral" onclick={navigationHandlerTsm}></lightning-button>
+              <lightning-button label="Cancel" variant="neutral" onclick={handleCloseModalTsm}></lightning-button>
+            </footer>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </div>
+    </template>
+
+    <div class="slds-is-relative slds-p-horizontal_small slds-m-top_small" style="width: 98%; margin-left: 13px;">
+      <div class="container" lwc:dom="manual"></div>
+      <table class="slds-table slds-table_bordered slds-table_col-bordered  slds-m-top_small">
+        <thead>
+          <tr>
+            <th style="cursor: pointer;">
+              <div onclick={navigateToShortView} data-id="siteName" style="display: flex;">
+                Site&nbsp;
+                <template if:true={isSiteTSM}>
+                  <template if:true={ascTsm}>&#9650;</template>
+                  <template if:false={ascTsm}>&#9660;</template></template>
+                <template if:false={isSiteTSM}>&#9660;</template>
+              </div>
+            </th>
+            <th style="cursor: pointer;">
+              <div onclick={navigateToShortView} data-id="shipDate">
+                Ship Date&nbsp;
+                <template if:true={isDateTSM}><template if:true={ascTsm}>&#9650;</template>
+                  <template if:false={ascTsm}>&#9660;</template></template>
+                <template if:false={isDateTSM}>&#9660;</template>
+              </div>
+            </th>
+            <th>Shipping Manifest</th>
+            <th>Purchase Order</th>
+            <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortView} data-id="driverName">
+                Driver&nbsp;
+                <template if:true={isDriverTSM}><template if:true={ascTsm}>&#9650;</template>
+                  <template if:false={ascTsm}>&#9660;</template></template>
+                <template if:false={isDriverTSM}>&#9660;</template>
+              </div>
+            </th>
+            <th>Vehicle</th>
+            <!-- <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortView} data-id="Priority__c">
+                Priority&nbsp;
+                <template if:true={isPriorityTSM}><template if:true={ascTsm}>&#9650;</template>
+                  <template if:false={ascTsm}>&#9660;</template></template>
+                <template if:false={isPriorityTSM}>&#9660;</template>
+              </div>
+            </th> -->
+
+          </tr>
+        </thead>
+
+        <tbody>
+          <template for:each={setTSM} for:item="tsmValue" for:index="ifx">
+            <tr key={tsmValue.poId} data-class={tsmValue.poId}>
+              <td>
+                <a href={tsmValue.sUrl} data-id={tsmValue.siteId} data-name="Site__c" >
+                  <template if:true={tsmValue.siteId}>{tsmValue.siteName}</template>
+                </a>
+              </td>
+              <td>
+                <!-- {tsmValue.shipDate}
+                  <lightning-formatted-date-time value={tsmValue.shipDate} year="numeric" month="numeric" day="numeric">
+                </lightning-formatted-date-time>
+                <input type="date" format="mm/dd/yyyy" data-name={tsmValue.poId}  data-id={tsmValue.poId} onchange={onShipDateChangTsm} value={tsmValue.shipDate}/>-->
+                <lightning-input data-name={tsmValue.poId} date-style="short" data-id={tsmValue.poId} variant="label-hidden" onchange={onShipDateChangTsm} value={tsmValue.shipDate} type="date" 
+                     style="width:7rem"></lightning-input>
+               
+              </td>
+              <td>
+                <template if:true={tsmValue.smId}>
+                <a  href={tsmValue.smUrl} data-id={tsmValue.smId} data-name="Site__c"
+                  >{tsmValue.smName}</a>
+                </template>
+              </td>
+              <td>
+                <a href={tsmValue.poUrl} data-id={tsmValue.poId} data-name="Purchase_Order__c" >
+                  <template if:true={tsmValue.poId}>{tsmValue.poName}</template>
+                </a>
+              </td>
+              <td>
+                <lightning-combobox disabled if:true={tsmValue.StatusCheck} onchange={onTSMDriverSelection}
+                  dropdown-alignment=auto value={tsmValue.driverId} variant="label-hidden" style="width:14rem"
+                  name="Driver" label="Driver" placeholder="Select Driver" options={bindDriver}>
+                </lightning-combobox>
+                <lightning-combobox data-name={tsmValue.poId} if:false={tsmValue.StatusCheck} data-id={tsmValue.poId}
+                  onchange={onDriverChangTsm} dropdown-alignment=auto value={tsmValue.driverId} variant="label-hidden"
+                  style="width:14rem" name="Driver" label="Driver" placeholder="Select Driver" options={bindDriver}>
+                </lightning-combobox>
+
+              </td>
+              <td>
+                <lightning-combobox disabled if:true={tsmValue.StatusCheck} data-id={tsmValue.poId}
+                  dropdown-alignment=auto value={tsmValue.vehicleId} variant="label-hidden" style="width:14rem"
+                  name="Vehicle" label="Vehicle" placeholder="Select Vehicle" options={bindVehicle}>
+                </lightning-combobox>
+                <lightning-combobox data-name={tsmValue.poId} if:false={tsmValue.StatusCheck} data-id={tsmValue.poId}
+                  onchange={onVechileChangeTsm} dropdown-alignment=auto value={tsmValue.vehicleId}
+                  variant="label-hidden" style="width:14rem" name="Vehicle" label="Vehicle" placeholder="Select Vehicle"
+                  options={bindVehicle}>
+                </lightning-combobox>
+              </td>
+              <!-- <td>{tsmValue.priority}</td> -->
+
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <template if:true={isNoTSM}>
+        <div class="slds-align_absolute-center">
+          <br />No Inbound records.<br />
+        </div>
+      </template>
+    </div>
+
+    <div style="width: 98%; margin-left: 13px; padding-bottom:7px;">
+      <br />
+      <template if:false={isNoTSM}>
+
+        <lightning-layout>
+          <lightning-layout-item flexibility="grow">
+            <div style="display: flex;padding-left: 25%;">
+              <p>
+                <lightning-button label="First" data-id="firstTsm" onclick={handleOpenModalTsm}>
+                </lightning-button>&nbsp;&nbsp;
+                <lightning-button label="Previous" data-id="previousTsm" onclick={handleOpenModalTsm}>
+                </lightning-button>
+                &nbsp;&nbsp;Page {pageTsm} of {totalPageTsm} &nbsp;&nbsp;
+                <lightning-button label="Next" data-id="nextTsm" onclick={handleOpenModalTsm}></lightning-button>
+                &nbsp;&nbsp;
+                <lightning-button label="Last" data-id="lastTsm" onclick={handleOpenModalTsm}></lightning-button>
+                &nbsp;&nbsp;Page Size : &nbsp;&nbsp;
+              </p>
+              <div style="width:100px;">
+                <lightning-combobox style="width: 100%; margin-top: -1%;" value={valueTsm} variant="label-hidden"
+                  onchange={handleTsmValueChange} options={options} dropdown-alignment=auto class="widthDrop">
+                </lightning-combobox>
+              </div>
+              <p style="margin-top: 6px;">
+                &nbsp;&nbsp;Displaying {startingRecordTsm} to
+                {endingRecordTsm} of
+                {totalRecountCountTsm} records
+              </p>
+            </div>
+          </lightning-layout-item>
+        </lightning-layout>
+      </template>
+    </div>
+  </article>
+  <div if:false={isLoaded} class="slds-is-relative">
+    <lightning-spinner alternative-text="Loading..." variant="brand">
+    </lightning-spinner>
+  </div>
+  <!--******************************************************************************************************************************-->
+
+  <!--***********************************************************************************************************************-->
+
+  <!---model dialog-->
+
+  <template if:true={isOpenModal}>
+    <div style="height: 500px;">
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+              onclick={handleCloseModal}>
+              <lightning-icon icon-name="utility:close" variant="inverse" alternative-text="Close" size="medium">
+              </lightning-icon>
+              <span class="slds-assistive-text">Close</span>
+            </button>
+            <h3 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">Navigation Confirmation</h3>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+            <div class="slds-text-heading_small slds-text-align_center">
+              Navigate the page it's lost the updated values.
+            </div>
+          </div>
+          <footer class="slds-modal__footer">
+            <lightning-button label="Ok " variant="neutral" onclick={navigationHandler}></lightning-button>
+            <lightning-button label="Cancel" variant="neutral" onclick={handleCloseModal}></lightning-button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+  </template>
+  <article class="slds-card">
+    <div class="slds-page-header banner-header" role="banner" style="padding-top: 2px;">
+      <div class="slds-col slds-has-flexi-truncate">
+        <!--style="margin-top:-14px"-->
+        <div class="slds-media">
+          <lightning-icon icon-name="standard:address" alternative-text="Address" title="Address" class="icon-height">
+          </lightning-icon>
+          <div class="slds-media__body">
+            <div class="slds-medium-size--12-of-12">
+              <div class="slds-medium-size--2-of-12 slds-button-group" role="group"
+                style="float: right; margin-top:-7px">
+
+                <div class="slds-medium-size--11-of-12">
+                  <lightning-input type="text" placeholder="Search" value={strSearchProdName} onchange={handleSearch}
+                    style="margin-top: -18px; margin-right: 8px; float:right">
+                  </lightning-input>
+                </div>
+                <div class="slds-medium-size--1-of-12">
+                  <lightning-helptext style="float:right" content="* Search keyword will look for Site, Driver">
+                  </lightning-helptext>
+                </div>
+              </div>
+              <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle"
+                title="Record Title" style="margin-top: 10px;">
+                &nbsp;Outbound Schedule
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slds-col slds-no-flex slds-align-bottom">
+
+      </div>
+    </div>
+
+    <div id="outbound" class="slds-is-relative slds-p-horizontal_small slds-m-top_small"
+      style="width: 98%; margin-left: 13px;">
+      <table id="myTable" class=" slds-table slds-table_bordered slds-table_col-bordered slds-m-top_small">
+        <thead>
+          <tr>
+            <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortOutboundView} data-id="siteName">
+                Site&nbsp;
+                <template if:true={isSiteRSM}><template if:true={ascRsm}>&#9650;</template>
+                  <template if:false={ascRsm}>&#9660;</template></template>
+                <template if:false={isSiteRSM}>&#9660;</template>
+              </div>
+            </th>
+            <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortOutboundView} data-id="shipDate">
+                Ship Date&nbsp;
+                <template if:true={isDateRSM}><template if:true={ascRsm}>&#9650;</template>
+                  <template if:false={ascRsm}>&#9660;</template></template>
+                <template if:false={isDateRSM}>&#9660;</template>
+              </div>
+            </th>
+            <th>Shipping Manifest</th>
+            <th>Metrc #</th>
+            <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortOutboundView} data-id="soName">
+                Sales Order&nbsp;
+                <template if:true={isSOrderRSM}><template if:true={ascRsm}>&#9650;</template>
+                  <template if:false={ascRsm}>&#9660;</template></template>
+                <template if:false={isSOrderRSM}>&#9660;</template>
+              </div>
+            </th>
+            <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortOutboundView} data-id="driverName">
+                Driver&nbsp;
+                <template if:true={isDriverRSM}><template if:true={ascRsm}>&#9650;</template>
+                  <template if:false={ascRsm}>&#9660;</template></template>
+                <template if:false={isDriverRSM}>&#9660;</template>
+              </div>
+            </th>
+            <th>Vehicle1</th>
+            <th>Window Start</th>
+            <th>Window End</th>
+            <th style="cursor: pointer;">
+              <div style="display: flex;" onclick={navigateToShortOutboundView} data-id="recieverName">
+                Receiver DBA&nbsp;
+                <template if:true={isRecNameRSM}><template if:true={ascRsm}>&#9650;</template>
+                  <template if:false={ascRsm}>&#9660;</template></template>
+                <template if:false={isRecNameRSM}>&#9660;</template>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={setRSM} for:item="rsmValue" for:index="idx">
+            <tr key={rsmValue.soId} data-id={idx}>
+              <td>
+                <a href={rsmValue.sUrl} data-id={rsmValue.siteId} data-name="Site__c" >
+                  <template if:true={rsmValue.siteId}>{rsmValue.siteName}</template>
+                </a>
+              </td>
+              <td>
+                <lightning-input data-name={idx} date-style="short" data-id={rsmValue.smId} variant="label-hidden" onchange={onShipDateChangeRsm} value={rsmValue.shipDate} type="date" 
+                     style="width:7rem"></lightning-input>
+                <!-- {rsmValue.shipDate} -->
+              </td>
+              <td >
+               <template if:true={rsmValue.smId}>
+               <a href={rsmValue.smUrl} data-id={rsmValue.smId} data-name="Shipping_Manifest__c"
+                  > {rsmValue.smName} </a>
+                 
+               </template>
+              </td>
+              <td>
+                <lightning-input style="width:6rem" disabled if:true={rsmValue.isEnabled} variant="label-hidden"
+                  value={rsmValue.metrc}></lightning-input>
+                <lightning-input style="width:6rem" if:false={rsmValue.isEnabled} variant="label-hidden" data-name={idx}
+                  value={rsmValue.metrc} data-id={rsmValue.soId} onchange={onMetrcChangeRsm}>
+                </lightning-input>
+              </td>
+              <td>
+                <a href={rsmValue.soUrl} data-id={rsmValue.soId} data-name="Sales_Order__c" >
+                  <template if:true={rsmValue.soId}>{rsmValue.soName}</template>
+                </a>
+              </td>
+              <td>
+                <lightning-combobox disabled if:true={rsmValue.StatusCheck} dropdown-alignment=auto
+                  value={rsmValue.driverId} length="5" variant="label-hidden" style="width:8rem" name="Driver"
+                  label="Driver" placeholder="Select Driver" options={bindDriver}>
+                </lightning-combobox>
+                <lightning-combobox data-name={idx} if:false={rsmValue.StatusCheck}
+                  dropdown-alignment=auto data-id={rsmValue.smId} onchange={onDriverChangeRsm} value={rsmValue.driverId}
+                  length="5" variant="label-hidden" style="width:8rem" name="Driver" label="Driver"
+                  placeholder="Select Driver" options={bindDriver}>
+                </lightning-combobox>
+              </td>
+              <td>
+                <lightning-combobox disabled if:true={rsmValue.StatusCheck} dropdown-alignment=auto
+                  value={rsmValue.vehicleId} variant="label-hidden" style="width:8rem" name="Vehicle" label="Vehicle"
+                  placeholder="Select Vehicle" options={bindVehicle}>
+                </lightning-combobox>
+                <div>
+                  <lightning-combobox data-name={idx} if:false={rsmValue.StatusCheck} style="width:8rem"
+                    data-id={rsmValue.smId} dropdown-alignment=auto onchange={onVehicleChangeRsm}
+                    value={rsmValue.vehicleId} variant="label-hidden" name="Vehicle" label="Vehicle"
+                    placeholder="Select Vehicle" options={bindVehicle}>
+                  </lightning-combobox>
+                </div>
+              </td>
+              <td>
+                <lightning-input type="time" style="width:6rem" label="Time" variant="label-hidden" data-name={idx}
+                  data-id={rsmValue.smId} value={rsmValue.windowStart} onchange={onWindowStartDateRsm}>
+                </lightning-input>
+              </td>
+              <td>
+                <lightning-input type="time" style="width:6rem" label="Time" variant="label-hidden" data-name={idx}
+                  data-id={rsmValue.smId} value={rsmValue.windowEnd} onchange={onWindowEndDateRsm}>
+                </lightning-input>
+              </td>
+              <td class="elipse">
+                <lightning-helptext content={rsmValue.recieverName}></lightning-helptext>
+
+                {rsmValue.recieverName}
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <template if:true={isNoRSM}>
+        <div class="slds-align_absolute-center" style="margin-bottom: 14px;">
+          <br />No Outbound records.<br />
+        </div>
+      </template>
+    </div>
+
+    <div style="width: 98%; margin-left: 5px; padding-bottom:7px;">
+      <br />
+      <template if:false={isNoRSM}>
+        <lightning-layout>
+          <lightning-layout-item flexibility="grow">
+            <div style="display: flex;padding-left: 25%;">
+              <p>
+                <lightning-button label="First" data-id="first" onclick={handleOpenModal}>
+                </lightning-button>&nbsp;&nbsp;
+                <lightning-button label="Previous" data-id="previous" onclick={handleOpenModal}>
+                </lightning-button>
+                &nbsp;&nbsp;Page {page} of {totalPage} &nbsp;&nbsp;
+                <lightning-button label="Next" data-id="next" onclick={handleOpenModal}></lightning-button>
+                &nbsp;&nbsp;
+                <lightning-button label="Last" data-id="last" onclick={handleOpenModal}></lightning-button>
+                &nbsp;&nbsp;Page Size : &nbsp;&nbsp;
+              </p>
+              <div style="width:100px;">
+                <lightning-combobox style="width: 100%; margin-top: -1%;" value={valueRsm} variant="label-hidden"
+                  onchange={handleValueChange} options={options} dropdown-alignment=auto></lightning-combobox>
+              </div>
+              <p style="margin-top: 6px;">
+                &nbsp;&nbsp;Displaying {startingRecord} to
+                {endingRecord} of
+                {totalRecountCount} records
+              </p>
+            </div>
+          </lightning-layout-item>
+
+        </lightning-layout>
+
+      </template>
+    </div>
+
+  </article>
+
+  <!--<article class="slds-card">
+
+
+  </article>-->
+</template>

@@ -1,0 +1,5 @@
+<apex:page showHeader="false" sidebar="false" controller="AcceptRetailerOrderController" action="{!acceptOrder}">
+    <apex:form >
+    	<apex:pageMessages escape="false"></apex:pageMessages>
+    </apex:form>
+</apex:page>

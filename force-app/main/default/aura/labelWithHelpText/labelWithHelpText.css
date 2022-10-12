@@ -1,0 +1,10 @@
+.THIS .slds-form-element__icon.slds-align-middle{
+    padding: 0
+}
+
+.THIS .slds-form-element__icon {
+    padding-top: 0;
+}
+.THIS .helpIconClass{
+    height: 20px!important;
+}

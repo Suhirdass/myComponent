@@ -1,0 +1,78 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .brand-card {
+	display: flex;
+    font-family:token(salesforceSans) !important;
+	/*width: 515px;*/
+	border: 1px solid var(--lwc-colorGray7);
+	min-height: 141px;
+}
+.THIS .brand-card:hover {
+	border-color: var(--c-greenAccent);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+.THIS .brand-card:hover .brand-card__details-btn {
+	color: token(daze);
+	background-color: var(--c-land,#32402A);
+	border-color: var(--c-greenPrimary);
+}
+
+.THIS .brand-card__img-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--lwc-colorGray7);
+	width: 80px;
+	height: 80px;
+	padding: 8px;
+	border-radius: 5px;
+}
+
+.THIS .brand-card__img {
+	flex: 1;
+}
+
+.THIS .brand-card__header {
+	display: flex;
+	align-items: center;
+}
+
+.THIS .brand-card__location {
+	display: inline-block;
+	color:token(fontColor);
+}
+
+.THIS .brand-card__btn-container {
+	margin-left: auto;
+	align-self: flex-start;
+}
+
+.THIS .brand-card__details-btn {
+	display: inline-block;
+	background: #fff;
+	color:token(fontColor);
+	border: 1px solid var(--lwc-colorGray7);
+	border-radius: 4px;
+	font-size: 13px;
+	padding: 6px 16px;
+	text-decoration: none;
+	cursor:pointer;
+}
+.THIS .ipadMaxwidth{
+	max-width: 117px;
+	min-width: 117px;
+}
+.THIS .dasktopMaxWidth{
+	max-width: 275px;
+	min-width: 275px;
+}
+.THIS .businessLneIpadMaxwidth{
+	max-width: 117px;
+	min-width: 117px;
+}
+.THIS .businessLneDasktopMaxWidth{
+	max-width: 175px;
+	min-width: 175px;
+}

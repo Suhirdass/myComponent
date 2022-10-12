@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Application_Checklist__c</fullName>
+    <externalId>false</externalId>
+    <label>Application Checklist</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Ease</fullName>
+                <default>false</default>
+                <label>Ease</label>
+            </value>
+            <value>
+                <fullName>Email_Account</fullName>
+                <default>false</default>
+                <label>Email Account</label>
+            </value>
+            <value>
+                <fullName>Gusto</fullName>
+                <default>false</default>
+                <label>Gusto</label>
+            </value>
+            <value>
+                <fullName>Metric</fullName>
+                <default>false</default>
+                <label>Metric</label>
+            </value>
+            <value>
+                <fullName>Slack</fullName>
+                <default>false</default>
+                <label>Slack</label>
+            </value>
+            <value>
+                <fullName>Smartsheet</fullName>
+                <default>false</default>
+                <label>Smartsheet</label>
+            </value>
+            <value>
+                <fullName>T- sheets</fullName>
+                <default>false</default>
+                <label>T- sheets</label>
+            </value>
+            <value>
+                <fullName>WEX</fullName>
+                <default>false</default>
+                <label>WEX</label>
+            </value>
+            <value>
+                <fullName>Salesforce - Conga Deactivated?</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Salesforce - Conga Deactivated?</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

@@ -1,0 +1,462 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+                access="global">
+    
+    <ltng:require 
+                  styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" 
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                           $Resource.ratingPlugin + '/js/jquery-ui.js',
+                           $Resource.perfectScrollbar + '/jquery.zoom.js')}" 
+                  afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="change" value="{!v.updated}" action="{!c.onInit}" />
+    <aura:attribute name="orderId" type="String" default="" />
+    <aura:attribute name="items" type="List" default="[]" />
+    <aura:attribute name="allItems" type="List" default="[]" />
+    <aura:attribute name="total" type="Double" default="0" />
+    <aura:attribute name="quantity" type="Double" default="0" />
+    <aura:attribute name="cartTotal" type="Double" default="0" />
+    <aura:attribute name="exciseTax" type="Double" default="0" />
+    <aura:attribute name="subTotal" type="Double" default="0" />
+    <aura:attribute name="updated" type="String" default="" />
+    <aura:attribute name="termsAndConditions" type="List" default="[]"/>
+    <aura:attribute name="existingAddresses" type="List" default="" />
+    <aura:attribute name="address" type="Map" default="" />
+    <aura:attribute name="isEditing" type="Boolean" default="false" />
+    <aura:attribute name="isCartEmpty" type="Boolean" default="false" />
+    <aura:attribute name="selectedAddress" type="Integer" default="-1" />
+    <aura:registerEvent name="updateCartTotalEvt" type="c:updateCartTotalEvt" />
+    <aura:attribute name="excludeExciseTax" type="Boolean" default="false" />
+    <aura:attribute name="acceptTerms" type="Boolean" default="false" />
+    <aura:attribute name="retailers" type="List" default="[]" />
+    <aura:attribute name="licenses" type="List" default="[]" />
+    <aura:attribute name="statelicenses" type="Map" default="{}" />
+    <aura:attribute name="searchString" type="String" default=""/>
+    <aura:attribute name="contacts" type="List" default="[]" />
+    <aura:attribute name="contactsOptions" type="List" default="[]" />
+    <aura:attribute name="retailerDetails" type="List" default="[]" />
+    <aura:attribute name="retailersDetail" type="Map" default="{}" />
+    <aura:attribute name="selectedRetailerId" type="String" default=""/>
+    <aura:attribute name="selectedRetailerContactId" type="String" default=""/>
+    <aura:attribute name="requestShipDate" type="Date" default=""/>
+    <aura:attribute name="today" type="String" default=""/>
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+    <aura:attribute name="requestShipEarliestTime" type="time" default="" />
+    <aura:attribute name="requestShipLatestTime" type="time" default="" />
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="isExpended" type="Boolean" default="false"/>
+    <aura:attribute name="allIds" type="List"/>
+    
+    <aura:attribute name="isShowSuccess" type="Boolean" default="false"/>
+    <aura:attribute name="qtyTooLow" type="Boolean" default="false"/>
+    <aura:attribute name="buttonStatus" type="String"/>
+    <aura:attribute name="successMsgTitle" type="String"/>
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="activeTab" type="String" default="all"/>
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="selectedFilter" type="String" default="Product2.Name ASC" />
+    <aura:attribute name="EARLIEST_DELIVERY_TIME" type="String" default="08:00" />
+    <aura:attribute name="LATEST_DELIVERY_TIME" type="String" default="06:00" />
+    <aura:handler name="numberInputEvt" event="c:numberInputEvent" action="{!c.handleNumberEvent}"/>
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchProducts}" />
+    <aura:handler name="timePickerEvt" event="c:timePickerEvent" action="{!c.handleTimePickerEvent}"/>
+    <lightning:overlayLibrary aura:id="overlay" />
+    <aura:html tag="style">
+        .slds-datepicker__month td{
+        padding:4px!important;
+        }
+        .slds-table td {
+        white-space: normal !important;
+        }        
+    </aura:html>
+    
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" >
+                <aura:if isTrue="{!!empty(v.orderId)}">
+                    <lightning:layoutItem flexibility="grow" size="12" >
+                        <div class="slds-text-align_center slds-text-heading_medium">
+                            Thank you! We have received your order.
+                        </div>
+                        <div class="slds-text-align_center slds-text-heading_medium">
+                            <span class="slds-border_bottom">Your order number is: {!v.orderId}</span>
+                        </div>
+                        <br/>
+                    </lightning:layoutItem>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.isCartEmpty}">
+                    <lightning:layoutItem flexibility="grow" size="12" >
+                        <div class="slds-text-align_center">
+                            Your Shopping Cart is empty.
+                            <lightning:button class="addToCardButton" onclick="{!c.onContinueShopping}" label="Continue Shopping!" />
+                        </div>
+                    </lightning:layoutItem>
+                </aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>
+                
+        <div class="slds-grid slds-gutters slds-m-top_small">
+            <section class="slds-col slds-size_2-of-3" style="height: fit-content;min-height:400px;">
+                <div class="slds-box height-full" style="padding:0;">
+                    <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                        Customer Information
+                    </h2>
+                    <div class="slds-grid slds-m-vertical_large">
+                        <div class="slds-col slds-size_1-of-3" style="display: inline-grid;">
+                            <label class="slds-form-element__label cLabelWithHelpText">Request Ship Date</label>
+                            <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:220px;float:left;margin-right:10px;">
+                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                    <input type="text" class="slds-input slds-show_inline-block" id="datepickerId" style="vertical-align:top" />
+                                    <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}">
+                                        <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-col slds-size_1-of-3" style="display: inline-grid;">
+                            <label class="slds-form-element__label cLabelWithHelpText">Earliest Delivery Time</label>
+                            <div style="width: 200px;float:left;margin-right:10px;">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="false" fieldName="requestShipEarliestTime" label=""/>
+                                </aura:if>
+                                <!--lightning:input min="08:00:00.000Z" max="18:00:00.000Z" type="time" variant="label-hidden" aura:id="fieldId" value="{!v.requestShipEarliestTime}" name="reqETime" label="Delivery Earliest Time" /-->
+                            </div>
+                        </div>
+                        
+                        <div class="slds-col slds-size_1-of-3" style="display: inline-grid;">
+                            <label class="slds-form-element__label cLabelWithHelpText">Latest Delivery Time</label>
+                            <div style="width: 200px;float:left;margin-right:10px;">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="false" fieldName="requestShipLatestTime" label=""/>
+                                </aura:if>
+                                <!--lightning:input min="08:00:00.000Z" max="18:00:00.000Z" type="time" variant="label-hidden" aura:id="fieldId1" value="{!v.requestShipLatestTime}" name="reqETime" label="Delivery Latest Time" /-->
+                            </div>
+                        </div>
+                    </div>
+                    <aura:renderIf isTrue="{!v.isHybrid}">
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning:select aura:id="validate" label="Retailer" value="{!v.selectedRetailerId}" required="true"
+                                              onchange="{!c.onRetailerChange}">
+                                <option value="">None</option>
+                                <aura:iteration items="{!v.retailers}" var="r">
+                                    <option value="{!r.id}">{!r.name}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                        
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning:select aura:id="validate" label="Retailer Contact" value="{!v.selectedRetailerContactId}" required="true"
+                                              >
+                                <option value="">None</option>
+                                <aura:iteration items="{!v.contacts}" var="r">
+                                    <option value="{!r.id}">{!r.name}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                    </aura:renderIf>
+                    
+                    <h2 class="sl-ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium bg__tan">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1 slds-p-horizontal_medium STHeader">
+                                <div class="slds-show_inline-block" style="margin-left: -26px;margin-right:3px;">
+                                    <lightning:icon iconName="{!v.isExpended ? 'utility:right' : 'utility:down'}" variant="bare" size="small" onclick="{!c.onExpendCollapse}"></lightning:icon>
+                                </div>
+                                State Licenses
+                            </div>
+                        </div>
+                    </h2>
+                    <aura:if isTrue="{!!v.isExpended}">
+                        <div class="slds-box slds-box_small" style="padding: 0;">
+                            <div class="slds-table--header-fixed_container" style="height:181px;background:#d1cdb0;padding-top: 35px;">
+                                <div class="slds-scrollable_y" style="height:100%;">
+                                    <table class="slds-table slds-table_bordered slds-table--header-fixed order-table table--double-border slds-text-body">
+                                        <thead>
+                                            <tr class="">
+                                                <th title="Select" style="min-width:50px"><p class="truncate slds-cell-fixed" style="background:#d1cdb0;">Select</p></th>
+                                                <th title="Exclude Excise Tax" style="min-width:70px"><p style="background:#d1cdb0;margin-left: 5px;" class="truncate slds-cell-fixed"> Excise Tax</p></th>
+                                                <th title="Address"><p style="background:#d1cdb0;margin-left: 5px;" class="truncate slds-cell-fixed">Address</p></th>
+                                                <th title="License Class"><p style="background:#d1cdb0;margin-left: 5px;" class="truncate slds-cell-fixed">Class</p></th>
+                                                <th title="License Type"><p style="background:#d1cdb0;margin-left: 5px;" class="truncate slds-cell-fixed">Type</p></th>
+                                                <th title="License Number"><p style="background:#d1cdb0;margin-left: 5px;" class="truncate slds-cell-fixed">Number</p></th>
+                                                <th title="Expiration Date"><p style="background:#d1cdb0;margin-left: 5px;" class="truncate slds-cell-fixed">Expiration Date</p></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <aura:iteration items="{!v.existingAddresses}" var="address">
+                                                <aura:if isTrue="{!address.licenseStatus != 'Expired'}">
+                                                    <tr>
+                                                        <td>
+                                                            <lightning:input type="radio" name="selecteAddress" checked="{!address.isSelected}" disabled="{!!address.isActive}" value="{!address.id}" onchange="{!c.onAddressSelection}"/>
+                                                        </td>
+                                                        <td>
+                                                            <lightning:input type="checkbox" aura:id="excludeExciseTax" checked="{!address.excludeExciseTax}" value="{!address.id}"
+                                                                             class="inputCheckbox" disabled="{!address.disableExcludeExciseTax}" onchange="{!c.onChangeExcludeExciseTax}"/>
+                                                        </td>
+                                                        <td style="width:27%;">
+                                                            {!address.shipping.street}, {!address.shipping.city}, {!address.shipping.province}, {!address.shipping.country}, {!address.shipping.postalCode}  
+                                                            <!--lightning:formattedAddress disabled="{!true}" street="{!address.shipping.street}" country="{!address.shipping.country}" province="{!address.shipping.province}" city="{!address.shipping.city}" postalCode="{!address.shipping.postalCode}" /-->
+                                                        </td>
+                                                        <td>{!address.licenseClass}</td>
+                                                        <td>{!address.licenseType}</td>
+                                                        <td>{!address.licenseNumber}</td>
+                                                        <td style="padding-right: 1.5rem!important;">
+                                                            <span class="{!(address.isActive? 'slds-text-color_success': 'slds-text-color_error')}"><lightning:formattedDateTime value="{!address.expirationDate}" year="numeric" month="numeric" day="numeric"/></span>
+                                                        </td>
+                                                    </tr>
+                                                </aura:if>
+                                            </aura:iteration>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+                </div>
+            </section>
+            <section class="slds-col slds-size_1-of-3" style="height: fit-content;">
+                <div class="slds-box height-full" style="padding:0;">
+                    <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                        Order Total
+                    </h2>
+                    <div class="slds-p-horizontal_medium">
+                        <!--div class="flex items-center slds-m-vertical_medium">
+                            <p>Total Quantity:</p>
+                            <p class="m-left_auto text__bold">
+                                {!v.total}
+                            </p>
+                        </div>
+                        <div class="flex items-center slds-m-vertical_medium">
+                            <p>Subtotal:</p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{!v.subTotal}" />
+                            </p>
+                        </div-->
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p>{!v.allItems.length} Products - Subtotal</p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.subTotal }" />
+                            </p>
+                        </div>
+                        <div class="flex items-center slds-m-vertical_medium">
+                            <p>Total Excise Tax:</p>
+                            <p class="m-left_auto text__bold">
+                                <aura:renderIf isTrue="{!!v.excludeExciseTax}">
+                                    <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.exciseTax }" />
+                                    <aura:set attribute="else">
+                                        <lightning:formattedNumber style="currency" currencyCode="USD" value="0.00" />
+                                    </aura:set>
+                                </aura:renderIf>
+                            </p>
+                        </div>
+                        <div class="flex items-center slds-m-vertical_medium">
+                            <p>Total:</p>
+                            <p class="m-left_auto slds-text-heading_large text__semibold" style="font-size: x-large;">
+                                <aura:renderIf isTrue="{!!v.excludeExciseTax}">
+                                    <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.cartTotal }" />
+                                    <aura:set attribute="else">
+                                        <lightning:formattedNumber style="currency" currencyCode="USD" value="{!v.subTotal}" />
+                                    </aura:set>
+                                </aura:renderIf>
+                            </p>
+                        </div>
+                        <div class="cart-upsell cart-upsell--active">
+                            <div>
+                                <lightning:input type="checkbox" checked="{!v.acceptTerms}"
+                                                 class="inputCheckbox inline-block" />
+                                <span class="termsbutton inline-block" 
+                                      title="Terms &amp; Conditions" onclick="{!c.onTermsAndCondition}">
+                                    Terms &amp; Conditions</span>
+                            </div>
+                            <div style="text-align:justify;white-space: normal;">
+                                $75 fee will be applied to orders below $1,000 (before tax)
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                </div>
+            </section>
+        </div>
+        <div class="flex slds-m-vertical_large" style="margin-top:0;">
+            <div class="slds-size_1-of-3">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                        <input type="text" style="color:rgb(6, 94, 102);font-size:14px;" aura:id="searchRec" id="searchRec" oninput="{!c.onChangeSearchProduct}" placeholder="Search by name, sku or price" class="slds-input" value="{!v.searchString}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-size_1-of-3 m-left_auto slds-p-left_medium">
+                <lightning:buttonGroup class="slds-size_full flex">
+                    <lightning:button
+                                      onclick="{! c.setActiveTab }"
+                                      aura:id="all"
+                                      label="All Products"
+                                      variant="{! equals(v.activeTab, 'all') ? 'brand' : 'neutral' }"
+                                      class="{! equals(v.activeTab, 'all') ? 'flex-1 activeAllPrd' : 'bg__tan flex-1 inactiveAllPrd' }"
+                                      />
+                    <lightning:button
+                                      onclick="{! c.setActiveTab }"
+                                      aura:id="active"
+                                      variant="{! equals(v.activeTab, 'active') ? 'brand' : 'neutral' }"
+                                      class="{! equals(v.activeTab, 'active') ? 'slds-is-relative flex-1 active-order-btn activeReviewOrd' : 'bg__tan slds-is-relative flex-1 active-order-btn' }"
+                                      >
+                        Review Order
+                        <lightning:icon
+                                        iconName="utility:cart"
+                                        class="{! equals(v.activeTab, 'active') ? 'slds-m-left_xx-small activeIcon' : 'slds-m-left_xx-small inactiveIcon'}" size="small" />
+                        <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom active-order-tooltip"
+                             role="tooltip" id="help" >
+                            <div class="slds-popover__body">
+                                View items in your order
+                            </div>
+                        </div>
+                    </lightning:button>
+                </lightning:buttonGroup>
+            </div>
+        </div>
+        <br/>
+        <div class="table-container" style="padding: 0;">
+            <table class="order-table slds-table table--double-border slds-text-body">
+                <thead>
+                    <tr class="">
+                        <th style="background-color:#d1cdb0;"></th>
+                        <th style="background-color:#d1cdb0;">Brand</th>
+                        <th style="background-color:#d1cdb0;">SKU</th>
+                        <th style="background-color:#d1cdb0;">Product Name</th>
+                        <th style="background-color:#d1cdb0;">Available Cases</th>
+                        <th style="background-color:#d1cdb0;" width="80" class="slds-text-align_center">Unit Price</th>
+                        <th style="background-color:#d1cdb0;">Subtotal</th>
+                        <th style="background-color:#d1cdb0;" width="100" class="slds-text-align_center">Case Quantity</th>
+                        <th style="background-color:#d1cdb0;" width="70" class="slds-text-align_center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:if isTrue="{! equals(v.activeTab, 'all') ? not(empty(v.records)) : not(empty(v.items)) }">
+                        <aura:iteration items="{! equals(v.activeTab, 'all') ? v.records : v.items }" var="item" indexVar="index">
+                            <tr class="slds-hint-parent">
+                                <td style="min-width: 65px;">
+                                    <img src="{!item.imageUrl}" style="width: 40px; height: 40px; border: 1px solid #ccc" />
+                                </td>
+                                <td><p class="truncate" style="font-size: 12px; font-family:Alliance Neue;color:#42472a;" title="{!item.producerName}">{!item.producerName}</p></td>
+                                <td style="max-width: 140px;">
+                                    <p class="truncate" style="font-size: 13px;" title="{!item.name}">
+                                        <aura:if isTrue="{!item.isSample}">
+                                            {!item.name}
+                                            <aura:set attribute="else">
+                                                <div class="text__blue truncate" style="cursor:pointer;color:#518397;" data-label="Product" data-id="{!item.price.id}" onclick="{!c.onProductClick}">{!item.name}</div>
+                                            </aura:set>
+                                        </aura:if>
+                                    </p>
+                                </td>
+                                <td style="max-width: 150px;">
+                                    <p class="truncate" style="font-size: 12px;" title="{!item.shortDescription}">
+                                        <div class="text__blue truncate" style="cursor:pointer;color:#518397;" data-label="Product" data-id="{!item.price.id}" onclick="{!c.onProductClick}">{!item.shortDescription}</div>
+                                    </p>
+                                </td>
+                                <td style="min-width: 188px;">
+                                    <c:availableInventoryComponent iconSize="small" isCurrencyFld="false" isRightAlign="true" iconName="utility:preview" helpText="{!item.warehouseInventoryDetails}" required="false" >
+                                    </c:availableInventoryComponent>
+                                    &nbsp;&nbsp;<lightning:formattedNumber value="{!item.availableQty / item.MOQ}" maximumFractionDigits="2"/> (<lightning:formattedNumber value="{!item.availableQty}" /> units)
+                                </td>
+                                <td>
+                                    <aura:if isTrue="{!item.isSample}">
+                                        <lightning:formattedNumber style="currency" currencyCode="USD" value="{!item.unitPrice}" />
+                                        <aura:set attribute="else">
+                                            <lightning:formattedNumber style="currency" currencyCode="USD" value="{!item.salePrice}" />
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                <td>
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                        <lightning:formattedNumber style="currency" currencyCode="USD" value="{!item.salePrice * item.MOQ}" />
+                                        <aura:set attribute="else">
+                                            <lightning:formattedNumber style="currency" currencyCode="USD" value="{!item.lineTotalCost}" />
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                <td>
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                    	<c:numberInput isDisabled="false" value="{!item.quantity}" min="0" max="99" recordId="{!item.id}" showInRed="{!and(v.qtyTooLow,lessthanorequal(item.quantity, 0))}"/>
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue="{!item.isSample}">
+                                                <c:numberInput isDisabled="true" value="{!item.quantity}" min="0" max="99" recordId="{!item.id}"/>
+                                                <!--lightning:input style="width: 40px;" disabled="true" type="number" value="{!item.quantity}" class="slds-m-right_xx-small width60 hide-label inputPadding"/-->
+                                                <aura:set attribute="else">
+                                                    <c:numberInput isDisabled="false" value="{!item.quantity}" min="0" max="99" recordId="{!item.id}" isActive="true" showInRed="{!and(v.qtyTooLow,lessthanorequal(item.quantity, 0))}"/>
+                                                    <!--c:addToCart isBrand="{!v.isBrand}" isFromCartInput="true" product="{!item}" quantity="{!item.quantity}" showQuantityInput="true"
+                                                                 actionTitle="Update" isUpdate="true" updated="{!v.updated}" /-->
+                                                </aura:set>
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                    <aura:if  isTrue="{!and(v.qtyTooLow, equals(v.activeTab, 'all') ? lessthanorequal(item.quantity, 0) : lessthanorequal(item.quantity, 0)  )}" >
+                                        <p style="font-size: 11px;color: rgb(194, 57, 52);"> Number is too low</p>
+                                    </aura:if>
+                                </td>
+                                <td class="slds-text-align_center">
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                        <div data-productId="{!item.id}" onclick="{!c.addToProduct}">
+                                            <lightning:button label="Add" variant="brand" class="addBtn"/>
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div style="display:flex;">
+                                                <div data-id="{!item.id}" onclick="{!c.onProductRemove}" style="cursor:pointer;">
+                                                    <lightning:button label="Remove" variant="brand" class="removeBtn" value="{!index}" />
+                                                </div>&nbsp;&nbsp;
+                                                <c:addToCart isBrand="{!v.isBrand}" isFromCartUpdate="true" isFromCartInput="true" product="{!item}" quantity="{!item.quantity}" showQuantityInput="true"
+                                                             actionTitle="Update" isUpdate="true" updated="{!v.updated}" />
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                        <aura:set attribute="else">
+                            <tr>
+                                <td colspan="10" style="font-size: var(--lwc-fontSize5,1rem);">
+                                    <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large" style="font-size: var(--lwc-fontSize5,1rem);">No items in order</p>
+                                </td>
+                            </tr>
+                        </aura:set>
+                    </aura:if>
+                </tbody>
+            </table>
+            <aura:renderIf isTrue="{!v.activeTab == 'all'}">
+            	<c:paginator aura:id="paginator" perPage="{!v.perPage}"/>
+                <aura:set attribute="else">
+                    <c:paginator aura:id="paginatorActive" perPage="{!v.perPage}"/>
+                </aura:set>
+            </aura:renderIf>
+        </div>
+        
+        <div class="action-bar">
+            <lightning:layout>
+                <lightning:layoutItem flexibility="grow" size="6">
+                    <lightning:button onclick="{!c.onCancel}" class="cancelButton" label="Cancel" />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right" >
+                    <div style="margin-right: 2%;">
+                        <lightning:button aura:id="Pending" class="submitBtn" disabled="{!v.isCartEmpty}" label="Submit Order" variant="brand"
+                                          title="Submit Order" onclick="{!c.onCheckout}" />
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.isShowSuccess}">
+        <c:successModal
+                        title="{!v.buttonStatus == 'Draft' ? 'Order saved successfully!' : 'Order submitted successfully!'}"
+                        description="Our team will begin working on your order right away. You'll recieve an email confirmation shortly."
+                        buttons="[
+                                 { href: '/filigreenb2b/s', label: 'Home', variant: 'neutral',screenName:'Home' },
+                                 { href: '/filigreenb2b/s/orders', label: 'Orders', variant: 'brand', screenName:'View My Orders' },
+                                 ]"
+                        />
+    </aura:if>
+</aura:component>

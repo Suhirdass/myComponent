@@ -1,0 +1,9 @@
+.THIS label{
+    font-weight:token(fontWeight700);
+}
+.THIS .headerBackground{
+    background: token(background4);
+}
+.THIS button{
+    text-transform: token(txtTransformUpper);
+}

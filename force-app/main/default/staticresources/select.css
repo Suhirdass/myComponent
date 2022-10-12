@@ -1,0 +1,12 @@
+.slds-select_container:before {
+  display: none;
+}
+
+.slds-select_container:after {
+  border-top-color: #706E6B;
+  border-top-width: 6px;
+  border-right-width: 4px;
+  border-left-width: 4px;
+  bottom: calc(50% - 4px);
+  right: 12px;
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Email_BCC_TSM</fullName>
+    <availability>online</availability>
+    <description>&amp;EmailAdditionalTo=bcc@dca.ca.gov,{!Transfer_Shipping_Manifest__c.Distributor_Email__c}
+2/3/19 - &amp;ReportId=[tsml]00O6A0000061EQ4?pv0={!Transfer_Shipping_Manifest__c.Id}</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Email BCC TSM</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/APXTConga4__Conga_Composer
+?serverUrl={!API.Partner_Server_URL_370}
+&amp;Id={!Transfer_Shipping_Manifest__c.Id}
+&amp;QueryId=[tsml]a056A00000XZO8HQAX?pv0={!Transfer_Shipping_Manifest__c.Id}
+&amp;TemplateId=a0F6A000001kH6iUAE
+&amp;EmailRelatedToId={!Transfer_Shipping_Manifest__c.Id}
+&amp;DefaultPDF=1
+&amp;CongaEmailTemplateId=a046A00000Axt3yQAB
+&amp;EmailSubject= Your+Filigreen.com+transfer+for+{!Transfer_Shipping_Manifest__c.Supplier_DBA__c}+is+scheduled!
+&amp;EmailToId={!Transfer_Shipping_Manifest__c.Supplier_ContactId__c}
+&amp;EmailCC=bcc@dca.ca.gov,{!Transfer_Shipping_Manifest__c.Distributor_Email__c},shippingmanifest@filigreen.com{!IF(CONTAINS(Transfer_Shipping_Manifest__c.Supplier_DBA__c, &quot;Triple J&quot;), 
+&apos;,joshua@originalminijoints.com,sales@originalminijoints.com,matt@originalminijoints.com,rollingoaksdocs@gmail.com&apos; 
+, &apos;&apos;)}
+&amp;AC0=1
+&amp;AC1=Sent+BCC+TSM
+&amp;CongaEmailTemplateGroup=SendTSMtoBCC
+&amp;TemplateGroup=TransferShippingManifest</url>
+    <width>900</width>
+</WebLink>

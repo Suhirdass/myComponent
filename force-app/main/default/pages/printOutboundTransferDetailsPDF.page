@@ -1,0 +1,405 @@
+<apex:page renderAs="pdf" controller="PrintOrderDetailsController" showHeader="false"
+           sidebar="false" applyBodyTag="false" applyHtmlTag="false">
+    <html>
+        <head>
+            <style type="text/css">                
+                table
+                {
+                border-collapse: collapse;
+                border: none;
+                }
+                @page{
+                margin-top: 3cm;
+                size: A4 landscape;
+                font-size: 13px;
+                font-family:'sans-serif';
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 130px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                margin-top: 30px;
+                }
+                div.right {
+                float: right;
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                .sectionHeader {
+                width: 100%;
+                background-color: #eee;
+                font-size: 16pt;
+                padding: 5px;
+                margin: 20px 0px;
+                font-weight: bold;
+                }
+                table {
+                width: 100%;
+                text-align: left;
+                border-collapse: collapse;
+                -fs-table-paginate: paginate;
+                }
+                th,td{
+                padding:4px;
+                }
+                thead{
+                background: #e7e6e2;
+                display: table-header-group;
+                text-align: center;
+                }
+                tr.noBorder td {
+                border: 0;
+                }
+                .labelCol {
+                white-space: nowrap;
+                width: 1%;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+				tfoot{display: table-footer-group;}
+                .ticket-header {
+                  padding: 6px 72px 4px;
+                  border-bottom: 2px solid token(grayAccent);
+                }
+                .totalText{
+                    color: #080707;
+                    font-family: "Salesforce Sans";
+                    font-size: 14px;
+                    font-weight: bold;
+                    letter-spacing: 0;
+                    line-height: 21px;
+                    text-align: right;
+                }
+                .totalTextLabel{
+                    color: #080707;
+                    font-family: "Salesforce Sans";
+                    font-size: 14px;
+                    letter-spacing: 0;
+                    line-height: 21px;
+                }
+                .rectangleRli {
+                  box-sizing: border-box;
+                  height: 50.5px;
+                  width: 50.5px;
+                  border: 0.5px solid #B9BEC5;
+                  border-radius: 2.25px;
+                  background-color: #FFFFFF;
+                }
+                .rectangle {
+                  box-sizing: border-box;
+                  height: 60.5px;
+                  width: 60.5px;
+                  border: 0.5px solid #B9BEC5;
+                  border-radius: 2.25px;
+                  background-color: #FFFFFF;
+                	float: left;
+    				margin-right: 4%;
+                }
+                .orderHeader{
+                	background-color: #e7e6e2;
+    				padding: 1%;
+                	margin-bottom: 3%;
+                }
+                .orderH2{
+                	font-size: 15px;
+    				font-weight: bold;
+                }
+                .slds-text-heading_small{
+                	font-size: 15px;
+    				padding-bottom: 8px;
+                	padding-top: 7px;
+                }
+                .slds-text-heading_large{
+                	font-weight: bold;
+    				font-size: 20px;
+                }
+                .boldTd{
+                	font-weight: bold;
+                }
+                .txtRightAlign{
+                	text-align:right;
+                }
+                html,body,div,span,table,thead,tbody,tr,th,td{
+            		font-family:'sans-serif';
+                	font-size:13px;
+            	}
+                th{
+                font-size:12px;
+                }
+            </style>
+        </head>
+        <div class="header"  >
+        	<table>
+                <tr>
+                    <td>
+                        <br/>
+                        <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;"/>
+                    </td>
+                    <td>
+                        <br/>
+                        <h1 class="stationName">Outbound Transfer Details</h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            <div class="footerAlign" id="footerId">
+                <apex:outputText value=" {!NOW()}"/>
+            </div> 
+        </div>
+        <div>
+            <div class="orderHeader">
+                <h2 class="orderH2">
+                    <b>{!headerTxt} {!retailDeliveryTicket.name}</b>
+                </h2>
+            </div>
+            <table style="margin-bottom: 3%;">
+                <tr>
+                	<td >
+                    	<!--<div class="rectangle">
+                			<img src="{!retailDeliveryTicket.retailerLogoURL }" style="width: 58px; height: 58px" />
+                		</div>-->
+                        <p class="slds-text-heading_small slds-m-top_x-small">{!retailDeliveryTicket.accountName}</p>
+                        <p class="slds-text-heading_large text__semibold slds-m-top_xx-small" >
+                            Origin: {! retailDeliveryTicket.siteWarehouseName }
+                        </p>
+                    </td>
+                    <td style="text-align: right;">
+                    	<apex:outputPanel rendered="{!retailDeliveryTicket.status == 'Shipped'}">
+                            <p class="slds-text-heading_small" style="padding-bottom: 0px;padding-top: 0px;">Transferred Date</p>
+                            <p class="slds-text-heading_large text__semibold">
+                                <apex:outputText value="{0,date,MMM dd, yyyy}"> 
+                                    <apex:param value="{!retailDeliveryTicket.deliveredDate}" /> 
+                                </apex:outputText>
+                            </p>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!retailDeliveryTicket.status != 'Shipped'}">
+                            <p class="slds-text-heading_small" style="padding-bottom: 0px;padding-top: 0px;">Requested Transfer Date</p>
+                            <p class="slds-text-heading_large text__semibold">
+                                <apex:outputText value="{0,date,MMM dd, yyyy}"> 
+                                    <apex:param value="{!retailDeliveryTicket.requestShipDate}" /> 
+                                </apex:outputText>
+                            </p>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table>
+            <table style="margin-bottom: 2%;">
+                <tr>
+                	<td style="width: 70%;">
+                    	<table>
+                            <tr>
+                            	<td class="boldTd">Ship To</td>
+                                <td class="boldTd">Shipping Address</td>
+                                <td class="boldTd">Receiver Contact</td>
+                            </tr>
+                            <tr>
+                            	<td style="vertical-align: top;">
+                                	{!retailDeliveryTicket.retailerDBA }
+                                </td>
+                                <td> <div style="width:150px;"> {!retailDeliveryTicket.stateLicenseName} </div> </td>
+                                <td style="vertical-align: top;">{!retailDeliveryTicket.retailerContactName }</td>
+                            </tr>
+                            <tr><td colspan="3">&nbsp;</td></tr>
+                            <tr>
+                            	<td class="boldTd">Origin Site</td>
+                                <td class="boldTd">Origin Address</td>
+                                <td class="boldTd">Transporter</td>
+                            </tr>
+                            <tr>
+                            	<td>{! retailDeliveryTicket.siteWarehouseName }</td>
+                                <td><div style="width:150px;">{! retailDeliveryTicket.siteWarehouseAddress}</div></td>
+                                <td><div style="width:150px;">{! retailDeliveryTicket.transportLicenseName }</div></td>
+                            </tr>
+                            <tr><td colspan="3">&nbsp;</td></tr>
+                            <tr>                                
+                                <td class="boldTd">Brand Contact</td>
+                                <td class="boldTd">Requested Transfer Date</td>
+                                <td></td>
+                            </tr>
+                            <tr>                                
+                                <td>{! retailDeliveryTicket.brandContactName }</td>
+                                <td>
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}"> 
+                                        <apex:param value="{!retailDeliveryTicket.requestShipDate}" /> 
+                                    </apex:outputText>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr><td colspan="3">&nbsp;</td></tr>
+                            <tr>
+                                <td colspan="3" class="boldTd">
+                                    <apex:outputPanel rendered="{!fromOrder}">Order Notes</apex:outputPanel>
+                                    <apex:outputPanel rendered="{!!fromOrder}">Transfer Notes</apex:outputPanel>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><div style="width:300px;overflow-wrap: break-word;">{! retailDeliveryTicket.specialDeliveryInstructions}</div></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <!--td style="width:10%">&nbsp;</td-->
+                    <td style="width: 30%;vertical-align: top;">
+                    	<table>
+                            <tr>
+                            	<td>
+                                    <apex:outputText value="{0,number,###,##0} Products - Subtotal">
+                                    	<apex:param value="{!retailDeliveryTicket.totalLineItems}"/>
+                                	</apex:outputText>
+                                </td>
+                                <td class="boldTd txtRightAlign">
+                                	<apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                    	<apex:param value="{!subTotal}"/>
+                                	</apex:outputText>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>Total Excise Tax</td>
+                                <td class="boldTd txtRightAlign">
+                                	<apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!totalExciseTax}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>Grand Total</td>
+                                <td class="boldTd txtRightAlign" style="font-size: 20px;">
+                                	<apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!grandTotal}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr/></td>
+                            </tr>
+                            <tr>
+                            	<td>Order Processing</td>
+                                <td class="boldTd txtRightAlign">
+                                    <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!orderProcessingFee}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>Shipping</td>
+                                <td class="boldTd txtRightAlign">
+                                	<apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!shippingFee}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr/></td>
+                            </tr>
+                            <tr>
+                                <td>Distribution &nbsp;
+                                    <apex:outputText value="{0,number,###,###,###,##0.0}%">
+                                        <apex:param value="{!distribution}"/>
+                                    </apex:outputText> 
+                                </td>
+                                <td class="boldTd txtRightAlign">
+                                	<apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!totalServicesfee}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tbl-header">
+            <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                <thead>
+                    <tr>    
+                        <!--<th rowspan="1" colspan="1" style="width: 43px;">
+                            <span class="headerText"></span>
+                        </th>-->
+                        <th rowspan="1" colspan="1" style="width: 105px;">
+                            <span class="headerText">Brand </span>
+                        </th>
+                        <th rowspan="1" colspan="1" style="width: 140px;">
+                            <span class="headerText">SKU </span>
+                        </th>
+                        <th rowspan="1" colspan="1" style="width: 182px;">
+                            <span class="headerText">Product Name </span>
+                        </th>
+                        <th rowspan="1" colspan="1" style="width: 125px;">
+                            <span class="headerText">Case Quantity (Units) </span>
+                        </th>
+                        <th rowspan="1" colspan="1" style="width: 100px;">
+                            <span class="headerText">Unit Price </span>
+                        </th>
+                        <th rowspan="1" colspan="1" style="width: 100px;">
+                            <span class="headerText">Total Price </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!retailDeliveryTicketLineItems}" var="product">
+                        <tr>
+                            <!--<td style="width: 43px;">
+                                <img src="{!product.imageUrl}" style="width: 40px; height: 40px; border: 1px solid #ccc" />
+                            </td>-->
+                            <td style="width: 105px;">{!product.brandName}</td>
+                            <td style="width: 140px;">{! product.productName }</td>
+                            <td style="width: 182px;">{!product.shortDescription}</td>
+                            <td style="width: 125px;">
+                                <apex:outputText value="{0,number,###,##0.0000} ">
+                                    <apex:param value="{!product.orderQty}"/>
+                                </apex:outputText>
+                                <apex:outputText value="{0,number,(###,##0 units)}">
+                                    <apex:param value="{!product.MOQ}"/>
+                                </apex:outputText>
+                            </td>
+                            <td style="width: 100px;">
+                                <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                    <apex:param value="{!product.salesPrice}"/>
+                                </apex:outputText>
+                            </td>
+                            <td style="width: 100px;">
+                                <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                    <apex:param value="{!product.salesPrice * product.orderQty * product.MOQ}"/>
+                                </apex:outputText>
+                            </td>
+                    	</tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+        </div>
+    </html>    
+</apex:page>

@@ -1,0 +1,91 @@
+.THIS .container { }
+
+.THIS .menu-list {
+  font-size: 16px;
+  font-weight: 300;
+  padding-bottom: 2em;
+    background-color: token(land);
+}
+
+.THIS .menu-list__item.is-active {
+  background-color: token(plant);
+}
+
+.THIS .menu-list__item.is-active > .submenu-list {
+  display: block;
+}
+
+.THIS .menu-list__item.is-active .menu-list__expand {
+  transform: rotate(180deg);
+	color: token(fontColor);
+}
+
+.THIS .menu-list__link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  color:token(fontColor);
+  text-decoration: none;
+}
+
+.THIS .menu-list__link:hover,
+.THIS .menu-list__link:focus,
+.THIS .menu-list__link.is-active {
+  background-color: token(plant);
+  cursor: pointer;
+}
+.THIS .menu-list__item.is-active .menu-list__expand {
+    filter: brightness(1);
+}
+.THIS .menu-list__link > * + * {
+  margin-left: 0.75rem;
+    color :token(fontColor);
+    
+}
+.THIS .menu-list__link{
+    background-color: token(daze);
+}
+.THIS .menu-list__label {
+  flex-grow: 1;
+    font-weight: normal;
+}
+
+.THIS .menu-list__icon > img {
+  display: block;
+  width: 1em;
+  height: 1em;
+    filter: grayscale(1) brightness(0.1);
+}
+
+.THIS .menu-list__expand {
+  display: block;
+  background-image: url(/filigreenb2b/resource/BrigadeResources/assets/line-arrow.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 0.6em;
+  height: 0.5em;
+    filter: grayscale(1) brightness(0.1);
+}
+
+.THIS .submenu-list {
+  display: none;
+  /*padding-bottom: 0.5em;*/
+}
+
+.THIS .submenu-list__item {
+font-weight: normal;}
+.THIS .submenu-list__link {
+  display: block;
+  padding: 0.75rem 0.75em 0.75em 3em;
+  font-size: 0.8rem;
+  color: token(fontColor);
+  text-decoration: none;
+}
+
+.THIS .submenu-list__link:hover,
+.THIS .submenu-list__link:focus,
+.THIS .submenu-list__link.is-active{
+  background-color: #7b8048;
+  color: token(daze);
+}

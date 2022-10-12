@@ -1,0 +1,144 @@
+.THIS {
+    font-family:'Alliance Neue' !important;
+}
+.THIS .slds-box {
+	padding: 0;
+	background-color: white;
+}
+.THIS .ticket-header{
+    background-color: token(tableHeaderColor);
+    color:token(fontColor);
+    font-family:'Alliance Neue';
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  /*color: rgb(6, 94, 102);*/
+    color:token(fontColor);
+  opacity: 1; /* Firefox */
+}
+.THIS .text__blue{
+    color:token(wovnlink);
+}
+.THIS .sortIcon{
+    color: #065e66;
+    font-size: 13px;
+    filter: brightness(0.5) grayscale(1);
+}
+.THIS .selectBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .nonSelectBtn{
+    
+    color:token(land);
+}
+.THIS .transferIconActive{
+    height:18px;
+    width:18px;
+    background-image:url('/filigreenb2b/resource/BrigadeResources/assets/Minitruckwhite.svg');
+    filter: brightness(0.8);
+}
+.THIS .transferIcon{
+    height:18px;
+    width:18px;
+    background-image:url('/filigreenb2b/resource/BrigadeResources/assets/Minitruck.svg');
+    filter: grayscale(1) brightness(1);
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  /*color: rgb(6, 94, 102);*/
+    color:token(fontColor);
+  opacity: 1; /* Firefox */
+}
+
+.THIS .slds-box__header {
+	background: token(tan);
+	border-bottom: 2px solid token(grayAccent);
+}
+
+.THIS .cart-upsell {
+	padding: 0.75rem 1rem;
+	border-radius: 4px;
+	font-size: 12px;
+}
+
+.THIS .cart-upsell--empty {
+	background: token(tableHeaderColor);
+	text-align: center;
+}
+
+.THIS .cart-upsell--active {
+	background: #dff1ee;
+}
+
+.THIS .slds-form-element__icon {
+	padding-top: 0;
+}
+
+.THIS .cart-icon svg {
+	width: 18px;
+	fill: currentColor;
+}
+
+.THIS .active-order-tooltip {
+	position: absolute;
+	bottom: calc(100% + 16px);
+	left: 50%;
+	line-height: 1.25em;
+	width: 120px;
+	transform: translateX(-50%);
+	display: none;
+}
+
+.THIS .active-order-btn:hover .active-order-tooltip {
+	display: block;
+}
+
+.THIS .exclude-excise-checkbox .slds-form-element__label {
+	font-weight: normal;
+	font-size: 12px;
+	color: token(grayMid);
+}
+
+.THIS .cancelButton{
+    color: token(daze);
+    background-color: token(land);
+    font-family: "Alliance Neue";
+    font-size: 12px;
+}
+
+.THIS .saveDraft{
+    color: token(daze);
+    font-family: "Alliance Neue";
+    font-size: 12px;
+    text-align: center;
+    background-color:token(land);
+}
+
+.THIS .submitOrder{
+    color: #25282A;;
+    font-family: "Alliance Neue";
+    font-size: 12px;
+    text-align: center;
+    background-color: #B0B1B2;
+}
+
+.THIS .submitOrderEnable{
+    color: token(daze);
+    font-family: "Alliance Neue";
+    font-size: 12px;
+    text-align: center;
+    border-color: token(daze);
+    background-color: token(land);   
+}
+
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}
+
+.THIS .order-table td,
+.THIS .order-table th,
+.THIS .order-table p {
+	font-size: 11px;
+}
+.THIS .errorBorder{
+    border: solid 1px var(--lwc-colorTextError,rgb(194, 57, 52));
+}

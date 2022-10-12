@@ -1,0 +1,218 @@
+<apex:page standardController="Receiving__c"  
+           extensions="CreateRLfromPOline" 
+           sidebar="true" showHeader="true" 
+           standardStylesheets="true">
+
+      <script type="text/javascript">
+        function selectAllCheckboxes(obj){
+           var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){                         
+                inputCheckBox[i].checked = obj.checked;
+            }
+        }
+      </script>
+  
+       <style>
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+       </style>
+       
+  <apex:form >
+      <apex:pageBlock title="{!$Label.Receivings}" id="receivingBlock">
+          
+          <apex:actionStatus id="idRefreshingStatus" style="align:center">
+             <apex:facet name="start">
+                <div class="grey-background">
+                  &nbsp;
+                </div>
+                 <div class="loading-image">
+                  <img src="/img/loading.gif" />
+                </div>
+              </apex:facet>
+          </apex:actionStatus>
+          
+          <apex:pageBlockSection columns="2">
+              <apex:pageBlockSectionItem dataStyle="width:5%" labelStyle="width:10%" rendered="{!NOT(poReadonly)}">
+                  <apex:outputLabel value="Purchase Order:" style="color:black" for="poId"/>
+                  <apex:inputField value="{!Receiving__c.Purchase_Order__c}" required="true" id="poId">
+                      <apex:actionSupport event="onchange" action="{!poDeatils}" reRender="siteId,suppierId,errormsg1,POlineSection"/>
+                  </apex:inputField>
+                  
+              </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem dataStyle="width:5%" labelStyle="width:10%" rendered="{!(poReadonly)}">
+                  <apex:outputLabel value="Purchase Order:" style="color:black" for="poReadId"/>
+                  <apex:outputField value="{!Receiving__c.Purchase_Order__c}" id="poReadId">
+                  </apex:outputField>
+                  
+              </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem dataStyle="width:15%" labelStyle="width:10%" >
+                  <apex:outputLabel value="Site:" style="color:black" for="siteId"/>
+                  <apex:outputField value="{!poData.Site__c}" id="siteId"/>              
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+              
+          <apex:pageBlockSection >
+              <span style="float:right">&nbsp;</span>
+              <apex:pageBlockSectionItem dataStyle="width:20%" labelStyle="width:10%">
+                  <apex:outputLabel value="Supplier Name:" style="color:black" for="suppierId"/>
+                  <apex:outputField value="{!poData.Supplier_Name__r.Name}" id="suppierId"/>
+              </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>   
+          
+          <apex:pageBlockButtons location="Bottom">
+             <apex:commandButton value="Load PO Lines" 
+                                 action="{!showDatatoPage}" 
+                                 rerender="POlineSection,errormsg1" 
+                                 status="idRefreshingStatus" 
+                                 id="polinebiuttonId" 
+                                 disabled="{!disablePoLine}"/>
+             <apex:commandButton action="{!doCancel}" 
+                                 value="Cancel" 
+                                 immediate="true"/>
+          </apex:pageBlockButtons>
+          
+          <apex:pagemessages id="errormsg1">
+          </apex:pagemessages>
+       </apex:pageBlock>
+         
+         <apex:pageBlock id="POlineSection" title="PO Lines">         
+          <apex:pageBlockSection columns="1" rendered="{!showPOline}">   
+            <apex:variable var="index" value="{!1}"/>
+              <apex:pageBlockTable value="{!mapOfreceivingLineDatabyPOlid}" var="POLine" id="tableId">
+                 <apex:column >
+                   <apex:facet name="header">
+                     <apex:inputCheckbox onclick="selectAllCheckboxes(this)"/>
+                      </apex:facet>
+                       <apex:inputCheckbox value="{!mapOfreceivingLineDatabyPOlid[POLine].isChecked}" id="checkBoxId" 
+                                           disabled="{!mapOfreceivingLineDatabyPOlid[POLine].lineReadonly}">                         
+                       </apex:inputCheckbox>
+                 </apex:column>
+                 
+                 <apex:column width="2%" headerValue="#Line">
+                     <apex:outputLabel value="{!index}" style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                        <apex:variable var="index" value="{!index+1}"/>
+                 </apex:column>    
+               
+                 <apex:column headerValue="Product Name" width="15%">
+                    <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].productName}" 
+                                      style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                 </apex:column>
+                 
+                 <apex:column headerValue="Product Description" width="15%">
+                     <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].productDescription}" 
+                                       style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                 </apex:column>
+                 
+                 <apex:column headerValue="Qty Ordered" width="15%">
+                     <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].qtyOrdered}"
+                                       style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                 </apex:column>
+                   
+                   <apex:column headerValue="Received Qty" width="15%">
+                       <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].totalReceivedQty}"
+                                         style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                 </apex:column>
+                  
+                 <apex:column headerValue="Balance Qty" width="15%">
+                     <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].balanceqty}"
+                                       style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}" id="qtyID"/>
+                 </apex:column>
+                                  
+                 <apex:column headerValue="Receiving Qty" width="10%">
+                       <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputText value="{!mapOfreceivingLineDatabyPOlid[POLine].qtyReceived}" id="qty" size="5"
+                                        rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , false, true)}">                            
+                            </apex:inputText> 
+                        </div>
+                     <apex:outputText value="{!mapOfreceivingLineDatabyPOlid[POLine].qtyReceived}" id="qty1"
+                                    rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , true, false)}">                      
+                     </apex:outputText> 
+                 </apex:column>
+
+                 <apex:column headerValue="UID" width="10%">
+                     <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                         <apex:inputField value="{!mapOfreceivingLineDatabyPOlid[POLine].RLObj.UID_New__c}" rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , false, true)}"/>
+                        <!--apex:inputText value="{!mapOfreceivingLineDatabyPOlid[POLine].uId}" size="8"
+                                     rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , false, true)}" /--> 
+                     </div>
+                     <apex:outputText value="{!mapOfreceivingLineDatabyPOlid[POLine].uId}" 
+                                     rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , true, false)}" />
+                 </apex:column>
+                 
+                <apex:column headerValue="{!$ObjectType.Receiving_Line__c.Fields.Harvest_Batch_Code__c.Label}" width="10%">
+                     <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                         <apex:inputField value="{!mapOfreceivingLineDatabyPOlid[POLine].RLObj.Harvest_Batch_Code__c }" rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , false, true)}"/>
+                        <!--apex:inputText value="{!mapOfreceivingLineDatabyPOlid[POLine].harvestBatchOrLotCode}"
+                                     size="12"
+                                     rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , false, true)}" /--> 
+                    </div>
+                     <apex:outputText value="{!mapOfreceivingLineDatabyPOlid[POLine].harvestBatchOrLotCode}" 
+                                     rendered="{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly , true, false)}" />
+                </apex:column>
+                 
+                 <apex:column headerValue="{!$ObjectType.Receiving_Line__c.Fields.Lab_Test_Status__c.Label}" width="10%">
+                    <apex:selectList size="1" 
+                                     rendered="{!!mapOfreceivingLineDatabyPOlid[POLine].lineReadonly}" 
+                                     value="{!mapOfreceivingLineDatabyPOlid[POLine].labTestStatus}">
+                        <apex:selectOptions value="{!labTestStatuses}"/>
+                    </apex:selectList>
+                </apex:column>
+                 
+                 <apex:column style="text-align:right;" headerValue="Balance Qty Price" width="15%">
+                     <apex:outputText value="{0, Number, Currency}"
+                                      style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}">
+                          <apex:param value="{!mapOfreceivingLineDatabyPOlid[POLine].balanceqtyvalue}"/>
+                    </apex:outputText>
+                 </apex:column>
+                 
+                 <apex:column style="text-align:right;" headerValue="Unit Cost" width="15%">
+                     <apex:outputText value="{0, Number, Currency}" 
+                                       style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}">
+                          <apex:param value="{!mapOfreceivingLineDatabyPOlid[POLine].productPrice}"/>
+                     </apex:outputText>                 
+                 </apex:column>
+                 
+                 <apex:column headerValue="Qty Type" width="15%">
+                     <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].QuantityType}" 
+                                       style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                 </apex:column>
+                 
+                 <apex:column headerValue="Producer Name" width="20%">
+                     <apex:outputLabel value="{!mapOfreceivingLineDatabyPOlid[POLine].producerName}" 
+                                       style="color:{!IF(mapOfreceivingLineDatabyPOlid[POLine].lineReadonly, 'grey', 'black')}"/>
+                 </apex:column>      
+               
+              </apex:pageBlockTable>
+         </apex:pageBlockSection>           
+
+         <apex:pageBlockButtons location="both" id="CreateReceiving" rendered="{!showPOline}">
+                  <apex:commandButton value="Create Receipts" 
+                                      action="{!CreateReceving}" 
+                                      rerender="errormsg1" 
+                                      status="idRefreshingStatus"/>
+         </apex:pageBlockButtons>          
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

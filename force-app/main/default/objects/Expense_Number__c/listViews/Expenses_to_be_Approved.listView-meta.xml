@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expenses_to_be_Approved</fullName>
+    <columns>ExpenseStatus__c</columns>
+    <columns>NAME</columns>
+    <columns>ExpenseName__c</columns>
+    <columns>Project__c</columns>
+    <columns>TotalExpenseAmount__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ExpenseStatus__c</field>
+        <operation>equals</operation>
+        <value>Recalled,Rejected,Submitted</value>
+    </filters>
+    <label>Expenses to be Approved</label>
+</ListView>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cash_Collection</fullName>
+    <columns>Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Ship_Confirmation_Date__c</columns>
+    <columns>Receiver_DBA__c</columns>
+    <columns>Receiver_Contact__c</columns>
+    <columns>Total_Price__c</columns>
+    <columns>Delivery_City__c</columns>
+    <columns>Driver__c</columns>
+    <columns>Site__c</columns>
+    <columns>Sales_Order__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Shipping_Manifest__c.Cash_Collection</value>
+    </filters>
+    <label>Cash Collection</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

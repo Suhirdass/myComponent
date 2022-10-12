@@ -1,0 +1,274 @@
+<aura:component extends="c:utility" controller="RetailDeliveryTicketsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+    
+    <ltng:require 
+                styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" 
+                scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                         $Resource.ratingPlugin + '/js/jquery-ui.js',
+                         $Resource.perfectScrollbar + '/jquery.zoom.js')}" 
+                afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <aura:attribute name="warehouseAvailableInventoryMap" type="Map"/>
+    <aura:attribute name="warehouseTotalOrderedMap" type="Map"/>
+    <aura:handler event="c:updateRDTSubTotal" action="{!c.updateSubTotal}" />
+    <aura:handler name="retailerContactsMultiselectEvt" event="c:retailerContactsMultiselectEvt" action="{!c.onSelectChange}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="paymentTerms" type="List" default="[]" />
+    <aura:attribute name="products" type="List" default="[]" />
+    <aura:attribute name="retailers" type="List" default="[]" />
+    <aura:attribute name="licenses" type="List" default="[]" />
+    <aura:attribute name="statelicenses" type="Map" default="{}" />
+    <aura:attribute name="contacts" type="List" default="[]" />
+    <aura:attribute name="brandContacts" type="List" default="[]" />
+    <aura:attribute name="salesReps" type="List" default="[]" />
+    <aura:attribute name="contactsOptions" type="List" default="[]" />
+    <aura:attribute name="retailerDetails" type="List" default="[]" />
+    <aura:attribute name="newRetailDeliveryTicket" type="Map" default="{}" />
+    <aura:attribute name="newRDTLI" type="Map" default="{}" />
+    <aura:attribute name="retailersDetail" type="Map" default="{}" />
+    <aura:attribute name="newRetailDeliveryTicketLineItems" type="List" default="[]" />
+    <aura:attribute name="disableExcludeExciseTax" type="boolean" default="true"/>
+    <aura:attribute name="excludeExciseTaxTypes" type="List" default="[]"/>
+    <aura:attribute name="excludeExciseTaxTypesText" type="String" default=""/>
+    <aura:attribute name="Additional_Brand_Contact_Help_Text" type="String" default=""/>
+    <aura:registerEvent name="updateCartTotalEvt" type="c:updateCartTotalEvt" />
+    <aura:handler name="retailDeliveryTicketLineEvt" event="c:retailDeliveryTicketLineEvt" action="{!c.updateTicketLineItem}"/>
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.recordIdChanges}"/>
+    <aura:attribute name="selectedContactIds" type="String" default=""/>
+    <aura:attribute name="RDTRecordId" type="String" default="{!v.recordId}"/>
+    <aura:attribute name="commSetting" type="Object" default=""/>
+    <aura:attribute name="otherReletecContactIds" type="String[]" default="[]"/>
+    <aura:attribute name="subTotal" type="decimal" default="0"/>
+    <aura:attribute name="companySetting" type="Object" default="{}"/>
+    <aura:attribute name="totalExcisetax" type="decimal" default="0"/>
+    <aura:attribute name="grandTotal" type="decimal" default="0"/>
+    <aura:attribute name="distribution" type="decimal" default="0.00"/>
+    <aura:attribute name="totalServicesfee" type="decimal" default="0.00"/>
+    <aura:attribute name="orderInfo" type="string" default=""/>
+    <aura:attribute name="orderProcessingFee" type="decimal" default="0.00"/>
+    <aura:attribute name="shippingFee" type="decimal" default="0.00"/>
+    <aura:attribute name="routeMiles" type="decimal" default="0.00"/>
+    <aura:attribute name="pickPackfee" type="decimal" default="0.0"/>
+    <aura:attribute name="QAFee" type="decimal" default="0.0"/>
+    <aura:attribute name="orderBookingFee" type="decimal" default="0.00"/>
+    <aura:attribute name="stageAndManifestFee" type="decimal" default="0.00"/>
+    <aura:attribute name="isEnable" type="boolean" default="false"/>
+    <aura:attribute name="addresses" type="List" default="[]" />
+    <aura:attribute name="wAddresses" type="List" default="[]" />
+    <aura:attribute name="productOrderedQtyMap" type="Map" default="{}" />
+    <aura:attribute name="brandfee" type="Boolean" default="false"/>
+    <aura:attribute name="retailerFee" type="Boolean" default="false"/>
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="requestDateTime" type="Date" default=""/>
+    <aura:attribute name="requestDateTimeHide" type="Date" default=""/>
+    <aura:attribute name="reqTempDate" type="String" default=""/>
+    <aura:attribute name="isDateChanged" type="Boolean" default="false"/>   
+    <aura:attribute name="holidayList" type="List" default="[]" />
+    <div class="slds-is-relative">
+        <lightning:messages />
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />
+        <div class="slds-box slds-box_small slds-m-top_small" style="padding: 0;">
+            <lightning:layout multipleRows="true" horizontalAlign="left">
+                <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                    <span class="productName">Outbound Transfer
+                        <aura:if isTrue="{!v.newRetailDeliveryTicket.name != ''}">: {!v.newRetailDeliveryTicket.name}
+                        </aura:if>
+                    </span>
+                    <div class="slds-show_inline-block slds-float_right">
+                        <lightning:button class="theme workSansSemiBold uppserCase" variant="brand" onclick="{!c.onSave}" label="Submit"  disabled="{!!v.isEnable}"/>
+                        <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onCancel}" label="Cancel" />
+                    </div>
+                </lightning:layoutItem>
+                <!--aura:if isTrue="{!v.newRetailDeliveryTicket.name != ''}">
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                        <lightning:input disabled="true" label="Name" value="{!v.newRetailDeliveryTicket.name}" />
+                    </lightning:layoutItem>
+                </aura:if-->
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:select aura:id="validate" label="Receiver Name" value="{!v.newRetailDeliveryTicket.retailer}" required="true" 
+                                      onchange="{!c.onRetailerChange}">
+                        <option value="">None</option>
+                        <aura:iteration items="{!v.retailers}" var="r">
+                            <option value="{!r.id}" selected="{!r.id == v.newRetailDeliveryTicket.retailer}">{!r.name}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                    <lightning:select aura:id="validate" label="License Premise" value="{!v.newRetailDeliveryTicket.stateLicense}"
+                                      required="true">
+                        <option value="">None</option>
+                        <aura:iteration items="{!v.licenses}" var="l">
+                            <option value="{!l.id}" selected="{!l.id == v.newRetailDeliveryTicket.stateLicense}">{!l.address}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                    <lightning:select aura:id="validate" label="Payment Terms" value="{!v.newRetailDeliveryTicket.paymentTerms}"
+                                      required="true">
+                        <option value="">None</option>
+                        <aura:iteration items="{!v.paymentTerms}" var="r">
+                            <option value="{!r.value}" selected="{!r.value == v.newRetailDeliveryTicket.paymentTerms}">{!r.label}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                    <br/>
+                    <div style="margin-top: -17px;">
+                        <label class="slds-form-element__label cLabelWithHelpText">Requested Ship Date</label><br/>
+                        <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:100%">
+                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                <input type="text" class="slds-input slds-show_inline-block" id="datepickerId" style="vertical-align:top" value="{!v.requestDateTime}"/>
+                                <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}">
+                                    <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--lightning:input type="date" aura:id="validate" required="true" label="Requested Ship Date" value="{!v.newRetailDeliveryTicket.requestShipDate}"/-->
+                    
+                    <lightning:input type="text" aura:id="validate" label="Purchase Order #" value="{!v.newRetailDeliveryTicket.retailerPO}" onblur="{!c.onPOBlur}" maxlength="100"/>
+                    <c:labelWithHelpText label="Additional Brand Contact" helpText="{!v.Additional_Brand_Contact_Help_Text}">
+                        <lightning:select aura:id="validate" class="resetLabel" variant="label-hidden" label="Additional Contact" value="{!v.newRetailDeliveryTicket.Additional_Brand_Contact}">
+                            <option value="">None</option>
+                            <aura:iteration items="{!v.brandContacts}" var="l">
+                                <option value="{!l.id}" selected="{!l.id == v.newRetailDeliveryTicket.Additional_Brand_Contact}">{!l.name}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </c:labelWithHelpText>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    
+                    <lightning:select label="Sales Rep" value="{!v.newRetailDeliveryTicket.salesPersonId}">
+                        <option value="">None</option>
+                        <aura:iteration items="{!v.salesReps}" var="l">
+                            <option value="{!l.id}" selected="{!l.id == v.newRetailDeliveryTicket.salesPersonId}">{!l.name}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                    <c:retailerContactsMultiselect fromTransfer="true" allContactList="{!v.contactsOptions}" selectedContactids="{!v.selectedContactIds}"/>
+                    <lightning:textArea label="Special Delivery Instructions" value="{!v.newRetailDeliveryTicket.specialDeliveryInstructions}" />
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <!--aura:if isTrue="{!v.newRetailDeliveryTicket.name == ''}"><br/><br/></aura:if-->
+                    
+                </lightning:layoutItem>
+                
+                <!--lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:select aura:id="validate" label="State License" value="{!v.newRetailDeliveryTicket.stateLicense}"
+                                      required="true" onchange="{!c.onLicenseChange}">
+                        <option value="">None</option>
+                        <aura:iteration items="{!v.licenses}" var="l">
+                            <option value="{!l.id}" selected="{!l.id == v.newRetailDeliveryTicket.stateLicense}">{!l.address}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input type="date" label="Requested Ship Date" value="{!v.newRetailDeliveryTicket.requestShipDate}"/>
+                </lightning:layoutItem-->
+                
+                <!--lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    
+                    
+                </lightning:layoutItem-->
+                <!--lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input type="text" label="Retailer PO" value="{!v.newRetailDeliveryTicket.retailerPO}" required="true"/>
+                </lightning:layoutItem-->
+                
+                <!--lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small" class="excludeExcideTax">
+                    <aura:if isTrue="{!v.newRetailDeliveryTicket.name == ''}"><br/><br/></aura:if>
+                    <lightning:input type="checkbox" aura:id="validate" label="Exclude Excise Tax" checked="{!v.newRetailDeliveryTicket.excludeExciseTax}"
+                                     class="inputCheckbox inline-block" disabled="{!v.disableExcludeExciseTax}" />
+                    <lightning:helptext class="slds-show_inline-block" content="{!'Option available for State License '+v.excludeExciseTaxTypesText}" />
+                </lightning:layoutItem-->
+            </lightning:layout>
+        </div>
+        <div class="slds-box slds-box_small slds-m-top_small" style="padding: 0;">
+            <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                <span class="productName">Outbound Transfer Lines</span>
+            </lightning:layoutItem>
+            <lightning:layout multipleRows="true" horizontalAlign="left">
+                <aura:iteration items="{!v.newRetailDeliveryTicketLineItems}" var="rdtli" indexVar="index">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                        <span class="productName">Outbound Transfer Line</span>
+                        
+                        <lightning:button class="theme workSansSemiBold uppserCase slds-float_right" onclick="{!c.onRemoveRow}"
+                                          value="{!index}" label="Remove" />
+                        <!--lightning:input type="checkbox" class="slds-float_right checkBox" label="Sample ?" checked="{!rdtli.isSample}"  /-->
+                    </lightning:layoutItem>
+                    <c:retailDeliveryTicketLineItem aura:id="retailDeliveryTicketLineItem" indexVal="{!index}" warehouseTotalOrderedMap="{!v.warehouseTotalOrderedMap}" warehouseAvailableInventoryMap="{!v.warehouseAvailableInventoryMap}" retailDeliveryTicketLineItem="{!rdtli}"
+                                                    products="{!v.products}" commSetting="{!v.commSetting}" recordId="{!v.recordId}"/>
+                </aura:iteration>
+                
+                <lightning:layoutItem flexibility="grow" size="12">
+                    <hr style="margin: 0;width:100%" />
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="12" padding="around-small">
+                    <div class="row" style="display: flex;float: right;">
+                        <div class="col-lg-8" style="padding-right: 60px;">
+                            <div>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <th class="pull-right customStyle" style="margin-right: 10px;">Order Processing:
+                                                <div class="slds-show_inline-block">
+                                                    <c:availableInventoryComponent helpText="{!v.orderInfo}" required="false" >
+                                                    </c:availableInventoryComponent>
+                                                </div>
+                                            </th>
+                                            <th><ui:outputCurrency value="{!v.orderProcessingFee}" /></th>
+                                        </tr>
+                                        <tr>
+                                            <th class="pull-right" style="margin-right: 36px;">Shipping:</th>
+                                            <th><ui:outputCurrency value="{!v.shippingFee}" /></th>
+                                        </tr>
+                                        <tr>
+                                            <th class="pull-right" style="margin-right: 36px;">Total Services:</th>
+                                            <th><ui:outputCurrency value="{!v.totalServicesfee}" /></th>
+                                        </tr>
+                                        <tr>
+                                            <th class="pull-right" style="margin-right: 36px;">Distribution %:</th>
+                                            <th><ui:outputNumber value="{!v.distribution}" format="0.00"/> </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="pull-right" style="margin-right: 5%;">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <th class="pull-right" style="width: max-content;margin-right: 10px;">Total Price:</th>
+                                            <th style="min-width:100px">${!v.subTotal}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="pull-right" style="width: max-content;margin-right: 10px;">Total Excise tax:</th>
+                                            <th style="min-width:100px">
+                                                <ui:outputCurrency value="{!v.totalExcisetax}"/>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="pull-right" style="width: max-content;margin-right: 10px;">Grand Total:</th>
+                                            <th style="min-width:100px">
+                                                <ui:outputCurrency value="{!v.grandTotal}"/>
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="12" padding="around-small">
+                    <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onAddRow}" label="Add Row" />
+                    <!--  <div class="slds-show_inline-block slds-p-left_small"><b>$75 fee will be applied to orders below $1,000.00</b></div> -->
+                    <div class="slds-show_inline-block slds-float_right">
+                        <!--b><lightning:input type="checkbox" value="{!v.brandfee}" onchange="{!c.onbrandFee}" checked="{!v.brandfee}" label="Brand Fee" name="brandfee"/>
+                            <lightning:input type="checkbox" value="{!v.retailerFee}" onchange="{!c.onretailerFee}" checked="{!v.retailerFee}" label="Retailer Fee" name="retailerFee"/></b-->
+                        <!--<b>$75 fee will be applied to orders below $1,000 (before tax)&nbsp;&nbsp;&nbsp;&nbsp;</b> -->
+                        <!--b>Sub Total Order : ${!v.subTotal}&nbsp;&nbsp;</b-->
+                        <lightning:button class="theme workSansSemiBold uppserCase setWidthClass" variant="brand" onclick="{!c.calculateServiceFee}" label="Calculate Service Fee" disabled="{!empty(v.newRetailDeliveryTicket.stateLicense)}" />
+                        <lightning:button class="theme workSansSemiBold uppserCase" variant="brand" onclick="{!c.onSave}" label="Submit" disabled="{!!v.isEnable}"/>
+                        <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onCancel}" label="Cancel" />
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

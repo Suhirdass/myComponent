@@ -1,0 +1,101 @@
+<aura:component extends="c:utility" controller="SelfRegisterCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="flag" type="Boolean" default="false" />
+    <aura:attribute name="isIPad" type="Boolean" default="false" />
+    <aura:attribute name="firstName" type="string" default=""/>
+    <aura:attribute name="lastName" type="string" default=""/>
+    <aura:attribute name="dbaName" type="string" default=""/>
+    <aura:attribute name="phone" type="string" default=""/>
+    <aura:attribute name="email" type="string" default=""/>
+    <aura:attribute name="title" type="string" default=""/>
+    <aura:attribute name="stateLicense" type="string" default=""/>
+    <aura:attribute name="sendMeCopy" type="Boolean" default="false"/>
+    <aura:attribute name="fileName" type="String" default="" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:html tag="style">
+    	.selfRegister .slds-file-selector__body, .selfRegister .slds-file-selector__button{
+            height:30px;
+        }}
+    </aura:html>
+    <ui:scrollerWrapper class="scrollerSize selfRegister">
+        <div class="innerDivWrapper">
+            <lightning:layout horizontalAlign="center" multipleRows="true">
+            	<lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="6" mediumDeviceSize="10">
+                    <lightning:layout horizontalAlign="center" multipleRows="true">
+                        <lightning:layoutItem flexibility="grow" size="12">
+                            <div id="imageArea" style="text-align: -webkit-center;">
+                                <div role="img" class="{!'filigreenLogo'+if(v.isIPad,' FGLogoURLInternal',' FGLogoURLExternal')}"></div> 
+                            </div>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem>
+                        	<div class="slds-box  slds-scrollable" style="padding:1.5rem!important">
+                            	<aura:renderIf isTrue="{!!v.flag}">
+                                    <lightning:layout horizontalAlign="center" multipleRows="true">
+                                        <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                                            <div>
+                                                <b >Self Registration Form for B2B</b>
+                                            </div>
+                                            <div>
+                                                We're so excited you're ready to join us on the WOVN Marketplace! To start, please tell us a little about yourself.
+                                            </div>
+                                        </lightning:layoutItem>
+                                        <lightning:layoutItem flexibility="grow" size="12">
+                                        	<lightning:layout horizontalAlign="center" multipleRows="true">
+                                            	<lightning:layoutItem flexibility="grow" size="6"  padding="around-small">
+                                                	<lightning:input aura:id="validate" type="text" label="First Name" value="{!v.firstName}" required="true" minlength="2" messageWhenValueMissing="This field is required" messageWhenTooShort ="Invalid input! Atleast 2 characters required"/>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="6"  padding="around-small">
+                                                    <lightning:input aura:id="validate" type="text" label="Last Name" value="{!v.lastName}" required="true" minlength="2" messageWhenValueMissing="This field is required" messageWhenTooShort ="Invalid input! Atleast 2 characters required"/>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="6"  padding="around-small">
+                                                    <lightning:input aura:id="validate" type="text" label="Company Name &amp; DBA" value="{!v.dbaName}" required="true"  minlength="2" messageWhenValueMissing="This field is required" messageWhenTooShort ="Invalid input! Atleast 2 characters required"/>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="6"  padding="around-small">
+                                                    <lightning:input  aura:id="validate" type="tel" label="Phone Number" value="{!v.phone}" required="true" messageWhenValueMissing="This field is required" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" messageWhenTypeMismatch ="Invalid phone number" onchange ="{!c.onPhoneChange}"/>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="12"  padding="around-small">
+                                                    <c:customLabel required="true" label="Email" sublabel="This email will become your login and is where you'll receive login credentials.">
+                                                    	<lightning:input  aura:id="validate" type="email" variant="label-hidden" value="{!v.email}" required="true"  messageWhenValueMissing="This field is required" messageWhenTypeMismatch ="Invalid email address"/>
+                                                    </c:customLabel>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="12"  padding="around-small">
+                                                    <c:customLabel required="true" label="Title" sublabel="What's your role at the company?">
+                                                    	<lightning:input  aura:id="validate" type="text" variant="label-hidden" value="{!v.title}"  required="true"  messageWhenValueMissing="This field is required"/>
+                                                    </c:customLabel>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="12"  padding="around-small">
+                                                    <c:customLabel required="true" label="State License Number" sublabel="Please enter your cannabis state license number issued by the BCC, CDFA, or CDPH. Don't worry about supplying all the licenses you have. We only need one to get you set-up.">
+                                                    	<lightning:input aura:id="validate" type="text" variant="label-hidden" value="{!v.stateLicense}"  required="true"/>
+                                                    </c:customLabel>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="12"  padding="around-small">
+                                                    <c:customLabel required="false" label="State License Upload" sublabel="Please provide us a copy of your state license.">
+                                                    	<lightning:input type="file" aura:id="fileId" name="file" variant="label-hidden" onchange="{!c.handleFilesChange}" multiple="true" required="false"/>
+                                                        <div class="slds-text-body_small slds-text-color_error" >{!v.fileName} </div>
+                                                    </c:customLabel>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="12"  padding="around-small">
+                                                    <lightning:input class="sendMeCopy" type="checkbox" label="Send me a copy of my responses" value="{!v.sendMeCopy}" onchange="{!c.onSendCopyChange}"/>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem flexibility="grow" size="12"  padding="around-small" class="slds-text-align_center">
+                                                    <lightning:button class="signUpButton" label="Sign Up" onclick="{!c.onSignUp}"/><br/>
+                                                    <aura:renderIf isTrue="{!!v.isIPad}">
+                                                        <div style="text-align:center;margin-top: 6px;">
+                                                            <span >
+                                                                <a class="inverseTextColor" href="filigreenb2b/s/login" data-aura-rendered-by="242:0">Already have account? Login</a>
+                                                            </span>
+                                                        </div>
+                                                    </aura:renderIf>
+                                                </lightning:layoutItem>
+                                            </lightning:layout>
+                                        </lightning:layoutItem>
+                                    </lightning:layout> 
+                                </aura:renderIf>
+                            
+                            </div>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </ui:scrollerWrapper>
+</aura:component>

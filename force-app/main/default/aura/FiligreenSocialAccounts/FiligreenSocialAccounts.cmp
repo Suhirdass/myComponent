@@ -1,0 +1,22 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="FiligreenSocailAccountsController">
+    <aura:handler action="{!c.doInit}" value="{!this}" name="init"/>
+    <aura:attribute name="facebook" type="String" default=""/>
+    <aura:attribute name="twitter" type="String" default=""/>
+    <aura:attribute name="linkedin" type="String" default=""/>
+    <aura:attribute name="instagram" type="String" default=""/>
+    <div class="slds-is-relative">
+        <lightning:layout horizontalAlign="center" multipleRows="true">
+            <lightning:layoutItem flexibility="grow" class="slds-text-align_right" size="12">
+                <center>
+                    <div class="slds-show_inline-block" style="width:100%">
+                        <a href="{!v.twitter}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/twitter.png'}"/> </a>
+                        <a href="{!v.facebook}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/facebook.png'}"/> </a>
+                        <a href="{!v.linkedin}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/linkedin.png'}"/> </a>
+                        <a href="{!v.instagram}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/instagram.png'}"/> </a>
+                        
+                    </div>
+                </center>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

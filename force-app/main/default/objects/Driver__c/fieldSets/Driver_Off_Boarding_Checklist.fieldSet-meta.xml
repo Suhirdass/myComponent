@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Driver_Off_Boarding_Checklist</fullName>
+    <description>this is used  for driver record field set</description>
+    <displayedFields>
+        <field>File_termination_of_employment_notice_in__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>Report_departure_to_ABD_for_insurance__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>De_select_Driver_Active_in_SFDC__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <label>Driver Off-Boarding Checklist</label>
+</FieldSet>

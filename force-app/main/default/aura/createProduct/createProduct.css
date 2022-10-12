@@ -1,0 +1,144 @@
+.THIS{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+    --lwc-spacingXxxSmall: 0.4em;
+}
+
+.THIS button{
+    font-size:13px;
+    font-family:token(salesforceSans);
+}
+.THIS .cancelButton{
+    font-family:token(salesforceSans);
+    background-color :token(land);
+    color:token(daze);
+    border-color:token(daze);
+}
+.THIS .submitBtn{
+    font-family:token(salesforceSans);
+    background-color :token(land);
+    color:token(daze);
+    border-color:token(daze);
+}
+.THIS .label-text {
+  height: 35px;
+  width: 84px;
+  /*color: #3E3E3C;
+  font-family: "Salesforce Sans";*/
+  font-family:token(salesforceSans);
+  color:token(fontColor);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 18px;
+}
+.THIS .slds-box {
+  padding: 0 var(--lwc-spacingMedium) var(--lwc-spacingMedium); 
+  background-color: white;
+}
+.THIS .slds-box__header {
+  /*background: #E7E6E2;*/
+  font-family:token(salesforceSans);
+  color:token(fontColor);
+  background:token(tableHeaderColor);
+  border-bottom: 1px solid #d4d4d4;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 calc(var(--lwc-spacingMedium) + var(--lwc-spacingSmall));
+  margin-left: calc(-1 * var(--lwc-spacingMedium));
+  margin-right: calc(-1 * var(--lwc-spacingMedium));
+  width: calc(100% + 2 * var(--lwc-spacingMedium))
+}
+
+.THIS .slds-tabs_default__nav {
+  margin-left: calc(-1 * var(--lwc-spacingMedium));
+  margin-right: calc(-1 * var(--lwc-spacingMedium));
+  width: calc(100% + 2 * var(--lwc-spacingMedium))
+}
+
+.THIS .slds-box__heading-1 {
+  font-family:token(salesforceSans) !important;
+  color:token(fontColor);
+  font-size: 16px;
+}
+
+.THIS .slds-box__heading-2 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.THIS .untitled {
+  height: 32px;
+  width: 100%;
+  /*color: #195458;*/
+  /*font-family: "Salesforce Sans";*/
+  font-family:token(salesforceSans) !important;
+  color:token(fontColor);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 32px;
+}
+
+.THIS .slds-form-element__label {
+  padding-top: 0;
+}
+
+.THIS .hidden-label .slds-form-element__label {
+  position: absolute;
+  pointer-events: none;
+}
+.THIS .editDisabled{
+    color: #25282A;
+    font-family: token(salesforceSans);
+    font-size: 12px;
+    text-align: center;
+    background-color: #B0B1B2;
+}
+.THIS .slds-required {
+  margin: 0 4px 0 0;
+}
+
+.THIS .uiInputCheckbox {
+  display: inline-block;
+  margin-right: 9px;
+}
+.THIS .nomalLabel{
+  font-family:token(salesforceSans);
+  color:token(fontColor);
+  font-size: 12px;
+  font-weight: bold;
+}
+                                                    
+.THIS .nomalLabel .slds-form-element__label{
+  font-family:token(salesforceSans);
+  color:token(fontColor);
+  font-size: 12px;
+  font-weight: bold;
+    }
+    .THIS .description textarea{
+    height:32px;
+    padding-top:5px;
+}
+.THIS .resetLabel.slds-form-element label{
+    display:none;
+}
+.THIS .print-export{
+    height: 10px;
+    width: 78px;
+    color: token(land);
+	font-family: token(salesforceSans) !important;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+	padding-top: 0px;
+	padding-right: 6px;
+	cursor:pointer;
+	background: token(tableHeaderColor);
+	position: absolute;
+	right: 35px;
+                                                        
+}

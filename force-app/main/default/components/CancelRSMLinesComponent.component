@@ -1,0 +1,57 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - CancelRSMLinesComponent
+-->
+<apex:component controller="CancelRSMController">
+    
+    <script type="text/javascript">
+        function selectAllCheckboxes(obj){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(!inputCheckBox[i].disabled){
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+    
+    <apex:attribute name="rsmLinesToDisplay" 
+                    description="List of RSM line wrapper class" 
+                    type="RSMLineWrapper[]" 
+                    required="true" 
+                    assignTo="{!rsmLines}" />
+                    
+    <apex:attribute name="isErrorFlag" 
+                    description="Error flag to display RSM lines or not" 
+                    type="Boolean" 
+                    required="true" 
+                    assignTo="{!isError}" />
+    
+    <apex:pageBlockSection columns="1" title="Select RSM Lines to cancel" rendered="{!!isError}">
+        <apex:pageBlockTable id="rsmLinesId" value="{!rsmLines}" var="rsmLine">
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')"/> 
+                </apex:facet>
+                <apex:outputPanel >
+                    <apex:inputCheckbox value="{!rsmLine.selected}" disabled="{!rsmLine.disabled}"/>
+                </apex:outputPanel>
+            </apex:column>
+
+            <apex:column headerValue="RSM Line">
+                <apex:outputLink value="/{!rsmLine.rsmLineSO.Id}" target="__blank">{!rsmLine.rsmLineSO.Name}</apex:outputLink>
+            </apex:column>  
+            <apex:column headerValue="Product Name" value="{!rsmLine.rsmLineSO.Product_Name__c}"/>
+            <apex:column headerValue="Product Description" value="{!rsmLine.rsmLineSO.Producer_Name__c}"/>
+            <apex:column headerValue="Producer Name" value="{!rsmLine.rsmLineSO.Product_Description__c}"/>
+            <apex:column headerValue="Retail Wholesale Price" value="{!rsmLine.rsmLineSO.Retail_Wholesale_Price__c}"/>
+            <apex:column headerValue="Shipment Qty" value="{!rsmLine.rsmLineSO.Shipment_Qty__c}"/>
+            <apex:column headerValue="Qty Received" value="{!rsmLine.rsmLineSO.Qty_Received__c}"/>
+            <apex:column headerValue="Line Total Price" value="{!rsmLine.rsmLineSO.Line_Total_Price__c}"/>
+            <apex:column headerValue="Picklist Line" value="{!rsmLine.rsmLineSO.Picklist_Line__c}"/>
+            <apex:column headerValue="SO Line" value="{!rsmLine.rsmLineSO.Picklist_Line__r.Sales_Order_Line__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    
+</apex:component>

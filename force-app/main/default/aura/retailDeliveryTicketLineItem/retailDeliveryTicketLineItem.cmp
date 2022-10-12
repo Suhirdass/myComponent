@@ -1,0 +1,87 @@
+<aura:component extends="c:utility">
+    <ltng:require scripts="{!$Resource.SweetAlert}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    
+    <aura:attribute name="retailDeliveryTicketLineItem" type="Object" default="{}" />
+    <aura:attribute name="retailDeliveryTicketLineItemOld" type="Object" default="{}" />
+    <aura:registerEvent name="retailDeliveryTicketLineEvt" type="c:retailDeliveryTicketLineEvt" />
+    <aura:html tag="style">
+        .slds-small-size_2-of-12, .slds-small-size--2-of-12 {
+        width: 19.666667%;
+        }
+    </aura:html>
+    <aura:attribute name="warehouseAvailableInventoryMap" type="Map"/>
+    <aura:attribute name="warehouseTotalOrderedMap" type="Map"/>
+    <aura:attribute name="warehouseDetails" type="List" default="[]" />
+    <aura:attribute name="products" type="List" default="[]" />
+    <aura:attribute name="perUnitWeights" type="List" default="[]" />
+    <aura:attribute name="desiredRetailReadyForms" type="List" default="[]" />
+    <aura:attribute name="preRollPackagings" type="List" default="[]" />
+    <aura:attribute name="tamperTypes" type="List" default="[]" />
+    <aura:attribute name="packageTypes" type="List" default="[]" />
+    <aura:attribute name="isPreRoll" type="Boolean" default="false" />
+    <aura:attribute name="warehouseInventoryDetails" type="String" default="" />
+    <aura:attribute name="indexVal" type="Integer" />
+    <aura:attribute name="recordId" type="String" default="" />
+    <aura:attribute name="commSetting" type="Object" default=""/>
+    <aura:attribute name="cliRegularProductWithSamplePrice" type="Object"/>
+    <aura:registerEvent name="updateRDTSubTotal" type="c:updateRDTSubTotal" />
+    <aura:method name="validate" />
+    <lightning:layout multipleRows="true" horizontalAlign="left">
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+            <lightning:select aura:id="validate" label="Product" value="{!v.retailDeliveryTicketLineItem.Product}" required="true" onchange="{!c.onProductChange}">
+                <option value="">None</option>
+                <aura:iteration items="{!v.products}" var="p">
+                    <option value="{!p.id}" selected="{!v.retailDeliveryTicketLineItem.Product == p.id}">{!p.name}</option>
+                </aura:iteration>
+            </lightning:select>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+            <lightning:textArea label="Product Description" value="{!v.retailDeliveryTicketLineItem.description}" disabled="true"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+            <c:availableInventoryComponent label="{!'Available Qty ('+v.retailDeliveryTicketLineItem.cases+' Cases)'}" helpText="{!v.warehouseInventoryDetails}" required="false">
+                <lightning:input  type="number" variant="label-hidden" value="{!(v.retailDeliveryTicketLineItem.availableQty>0?v.retailDeliveryTicketLineItem.availableQty:0)}" disabled="true"/>
+            </c:availableInventoryComponent>
+            
+        </lightning:layoutItem>
+        <!--aura:iteration items="{!v.warehouseDetails}" var="wh">
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+            <lightning:input  type="number" label="{!'Available Qty in '+wh.name+' ('+v.retailDeliveryTicketLineItem.cases+' Cases)'}" value="{!(wh.availableInventory>0?wh.availableInventory:0)}" disabled="true"/>
+        </lightning:layoutItem>
+    </aura:iteration-->
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+            <lightning:input type="number" label="Qty in Case (MOQ)" value="{!v.retailDeliveryTicketLineItem.MOQ}" disabled="true"/>
+        </lightning:layoutItem>
+        
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+            <c:availableInventoryComponent label="Order Qty (Cases)" helpText="{!'Max Order Qty (Cases): '+ if(v.retailDeliveryTicketLineItem.maxOrderAllowed == 0,'',v.retailDeliveryTicketLineItem.maxOrderAllowed)}" required="false">
+                <lightning:input aura:id="validate" variant="label-hidden" type="number" label="Order Qty (Cases)" value="{!v.retailDeliveryTicketLineItem.orderQty}" min="1" max="{! if(v.retailDeliveryTicketLineItem.maxOrderAllowed == 0,1000,v.retailDeliveryTicketLineItem.maxOrderAllowed)}" messageWhenRangeOverflow="{!'Max Order Qty (Case):' + v.retailDeliveryTicketLineItem.maxOrderAllowed}" required="true"  onblur="{!c.onSubtotalChange}"/>
+            </c:availableInventoryComponent>
+        </lightning:layoutItem>
+    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+        <lightning:input  type="number" label="Total Order Qty" value="{!v.retailDeliveryTicketLineItem.MOQ*v.retailDeliveryTicketLineItem.orderQty}" disabled="true"/>
+    </lightning:layoutItem>
+    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+        <lightning:input type="number" formatter="currency" step="0.01" label="List Price" value="{!v.retailDeliveryTicketLineItem.listPrice}" disabled="true"/>
+    </lightning:layoutItem>
+    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+        <lightning:input aura:id="validate" disabled="{!v.retailDeliveryTicketLineItem.isSample}" type="number" formatter="currency"  step="0.01" label="Sale Price" value="{!v.retailDeliveryTicketLineItem.salesPrice}" required="true" min="{!if(and(and(and(v.retailDeliveryTicketLineItem.productRecordTypeName == 'Product', or(v.retailDeliveryTicketLineItem.parentProduct == '',v.retailDeliveryTicketLineItem.parentProduct == undefined)),v.retailDeliveryTicketLineItem.salesPrice == 0.01),!v.retailDeliveryTicketLineItem.isSample),0.02,0)}" messageWhenRangeUnderflow="{!if(and(and(and(v.retailDeliveryTicketLineItem.productRecordTypeName == 'Product', or(v.retailDeliveryTicketLineItem.parentProduct == '',v.retailDeliveryTicketLineItem.parentProduct == undefined)),v.retailDeliveryTicketLineItem.salesPrice == 0.01),!v.retailDeliveryTicketLineItem.isSample),v.cliRegularProductWithSamplePrice,'')}" onblur="{!c.onSubtotalChange}"/><!--onblur="{!c.inputBlur}"-->
+    </lightning:layoutItem>
+    
+    
+    
+    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+        <lightning:input type="number" label="Subtotal Price" value="{!v.retailDeliveryTicketLineItem.salesPrice*v.retailDeliveryTicketLineItem.orderQty*v.retailDeliveryTicketLineItem.MOQ}" formatter="currency" step="0.01" disabled="true"/>
+    </lightning:layoutItem>
+    
+    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="2" padding="around-small">
+              <lightning:textArea label="Special Instructions" value="{!v.retailDeliveryTicketLineItem.specialInstructions}"/>
+          </lightning:layoutItem>
+    </lightning:layout>
+    <!--div style="display:none;">
+        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-large">
+            <ui:inputCheckbox aura:id="isSmaple" label="Sample ?" value="{!v.retailDeliveryTicketLineItem.isSample}"  />
+        </lightning:layoutItem >
+    </div-->
+</aura:component>

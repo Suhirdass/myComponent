@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannabis_Product_Cannabinoid_Content__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Products with serving, cannabinoid content - in mg per serving and mg per package. Other Products without serving - cannabinoid content, in mg package. If less than 2.0 per serving, may be labeled as “2.0 mg per serving” or &quot;2.0 mg per package&quot;</inlineHelpText>
+    <label>Cannabis Product Cannabinoid Content</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>QA_Result</valueSetName>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disallow_Duplicate_UID</fullName>
+    <active>false</active>
+    <errorConditionFormula>Name = Name</errorConditionFormula>
+    <errorDisplayField>Name</errorDisplayField>
+    <errorMessage>No Duplicate UIDs Allowed!</errorMessage>
+</ValidationRule>

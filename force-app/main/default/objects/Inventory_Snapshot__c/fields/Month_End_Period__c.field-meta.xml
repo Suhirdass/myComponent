@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Month_End_Period__c</fullName>
+    <defaultValue>IF( 
+MONTH(TODAY())=12,
+DATE(YEAR(TODAY())+1,1,1)-1, 
+DATE(YEAR(TODAY()),MONTH(TODAY()) + 1,1) -1)</defaultValue>
+    <externalId>false</externalId>
+    <label>Month End Period</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

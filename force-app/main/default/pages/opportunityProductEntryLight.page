@@ -1,0 +1,26 @@
+<apex:page standardController="Opportunity" recordSetVar="risks" showHeader="true" sidebar="false">
+    <apex:includeLightning />
+    
+    <div id="FlipcardContainer" style="min-height: 500px;"/>
+    <script>
+        var oppId = "{!$CurrentPage.parameters.id}";
+        
+        $Lightning.use("c:OpportunityProductEntryApp", function() {
+            $Lightning.createComponent("c:OpportunityProductEntry", {"oppId" : oppId},
+            "FlipcardContainer", function(cmp) {
+                console.log('Component created, do something cool here');
+            });
+        });
+    </script>
+    <style type="text/css">
+        body.sfdcBody {
+            background:white !important; 
+        }
+        .bodyDiv {
+            border-bottom-right-radius: 0px; 
+            border-bottom-left-radius: 0px; 
+            -webkit-box-shadow: none !important; 
+            box-shadow:  none !important; 
+        }
+    </style>  
+</apex:page>

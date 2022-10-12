@@ -1,0 +1,188 @@
+.THIS .slds-page-header__title {
+    margin-left:10px;
+    
+}
+.THIS .heightfix{
+    padding:8px !important;
+}
+
+.THIS .smName{
+    display:none;
+}
+.THIS .slds-media__body{
+    padding-top:5px;
+}
+.THIS .textsmal 
+
+{
+    text-transform:lowercase !important;
+}
+
+.THIS  .textCap 
+{
+    margin-left: 0px;
+    text-transform: capitalize !important; 
+}
+
+.THIS div.scrollDiv {
+    width: 100%;
+    overflow-y: auto;
+}
+
+.THIS.clear-user-agent-styles table,
+.THIS.clear-user-agent-styles thead,
+.THIS.clear-user-agent-styles tbody,
+.THIS.clear-user-agent-styles tfoot,
+.THIS.clear-user-agent-styles tr,
+.THIS.clear-user-agent-styles th,
+.THIS.clear-user-agent-styles td {
+    font-weight: inherit;
+}
+
+.THIS .datepicker-table {
+    border-color: rgb(128,128,128);
+    border-collapse: collapse;
+    box-sizing: border-box;
+    font-family: "Salesforce Sans",Arial,sans-serif;
+    height: auto;
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.THIS .datepicker-table table {
+    color: rgb(22,50,92);
+    display: table;
+    line-height: 18px;
+    width: 100%;
+}
+
+.THIS .datepicker-table thead tr {
+    border-bottom-color: rgb(240, 241, 242);
+    display: table-row;
+    font-size: 12px;
+    line-height: 18px;
+    vertical-align: middle;
+    width: auto;
+}
+
+.THIS .datepicker-table tbody {
+    border-collapse: collapse;
+    box-sizing: border-box;
+    color: rgb(22, 50, 92);
+    display: table-row-group;
+    line-height: 18px;
+    vertical-align: middle;
+    width: auto;
+}
+
+.THIS .datepicker-table tbody tr {
+    display: table-row;
+}
+.THIS .datepicker-table tbody tr td {
+    display: table-cell;
+    line-height: 18px;
+    padding: .25rem;
+    text-align: center;
+    vertical-align: middle;
+    width: auto;
+    border: none;
+}
+.THIS.scrollerSize {
+    height: 100%;
+    width: 100%;
+    border-radius: 1px;
+}
+
+.THIS .innerDivWrapper {
+    min-height: 101%;
+    padding-bottom: 20px;
+}
+
+.THIS .slds-scrollable {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: hidden !important;
+}
+.THIS.slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+
+.THIS .rsmlinetable{
+    
+    
+    border:var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218)); 
+                border-spacing: 0px; 
+                table-layout: fixed; 
+                margin-left: auto; 
+                margin-right: auto; 
+            }
+            
+            .THIS .rsmlinetable tr:hover {background-color: #F5F5F5;} 
+            
+            
+            .THIS .cell-breakAll {
+                
+                word-wrap: break-word !important; 
+                padding: 10px;
+                font-size: 13px; 
+            }
+            .THIS .slds-truncate{
+                font-family: var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+                        font-size: 13px; 
+                    }
+                    .THIS label.slds-form-element__label {
+                        display: none !important;
+                    }
+                    .THIS .slds-size_1-of-6-tsm {
+                        width: 14.666667% !important;
+                    }
+                    
+                    
+                    .THIS .slds-size_1-of-4 {
+                        width: 21% !important;
+                    }
+                    .THIS .toastMessage .slds-text-heading--small .forceActionsText{
+                        white-space : pre-line !important;
+                    }
+                    
+                    .THIS .esigntable td {
+                        padding: 5px;
+                    }
+                    
+                    
+                    
+                    .THIS .esignSM{
+                        padding-top: 29px;
+                    }
+                    
+                    .THIS .rcnamedt{
+                        float: right;
+                        margin-right: 123px;
+                    }
+                    
+                    .THIS .rcnamedate{
+                        float: right;
+                        margin-right: 160px;
+                    }
+                    
+                    
+                    
+                    @media only screen and (device-width: 768px),
+                        only screen and (max-width: 768px) {
+                        .THIS .rcnamedt {
+                            float: right;
+                            margin-right: 0px !important;
+                            
+                        }
+                        .THIS .rcnamedate {
+                            float: right;
+                            margin-right: 0px !important;
+                            
+                        }
+                        
+                        .THIS  .cShipConfirmRsmTsmDetail .esigntable lightning-input.slds-form-element{
+                            width: 100% !important;   
+                        }
+                        
+                    }

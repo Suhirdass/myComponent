@@ -1,0 +1,28 @@
+<template>
+    <!-- template for public boolean property-->
+    <!-- <template if:true={showRoomInfo}>
+    <div class="slds-p-around_medium lgc-bg">
+        <lightning-tile label={meetingRoomInfo.roomName} href="/path/to/somewhere">
+            <p class="slds-truncate" title={meetingRoomInfo.roomCapacity}>Room Capacity: {meetingRoomInfo.roomCapacity}</p>
+        </lightning-tile>
+    </div>
+</template> -->
+
+<!-- Slots Example -->
+<!-- <template if:true={showRoomInfo}>
+    <div class="slds-p-around_medium lgc-bg">
+         // named slots & unnamed slots 
+        <slot name="roomInfo"></slot>
+        <slot></slot>
+    </div>
+</template> -->
+
+<!-- Component communication (CC To PC) using events - Dispatching & Handling events -->
+<template if:true={showRoomInfo}>
+    <div class="slds-p-around_medium lgc-bg" onclick={tileClickHandler}>
+        <lightning-tile label={meetingRoomInfo.roomName} href="/path/to/somewhere">
+            <p class="slds-truncate" title={meetingRoomInfo.roomCapacity}>Room Capacity: {meetingRoomInfo.roomCapacity}</p>
+        </lightning-tile>
+    </div>
+</template>
+</template>

@@ -1,0 +1,625 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <!--ltng:require styles="{! $Resource.box }" /-->
+
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="isClone" type="String" default="" />
+    <aura:attribute name="isView" type="Boolean" default="false" />
+    <aura:attribute name="brandId" type="String" default="" />
+    <aura:attribute name="brandName" type="String" default="" />
+    <aura:attribute name="productName" type="String" default="" />
+    <aura:attribute name="product" type="Object" default="{name:''}" />
+    <aura:attribute name="productFamily" type="List" default="[]" />
+    <aura:attribute name="quantityType" type="List" default="[]" />
+    <aura:attribute name="cultivationType" type="List" default="[]" />
+    <aura:attribute name="cannabisWeightUOM" type="List" default="[]" />
+    <aura:attribute name="applyCultivationTax" type="List" default="[]" />
+    <aura:attribute name="certificationOptions" type="List" default="[]" />
+    <aura:attribute name="notificationContacts" type="List" default="[]" />
+    <aura:attribute name="finalFormFactorOptions" type="List" default="[]" />
+    <aura:attribute name="marketplaceBrandOptions" type="List" default="[]" />
+    <aura:attribute name="applyCultivationTaxToggle" type="Boolean" default="true" />
+    <aura:attribute name="hasProductDetails" type="Boolean" default="false" />
+    <aura:attribute name="applyExciseTax" type="List" default="[]" />
+    <aura:attribute name="cannabisCategory1" type="List" default="[]" />
+    <aura:attribute name="cannabisCategory2" type="List" default="[]" />
+    <aura:attribute name="retailUnitFormFactor" type="List" default="[]" />
+    <aura:attribute name="appellationOptions" type="List" default="[]" />
+    <aura:attribute name="stockingUOM" type="List" default="[]" />
+    <aura:attribute name="supplierUOM" type="List" default="[]" />
+    <aura:attribute name="selectedRecord" type="Object" default="" description="selected Record Details" />
+    <aura:attribute name="selectedStrain" type="Object" default="" description="selected Strain Record Details" />
+    <aura:attribute name="selectedContact" type="Object" default="" description="selected Contact Record Details" />
+    <aura:handler event="c:selectedRecordLookupEvent" action="{!c.handleSelectedRecord}"/>
+
+    <aura:handler name="change" value="{!v.product.shortDescription}" action="{!c.onProductNameChange}"/>
+    <aura:attribute name="isSuccess" type="Boolean" default="false" />
+    <aura:attribute name="productFamilyDependency" type="Map" default="{}" />
+    <aura:attribute name="productFamilyDependencyStockingUOM" type="Map" default="{}" />
+    <aura:attribute name="productFamilyDependencyCultivationType" type="Map" default="{}" />
+    <aura:attribute name="strainType" type="String" default="" />
+    <aura:attribute name="successTitle" type="String" default="" />
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false" />
+    <aura:attribute name="Certifications_Tooltip" type="String" default="" />
+    <aura:attribute name="External_Id_Tooltip" type="String" default="" />
+    <aura:attribute name="initializationCompleted" type="Boolean" default="false" />
+    <aura:attribute name="MOQ_Tooltip" type="String" default="" />
+    <aura:attribute name="Msg_for_RetailWholesalePrice_Tooltip" type="String" default="" />
+    
+    <aura:attribute name="FRTMap" type="Map" default="{}" />
+    <aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/>
+    <aura:handler event="c:batchIdEvent" action="{!c.handleStrainIdEvent}"/>
+    <lightning:overlayLibrary aura:id="overlay"/>
+
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+		<aura:if isTrue="{!v.isDataLoaded}">
+        <!-- Brand Info -->
+        <div class="slds-box slds-m-top_small">
+            <lightning:layout multipleRows="true">
+                <div class="label-text"><br/>Product Name<br/><br/></div>
+                    <br/>
+                <aura:if isTrue="{!empty(v.productName)}">
+                    
+                    <div style="height: 32px;" class="untitled">
+                        Untitled
+                    </div>
+                    <aura:set attribute="else">
+                        <div style="height: 32px;" class="untitled">
+                            {!v.product.shortDescription}
+                        </div>
+                    </aura:set>
+                </aura:if>
+                
+                <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                    <h1 class="slds-box__heading-1">{!v.brandName}</h1>
+                    <aura:if isTrue="{!v.isView}">
+                        <span class="print-export" onclick="{!c.onDuplicate}">DUPLICATE</span>
+                    </aura:if>
+                </lightning:layoutItem>
+
+                <!-- Row 1 -->
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:if isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:select label="Brand" value="{!v.product.marketplaceBrand}" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <aura:iteration items="{!v.marketplaceBrandOptions}" var="p" indexVar="index">
+                                <option value="{!p.value}" selected="{!v.product.marketplaceBrand == p.value}">{!p.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        <aura:set attribute="else">
+                            <c:multiselect mslabel="Brand" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.marketplaceBrandOptions }" selectedValuesName="{!v.product.marketplaceBrand}" selectedValuesId="{!v.product.marketplaceBrand}"/>
+                        </aura:set>
+                    </aura:if>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:input type="text" label="Product Name" value="{!v.product.shortDescription}" required="true" maxlength="255" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                        <aura:set attribute="else">
+                            <lightning:input aura:id="validate" type="text" label="Product Name" value="{!v.product.shortDescription}" required="true" maxlength="40" placeholder="Enter Name"/>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+				<lightning:layoutItem size="3" padding="around-small">
+                        <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <lightning:input type="text" label="Strain Name" value="{!v.product.strainName}"  disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                            <aura:set attribute="else">
+                                <c:customLookup  isFixed="true" aura:id="strainCustomLookup" objectName="Strain__c" allowCreate="true" fieldName="Name" label="Strain Name" value="{!v.product.strainId}" selectedRecord="{!v.selectedStrain}" isRequired="true"/>
+                            </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:select label="Product Category" value="{!v.product.productFamily}" required="true"  disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <aura:iteration items="{!v.productFamily}" var="p">
+                                <option value="{!p.value}" selected="{!v.product.productFamily == p.value}">{!p.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        <aura:set attribute="else">
+                            <c:multiselect mslabel="Product Category"  aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.productFamily }" selectedValuesName="{!v.product.productFamily}" selectedValuesId="{!v.product.productFamily}"/>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+
+        <!-- Product Info -->
+        <div class="slds-box slds-m-top_large">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                    <h2 class="slds-box__heading-1">Product Info</h2>
+                </lightning:layoutItem>
+
+                <!-- Row 1 -->
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:input type="text" label="Producer" value="{!v.product.producerName}"  disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                        <aura:set attribute="else">
+                            <c:customLookup aura:id="accountCustomLookup" objectName="Account" fieldName="DBA__c" label="Producer" value="{!v.product.producerId}" selectedRecord="{!v.selectedRecord}" isRequired="true" />
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <lightning:input label="Strain Type" value="{!v.strainType}" disabled="true"/>
+                    
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <!--label class="slds-form-element__label cLabelWithHelpText" style="padding-right: 0px;">Retail Wholesale Price</label>
+                    <c:availableInventoryComponent helpText="{!v.Msg_for_RetailWholesalePrice_Tooltip}" required="false" >
+                    </c:availableInventoryComponent-->
+                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Retail Wholesale Price" helpText="{!v.Msg_for_RetailWholesalePrice_Tooltip}" required="true">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,v.isView)}">
+                        <lightning:input  type="number" variant="label-hidden" formatter="currency" value="{!v.product.MSRP}" step="0.01"  min="0" disabled="{!or(v.product.isActive,v.isView)}"/>
+                        <aura:set attribute="else">
+                            <lightning:input aura:id="validate" variant="label-hidden" formatter="currency" type="number" value="{!v.product.MSRP}" step="0.01"  min="0" required="true"/>
+                        </aura:set>
+                    </aura:renderIf>
+                    </c:labelWithHelpText>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:select label="Final Form Factor" value="{!v.product.retailUnitFormFactor}" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <option value="">Select</option>
+                            <aura:iteration items="{!v.retailUnitFormFactor}" var="p">
+                                <option value="{!p.value}" selected="{!v.product.retailUnitFormFactor == p.value}">{!p.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        <aura:set attribute="else">
+                            <c:multiselect mslabel="Final Form Factor" isMultiSelect="false" msoptions="{! v.retailUnitFormFactor }" selectedValuesName="{!v.product.retailUnitFormFactor}" selectedValuesId="{!v.product.retailUnitFormFactor}"/>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:select label="Quantity Type" value="{!v.product.quantityType}" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <aura:iteration items="{!v.quantityType}" var="p">
+                                <option value="{!p.value}" selected="{!v.product.quantityType == p.value}">{!p.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        <aura:set attribute="else">
+                            <c:multiselect mslabel="Quantity Type" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.quantityType }" selectedValuesName="{!v.product.quantityType}" selectedValuesId="{!v.product.quantityType}"/>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:select label="Unit of Measure" value="{!v.product.stockingUOM}" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <aura:iteration items="{!v.stockingUOM}" var="p">
+                                <option value="{!p.value}" selected="{!v.product.stockingUOM == p.value}">{!p.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        <aura:set attribute="else">
+                            <c:multiselect mslabel="Unit of Measure" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.stockingUOM }" selectedValuesName="{!v.product.stockingUOM}" selectedValuesId="{!v.product.stockingUOM}"/>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <lightning:select label="Cultivation Type" value="{!v.product.cultivationMethod}" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                            <aura:iteration items="{!v.cultivationType}" var="p">
+                                <option value="{!p.value}" selected="{!v.product.cultivationMethod == p.value}">{!p.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        <aura:set attribute="else">
+                            <c:multiselect mslabel="Cultivation Type" aura:id="multiSelect" isRequired="false" isMultiSelect="false" msoptions="{! v.cultivationType }" selectedValuesName="{!v.product.cultivationMethod}" selectedValuesId="{!v.product.cultivationMethod}"/>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                        <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Certifications" helpText="Certifications" required="false">
+                            <lightning:select label="Certifications" variant="label-hidden" value="{!v.product.certifications}" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}" class="resetLabel">
+                                <option value="">Optional</option>
+                                <aura:iteration items="{!v.certificationOptions}" var="p">
+                                    <option value="{!p.value}" selected="{!v.product.certifications == p.value}">{!p.label}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </c:labelWithHelpText>
+                        
+                        <aura:set attribute="else">
+                            <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Certifications" helpText="{!v.Certifications_Tooltip}" required="false">
+                                <lightning:select label="Certifications" variant="label-hidden" value="{!v.product.certifications}" disabled="true" class="resetLabel">
+                                    <option value="">Optional</option>
+                                    <aura:iteration items="{!v.certificationOptions}" var="p">
+                                        <option value="{!p.value}" selected="{!v.product.certifications == p.value}">{!p.label}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </c:labelWithHelpText>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+				
+                <!-- Row 2 -->
+                <lightning:layoutItem size="9" padding="around-small">
+                    <aura:renderIf isTrue="{!v.isView}">
+                        <lightning:inputRichText class="description" label="Product Details" labelVisible="true" value="{!v.product.productDetails}" disabled="{!v.isView}"/>
+                        <aura:set attribute="else">
+                            <lightning:inputRichText aura:id="validate" class="description" labelVisible="true" label="Product Details" value="{!v.product.productDetails}" />
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="3" padding="around-small">
+                    <aura:renderIf isTrue="{!v.isView}">
+                        <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="External Data ID" helpText="{!v.External_Id_Tooltip}" required="false">
+                        <lightning:input variant="label-hidden" label="External Data ID" value="{!v.product.ExternalDataID}" disabled="{!v.isView}"/>
+                        </c:labelWithHelpText>
+                        <aura:set attribute="else">
+                            <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="External Data ID" helpText="{!v.External_Id_Tooltip}" required="false">
+                            <lightning:input aura:id="validate" variant="label-hidden" label="External Data ID" value="{!v.product.ExternalDataID}" maxlength="255"/>
+                            </c:labelWithHelpText>
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+
+        <!-- Split 1 -->
+        <lightning:layout multipleRows="true" pullToBoundary="small">
+            <lightning:layoutItem size="6" padding="around-small">
+                <!-- Unit Dimensions -->
+                <div class="slds-box slds-m-top_small">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                            <h2 class="slds-box__heading-1">Unit Dimensions</h2>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.unitlength}" label="Unit Length"  min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.unitlength}" label="Unit Length" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.unitWidth}" label="Unit Width"  min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.unitWidth}" label="Unit Width"  min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.unitHeight}" label="Unit Height" min="0"  disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.unitHeight}" label="Unit Height" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.unitRadius}" label="Unit Radius"  min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.unitRadius}" label="Unit Radius" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.unitGrossWeight}" label="Unit Gross Weight" min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.unitGrossWeight}" label="Unit Gross Weight" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem size="6" padding="around-small">
+                <!-- Case Dimensions -->
+                <!-- @dev: Incomplete -->
+                <div class="slds-box slds-m-top_small">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                            <h2 class="slds-box__heading-1">Case Dimensions</h2>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.caseLength}" label="Case Length"  min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.caseLength}" label="Case Length" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.caseWidth}" label="Case Width"  min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.caseWidth}" label="Case Width"  min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.caseHeight}" label="Case Height" min="0"  disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.caseHeight}" label="Case Height" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.caseRadius}" label="Case Radius"  min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.caseRadius}" label="Case Radius" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input type="number" step="0.01" value="{!v.product.cartonGrossWeight}" label="Case Gross Weight" min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" step="0.01" value="{!v.product.cartonGrossWeight}" label="Case Gross Weight" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="4" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="MOQ" helpText="{!v.MOQ_Tooltip}" required="true">
+                                    <lightning:input type="number" variant="label-hidden" step="1" value="{!v.product.MOQ}" label="MOQ" min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                </c:labelWithHelpText>
+                                <aura:set attribute="else">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="MOQ" helpText="{!v.MOQ_Tooltip}" required="true">
+                                        <lightning:input variant="label-hidden" required="true" aura:id="validate" type="number" step="1" value="{!v.product.MOQ}" label="MOQ" min="0"/>
+                                    </c:labelWithHelpText>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+            
+            
+            <lightning:layout multipleRows="true" pullToBoundary="small">
+                <aura:if isTrue="{!!empty(v.recordId)}">
+                    <lightning:layoutItem size="6" padding="around-small">
+                        <div class="slds-box slds-m-top_small">
+                            <lightning:layout multipleRows="true">
+                                <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                                    <h2 class="slds-box__heading-1">Service Type</h2>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" padding="0px" >
+                                    <div class="table-container slds-m-top_small" style="overflow: auto;height: 217px;">
+                                        <table class="slds-table table-border">
+                                            <thead>
+                                                <tr>
+                                                    <th style="background-color: #d1cdb0;">Service Type</th>
+                                                    <th style="background-color: #d1cdb0;">Case Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:if isTrue="{!not(empty(v.FRTMap))}">
+                                                    <aura:iteration items="{!v.FRTMap}" var="frt" indexVar="Fkey">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="slds-truncate">{!frt.label}</div>
+                                                            </td>
+                                                            <td>
+                                                                <aura:iteration items="{!frt.FRTPrice}" var="f" indexVar="FPkey">
+                                                                    <div class="slds-truncate">{!f}</div>
+                                                                    <aura:if isTrue="{!and(frt.FRTPrice.length > 1,frt.FRTPrice.length > FPkey)}">  
+                                                                        <br/>
+                                                                    </aura:if>
+                                                                </aura:iteration>
+                                                                
+                                                            </td>
+                                                        </tr>
+                                                    </aura:iteration>
+                                                    <aura:set attribute="else">
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                <h3 class="slds-section-title_divider slds-text-align_center" style="font-weight: 700;font-family:'Alliance Neue';margin-right: 50px;">
+                                                                    NO RECORDS FOUND.
+                                                                </h3>
+                                                            </td>
+                                                        </tr>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </div>
+                    </lightning:layoutItem>
+                </aura:if>
+                
+                <lightning:layoutItem size="6" padding="around-small">
+                <!-- Cultivation Tax -->
+                <div class="slds-box slds-m-top_small">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                            <h2 class="slds-box__heading-1">Cultivation Tax</h2>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="12" padding="around-small" class="flex items-center">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input
+                                                 type="checkbox"
+                                                 id="apply-cultivation-tax"
+                                                 name="apply-cultivation-tax"
+                                                 checked="{! v.applyCultivationTaxToggle }"
+                                                 label="" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"
+                                                 />
+                                <aura:set attribute="else">
+                                    <lightning:input
+                                                     type="checkbox"
+                                                     id="apply-cultivation-tax"
+                                                     name="apply-cultivation-tax"
+                                                     checked="{! v.applyCultivationTaxToggle }"
+                                                     label=""
+                                                     />
+                                </aura:set>
+                            </aura:renderIf>
+                            
+                            <label for="apply-cultivation-tax" class="nomalLabel">Apply cultivation tax</label>
+                        </lightning:layoutItem>
+
+                        <aura:renderIf isTrue="{! v.applyCultivationTaxToggle }">
+                            <lightning:layoutItem size="12" padding="around-small">
+                                <p class="text__bold slds-m-bottom_small">Enter the grams of each component used to make the final product.</p>
+                                <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                    <lightning:layout>
+                                        <lightning:layoutItem size="3" class="slds-p-top--xxx-small">
+                                            <lightning:input type="checkbox" class="nomalLabel" aura:id="flowersCheckbox" id="flowers-tax" name="flowers-tax" checked="{! v.product.isFlowers }" label="Flowers" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                            <!--label for="flowers-tax">Flowers</label-->
+                                        </lightning:layoutItem>
+                                        
+                                        <lightning:layoutItem size="3">
+                                            <lightning:input class="hidden-label" type="number" aura:id="validate" placeholder="Enter Grams"  label="" value="{! v.product.flowersGrams }" required="{! v.product.isFlowers }" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                    
+                                    <lightning:layout class="slds-m-top_medium">
+                                        <lightning:layoutItem size="3" class="slds-p-top--xxx-small">
+                                            <lightning:input type="checkbox" class="nomalLabel" aura:id="leavesCheckbox" name="leaves-tax" checked="{! v.product.isLeaves }" label="Leaves" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                            <!--label for="leaves-tax">Leaves</label-->
+                                        </lightning:layoutItem>
+                                        
+                                        <lightning:layoutItem size="3">
+                                            <lightning:input class="hidden-label" type="number" aura:id="validate" placeholder="Enter Grams"  label="" value="{! v.product.leavesGrams }" required="{! v.product.isLeaves }" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                    
+                                    <lightning:layout class="slds-m-top_medium">
+                                        <lightning:layoutItem size="3" class="slds-p-top--xxx-small">
+                                            <lightning:input type="checkbox" class="nomalLabel" aura:id="fressCheckbox" name="fresh-tax" checked="{! v.product.isFresh }" label="Fresh" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                            <!--label for="fresh-tax">Fresh</label-->
+                                        </lightning:layoutItem>
+                                        
+                                        <lightning:layoutItem size="3">
+                                            <lightning:input aura:id="validate" type="number" class="hidden-label" placeholder="Enter Grams"  label="" value="{! v.product.freshGrams }" required="{! v.product.isFresh }" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                    
+                                    <aura:set attribute="else">
+                                        <lightning:layout>
+                                            <lightning:layoutItem size="3" class="slds-p-top--xxx-small">
+                                                <lightning:input type="checkbox" class="nomalLabel" aura:id="flowersCheckbox" id="flowers-tax" name="flowers-tax" checked="{! v.product.isFlowers }" label="Flowers"/>
+                                                <!--label for="flowers-tax">Flowers</label-->
+                                            </lightning:layoutItem>
+                                            
+                                            <lightning:layoutItem size="3">
+                                                <lightning:input class="hidden-label" aura:id="validate" type="number" placeholder="Enter Grams" step="0.01" label="" value="{! v.product.flowersGrams }" required="{! v.product.isFlowers }"/>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                        
+                                        <lightning:layout class="slds-m-top_medium">
+                                            <lightning:layoutItem size="3" class="slds-p-top--xxx-small">
+                                                <lightning:input type="checkbox" class="nomalLabel" aura:id="leavesCheckbox" name="leaves-tax" checked="{! v.product.isLeaves }" label="Leaves"/>
+                                                <!--label for="leaves-tax">Leaves</label-->
+                                            </lightning:layoutItem>
+                                            
+                                            <lightning:layoutItem size="3">
+                                                <lightning:input class="hidden-label" aura:id="validate" type="number" placeholder="Enter Grams" step="0.01"  label="" value="{! v.product.leavesGrams }" required="{! v.product.isLeaves }"/>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                        
+                                        <lightning:layout class="slds-m-top_medium">
+                                            <lightning:layoutItem size="3" class="slds-p-top--xxx-small">
+                                                <lightning:input type="checkbox" class="nomalLabel" aura:id="fressCheckbox" name="fresh-tax" checked="{! v.product.isFresh }" label="Fresh"/>
+                                                <!--label for="fresh-tax">Fresh</label-->
+                                            </lightning:layoutItem>
+                                            
+                                            <lightning:layoutItem size="3">
+                                                <lightning:input aura:id="validate" class="hidden-label" type="number" placeholder="Enter Grams"  label="" value="{! v.product.freshGrams }" step="0.01" required="{! v.product.isFresh }"/>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                    </aura:set>
+                                </aura:renderIf>
+                            </lightning:layoutItem>
+                        </aura:renderIf>
+                    </lightning:layout>
+                </div>
+            </lightning:layoutItem>
+            </lightning:layout>
+        <!-- Split 2 -->
+        <lightning:layout multipleRows="true" pullToBoundary="small">
+            <lightning:layoutItem size="6" padding="around-small">
+                <!-- Stock Notifications -->
+                <div class="slds-box slds-m-top_small">
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" padding="around-small" class="slds-box__header">
+                            <h2 class="slds-box__heading-1">Stock Notifications</h2>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="6" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input  type="number" value="{!v.product.safetyStockLow}" step="0.01" label="Safety Stock Low" min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" value="{!v.product.safetyStockLow}" step="0.01" label="Safety Stock Low" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="6" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input  type="number" value="{!v.product.safetyStockMedium}" step="0.01" label="Safety Stock Medium" min="0" disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <lightning:input aura:id="validate" type="number" value="{!v.product.safetyStockMedium}" step="0.01" label="Safety Stock Medium" min="0"/>
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+
+                        <lightning:layoutItem size="12" padding="around-small">
+                            <aura:renderIf isTrue="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}">
+                                <lightning:input  type="text" label="Notification Contact" value="{!v.product.safetyStockContactName}"  disabled="{!or(v.product.isActive,or(equals(v.product.status,'Pending'),v.isView))}"/>
+                                <aura:set attribute="else">
+                                    <c:multiselect mslabel="Notification Contact" isMultiSelect="false" msoptions="{! v.notificationContacts }" selectedValuesName="{!v.product.safetyStockContactName}" selectedValuesId="{!v.product.safetyStockContact}"/>
+                                    <!--c:customLookup objectName="Contact" fieldName="Name" label="Notification Contact" value="{!v.product.safetyStockContact}" selectedRecord="{!v.selectedContact}"/-->
+                                </aura:set>
+                            </aura:renderIf>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </lightning:layoutItem>
+
+            
+        </lightning:layout>
+</aura:if>
+
+
+        
+        <!-- Footer -->
+        <div class="action-bar">
+            <lightning:layout>
+                <lightning:layoutItem size="6">
+                    <lightning:button onclick="{!c.onCancel}" label="Cancel" class="cancelButton " />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" class="slds-text-align_right">
+                    <aura:renderIf isTrue="{!v.isView}">
+                        <lightning:button variant="brand" class="{!if(equals(v.product.status,'Inactive'),'editDisabled cancelButton','cancelButton')}" onclick="{!c.onEdit}" label="Edit" disabled="{!equals(v.product.status,'Inactive')}"/>
+                        <aura:set attribute="else">
+                            <!--lightning:button variant="brand" onclick="{!c.showSuccessModal}" label="Dev: Show Success Modal" /-->
+                            <lightning:button class="{!if(or(v.product.isActive,equals(v.product.status,'Pending')),'slds-m-right_medium editDisabled cancelButton','slds-m-right_medium draftButton cancelButton')}" disabled="{!or(v.product.isActive,equals(v.product.status,'Pending'))}" onclick="{!c.onSaveDraft}" label="Save Draft" />
+                            <lightning:button class="submitBtn" variant="brand" onclick="{!c.onSave}" label="Submit Product" />
+                        </aura:set>
+                    </aura:renderIf>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+	<aura:if isTrue="{!v.isSuccess}">
+    <c:successModal
+        title="{!'Product '+if(empty(v.product.id),v.successTitle+' successfully!','updated successfully!')}"
+        description="Our team will begin working on your product right away. You'll recieve an email confirmation shortly."
+        buttons="[
+                 { href: '/filigreenb2b/s', label: 'Home', variant: 'neutral' ,screenName:'Home'},
+            { href: '/filigreenb2b/s/newproduct', label: 'New Product', variant: 'neutral' ,removeIdsFromCache:'newProductRequestId,isViewProductRequest',screenName:'Create Product' },
+            { href: '/filigreenb2b/s/product-list', label: 'View My Product List', variant: 'brand' ,screenName:'My Product List'},
+        ]"
+    />
+        </aura:if>
+</aura:component>

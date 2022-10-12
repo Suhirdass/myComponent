@@ -1,0 +1,83 @@
+<aura:component extends="c:infiniteLoading" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="RMA" type="Map" default="{}" />
+	<div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    	<div class="slds-box slds-box_small slds-m-vertical_small" style="padding: 0;">
+        	<lightning:layout multipleRows="true" class="slds-page-header orderHeaderLastColumn">
+            	<lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="1" class="slds-p-horizontal_small">
+                    <div>Order #</div>
+                    <div class="sortable" data-id="{!v.RMA.orderId}" onclick="{!c.onOrderClick}">{!v.RMA.orderNumber}</div>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="3" class="slds-p-horizontal_small">
+                    <div>Shipping Manifest</div>
+                    <div class="sortable" data-id="{!v.RMA.SMId}" onclick="{!c.onSMClick}">{!v.RMA.SMName}</div>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="2" class="slds-p-horizontal_small">
+                    <div>RMA#</div>
+                    {!v.RMA.name}
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="2" class="slds-p-horizontal_small">
+                    <div>RMA Status</div>
+                    {!v.RMA.status}
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="2" class="slds-p-horizontal_small slds-text-align_center">
+                    <div>Total Return Qty</div>
+                    {!v.RMA.totalQty}
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right" mediumDeviceSize="2">
+                    <lightning:button class="addToCardButton" disabled="{!!equals(v.RMA.status, 'New')}" value="{!v.RMA.id}"
+                                      label="Edit" onclick="{!c.onEdit}" />
+                    <lightning:button class="addToCardButton" disabled="{!!equals(v.RMA.status, 'New')}" value="{!v.RMA.id}"
+                                      label="Cancel RMA" onclick="{!c.onRMACancel}" />
+                    
+                </lightning:layoutItem>
+            </lightning:layout>
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem flexibility="grow" size="12">
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                        	<th>&nbsp;</th>
+                            <th>Product Name</th>
+                            <th>Return Qty</th>
+                            <th>Return Code</th>
+                            <th>Additional Notes</th>
+                            <th>Status</th>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.RMA.items}" var="item">
+                                <tr class="slds-hint-parent">
+                                    <td scope="Image">
+                                        <img src="{!item.imageUrl}" class="responsive height50" />
+                                    </td>
+                                    <td data-label="Product">
+                                        <div class="slds-truncate clickable" title="{!item.productName}">
+                                            <a data-id="{!item.priceBookId }" onclick="{!c.onProductClick}">
+                                            {!item.productName}</a>
+                                        </div>
+                                        
+                                        <ui:outputCurrency class="productPrice" value="{!item.returnPrice}" />
+                                    </td>
+                                    <td data-label="Return Quantity" style="padding-left: 1.5rem;">
+                                        {!item.returnQty}
+                                    </td>
+                                    <td data-label="Return Code">
+                                        {!item.returnCode}
+                                    </td>
+                                    <td data-label="Additional Notes">
+                                        {!item.additionalNotes}
+                                    </td>
+                                    <td data-label="Return Status">
+                                        {!item.returnStatus}
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transfer</fullName>
+    <active>true</active>
+    <label>Transfer</label>
+    <picklistValues>
+        <picklist>Billing_City__c</picklist>
+        <values>
+            <fullName>City</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Billing_Country__c</picklist>
+        <values>
+            <fullName>USA</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Billing_Province__c</picklist>
+        <values>
+            <fullName>State</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Factoring_Terms__c</picklist>
+        <values>
+            <fullName>COD</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>NET 10</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 120</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 15</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 21</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 30</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 45</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 50</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 60</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 7</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 77</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 90</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Order_Type__c</picklist>
+        <values>
+            <fullName>Brand</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retail</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transfer</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Payment_Terms__c</picklist>
+        <values>
+            <fullName>COD</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>NET 10</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 120</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 15</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 21</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 30</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 45</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 50</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 60</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 7</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 77</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 90</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Shipping_City__c</picklist>
+        <values>
+            <fullName>Bellflower</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>City</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Desert Hot Springs</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mendota</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Oakland</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>San Bernardino</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>San Francisco</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Shipping_Country__c</picklist>
+        <values>
+            <fullName>USA</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Shipping_Province__c</picklist>
+        <values>
+            <fullName>California</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>State</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelled by Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelled by WOVN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delivered</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Draft</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Payment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Processing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Returned</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shipped</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

@@ -1,0 +1,7 @@
+<apex:page standardController="Service_Ticket__c" action="{!convertServiceTicket}" extensions="ConvertServiceTicketController">
+    <apex:form >
+        <apex:sectionHeader title="Convert Service Ticket"/>
+        <apex:pageMessages />
+        <apex:commandButton action="{!cancel}" value="Back"/>
+    </apex:form>
+</apex:page>

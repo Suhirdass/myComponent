@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>PO_Status_to_Closed</fullName>
+        <description>Updates PO Status to Closed when PO Balance is Zero</description>
+        <field>PO_Status__c</field>
+        <literalValue>Closed</literalValue>
+        <name>PO Status to Closed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Invoice_PO_Status</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Closed</literalValue>
+        <name>Update Invoice PO Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Sample_Order</fullName>
+        <field>Supplier_Payment_Settled_Date__c</field>
+        <formula>Ship_Confirmation_Date__c</formula>
+        <name>Update PO Sample Order</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Status</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Update PO Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Status_Close</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Closed</literalValue>
+        <name>Update PO Status Close</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Status_to_Cancelled</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Cancelled</literalValue>
+        <name>Update PO Status to Cancelled</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Status_to_Close</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Closed</literalValue>
+        <name>Update PO Status to Close</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Status_to_Closed</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Closed</literalValue>
+        <name>Update PO Status to Closed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_PO_Status_to_PR</fullName>
+        <field>PO_Status__c</field>
+        <literalValue>Partially Received</literalValue>
+        <name>Update PO Status to PR</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Settlement_Date</fullName>
+        <field>Supplier_Payment_Settled_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Update Settlement Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Settlement_Date_to_Today</fullName>
+        <field>Supplier_Payment_Settled_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Update Settlement Date to Today</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Update PO Status</fullName>
+        <actions>
+            <name>Update_PO_Status</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Purchase_Order__c.Flag_for_closed_Status__c</field>
+            <operation>equals</operation>
+            <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Purchase_Order__c.PO_Status__c</field>
+            <operation>notEqual</operation>
+            <value>Hold,Cancelled,Closed</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update PO Status to Cancelled</fullName>
+        <actions>
+            <name>Update_PO_Status_to_Cancelled</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>IF(AND (Total_Cancelled_Lines__c  ==  Total_Line_Items__c, Total_Line_Items__c &gt; 0), true, false)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update PO Status to Closed</fullName>
+        <actions>
+            <name>Update_PO_Status_to_Closed</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <failedMigrationToolVersion>236.19.21</failedMigrationToolVersion>
+        <formula>IF ( AND( Payment_Eligible__c == false,Total_Closed_Lines__c  ==  Total_Line_Items__c, Total_Line_Items__c &gt; 0),true,IF(AND(Total_Closed_Lines__c  !=  Total_Line_Items__c, Total_Cancelled_Lines__c &gt; 0, Total_Cancelled_Lines__c != Total_Line_Items__c, Total_Line_Items__c &gt; 0, Total_Line_Items__c == (Total_Cancelled_Lines__c+Total_Closed_Lines__c)),true, false))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update PO Status to PR</fullName>
+        <actions>
+            <name>Update_PO_Status_to_PR</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>IF ( AND(Total_Partially_Received_Lines__c  &gt;  0, Total_Line_Items__c &gt; 0),true,IF(AND(Total_Closed_Lines__c  !=  Total_Line_Items__c, Total_Cancelled_Lines__c &gt; 0, Total_Cancelled_Lines__c != Total_Line_Items__c, Total_Line_Items__c &gt; 0),true, false))</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

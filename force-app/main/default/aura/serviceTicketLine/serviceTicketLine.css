@@ -1,0 +1,30 @@
+.THIS .resetLabel.slds-form-element label{
+    display:none;
+}
+.THIS .inputCheckbox .slds-form-element__control, .THIS .inputCheckbox{
+    display:inline-block;
+}
+.THIS .inputCheckbox{
+    vertical-align: bottom;
+}
+.THIS .STHeader{
+    font-size:12px;
+    color:token(fontColor);
+    font-weight:600;
+}
+.THIS .removeBar{
+    box-sizing: border-box;
+    height: 56px;
+    border-radius: 0 0 4px 4px;
+    /*background-color:token(tan);*/
+    background-color: token(tableHeaderColor);
+    padding: 10px;
+}
+.THIS .removebtn{
+    color:token(daze);
+    background-color: token(land);
+}
+.THIS .arrowButton{
+    height: 12px!important;
+    width: 12px!important;
+}

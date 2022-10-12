@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_License_CP</fullName>
+    <columns>NAME</columns>
+    <columns>Default_Warehouse__c</columns>
+    <columns>License_Address__c</columns>
+    <columns>License_City__c</columns>
+    <columns>License_Status__c</columns>
+    <columns>License_Class__c</columns>
+    <columns>License_Expiration_Date__c</columns>
+    <columns>License_Name__c</columns>
+    <columns>License_Number__c</columns>
+    <columns>License_State__c</columns>
+    <columns>License_Type__c</columns>
+    <columns>Total_Miles__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>License_Status__c</field>
+        <operation>equals</operation>
+        <value>Active</value>
+    </filters>
+    <filters>
+        <field>Default_Warehouse__c</field>
+        <operation>startsWith</operation>
+        <value>7027</value>
+    </filters>
+    <label>Active License - CP</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

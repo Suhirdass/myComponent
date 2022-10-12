@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Qty_of_Misc_Label__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Please enter Qty of misc applies to apply. Service charges will vary based on label size.</inlineHelpText>
+    <label>Qty of Misc Label</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

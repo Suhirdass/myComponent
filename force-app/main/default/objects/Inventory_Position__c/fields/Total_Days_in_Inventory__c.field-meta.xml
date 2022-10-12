@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Days_in_Inventory__c</fullName>
+    <description>DO NOT modify/delete. Field used to store IP days store in the site. This field is also used in &quot;Days in Inventory&quot; logic. DO NOT ENABLE in PAGE LAYOUT or in REPORT.</description>
+    <externalId>false</externalId>
+    <label>Total Days in Inventory</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,232 @@
+<apex:page controller="DisplayRSMTSMController" docType="html-5.0" sidebar="false" action="{!retreiveTSMRSM}" title="Route Schedule">
+
+     <style type="text/css">
+
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+         .tableClass {
+         text-align:center;
+         width : 100px;
+         }
+         .columnWidth{
+         width : 100px;
+         }
+    </style>
+
+   <!-- <apex:form >
+        <apex:actionFunction name="ResetTSMPageSize" 
+                             action="{!doResetTSMPageSize}" 
+                             reRender="tsmBlock"
+                             status="idRefreshingStatus" />
+
+        <apex:actionFunction name="ResetRSMPageSize" 
+                             action="{!doResetRSMPageSize}" 
+                             reRender="rsmBlock"
+                             status="idRefreshingStatus" />
+        <apex:pageBlock >
+            
+            <apex:actionStatus id="idRefreshingStatus" 
+                              style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            
+   
+                 <apex:outputLabel value="Route Schedule" style="text-align:right; font-size: 14px; font-weight: bold ; position: right; color : Black" for="datefield"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="From: " />
+            <apex:input value="{!dat}" type="date" id="datefield" style="text-align:center"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="To: " />
+            <apex:input value="{!datTwo}" type="date" id="datefield1" style="text-align:center"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:commandButton action="{!retreiveTSMRSM}" value="Submit" status="idRefreshingStatus"/>
+                <apex:pageMessages ></apex:pageMessages>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="tsmBlock">
+            <apex:outputPanel rendered="{!hasTSM}">
+                <apex:actionStatus id="idRefreshingStatus" 
+                                  style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:pageMessages />
+                <apex:pageBlockSection columns="1"  collapsible="true" title="Inbound Schedule">
+                <apex:pageBlockTable value="{!setTSM}" var="tsmTest" >
+                    <apex:column styleClass="columnWidth" value="{!tsmTest.tsm.Site__c}"/>
+                    <apex:column styleClass="tableClass" value="{!tsmTest.tsm.Planned_Ship_Transfer_Date__c}" headerValue="Planned Transfer Date"/>
+                    <apex:column styleClass="columnWidth" headerValue="Shipping Manifest">                   
+                        <apex:outputLink value="/{!tsmTest.tsm.Id}">{!tsmTest.tsm.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!tsmTest.tsm.Status__c}"/>
+                    <apex:column value="{!tsmTest.tsm.Opportunity_Name__c}" headerValue="Opportunity"/>
+                    <apex:column value="{!tsmTest.tsm.Purchase_Order__c}"/>
+                    <apex:column value="{!tsmTest.tsm.Driver__c}"/>
+                    <apex:column value="{!tsmTest.tsm.Vehicle__c}"/>
+                    <apex:column value="{!tsmTest.tsm.Priority__c}"/>
+                     <apex:column styleClass="columnWidth" value="{!tsmTest.tsm.Window_Start_End__c}"/>
+                    <apex:column styleClass="columnWidth" value="{!tsmTest.tsm.Supplier_City_State_Zip__c}" headerValue="City"/>
+                    <apex:column value="{!tsmTest.tsm.Supplier_Name__c}"/>
+                </apex:PageblockTable>                        
+            </apex:pageBlockSection>
+                
+                <apex:outputPanel >
+                    <div style="text-align:center">
+                        &lt;<apex:outputLabel rendered="{!Not(hasPreviousTSM)}">{!$Label.First}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousTSM}" 
+                                          action="{!firstTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.First}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasPreviousTSM)}">{!$Label.Previous}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousTSM}" 
+                                          action="{!previousTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Previous}
+                        </apex:commandLink>
+                        &nbsp; {!$Label.Page} {!retreiveTSMIterable.currentPage} {!$Label.Of} {!retreiveTSMIterable.totalPages} &nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextTSM)}">{!$Label.Next}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextTSM}" 
+                                          action="{!nextTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Next}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextTSM)}">{!$Label.Last}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextTSM}" 
+                                          action="{!lastTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Last}
+                        </apex:commandLink>&gt;
+                        &nbsp;&nbsp;&nbsp;
+                        <b><apex:outputText value="{!$Label.Page_Size}"/></b> &nbsp;
+                        <apex:selectList value="{!pageSizeTSM}" size="1" 
+                                         onchange="ResetTSMPageSize()">
+                            <apex:selectOptions value="{!pageSizeOptionsTSM}" />
+                        </apex:selectList>
+                     </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!hasTSM}">
+                <b>No Inbound schedule found</b>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="rsmBlock">
+            <apex:outputPanel rendered="{!hasRSM}">
+                <apex:actionStatus id="idRefreshingStatus" 
+                                  style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:pageMessages />
+                <apex:pageBlockSection columns="1" title="Outbound Schedule">
+                <apex:pageBlockTable styleClass="" value="{!setRSM}" var="rsmTest" >
+                    <apex:column styleClass="columnWidth" value="{!rsmTest.rsm.Site__c}"/>
+                    <apex:column styleClass="tableClass" value="{!rsmTest.rsm.Planned_Ship_Transfer_Date__c}" headerValue="Planned Ship Date"/>
+                    <apex:column styleClass="columnWidth" headerValue="Shipping Manifest">                   
+                        <apex:outputLink value="/{!rsmTest.rsm.Id}">{!rsmTest.rsm.Name}</apex:outputLink>
+                   </apex:column>
+                    <apex:column value="{!rsmTest.rsm.Status__c}"/>
+                    <apex:column value="{!rsmTest.rsm.Metrc_Manifest__c}" headerValue="Metrc #"/>
+                    <apex:column value="{!rsmTest.rsm.Opportunity_Name__c}" headerValue="Opportunity"/>
+                    <apex:column value="{!rsmTest.rsm.Sales_Order__c}"/>
+                    <apex:column value="{!rsmTest.rsm.Driver__c}"/>
+                    <apex:column value="{!rsmTest.rsm.Vehicle__c}"/>
+                    <apex:column value="{!rsmTest.rsm.Priority__c}"/> 
+                    <apex:column styleClass="columnWidth" value="{!rsmTest.rsm.Window_Start_End__c}"/>
+                    <apex:column styleClass="tableClass" value="{!rsmTest.rsm.Ship_Confirmation_Date__c}"/>
+                    <apex:column styleClass="columnWidth" value="{!rsmTest.rsm.Delivery_City__c}" headerValue="City"/>
+                    <apex:column value="{!rsmTest.rsm.Receiver_Name__c}"/>
+                </apex:PageblockTable>                        
+            </apex:pageBlockSection>
+                
+                <apex:outputPanel >
+                    <div style="text-align:center">
+                        &lt;<apex:outputLabel rendered="{!Not(hasPreviousRSM)}">{!$Label.First}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousRSM}" 
+                                          action="{!firstRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.First}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasPreviousRSM)}">{!$Label.Previous}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousRSM}" 
+                                          action="{!previousRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Previous}
+                        </apex:commandLink>
+                        &nbsp; {!$Label.Page} {!retreiveRSMIterable.currentPage} {!$Label.Of} {!retreiveRSMIterable.totalPages} &nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextRSM)}">{!$Label.Next}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextRSM}" 
+                                          action="{!nextRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Next}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextRSM)}">{!$Label.Last}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextRSM}" 
+                                          action="{!lastRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Last}
+                        </apex:commandLink>&gt;
+                        &nbsp;&nbsp;&nbsp;
+                        <b><apex:outputText value="{!$Label.Page_Size}"/></b> &nbsp;
+                        <apex:selectList value="{!pageSizeRSM}" size="1" 
+                                         onchange="ResetRSMPageSize()">
+                            <apex:selectOptions value="{!pageSizeOptionsRSM}" />
+                        </apex:selectList>
+                     </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!hasRSM}">
+                <b>No Outbound schedule found</b>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>-->
+</apex:page>

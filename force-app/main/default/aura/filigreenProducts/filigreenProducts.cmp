@@ -1,0 +1,67 @@
+<aura:component extends="c:infiniteLoading" controller="FiligreenProductsCtrl" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <ltng:require scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchProducts}" />
+    <aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="selectedFilter" type="String" default="Product2.Name ASC" />
+    <aura:attribute name="hasFilter" type="Boolean" default="false" />
+    <aura:attribute name="isList" type="Boolean" default="false" />
+    <aura:attribute name="isPublic" type="Boolean" default="true" />
+    <aura:attribute name="includeOutStock" type="Boolean" default="false" />
+    <aura:attribute name="categories" type="List" default="[]"/>
+    <aura:dependency resource="markup://c:productDetails" />
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small slds-text-align_center">
+                <div class="categoryContainer" style="margin-bottom:10px">
+                    <aura:iteration items="{!v.categories}" var="record">
+                        <div class="categoryIcon" data-category="{!record.Product_Families__c}"  data-category-name="{!record.Category__c}" onclick="{!c.onCategoryClick}">
+                            <a data-category="{!record.Product_Families__c}" data-category-name="{!record.Category__c}">
+                                <img data-category="{!record.Product_Families__c}"  data-category-name="{!record.Category__c}" src="{!$Resource.Category_Icons +'/'+record.Icon_Name__c}" style="width:50%"/>
+                                <span data-category="{!record.Product_Families__c}"  data-category-name="{!record.Category__c}">{!record.Category__c}</span>
+                            </a>
+                        </div>
+                    </aura:iteration>
+                    <div class="slds-float_right">
+                        <lightning:input type="checkbox" checked="{!v.includeOutStock}" label="Include Out Of Stock" class="inline-block" onchange="{!c.onIncludeOutOfStock}"/>
+                        <lightning:buttonMenu iconName="utility:sort" menuAlignment="auto" class="slds-button_last" onselect="{!c.onOrderChange}" alternativeText="Filters">
+                            <lightning:menuItem prefixIconName="{!equals(v.selectedFilter, 'Product2.Name ASC')? 'utility:check': ''}" label="Name A-Z" value="Product2.Name ASC" />
+                            <lightning:menuItem prefixIconName="{!equals(v.selectedFilter, 'Product2.Name DESC')? 'utility:check': ''}" label="Name Z-A" value="Product2.Name DESC" />
+                            <lightning:menuItem prefixIconName="{!equals(v.selectedFilter, 'Product2.Family ASC')? 'utility:check': ''}" label="Product Family A-Z" value="Product2.Family ASC" />
+                            <lightning:menuItem prefixIconName="{!equals(v.selectedFilter, 'Product2.Family DESC')? 'utility:check': ''}" label="Product Family Z-A" value="Product2.Family DESC" />
+                            <lightning:menuItem prefixIconName="{!equals(v.selectedFilter, 'UnitPrice ASC')? 'utility:check': ''}" label="Price: Low to High" value="UnitPrice ASC" />
+                            <lightning:menuItem prefixIconName="{!equals(v.selectedFilter, 'UnitPrice DESC')? 'utility:check': ''}" label="Price: High to Low" value="UnitPrice DESC" />
+                        </lightning:buttonMenu>
+                    </div>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="12">
+                        <div class="ps slds-is-relative" id="psContainer" aura:id="psContainer" style="{!'width:100%;height: calc(100vh - ' + v.topHeight + ')'}">
+                            <lightning:layout multipleRows="true">
+                                <aura:if isTrue="{!v.records.length >0}">
+                                    <aura:iteration items="{!v.records}" var="record">
+                                        <c:product isBrand="{!v.isBrand}" product="{!record}" isList="{!v.isList}" isPublic="{!v.isPublic}"/>
+                                    </aura:iteration>
+                                    <aura:set attribute="else">
+                                        <div class="noData">
+                                            No Product Found.
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </lightning:layout>
+                        </div>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!v.showScrollToTop}">
+                        <lightning:icon class="jumptotop" iconName="utility:jump_to_top" onclick="{!c.scrollToTop}" />
+                    </aura:if>
+                </lightning:layout>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+    </div>
+</aura:component>

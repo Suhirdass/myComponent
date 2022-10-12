@@ -1,0 +1,3 @@
+<design:component label="Global Search">
+	<design:attribute name="searchTerm" label="Search Term" description="Enter some text to search records" />
+</design:component>

@@ -1,0 +1,302 @@
+<apex:page Controller="RatesController"  showHeader="false"
+           sidebar="false" applyBodyTag="false" applyHtmlTag="false" renderAs="pdf">
+    <html>
+        <head>
+            <style type="text/css">
+                html,body,div,span,table,thead,tbody,tr,th,td{
+                font-family:'sans-serif';
+                font-size:13px;
+                }                
+                table
+                {
+                border-collapse: collapse;
+                border: none;
+                }
+                @page{
+                margin-top: 3cm;
+                size: A4 landscape;
+                font-size: 13px;
+                font-family:'sans-serif';
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 130px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                margin-top: 30px;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                table {
+                width: 100%;
+                text-align: center;
+                padding: 7px;
+                border-collapse: collapse;
+                -fs-table-paginate: paginate;
+                }
+                th,td{
+                padding: 7px;
+                }
+                thead{
+                background: #e7e6e2;
+                display: table-header-group;
+                text-align: center;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                }
+            </style>
+        </head>
+        <div class="header"  >
+        	<table width="100%">
+                <tr>
+                    <td style="text-align: left;">
+                        <br/>
+                        <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;"/>
+                    </td>
+                    <td>
+                        <br/>
+                        <h1 class="stationName">{!headingName}</h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <apex:outputPanel rendered="{!!isOtherFRT}">
+            <apex:repeat value="{!FRTRateDetailPrint}" var="frt">
+                
+                <div class="tbl-header">
+                    <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                        <thead>
+                            <tr>
+                                <th rowspan="1" colspan="2">{!frt}</th>
+                                <th rowspan="1" colspan="{!MOQLength}">MOQ</th>
+                            </tr>
+                            <tr>
+                                <th rowspan="1" colspan="1" >
+                                    <span class="headerText">Class Type</span>
+                                </th>
+                                <th rowspan="1" colspan="1" >
+                                    <span class="headerText">Weight (lbs)</span>
+                                </th>
+                                
+                                <apex:repeat value="{!MOQSet}" var="m">
+                                    <th rowspan="1" colspan="1" id="{!m}">
+                                        <span class="headerText">{!m}</span>
+                                    </th>
+                                </apex:repeat>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!FRTRateDetailPrint[frt]}" var="frt2">
+                                <tr>
+                                    <td >{!frt2.MembershipLevel}</td>
+                                    <td>
+                                        
+                                        <apex:outputText value="{0,number,###,##0.00} ">
+                                            <apex:param value="{!frt2.weight}"/>
+                                        </apex:outputText>
+                                    </td>
+                                    <apex:repeat value="{!frt2.bracketPriceList}" var="p">
+                                        <td rowspan="1" colspan="1">
+                                            <span class="headerText">
+                                                <apex:outputPanel rendered="{!p==-1}">
+                                                    &nbsp;
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!p != -1}">
+                                                    <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                                        <apex:param value="{!p}"/>
+                                                    </apex:outputText>
+                                                </apex:outputPanel> 
+                                            </span>
+                                        </td>
+                                    </apex:repeat>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </div><br/><br/>
+            </apex:repeat>
+        </apex:outputPanel> 
+        <apex:outputPanel rendered="{!isOtherFRT}">
+            <div class="tbl-header">
+                <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                    <thead>
+                        <tr>   
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">Membership Level</span>
+                            </th>
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">Site</span>
+                            </th>
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">Fulfillment Services</span>                        
+                            </th>
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">Bracket Price</span>
+                            </th>
+                            <!--th rowspan="1" colspan="1" >
+                                <span class="headerText">Rate Effective From</span>                        
+                            </th-->
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">Rate Effective To</span>
+                            </th>
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">MOQ</span>                        
+                            </th>
+                            <th rowspan="1" colspan="1" >
+                                <span class="headerText">Weight (lbs)</span>                        
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <apex:repeat value="{!printOthersFRTList}" var="frt">
+                            <tr style="border-top:none;">
+                                <td>{!frt.Membership_Level__c}</td>
+                                <td>{!frt.Site__r.Warehouse_Name__c}</td>
+                                <td>{!frt.Fulfillment_Services__c}</td>
+                                <td>
+                                    <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!frt.Bracket_Price__c}"/>
+                                    </apex:outputText>
+                                </td>
+                                <!--td>
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}"> 
+                                        <apex:param value="{!frt.Rate_Effective_From__c}" /> 
+                                    </apex:outputText>
+                                </td-->
+                                <td>
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}"> 
+                                        <apex:param value="{!frt.Rate_Effective_To__c}" /> 
+                                    </apex:outputText>
+                                </td>
+                                <td>{!frt.MOQ__c}</td>
+                                <td>
+                                    <apex:outputText value="{0,number,###,##0.00} ">
+                                        <apex:param value="{!frt.Weight_lbs__c}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </div>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!isSRT}">
+            <apex:repeat value="{!printSRTDetails}" var="srt">
+                        <div class="tbl-header">
+                            
+                            <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                                <thead>
+                                    <tr>   
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Site</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Mileage Bracket</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Mileage Bracket Price</span>                        
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Weight Bracket</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Weight Bracket Price</span>                        
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Fixed Weight Amount</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Fixed Mileage Amount</span>                        
+                                        </th>
+                                        <!--th rowspan="1" colspan="1" >
+                                            <span class="headerText">Rate Effective From</span>                        
+                                        </th-->
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Rate Effective To</span>                        
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!printSRTDetails[srt]}" var="srt2">
+                                        <tr style="border-top:none;">
+                                            <td  style="white-space: nowrap;">{!srt2.Site__r.Warehouse_Name__c}</td>
+                                            <td>{!srt2.Mileage_Bracket__c}</td>
+                                            <td>
+                                                <apex:outputText value="{0,number,$###,###,###,##0.000}">
+                                                    <apex:param value="{!srt2.Mileage_Bracket_Price__c}"/>
+                                                </apex:outputText>
+                                            </td>
+                                            <td>{!srt2.Weight_Bracket__c}</td>
+                                            <td>
+                                                <apex:outputText value="{0,number,$###,###,###,##0.000}">
+                                                    <apex:param value="{!srt2.Weight_Bracket_Price__c}"/>
+                                                </apex:outputText>
+                                            </td>
+                                            <td>
+                                                <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                                    <apex:param value="{!srt2.Fixed_Weight_Amount__c}"/>
+                                                </apex:outputText>
+                                            </td>
+                                            <td>
+                                                <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                                    <apex:param value="{!srt2.Fixed_Mileage_Amount__c}"/>
+                                                </apex:outputText>
+                                            </td>
+                                            <!--td>
+                                                <apex:outputText value="{0,date,MM/dd/yyyy}"> 
+                                                    <apex:param value="{!srt2.Rate_Effective_From__c}" /> 
+                                                </apex:outputText>
+                                            </td-->
+                                            <td>
+                                                <apex:outputText value="{0,date,MM/dd/yyyy}"> 
+                                                    <apex:param value="{!srt2.Rate_Effective_To__c}" /> 
+                                                </apex:outputText>
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                        </div><br/><br/>
+            </apex:repeat>
+        </apex:outputPanel>
+        <div class="footer">
+            <div class="footerAlign" id="footerId">
+                <apex:outputText value=" {!NOW()}"/>
+            </div> 
+        </div>
+    </html>
+</apex:page>

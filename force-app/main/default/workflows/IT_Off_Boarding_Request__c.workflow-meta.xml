@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Alert_IT_Off_Boarding_Request</fullName>
+        <description>Alert IT Off Boarding Request</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>lakshmi@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>vijay@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>DefaultWorkflowUser</senderType>
+        <template>All_templates/IT_Off_Boarding</template>
+    </alerts>
+    <alerts>
+        <fullName>IT_Off_Boarding_Requested_completed_by_IT</fullName>
+        <description>IT Off Boarding Requested completed by IT</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>arielle@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>tracey@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>DefaultWorkflowUser</senderType>
+        <template>All_templates/IT_Off_Boarding_Request_Completed</template>
+    </alerts>
+    <rules>
+        <fullName>IT Off Boarding Request Completed</fullName>
+        <actions>
+            <name>IT_Off_Boarding_Requested_completed_by_IT</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>IT_Off_Boarding_Request__c.IT_Off_Boarding_Request_Completed__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>It Off  Boarding request email alert completed by IT</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>It Off Boarding Request for IT</fullName>
+        <actions>
+            <name>Alert_IT_Off_Boarding_Request</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>IT_Off_Boarding_Request__c.Type__c</field>
+            <operation>contains</operation>
+            <value>Employee,Contractor</value>
+        </criteriaItems>
+        <description>It Off Boarding Request for IT</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+</Workflow>

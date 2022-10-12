@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Driver_Assignment_Alert</fullName>
+        <description>Driver Assignment Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>FG_Delivery</recipient>
+            <type>role</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/RSM_Driver_of_Assignment</template>
+    </alerts>
+    <alerts>
+        <fullName>RSM_Departure_Alert_to_CSA</fullName>
+        <description>RSM Departure Alert to CSA</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>phong@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sinatra@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>tristen@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/RSM_Departure_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>RSM_Ship_Confirmation_Alert</fullName>
+        <description>RSM Ship Confirmation Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>satheesh@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sinatra@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/RSM_Ship_Confirm_Alert</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>TSM_Map_Arrival_Date_Time</fullName>
+        <field>Receiver_Acceptance_Date__c</field>
+        <formula>Actual_Arrival_Date_Time__c</formula>
+        <name>TSM Map Arrival Date &amp; Time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_SM_Status</fullName>
+        <field>Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Update SM Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_SM_Status_to_Draft</fullName>
+        <field>Status__c</field>
+        <literalValue>Draft</literalValue>
+        <name>Update SM Status to Draft</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_SM_Status_to_Shipment_Pending</fullName>
+        <field>Status__c</field>
+        <literalValue>Shipment Pending</literalValue>
+        <name>Update SM Status to Shipment Pending</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Driver Assigned Alert</fullName>
+        <actions>
+            <name>Driver_Assignment_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <description>Alerts Driver when Route is Assigned</description>
+        <formula>NOT(ISNULL( Driver__r.Related_User__c )) &amp;&amp;ISNULL( Ship_Confirmation_Date__c)  &amp;&amp;  ISCHANGED( Driver__c )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>RSM Departure Alert</fullName>
+        <actions>
+            <name>RSM_Departure_Alert_to_CSA</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Actual_Departure_Date_Time__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Actual_Arrival_Date_Time__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Draft,Shipment Pending,Pending Delivery</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Driver_License_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Vehicle_Model__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>RSM Ship Confirmation Alert</fullName>
+        <actions>
+            <name>RSM_Ship_Confirmation_Alert</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED( Ship_Confirmation_Date__c )  &amp;&amp;
+Text( Status__c ) =&apos;Shipment Complete&apos;  &amp;&amp; 
+ISCHANGED(Status__c )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>TSM Update Acceptance Date</fullName>
+        <actions>
+            <name>TSM_Map_Arrival_Date_Time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Actual_Arrival_Date_Time__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>TSM</value>
+        </criteriaItems>
+        <description>Updates Acceptance Date from Arrival Date</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update SM Status Upon Driver and Vehicle Assignment</fullName>
+        <actions>
+            <name>Update_SM_Status_to_Shipment_Pending</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Driver_License_Number__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Vehicle_Model__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Draft</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Planned_Ship_Transfer_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Updates SM Status when driver and vehicle is added</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update SM Status Upon Removal Driver Vehicle</fullName>
+        <actions>
+            <name>Update_SM_Status_to_Draft</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Driver_License_Number__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Vehicle_Model__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Shipping_Manifest__c.Status__c</field>
+            <operation>notEqual</operation>
+            <value>Cancelled,Pending Delivery,Shipment Complete,Received</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

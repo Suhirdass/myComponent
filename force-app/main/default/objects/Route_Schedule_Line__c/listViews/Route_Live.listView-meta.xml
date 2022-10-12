@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Route_Live</fullName>
+    <columns>Routing_ID__c</columns>
+    <columns>NAME</columns>
+    <columns>Schedule_sequence__c</columns>
+    <columns>Sitename__c</columns>
+    <columns>VehicleId__c</columns>
+    <columns>Route_Schedule__c</columns>
+    <columns>Sales_Order__c</columns>
+    <columns>Purchase_Order__c</columns>
+    <filterScope>Mine</filterScope>
+    <label>Route Live</label>
+</ListView>

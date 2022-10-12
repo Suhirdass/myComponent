@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event to update BreadCrumb">
+	<aura:attribute name="breadCrumbString" type="String"/>
+    <aura:attribute name="breadCrumbIds" type="String"/>
+</aura:event>

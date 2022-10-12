@@ -1,0 +1,367 @@
+<aura:component extends="c:utility">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="initializationCompleted" type="Boolean" default="false" />
+    <aura:attribute name="serviceTicketLine" type="Map" default="{}" />
+    <aura:attribute name="products" type="List" default="[]" />
+    <aura:attribute name="productPriceBooks" type="Map" default="" />
+    <aura:attribute name="perUnitWeights" type="List" default="[]" />
+    <aura:attribute name="desiredRetailReadyForms" type="List" default="[]" />
+    <aura:attribute name="preRollPackagings" type="List" default="[]" />
+    <aura:attribute name="tamperTypes" type="List" default="[]" />
+    <aura:attribute name="testStatus" type="List" default="[]" />
+    <aura:attribute name="packageTypes" type="List" default="[]" />
+    <aura:attribute name="isPreRoll" type="Boolean" default="false" />
+    <aura:attribute name="topFrontLabels" type="List" default="[]" />
+    <aura:attribute name="bottomBackLabels" type="List" default="[]" />
+    <aura:attribute name="bodyTubeLabels" type="List" default="[]" />
+    <aura:attribute name="THCCBDClaim_Labels" type="List" default="[]" />
+    <aura:attribute name="Cone_Size" type="List" default="[]" />
+    <aura:attribute name="selectedUID" type="Object" default="" description="selected UID Details" />
+    <aura:attribute name="selectedHarvestBatchCode" type="Object" default="" description="selected Harvest Batch Code Details" />
+    <aura:attribute name="selectedNewBatchCode" type="Object" default="" description="selected New Batch Code Details" />
+    <aura:attribute name="brandId" type="String" default="" />
+    <aura:attribute name="brandName" type="String" default="" />
+    <aura:attribute name="changeIds" type="String" default="" />
+    <aura:attribute name="SLIndex" type="Integer" default="-1" />
+    <aura:attribute name="totalCases" type="Integer" default="" />
+    <aura:attribute name="isCollapsed" type="Boolean" default="false" />
+    <aura:attribute name="isUIDError" type="Boolean" default="false" />
+    <aura:attribute name="isBatchIDError" type="Boolean" default="false" />
+    <aura:attribute name="isNewBatchIDError" type="Boolean" default="false" />
+    <aura:attribute name="toolTips" type="Object"/>
+    <aura:attribute name="IT_DISABLE_BATCH_UID_FAMILIES" type="String"/>
+    <aura:attribute name="DISABLE_BATCH_UID" type="Boolean" default="false"/>
+    <aura:attribute name="DISABLE_COA" type="Boolean" default="false"/>
+    <aura:attribute name="IT_DISABLE_COA_NUMBER_STATUSES" type="String"/>
+    <aura:attribute name="testRequiredOptions" type="List" default="[{id:'Yes',name:'Yes'},{id:'No',name:'No'}]"/>
+    
+    <aura:handler event="c:batchIdEvent" action="{!c.updateRecId}"/>
+    <aura:registerEvent name="removeServiceTicketLine" type="c:removeServiceTicketLine" />
+    <aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/>
+    <aura:method name="validate" />
+    <div class="slds-grid slds-gutters slds-m-top_small">
+        <section class="slds-col slds-size_1-of-1">
+            <div class="slds-box height-full">
+                <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-4 slds-is-relative STHeader">
+                            <div class="slds-show_inline-block" style="position:absolute;top:0;left:-10px;width:12px;">
+                                <lightning:buttonIcon class="arrowButton" iconName="{!if(v.isCollapsed,'utility:right','utility:down')}" variant="bare" size="medium" onclick="{!c.onExpendCollapse}"></lightning:buttonIcon>
+                            </div>
+                            <!--aura:if isTrue="{!equals(v.serviceTicketLine.Package_Type,'')}">
+                                Service
+                                <aura:set attribute="else">
+                                    {!v.serviceTicketLine.Package_Type}
+                                </aura:set>
+                            </aura:if-->
+                            <aura:if isTrue="{!equals(v.serviceTicketLine.ProductName,'')}">
+                                Product
+                                <aura:set attribute="else">
+                                    <div class="slds-truncate" title="{!v.serviceTicketLine.ProductName}">{!v.serviceTicketLine.ProductName}</div>
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 STHeader">    
+                            <aura:if isTrue="{!greaterthan(v.serviceTicketLine.Total_Units,0)}">
+                                <lightning:formattedNumber value="{!v.totalCases}" maximumFractionDigits="2"/> cases (<lightning:formattedNumber value="{!v.serviceTicketLine.Total_Units}" maximumFractionDigits="2"/> units)
+                                <aura:set attribute="else">
+                                	Quantity
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 STHeader">   
+                            <!--aura:if isTrue="{!and(not(equals(v.serviceTicketLine.Package_Type,'')),greaterthan(v.serviceTicketLine.Total_Units,0))}">
+                                {!v.totalCases} Cases {!v.serviceTicketLine.Total_Units} Units
+                                <aura:set attribute="else">
+                                	Quantity
+                                </aura:set>
+                            </aura:if-->
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 STHeader">
+                            <!--aura:if isTrue="{!or(greaterthan(v.serviceTicketLine.largeLabelQty,0),or(greaterthan(v.serviceTicketLine.mediumLabelQty,0),greaterthan(v.serviceTicketLine.smallLabelQty,0)))}">
+                                <span>Labels - Yes</span>
+                                <aura:set attribute="else">
+                                    <span>Labels - No</span>
+                                </aura:set>
+                            </aura:if-->
+                        </div>
+                    </div>
+                </h2>
+                
+                <div class="{!'slds-p-horizontal_xx-small'+if(v.isCollapsed,' slds-hide','')}">
+                    <div class="slds-grid slds-wrap">
+                        <!--div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                            <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Service Type" helpText="Please select the service type desired" required="true">
+                                <lightning:select aura:id="validate" variant="label-hidden" value="{!v.serviceTicketLine.Package_Type}"
+                                                  onchange="{!c.onPerRollChange}" required="true" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}">
+                                    <option value="">None</option>
+                                    <aura:iteration items="{!v.packageTypes}" var="tp">
+                                        <option value="{!tp.value}">{!tp.label}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </c:labelWithHelpText>
+                        </div-->
+                        <!--aura:if isTrue="{!not(equals(v.serviceTicketLine.Package_Type,''))}"-->
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <!--c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Product Name" helpText="{!v.toolTips.Product_Name_Tooltip}" required="true">
+                                    
+                                </c:labelWithHelpText-->
+                                <aura:if isTrue="{!v.initializationCompleted}">
+                                        <c:multiselect MSIndex="{!v.SLIndex}" aura:id="multiSelect" mslabel="Product Name" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.products }" selectedValuesName="{!v.serviceTicketLine.New_Packaged_ProductName}" selectedValuesId="{!v.serviceTicketLine.New_Packaged_Product}"/>
+                                    </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <!--c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Product SKU" helpText="{!v.toolTips.Product_SKU_Tooltip}">
+                                    
+                                </c:labelWithHelpText-->
+                                <lightning:input type="text" disabled="true" label="Product SKU" value="{!v.serviceTicketLine.productDescription}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Batch ID" helpText="{!v.toolTips.Batch_ID_Tooltip}" required="true" >
+                                    <c:customLookup isFixed="true" aura:id="Harvest_Batch_IDCustomLookup" updatedIndex="{!v.SLIndex}" changeIds="sourceBatch" brandName="{!v.brandName}" brandId="{!v.brandId}" objectName="Harvest_Batch_Code__c" fieldName="Name" label="" value="{!v.serviceTicketLine.Harvest_Batch_ID}" selectedRecord="{!v.selectedHarvestBatchCode}" isRequired="true"  hideLabel="true" allowCreate="true" isDisabled="{!v.DISABLE_BATCH_UID}"/>
+                                </c:labelWithHelpText>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="UID" helpText="{!v.toolTips.UID_Tooltip}" required="true">
+                                    <c:customLookup  isFixed="true" aura:id="UIDCustomLookup" updatedIndex="{!v.SLIndex}" changeIds="uids" brandName="{!v.brandName}" brandId="{!v.brandId}" objectName="UID__c" fieldName="Name" label="" value="{!v.serviceTicketLine.UID}" selectedRecord="{!v.selectedUID}" isRequired="true"  hideLabel="true"  allowCreate="true"  isDisabled="{!v.DISABLE_BATCH_UID}"/>
+                                </c:labelWithHelpText>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <!--c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Total Qty" helpText="{!v.toolTips.Total_Qty_Tooltip}" required="true">
+                                    
+                                </c:labelWithHelpText-->
+                                <lightning:input type="number" aura:id="validate" min="1" step="1" label="Total Qty" value="{!v.serviceTicketLine.Total_Units}" required="true"  disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}" onchange="{!c.onTotalUnitsChange}"/>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Test Required" helpText="{!v.toolTips.Test_Required_Tooltip}" required="false">
+                                    <!--lightning:select aura:id="validate" variant="label-hidden" label="Test Required" value="{!v.serviceTicketLine.Test_Required}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}">
+                                        <option value="No" selected="{!!equals(v.serviceTicketLine.Test_Required,'No')}">No</option>
+                                        <option value="Yes" selected="{!!equals(v.serviceTicketLine.Test_Required,'Yes')}">Yes</option>
+                                    </lightning:select-->
+                                    <aura:if isTrue="{!v.initializationCompleted}">
+                                        <c:multiselect MSIndex="{!v.SLIndex}" aura:id="multiSelect" mslabel="Test Required" isRequired="false" hideLabel="true" isMultiSelect="false" msoptions="{# v.testRequiredOptions }" selectedValuesName="{!v.serviceTicketLine.Test_Required}" selectedValuesId="{!v.serviceTicketLine.Test_Required}"/>
+                                    </aura:if>
+                                </c:labelWithHelpText>
+                            </div>
+                        <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                            <!--c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Test Status" helpText="{!v.toolTips.Test_Status_Tooltip}" required="false">
+                                
+                                
+                            </c:labelWithHelpText-->
+                            <aura:if isTrue="{!v.initializationCompleted}">
+                                <c:multiselect MSIndex="{!v.SLIndex}" aura:id="multiSelect" mslabel="Test Status" isRequired="false"  isMultiSelect="false" msoptions="{# v.testStatus }" selectedValuesName="{!v.serviceTicketLine.testStatus}" selectedValuesId="{!v.serviceTicketLine.testStatus}"/>
+                            </aura:if>
+                        </div>
+                            <div class="slds-col slds-size_1-of-4  slds-m-vertical_small">
+                                <!--c:labelWithHelpText label="COA Number"  isDefaultIcon="false" helpText="{!v.toolTips.COA_Number_Tooltip}" required="false">
+                                    
+                                </c:labelWithHelpText-->
+                                <lightning:input type="text" aura:id="validate" label="COA Number"
+                                                     value="{!v.serviceTicketLine.COA_Number}" disabled="{!or(v.DISABLE_COA,or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.status == 'Cancelled',or(v.serviceTicketLine.Package_Type == 'Bagging',or(v.serviceTicketLine.Package_Type == 'Pre-Rolling',v.serviceTicketLine.Package_Type == 'Jarring')))))}"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1  slds-m-vertical_small">
+                                <!--c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Special Instructions" helpText="{!v.toolTips.Special_Instructions_Tooltip}" required="false" >
+                                    
+                                </c:labelWithHelpText-->
+                                <lightning:textarea  aura:id="validate" label="Special Instructions" value="{!v.serviceTicketLine.Spl_Packaging_Notes}"
+                                                        placeholder="Special Instructions" class="specialInstructions" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}"  maxlength="255"/>
+                            </div>
+                            
+                            <!--
+                            <aura:if isTrue="{!not(equals(v.serviceTicketLine.Package_Type,''))}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="UID" helpText="Input UID or create new UID" required="true">
+                                        <c:customLookup  isFixed="true" aura:id="UIDCustomLookup" updatedIndex="{!v.SLIndex}" changeIds="uids" brandName="{!v.brandName}" brandId="{!v.brandId}" objectName="UID__c" fieldName="Name" label="" value="{!v.serviceTicketLine.UID}" selectedRecord="{!v.selectedUID}" isRequired="true"  hideLabel="true"  allowCreate="true"/>
+                                    </c:labelWithHelpText>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Request Date" helpText="Please enter the date when ALL materials will arrive or requested drop-off/pick-up" required="true">
+                                        <lightning:input type="date" aura:id="validate" variant="label-hidden" label="Packaging Materials to Arrive" value="{!v.serviceTicketLine.Expected_Arrival_At_Filligreen}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}"/>
+                                    </c:labelWithHelpText>
+                                </div>
+                                
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Net Weight or Qty" helpText="Please select the target weight per unit after transformation. Max allowance is 3% net weight variance" required="{!not(equals(v.serviceTicketLine.Package_Type,'Transfer Service'))}">
+                                        <lightning:select aura:id="validate" variant="label-hidden" label="Desired Retail Ready Form" value="{!v.serviceTicketLine.Desired_Retail_Ready_Form}"
+                                                          required="{!not(equals(v.serviceTicketLine.Package_Type,'Transfer Service'))}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}">
+                                            <option value="">None</option>
+                                            <aura:if isTrue="{!equals(v.serviceTicketLine.Per_Unit_Weight_g,'1 (each)')}">
+                                                <option value="1 (each)">1 (each)</option>
+                                                <aura:set attribute="else">
+                                                    <aura:iteration items="{!v.desiredRetailReadyForms}" var="desiredRetailReadyForm">
+                                                        <option value="{!desiredRetailReadyForm.value}">{!desiredRetailReadyForm.label}</option>
+                                                    </aura:iteration>
+                                                </aura:set>
+                                            </aura:if>
+                                        </lightning:select>
+                                    </c:labelWithHelpText>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!or(equals(v.serviceTicketLine.Package_Type,'Bagging'),or(equals(v.serviceTicketLine.Package_Type,'Jarring'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing'))))}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Tamper Type" helpText="Please select the type of tamper evident label to apply." required="false">
+                                        <lightning:select aura:id="validate" variant="label-hidden" label="Tamper Type" value="{!v.serviceTicketLine.Tamper_Type}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.Package_Type == 'Transfer Service',v.serviceTicketLine.status == 'Cancelled'))}">
+                                            <option value="" selected="{!(!or(v.serviceTicketLine.Package_Type == 'Jarring',or(v.serviceTicketLine.Package_Type == 'Bagging',v.serviceTicketLine.Package_Type == 'Pre-Rolling')))}">None</option>
+                                            <aura:iteration items="{!v.tamperTypes}" var="tp">
+                                                <option value="{!tp.value}">{!tp.label}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </c:labelWithHelpText>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Small Label Qty" helpText="Small Label Qty">
+                                        <lightning:input type="number" min="0" step="1" label="Small Label Qty" value="{!v.serviceTicketLine.smallLabelQty}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}"/>
+                                    </c:labelWithHelpText>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Medium Label Qty"  helpText="Medium Label Qty">
+                                        <lightning:input type="number" min="0" step="1" label="Small Label Qty" value="{!v.serviceTicketLine.mediumLabelQty}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}"/>
+                                    </c:labelWithHelpText>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Large Label Qty" helpText="Large Label Qty">
+                                        <lightning:input type="number" min="0" step="1" label="Small Label Qty" value="{!v.serviceTicketLine.largeLabelQty}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}"/>
+                                    </c:labelWithHelpText>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!or(equals(v.serviceTicketLine.Package_Type,'Bagging'),or(equals(v.serviceTicketLine.Package_Type,'Jarring'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(v.serviceTicketLine.Package_Type,'Transfer Pick-up'),or(equals(v.serviceTicketLine.Package_Type,'Supplier Drop-off'),or(equals(v.serviceTicketLine.Package_Type,'Pick &amp; Pack'),or(equals(v.serviceTicketLine.Package_Type,'Transport'),or(equals(v.serviceTicketLine.Package_Type,'Sorting')))))))))}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Testing Required" helpText="Please select Yes if required, if No, you will be required to provide transferring COA" required="{!equals(v.serviceTicketLine.Package_Type,'Pre-Rolling')}">
+                                        <lightning:select aura:id="validate" variant="label-hidden" label="Testing Required" value="{!v.serviceTicketLine.Test_Required}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}">
+                                            <option value="No" selected="{!!equals(v.serviceTicketLine.Test_Required,'No')}">No</option>
+                                            <option value="Yes" selected="{!!equals(v.serviceTicketLine.Test_Required,'Yes')}">Yes</option>
+                                        </lightning:select>
+                                    </c:labelWithHelpText>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!equals(v.serviceTicketLine.Package_Type,'Pre-Rolling')}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Cone Size" helpText="Please select Cone Size to apply" required="{!equals(v.serviceTicketLine.Package_Type,'Pre-Rolling')}">
+                                        <lightning:select aura:id="validate" variant="label-hidden" label="Cone Size" value="{!v.serviceTicketLine.Cone_Size}" required="{!equals(v.serviceTicketLine.Package_Type,'Pre-Rolling')}" class="resetLabel" disabled="{!!equals(v.serviceTicketLine.Package_Type,'Pre-Rolling')}">
+                                            <option value="" selected="{!!equals(v.serviceTicketLine.Package_Type,'Pre-Rolling')}">None</option>
+                                            <aura:iteration items="{!v.Cone_Size}" var="tp">
+                                                <option value="{!tp.value}" selected="{!equals(v.serviceTicketLine.Cone_Size,tp.value)}">{!tp.label}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </c:labelWithHelpText>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing')}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="Pre-Rolls per Pack" helpText="Please select how many pre-rolls will be packed into retail ready case" required="{!or(v.serviceTicketLine.Package_Type == 'Pre-Rolling',v.serviceTicketLine.Package_Type == 'Pre-Roll Packing')}">
+                                        <lightning:select aura:id="validate" variant="label-hidden" label="Pre-Rolls per Pack" value="{!v.serviceTicketLine.PreRoll_Packaging}"
+                                                          required="{!v.serviceTicketLine.Package_Type == 'Pre-Rolling'}" disabled="{!or(or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled'),!or(v.serviceTicketLine.Package_Type == 'Pre-Rolling',v.serviceTicketLine.Package_Type == 'Pre-Roll Packing'))}" class="resetLabel">
+                                            <option value="" selected="{!v.serviceTicketLine.Package_Type != 'Pre-Rolling'}">None</option>
+                                            <aura:iteration items="{!v.preRollPackagings}" var="preRollPackaging">
+                                                <option value="{!preRollPackaging.value}">{!preRollPackaging.label}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </c:labelWithHelpText>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!or(equals(v.serviceTicketLine.Package_Type,'Bagging'),or(equals(v.serviceTicketLine.Package_Type,'Jarring'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Rolling'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(v.serviceTicketLine.Package_Type,'Blending'))))))}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="New Product Name" helpText="Please select from your Product Names" required="{!or(equals(v.serviceTicketLine.Package_Type,'Bagging'),or(equals(v.serviceTicketLine.Package_Type,'Jarring'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Rolling'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(v.serviceTicketLine.Package_Type,'Blending'))))))}">
+                                        <lightning:select aura:id="validate" variant="label-hidden" label="New Packaged Product" value="{!v.serviceTicketLine.New_Packaged_Product}" required="{!or(equals(v.serviceTicketLine.Package_Type,'Bagging'),or(equals(v.serviceTicketLine.Package_Type,'Jarring'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Rolling'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(v.serviceTicketLine.Package_Type,'Blending'))))))}" class="resetLabel">
+                                            <option value="">None</option>
+                                            <aura:iteration items="{!v.products}" var="p">
+                                                <option value="{!p.id}">{!p.name}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </c:labelWithHelpText>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <c:labelWithHelpText hideRequired="true" isDefaultIcon="false" label="New Batch ID" helpText="Input Batch ID or create new Batch ID" required="{!or(equals(v.serviceTicketLine.Package_Type,'Bagging'),or(equals(v.serviceTicketLine.Package_Type,'Jarring'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Rolling'),or(equals(v.serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(v.serviceTicketLine.Package_Type,'Blending'))))))}" >
+                                        <c:customLookup  isFixed="true" updatedIndex="{!v.SLIndex}" aura:id="New_Batch_IDCustomLookup" changeIds="newBatch" brandName="{!v.brandName}" brandId="{!v.brandId}" objectName="Harvest_Batch_Code__c" fieldName="Name" label="" value="{!v.serviceTicketLine.New_Batch_ID}" selectedRecord="{!v.selectedNewBatchCode}" hideLabel="true" allowCreate="true"  isRequired="true"/>
+                                    </c:labelWithHelpText>
+                                </div>
+                            </aura:if>
+							-->
+                        <!--/aura:if-->
+                        
+                    </div>
+                </div>
+                <div class="{!if(v.isCollapsed,' slds-hide',' removeBar')}">
+                    <lightning:button  class="slds-float_right removebtn" onclick="{!c.onRemoveRow}" value="{!v.SLIndex}" label="Remove"/>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!--<div class="slds-grid slds-m-vertical_large">
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="Transfer Weight Per Unit" helpText="If transferring bulk flower units select 453.6 (g) otherwise 1 (each)" required="true">
+                <lightning:select aura:id="validate" variant="label-hidden" label="Transfer Weight Per Unit" value="{!v.serviceTicketLine.Per_Unit_Weight_g}"
+                                  required="true" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}">
+                    <option value="">None</option>
+                    <aura:iteration items="{!v.perUnitWeights}" var="perUnitWeight">
+                        <option value="{!perUnitWeight.value}">{!perUnitWeight.label}</option>
+                    </aura:iteration> 
+                </lightning:select>
+            </c:labelWithHelpText>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="Top | Front Label" helpText="Input qty of label to apply; Top as in top of lid or tube, Front as in front of baggy or pack" required="false" >
+                <lightning:select aura:id="validate" variant="label-hidden" value="{!v.serviceTicketLine.Top_Front_Label}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.Package_Type == 'Transfer Service',v.serviceTicketLine.status == 'Cancelled'))}">
+                    <option value="" selected="{!(!or(v.serviceTicketLine.Package_Type == 'Jarring',or(v.serviceTicketLine.Package_Type == 'Bagging',v.serviceTicketLine.Package_Type == 'Pre-Rolling')))}">None</option>
+                    <aura:iteration items="{!v.topFrontLabels}" var="tp">
+                        <option value="{!tp.value}">{!tp.label}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </c:labelWithHelpText>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="Bottom | Back Label" helpText="Input qty of label to apply; Bottom as in top of jar or tube, Back as in back of baggy or pack" required="false">
+                <lightning:select aura:id="validate" variant="label-hidden" value="{!v.serviceTicketLine.Bottom_Back_Label}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.Package_Type == 'Transfer Service',v.serviceTicketLine.status == 'Cancelled'))}">
+                    <option value="" selected="{!(!or(v.serviceTicketLine.Package_Type == 'Jarring',or(v.serviceTicketLine.Package_Type == 'Bagging',v.serviceTicketLine.Package_Type == 'Pre-Rolling')))}">None</option>
+                    <aura:iteration items="{!v.bottomBackLabels}" var="tp">
+                        <option value="{!tp.value}">{!tp.label}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </c:labelWithHelpText>
+        </div>
+    </div>
+    <div class="slds-grid slds-m-vertical_large">
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="Body | Tube Label" helpText="Input qty of label to apply; Body as in body of jar or tube" required="false">
+                <lightning:select aura:id="validate" variant="label-hidden" value="{!v.serviceTicketLine.Body_Tube_Label}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.Package_Type == 'Transfer Service',or(v.serviceTicketLine.Package_Type == 'Bagging',v.serviceTicketLine.status == 'Cancelled')))}">
+                    <option value="">None</option>
+                    <aura:iteration items="{!v.bodyTubeLabels}" var="tp">
+                        <option value="{!tp.value}">{!tp.label}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </c:labelWithHelpText>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="THC &amp; CBD Claim Label" helpText="Please select the type of label to apply" required="false">
+                <lightning:select aura:id="validate" variant="label-hidden" label="Tamper Type" value="{!v.serviceTicketLine.THC_CBD_Claim_Label}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.Package_Type == 'Transfer Service',v.serviceTicketLine.status == 'Cancelled'))}">
+                    <option value="" selected="{!(!or(v.serviceTicketLine.Package_Type == 'Jarring',or(v.serviceTicketLine.Package_Type == 'Bagging',v.serviceTicketLine.Package_Type == 'Pre-Rolling')))}">None</option>
+                    <aura:iteration items="{!v.THCCBDClaim_Labels}" var="tp">
+                        <option value="{!tp.value}">{!tp.label}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </c:labelWithHelpText>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="Qty of Misc Label" helpText="Please select the type of label to apply" required="false">
+                <lightning:input type="number" min="0" aura:id="validate" variant="label-hidden" label="Qty of Misc Label" value="{!v.serviceTicketLine.Qty_of_Misc_Label}" class="resetLabel" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.Package_Type == 'Transfer Service',v.serviceTicketLine.status == 'Cancelled'))}"/>
+            </c:labelWithHelpText>
+        </div>
+    </div>
+    <div class="slds-grid slds-m-vertical_large">
+        <div class="slds-col slds-size_1-of-4">
+            <label><br/></label>
+            <lightning:input type="checkbox" aura:id="validate" label="Transfer of Custody" checked="{!v.serviceTicketLine.Transfer_of_Custody}"
+                             onchange="{!c.onInventory_HOLD}" class="inputCheckbox" disabled="{!or(v.serviceTicketLine.status == 'Accepted',v.serviceTicketLine.status == 'Cancelled')}" />
+            <lightning:helptext content="Select if Products will transfer to Filigreen, leave blank if Filigreen has custody of Products" class="inputCheckbox"/>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <c:labelWithHelpText label="COA Number" helpText="Please enter the COA number that corresponds to the Harvest Batch or Lot Code" required="false">
+                <lightning:input type="text" aura:id="validate" variant="label-hidden"
+                                 value="{!if((!or(v.serviceTicketLine.Package_Type == 'Bagging',or(v.serviceTicketLine.Package_Type == 'Pre-Rolling',v.serviceTicketLine.Package_Type == 'Jarring'))),v.serviceTicketLine.COA_Number,'')}" disabled="{!or(v.serviceTicketLine.status == 'Accepted',or(v.serviceTicketLine.status == 'Cancelled',or(v.serviceTicketLine.Package_Type == 'Bagging',or(v.serviceTicketLine.Package_Type == 'Pre-Rolling',v.serviceTicketLine.Package_Type == 'Jarring'))))}"/>
+            </c:labelWithHelpText>
+        </div>
+    </div>-->
+</aura:component>

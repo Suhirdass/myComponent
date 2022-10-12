@@ -1,0 +1,18 @@
+.THIS {
+}
+/*.THIS.tableFixHead {
+    overflow: auto;
+    height: 250px;
+}
+
+.THIS.tableFixHead table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.THIS.tableFixHead th {
+    position: sticky;
+    top: 0;
+  
+    background: white;
+ }*/

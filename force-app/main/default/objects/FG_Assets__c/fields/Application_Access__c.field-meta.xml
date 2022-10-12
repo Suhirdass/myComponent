@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Application_Access__c</fullName>
+    <externalId>false</externalId>
+    <label>Application Access</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Salesforce</fullName>
+                <default>false</default>
+                <label>Salesforce</label>
+            </value>
+            <value>
+                <fullName>Slack</fullName>
+                <default>false</default>
+                <label>Slack</label>
+            </value>
+            <value>
+                <fullName>Smartsheet</fullName>
+                <default>false</default>
+                <label>Smartsheet</label>
+            </value>
+            <value>
+                <fullName>Gmail account</fullName>
+                <default>false</default>
+                <label>Gmail account</label>
+            </value>
+            <value>
+                <fullName>Welkin Suite (SFDC)</fullName>
+                <default>false</default>
+                <label>Welkin Suite (SFDC)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>9</visibleLines>
+</CustomField>

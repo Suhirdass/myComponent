@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PBJ_Start_and_End_DateTime</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+OR(
+ISNEW(),
+ISCHANGED(Actual_Completion_Date__c)
+),
+Actual_Completion_Date__c &lt; Actual_Start_Date__c
+)</errorConditionFormula>
+    <errorDisplayField>Actual_Completion_Date__c</errorDisplayField>
+    <errorMessage>Actual Completion Date &amp; Time should not be less than Actual Start Date &amp; Time.</errorMessage>
+</ValidationRule>

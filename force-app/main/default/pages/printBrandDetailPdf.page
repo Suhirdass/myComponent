@@ -1,0 +1,267 @@
+<apex:page controller="printBrandDetailPdfCtrl"  showHeader="false"
+           sidebar="false" renderAs="pdf" applyBodyTag="false" applyHtmlTag="false">
+    <html>
+        <head>
+            <style type="text/css">
+                html,body,div,span,table,thead,tbody,tr,th,td{
+                font-family:'sans-serif';
+                }
+                table
+                {
+                border-collapse: collapse;
+                border: none;
+                }
+                @page{
+                margin-top: 3cm;
+                size: A4 landscape;
+                font-size: 13px;
+                font-family:'sans-serif';
+                font-size:13px;
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 130px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                margin-top: 30px;
+                }
+                div.right {
+                float: right;
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                float:right;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                .sectionHeader {
+                width: 100%;
+                background-color: #eee;
+                font-size: 16pt;
+                padding: 5px;
+                margin: 20px 0px;
+                font-weight: bold;
+                }
+                table {
+                width: 100%;
+                text-align: left;
+                
+                border-collapse: collapse;
+                -fs-table-paginate: paginate;
+                }
+                th,td{
+                padding:4px;
+                vertical-align:top;
+                }
+                th{
+                font-size:12px;
+                }
+                td{
+                font-size:13px;
+                }
+                tr,th,td{
+                border-collapse: collapse;
+                }
+                thead{
+                background: #e7e6e2;
+                text-align: center;
+                }
+                tr.noBorder td {
+                border: 0;
+                }
+                .labelCol {
+                white-space: nowrap;
+                width: 1%;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+            </style>
+        </head>
+        <div class="header"   >
+            <table>
+                <tr>
+                    <td>
+                        <br/>
+                        <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;"/>
+                    </td>
+                    <td>
+                        <br/>
+                        <h1 class="stationName">Brand Detail(s)</h1>
+                    </td>
+                </tr>
+            </table>
+            
+        </div> 
+        
+        <div class="footer">
+            <div class="footerAlign" id="footerId">
+                <apex:outputText value=" {!NOW()}"/>
+            </div> 
+        </div>
+        <div class="tbl-header">
+            <table border="1" cellpadding="6" cellspacing="0" style="border-color: #000;border-width:1px;">
+                <tr>
+                    <td style="width:30%;">
+                        <div class="brandLeftPanel" style="padding:20px;">
+                            <h2 style="font-weight: normal;font-size:18px;">
+                                {! brndRec.name }
+                            </h2>
+                            <br/>
+                            <div class="slds-m-vertical_medium" style="font-size:14px;">
+                                <p style="line-break: strict;"><span style="color:#74787D;"> Brand Name</span> <br/><b>{! brndRec.brandName }</b> </p><br/>
+                                <apex:outputPanel layout="none" rendered="{! brndRec.businessLine != '' }">
+                                	<p style="line-break: strict;"><span style="color:#74787D;"> Business Type</span> <br/><b>{! brndRec.businessLine }</b> </p><br/>
+                                </apex:outputPanel>
+                                <p style="line-break: strict;"> <span style="color:#74787D;"> Phone</span> <br/><b> {!brndRec.Phone}</b></p><br/>
+                                <p style="line-break: strict;">
+                                    <span style="color:#74787D;"> Website </span><br/><b><apex:outputLink value="{!brndRec.Website}">{!brndRec.Website}</apex:outputLink></b>
+                                </p><br/>
+                                <p style="line-break: strict;">
+                                    <span style="color:#74787D;"> Billing Address </span><br/><b> {!brndRec.billingAddress}</b>
+                                </p><br/>
+                                <!--<table cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                Primary Contact <br/><b>{!primaryContact.Name}</b>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Phone <br/><b> {!primaryContact.Phone}</b>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table><br/>-->
+                                <p style="line-break: strict;">
+                                    
+                                    <span style="color:#74787D;">Primary Contact </span><br/><b>{!primaryContact.Name}</b>
+                                </p><br/>
+                                <p style="line-break: strict;">
+                                    <span style="color:#74787D;"> Phone</span> <br/><b> {!primaryContact.Phone}</b>
+                                </p><br/>
+                                <p style="line-break: strict;">
+                                    <span style="color:#74787D;"> Email</span> <br/><b>{!primaryContact.Email} </b>
+                                </p><br/>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width:70%;">
+                        <div style="padding:20px;">
+                            <p style="font-size:16px;">
+                                <b><apex:outputText escape="false" value="{!brndRec.fullDescription}"></apex:outputText></b> 
+                            </p><br/>
+                            <p style="font-size:15px;">
+                                <apex:outputText escape="false" value="{!brndRec.aboutus}"></apex:outputText>                                
+                            </p>
+                            <apex:outputPanel layout="none" rendered="{!!isBrand}">
+                                <br/>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                Rating: {!brndRec.AccountRating}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Payment Terms: {!brndRec.PaymentTerms}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Date Joined:
+                                                <apex:outputText value="{0,date,yyyy}"> <apex:param value="{!brndRec.onBoardDate}" /> </apex:outputText>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </apex:outputPanel>
+                        </div>
+                        <div>
+                            <div style="padding:20px;">
+                                <span style="font-size:15px;">
+                                    License(s)<br/><br/>
+                                </span>
+                                <table border="1" cellpadding="6" width="100%" cellspacing="0" style="border-color: #000;border-width:0.5px;">
+                                    <thead><tr>
+                                        
+                                        <th aria-sort="ascending"  data-sortfield="License_Address__c">
+                                            <span class="headerText">Address</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Class__c">
+                                            <span class="headerText">License Class</span>
+                                            
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Type__c">
+                                            <span class="headerText">License Type</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Number__c">
+                                            <span class="headerText">License Number</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Status__c">
+                                            <span class="headerText">Status</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Expiration_Date__c">
+                                            <span class="headerText">Expire Date</span>
+                                        </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat var="licenses" value="{!LicenseAddress}">
+                                            <tr>
+                                                <td>{!licenses.shipping.street}, <br/>
+                                                    {!licenses.shipping.city}, {!licenses.shipping.province}, {!licenses.shipping.country}, {!licenses.shipping.postalCode}</td>
+                                                <td >{!licenses.licenseClass}</td>
+                                                <td>{!licenses.licenseType}</td>
+                                                <td>{!licenses.licenseNumber}</td>
+                                                <td >{!licenses.licenseStatus}</td>
+                                                <td>
+                                                    <apex:outputText value="{0,date,M/d/yyyy}">
+                                                        <apex:param value="{!licenses.expirationDate}"/>
+                                                        </apex:outputText>
+                                                </td>
+                                            </tr>    
+                                        </apex:repeat>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>                               
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
+        </div>
+    </html>    
+</apex:page>

@@ -1,0 +1,13 @@
+.THIS .MainDiv {
+    height: 323px;
+    padding: var(--lwc-spacingXSmall,0.5rem) !important;
+}
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+
+.THIS .slds-text-heading_small{
+           font-family:token(salesforceSans) !important;
+           color:token(fontColor);
+        }

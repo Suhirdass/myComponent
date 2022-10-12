@@ -1,0 +1,156 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - AssignDriverToSalesOrder
+-->
+<apex:page standardController="Sales_Order__c"  
+           extensions="AssignDriverToSalesOrderCtlr"  
+           action="{!doPrepare}" 
+           title="{!$Label.Assign_Driver_Label}">
+    
+    <style>
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+    </style>
+    <apex:form >
+        
+        <apex:actionFunction name="retrieveDriverAndRelatedRSMTSMs" 
+                             action="{!retrieveDriverAndRelatedRSMTSMs}" 
+                             reRender="assignDriverId"
+                             status="idRefreshingStatus" />
+                             
+        <apex:pageBlock title="{!$Label.Assign_Driver_Label}" id="assignDriverId">
+            <apex:pageMessages escape="false"/>
+            <apex:actionStatus id="idRefreshingStatus" 
+                              style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            
+            <!-- Assign Driver -->
+            <apex:pageBlockSection >
+                <apex:inputField value="{!tsmObj.Driver__c}" onchange="retrieveDriverAndRelatedRSMTSMs()" />
+                <apex:pageBlockSectionItem rendered="{!tsmObj.Id != null}">
+                    <apex:outputLabel value="{!$Label.Planned_Ship_Transfer_Date}" />
+                    <apex:inputField value="{!tsmObj.Planned_Ship_Date__c}" onchange="retrieveDriverAndRelatedRSMTSMs()"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!--  TSM Details -->
+            <!--apex:pageBlockSection title="{!$Label.TSM_details}" 
+                                   rendered="{!tsmObj.Id != null}"
+                                   collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Shipping_Manifest__c.Fields.Name.Label}"/>
+                    <apex:outputLink value="/{!tsmObj.Id}">{!tsmObj.Name}</apex:outputLink>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Total_Product}" />
+                    <apex:outputText value="{!totalProduct}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Total Product Capacity" />
+                    <apex:outputText value="??" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection!-->
+            
+            <!--  Driver Details -->
+            <apex:pageBlockSection columns="2" 
+                                   title="{!$Label.Driver_details}"
+                                   
+                                   collapsible="false">
+                <apex:outputField value="{!driverObj.Name}" />
+                <apex:outputField value="{!driverObj.Driver_License_Number__c}" />
+                <apex:outputField value="{!driverObj.Expiration_Date__c}" />
+                <apex:outputField value="{!driverObj.Driver_License_Class__c}" />
+                <apex:outputField value="{!driverObj.State_Issued__c}" />
+                <apex:outputField value="{!driverObj.Active__c}" />
+                <apex:outputField value="{!driverObj.License_Expired__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Total Miles to cover" />
+                    <apex:outputText value="??" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Miles available to cover" />
+                    <apex:outputText value="??" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!--  List of TSM associated with selected driver -->
+            <apex:pageBlockSection columns="1" 
+
+                                   title="{!$Label.TSMs_Associated_with_Driver} {!driverObj.Name}"
+                                   collapsible="false">
+                
+                <apex:pageBlockTable value="{!tsmList}" 
+                                     var="tsm"
+                                     rendered="{!tsmList.size > 0}">
+                    <apex:column headerValue="{!$ObjectType.Shipping_Manifest__c.Fields.Name.Label}">
+                        <apex:outputLink value="/{!tsm.Id}">{!tsm.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!tsm.Status__c}" />
+                    <apex:column value="{!tsm.Planned_Ship_Transfer_Date__c}" />                    
+                    <apex:column value="{!tsm.Actual_Departure_Date_Time__c}" />
+                    <apex:column value="{!tsm.Actual_Arrival_Date_Time__c}" />
+                    <apex:column headerValue="Route Miles" value="{!tsm.Route_Miles__c}"/>
+                    <apex:column value="{!tsm.Vehicle__c}" />
+                </apex:pageBlockTable>
+                <apex:outputLabel value="{!$Label.No_Record_Found}" rendered="{!tsmList.size = 0}" />
+            </apex:pageBlockSection>
+            
+            <!--  List of RSMs associated with selected driver -->
+            <apex:pageBlockSection columns="1" 
+
+                                   title="{!$Label.RSMs_Associated_with_Driver} {!driverObj.Name}"
+                                   collapsible="false">
+                
+                <apex:pageBlockTable value="{!rsmList}" 
+                                     var="rsm"
+                                     rendered="{!rsmList.size > 0}">
+                    <apex:column headerValue="{!$ObjectType.Shipping_Manifest__c.Fields.Name.Label}">
+                        <apex:outputLink value="/{!rsm.Id}">{!rsm.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!rsm.Status__c}" />
+                    <apex:column value="{!rsm.Planned_Ship_Transfer_Date__c}" />                   
+                    <apex:column value="{!rsm.Actual_Departure_Date_Time__c}" />
+                     <apex:column value="{!rsm.Receiver_Acceptance_Date__c}" />
+                    <apex:column headerValue="Route Miles" value="{!rsm.Route_Miles__c}"/>
+                    <apex:column headerValue="Vehicle" value="{!rsm.Vehicle__c}"/>
+                </apex:pageBlockTable>
+                <apex:outputLabel value="{!$Label.No_Record_Found}" rendered="{!rsmList.size = 0}" />
+            </apex:pageBlockSection>
+            
+            <!-- Page block buttons -->
+            <apex:pageBlockButtons rendered="{!tsmObj.Id != null}">
+                <apex:commandButton value="{!$Label.Assign_Driver_Label}" 
+                                    action="{!assignDriver}"
+                                    status="idRefreshingStatus"/>
+                <apex:commandButton value="{!$Label.Cancel}" 
+                                    action="{!cancelAction}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

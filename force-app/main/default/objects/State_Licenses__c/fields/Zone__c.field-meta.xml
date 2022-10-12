@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Zone__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Territory assigned to delivery city based on state license.</inlineHelpText>
+    <label>Zone</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Delivery_County__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetName>Zones</valueSetName>
+        <valueSettings>
+            <controllingFieldValue>Sierra</controllingFieldValue>
+            <controllingFieldValue>Siskiyou</controllingFieldValue>
+            <controllingFieldValue>Trinity</controllingFieldValue>
+            <controllingFieldValue>Humboldt</controllingFieldValue>
+            <controllingFieldValue>Lake</controllingFieldValue>
+            <controllingFieldValue>Lassen</controllingFieldValue>
+            <controllingFieldValue>Del Norte</controllingFieldValue>
+            <controllingFieldValue>Mendocino</controllingFieldValue>
+            <controllingFieldValue>Modoc</controllingFieldValue>
+            <controllingFieldValue>Nevada</controllingFieldValue>
+            <controllingFieldValue>Plumas</controllingFieldValue>
+            <valueName>Northern California</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Solano</controllingFieldValue>
+            <controllingFieldValue>Sonoma</controllingFieldValue>
+            <controllingFieldValue>Alameda</controllingFieldValue>
+            <controllingFieldValue>Contra Costa</controllingFieldValue>
+            <controllingFieldValue>Marin</controllingFieldValue>
+            <controllingFieldValue>Napa</controllingFieldValue>
+            <controllingFieldValue>San Benito</controllingFieldValue>
+            <controllingFieldValue>San Francisco</controllingFieldValue>
+            <controllingFieldValue>San Mateo</controllingFieldValue>
+            <controllingFieldValue>Santa Clara</controllingFieldValue>
+            <controllingFieldValue>Santa Cruz</controllingFieldValue>
+            <valueName>Bay Area</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Stanislaus</controllingFieldValue>
+            <controllingFieldValue>Tulare</controllingFieldValue>
+            <controllingFieldValue>Kern</controllingFieldValue>
+            <controllingFieldValue>Kings</controllingFieldValue>
+            <controllingFieldValue>Madera</controllingFieldValue>
+            <controllingFieldValue>Fresno</controllingFieldValue>
+            <controllingFieldValue>Merced</controllingFieldValue>
+            <controllingFieldValue>San Joaquin</controllingFieldValue>
+            <valueName>San Joaquin Valley</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sutter</controllingFieldValue>
+            <controllingFieldValue>Yolo</controllingFieldValue>
+            <controllingFieldValue>Yuba</controllingFieldValue>
+            <controllingFieldValue>El Dorado</controllingFieldValue>
+            <controllingFieldValue>Placer</controllingFieldValue>
+            <controllingFieldValue>Sacramento</controllingFieldValue>
+            <valueName>Greater Sacramento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Tehama</controllingFieldValue>
+            <controllingFieldValue>Glenn</controllingFieldValue>
+            <controllingFieldValue>Butte</controllingFieldValue>
+            <controllingFieldValue>Colusa</controllingFieldValue>
+            <controllingFieldValue>Shasta</controllingFieldValue>
+            <valueName>Northern Sacramento Valley</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Tuolumne</controllingFieldValue>
+            <controllingFieldValue>Inyo</controllingFieldValue>
+            <controllingFieldValue>Alpine</controllingFieldValue>
+            <controllingFieldValue>Mariposa</controllingFieldValue>
+            <controllingFieldValue>Amador</controllingFieldValue>
+            <controllingFieldValue>Calaveras</controllingFieldValue>
+            <controllingFieldValue>Mono</controllingFieldValue>
+            <valueName>Central Sierra</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Ventura</controllingFieldValue>
+            <controllingFieldValue>Los Angeles</controllingFieldValue>
+            <controllingFieldValue>Orange</controllingFieldValue>
+            <controllingFieldValue>Riverside</controllingFieldValue>
+            <controllingFieldValue>San Bernardino</controllingFieldValue>
+            <valueName>Southern California</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Imperial</controllingFieldValue>
+            <controllingFieldValue>San Diego</controllingFieldValue>
+            <valueName>Southern Border</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Monterey</controllingFieldValue>
+            <controllingFieldValue>San Luis Obispo</controllingFieldValue>
+            <controllingFieldValue>Santa Barbara</controllingFieldValue>
+            <valueName>Central Coast</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

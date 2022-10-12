@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_WIP_Not_Completed</fullName>
+    <columns>Brand_Name__c</columns>
+    <columns>NAME</columns>
+    <columns>Production_Work_Order__c</columns>
+    <columns>Product_Packaged_From__c</columns>
+    <columns>New_Packaged_Product__c</columns>
+    <columns>Targeted_Batch_Qty__c</columns>
+    <columns>Required_Cannabis_Weight_or_Qty__c</columns>
+    <columns>Yield_Factor__c</columns>
+    <columns>PWO_Balance_Qty__c</columns>
+    <columns>Actual_Start_Date__c</columns>
+    <columns>Actual_Converted_Qty__c</columns>
+    <columns>Consumed_Weight_or_Qty__c</columns>
+    <columns>Actual_Completion_Date__c</columns>
+    <columns>Purchase_Order__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Actual_Completion_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>1. WIP - Not Completed</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

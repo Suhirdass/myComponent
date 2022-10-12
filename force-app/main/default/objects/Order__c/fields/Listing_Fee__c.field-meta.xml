@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Listing_Fee__c</fullName>
+    <externalId>false</externalId>
+    <label>Listing Fee</label>
+    <summarizedField>Order_Line_Item__c.Listing_Fee__c</summarizedField>
+    <summaryFilterItems>
+        <field>Order_Line_Item__c.Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled, Rejected</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Order_Line_Item__c.Order__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

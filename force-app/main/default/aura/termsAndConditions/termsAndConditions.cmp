@@ -1,0 +1,28 @@
+<aura:component extends="c:utility" controller="Utility">
+    <aura:html tag="style">
+        .slds-modal__content { 
+            padding:0px !important;
+        	width:70% !important;
+        	margin-left:18% !important;
+        	margin-top:2% !important;
+        	height:427px !important;
+        } 
+	</aura:html>
+    <aura:attribute name="termsAndConditions" type="List" default=""/>
+    <aura:registerEvent name="newsAndAnnouncementEvent" type="c:newsAndAnnouncementEvent" />
+    <aside id="success-modal">
+        <div class="slds-text-align_center slds-p-top_large" style="background: var(--c-tanLight,#FAFAF7);">
+            <h2> Terms And Conditions </h2>
+        </div>
+		<div class="success-modal">
+            <aura:iteration items="{!v.termsAndConditions}" var="termsAndCondition">
+               <aura:unescapedHtml value="{!termsAndCondition}" />
+            </aura:iteration>
+        </div>
+        <div class="slds-text-align_center slds-p-top_medium slds-p-bottom_medium" style="background: var(--c-tanLight,#FAFAF7);">
+            <a href="" onclick="{!c.handleClick}" class="slds-button slds-button_brand slds-m-horizontal_small">
+                I ACCEPT
+            </a>
+        </div>
+    </aside>
+</aura:component>

@@ -1,0 +1,169 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global" extends="c:utility" controller="ProductsCtlr" >
+    <ltng:require 
+                  styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}"
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                           $Resource.ratingPlugin + '/js/jquery-ui.js',
+                           $Resource.perfectScrollbar + '/jquery.zoom.js')}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="caseDetails" type="Case"/>
+    <aura:attribute name="isEdit" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="hideButtons" type="boolean" default="false"/>
+    <aura:attribute name="isShowSuccess" type="Boolean" default="false"/>
+    <aura:attribute name="fileDet" type="List" default="[]"/>
+    <aura:attribute name="caseTypesOptions" type="List" default="[{id:'Problem',name:'Problem'},{id:'Feature Request',name:'Feature Request'},{id:'Question',name:'Question'}]"/>
+    <aura:attribute name="priorityOptions" type="List" default="[{id:'High',name:'High'},{id:'Medium',name:'Medium'},{id:'Low',name:'Low'}]"/>
+    <aura:attribute name="preferenceOptions" type="List" default="[{id:'Phone',name:'Phone'},{id:'Email',name:'Email'}]"/>
+    <aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/>
+    
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:messages />
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />
+        <div class="slds-grid slds-gutters slds-m-top_small">
+            <section class="slds-col slds-size_1-of-1">
+                <div class="slds-box height-full">
+                    <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                        <aura:if isTrue="{!v.caseDetails.Id!=null}">
+                            Case Details
+                           <aura:set attribute="else">
+                               Case Details
+                           </aura:set>
+               			 </aura:if> 
+                    </h2>
+                    <div class="slds-p-horizontal_xx-small">
+                        <div class="slds-grid slds-wrap">
+                            <aura:if isTrue="{!v.caseDetails.Id!=null}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input disabled="true" type="text" aura:id="validate"  label="Case Number" value="{!v.caseDetails.CaseNumber}"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input disabled="true" type="text" aura:id="validate"  label="Status" value="{!v.caseDetails.Status}"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <aura:if isTrue="{!v.isDataLoaded}">
+                                        <c:multiselect aura:id="multiSelect" mslabel="Type" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.caseTypesOptions }" selectedValuesName="{!v.caseDetails.Type}" selectedValuesId="{!v.caseDetails.Type}"/>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <aura:if isTrue="{!v.isDataLoaded}">
+                                        <c:multiselect aura:id="multiSelect" mslabel="Priority" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.priorityOptions }" selectedValuesName="{!v.caseDetails.Priority}" selectedValuesId="{!v.caseDetails.Priority}"/>
+                                    </aura:if>
+                                </div>
+                                
+                                
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <label class="slds-form-element__label">Created Date &amp; Time</label>
+                                    <div style="border: 1px solid #e9eaec; height:32px; border-radius:3px; font-size: 11.5px; background:#e9eaec; padding: 3% 0 0 5%;"><ui:outputDateTime format="MM/dd/yyyy hh:mm a" value="{!v.caseDetails.CreatedDate}"/></div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <aura:if isTrue="{!v.isDataLoaded}">
+                                        <c:multiselect aura:id="multiSelect" mslabel="Contact Preference" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.preferenceOptions }" selectedValuesName="{!v.caseDetails.Contact_Preference__c}" selectedValuesId="{!v.caseDetails.Contact_Preference__c}"/>
+                                    </aura:if>
+                                </div>
+                                
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" disabled="true" aura:id="validate" label="Contact Email" value="{!v.caseDetails.ContactEmail}" />
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" disabled="true" aura:id="validate"  label="Contact Phone" value="{!v.caseDetails.ContactPhone}" />
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="subjectInput" maxlength="100" label="Subject" value="{!v.caseDetails.Subject}" required="true" messageWhenValueMissing="Complete this field"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+                                    <lightning:textarea aura:id="DescInput"  required="true" class="specialInstructions" label="Message" value="{!v.caseDetails.Description}" messageWhenValueMissing="Complete this field"
+                                                        maxlength="255"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+                                    <lightning:textarea aura:id="validate" disabled="true" required="true" class="specialInstructions" title="{!v.caseDetails.Owner_Information_Notes__c}"  label="Filigreen Notes" value="{!v.caseDetails.Owner_Information_Notes__c}" messageWhenValueMissing="Complete this field"
+                                                        maxlength="255"/>
+                                </div>
+                                <aura:iteration items="{!v.fileDet}" var="file" indexVar="index">
+                                    <aura:if isTrue="{!!file.hasAttchment}">
+                                        <div class="slds-col slds-size_1-of-4 hasAttchment slds-p-around_medium">
+                                            <lightning:fileUpload name="fileUploader" accept=".pdf, .png, .jpg" multiple="true" recordId="{!v.caseDetails.Id}" label ="Upload Document" onuploadfinished="{!c.doInit}" />
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                                <label class="slds-form-element__label">Attachment</label>
+                                                <div data-id="{!file.documentId}" onclick="{!c.onViewCompliance}">
+                                                    <h3 class="attachmentFile clickable">{!file.documentTitle} </h3>
+                                                </div>
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <aura:if isTrue="{!v.isDataLoaded}">
+                                            <c:multiselect aura:id="multiSelect" mslabel="Type" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.caseTypesOptions }" selectedValuesName="{!v.caseDetails.Type}" selectedValuesId="{!v.caseDetails.Type}"/>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <aura:if isTrue="{!v.isDataLoaded}">
+                                            <c:multiselect aura:id="multiSelect" mslabel="Priority" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.priorityOptions }" selectedValuesName="{!v.caseDetails.Priority}" selectedValuesId="{!v.caseDetails.Priority}"/>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <aura:if isTrue="{!v.isDataLoaded}">
+                                            <c:multiselect aura:id="multiSelect" mslabel="Contact Preference" isRequired="true" hideLabel="false" isMultiSelect="false" msoptions="{# v.preferenceOptions }" selectedValuesName="{!v.caseDetails.Contact_Preference__c}" selectedValuesId="{!v.caseDetails.Contact_Preference__c}"/>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <lightning:input type="text" disabled="true" aura:id="validate"  label="Contact Phone" value="{!v.caseDetails.ContactPhone}" />
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-4 slds-m-vertical_small">
+                                        <lightning:input type="text" aura:id="subjectInput" maxlength="100" label="Subject" value="{!v.caseDetails.Subject}" required="true" messageWhenValueMissing="Complete this field"/>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <lightning:input type="text" disabled="true" aura:id="validate" label="Contact Email" value="{!v.caseDetails.ContactEmail}" />
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+                                        <lightning:textarea aura:id="DescInput"  required="true" class="specialInstructions" label="Message" value="{!v.caseDetails.Description}" messageWhenValueMissing="Complete this field"
+                                                            maxlength="255"/>
+                                    </div>
+                                    <div style="margin-bottom:8%;"></div>
+                                </aura:set>
+                            </aura:if> 
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>  
+        <aura:if isTrue="{!v.caseDetails.Id==null}">
+             <div style="margin-bottom:20%;"></div>
+         </aura:if> 
+        <div class="action-bar">
+            <lightning:layout>
+                <lightning:layoutItem flexibility="grow" size="6">
+                    <lightning:button onclick="{!c.onCancel}" label="Cancel" class="cancelButton" />
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right">
+                    <!--<lightning:button onclick="{!c.onCancel}" class="slds-m-right_medium draftButton" label="All Tickets" />-->
+                    <aura:if isTrue="{!(!v.hideButtons) &amp;&amp; v.caseDetails.Status!='Closed'}">
+                        <lightning:button  class="submitButtonGreen"  onclick="{!c.onSave}" label="{!v.caseDetails.Id!=null ? 'Save' : 'Submit'}" />
+                        <aura:if isTrue="{!v.caseDetails.Id!=null &amp;&amp; v.caseDetails.Status!='Closed'}">
+                            <lightning:button  class="submitButtonGreen"  onclick="{!c.onClose}" label="Save &amp; Close" />
+                        </aura:if>
+                    </aura:if>
+                    
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+        
+    </div>
+    
+    <aura:if isTrue="{!v.isShowSuccess}">
+        <c:successModal
+                        title="{!'Ticket '+if(empty(v.caseDetails.CaseNumber),'submitted successfully!','updated successfully!')}"
+                        description="Our team will begin working on your ticket right away. You'll recieve an email confirmation shortly."
+                        buttons="[
+                                 { href: '/filigreenb2b/s', label: 'Home', variant: 'neutral' ,screenName:'Home'},
+                                 { href: '/filigreenb2b/s/casedetails', label: 'New Ticket', variant: 'neutral',removeIdsFromCache:'caseId',screenName:'Create Ticket' },
+                                 { href: '/filigreenb2b/s/cases', label: 'View My Tickets', variant: 'brand' ,screenName:'Support Cases' },
+                                 ]"
+                        />
+    </aura:if>
+</aura:component>

@@ -1,0 +1,333 @@
+<aura:component extends="c:utility" controller="PutAwayInventoryController" implements="force:appHostable,force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+        <aura:attribute name="tooltip" type="boolean" default="false" />
+
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="setInventoryPositions" type="List"/>
+    <aura:attribute name="inventoryPositions" type="List"/>
+    <aura:attribute name="masterInventoryPositions" type="List"/>
+    <aura:attribute name="siteOptions" type="List"/>
+    <aura:attribute name="selectedSiteId" type="String" default="All"/>
+    <aura:attribute name="selectedRackId" type="String"/>
+    <aura:attribute name="selectedRackLevelId" type="String"/>
+    <aura:attribute name="selectedBinLocationId" type="String"/>
+    <aura:attribute name="searchValue" type="String" default=""/>
+          <aura:attribute name="DisplayEyeIcon" type="Boolean" />
+
+    <aura:attribute name="isAllSelected" type="Boolean" default="false"/>
+        <aura:attribute name="eyeshow" type="Boolean"/>
+
+    <aura:attribute name="orderField" type="String" default="Product_Name__r.Name"/>
+    <aura:attribute name="direction" type="String" default="ASC"/>
+    <aura:attribute name="hasInventoryPosition" type="Boolean" default="false"/>
+        <aura:attribute name="showtable" type="Boolean" default="true"/>
+        <aura:attribute name="tableerror" type="Boolean" default="false"/>
+
+    <aura:attribute name="rackLevelsByRackId" type="List"/>
+    <aura:attribute name="binLocationsByRackLevelId" type="List"/>
+    <aura:attribute name="binConsumedCapacityById" type="List"/>
+    <aura:attribute name="inventoryPositionById" type="List"/>
+    
+    <aura:attribute name="page" type="Integer" default = "1"/>
+    <aura:attribute name="startingRecord" type="Integer" default = "1"/>
+    <aura:attribute name="endingRecord" type="Integer" default = "0"/>
+    <aura:attribute name="pageSize" type="Integer" default = "25"/>
+    <aura:attribute name="totalRecountCount" type="Integer" default = "0"/>
+    <aura:attribute name="totalPage" type="Integer" default = "0"/>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    
+    <aura:html tag="style">
+        .cUtility .slds-form-element__label {
+            display: none;
+        }
+        .article.slds-card.cUtility {
+        overflow: hidden;
+        }
+        
+        .cUtility button {
+    		text-transform: inherit;
+        }
+        .cUtility .slds-select {
+        border-color: var(--c-tan,#E7E6E2);
+        font-size: 12px;
+        border-radius: 3px;
+        vertical-align: middle;
+        min-height: 0;
+        width: 83px;
+        }
+        .slds-select_container {
+         width: 87px;
+        }
+        /*.eyeball {
+    content: '';
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    width: 2em;
+    height: 1.35em;
+    background-image: url(/filigreenb2b/resource/BrigadeResources/assets/preview.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top right;
+    opacity: 0;
+    transition: opacity .2s ease;
+        }*/
+    </aura:html>
+    
+    <lightning:card>
+        <div class="slds-page-header heightfix" role="banner" style="margin-top: -18px;">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                         <lightning:icon iconName="standard:product" title="product" /> 
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title" style="margin-left: 10px;">Items to Put Away</h1> 
+                            </div>
+                             <div class="slds-grid" style="padding: 20px;margin-left: 206px;margin-top: -41px;">
+            <h2 title="Select Warehouse" style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">Select Warehouse&nbsp;</h2> 
+            <lightning:select aura:id="warehouse" name="selectWarehouse" variant="label-hidden" onchange="{!c.onWarehouseChange}">
+                <aura:iteration items="{!v.siteOptions}" var="proTitle">
+                    <option value="{!proTitle.label}" selected="{!v.selectedSiteId == proTitle.label}">{!proTitle.value}</option>
+                </aura:iteration>
+            </lightning:select>
+            &nbsp;&nbsp;
+            <lightning:input  variant="label-hidden" id="searchInput" value="{!v.searchValue}" aura:id="searchInput" class="searchBox"/>&nbsp;&nbsp;
+              <lightning:button variant="Neutral" class="" value="{!v.searchValue}" label="Search" onclick="{!c.searchRecords}"></lightning:button>&nbsp;
+            <lightning:helptext style="margin-top: 3px;" content="* Search keyword will look for Supplier, Product name, Producer name or PO number"/>&nbsp;
+
+            <!--lightning:button variant="Neutral" class="" label="Search" onclick="{!c.searchRecords}"></lightning:button-->
+            
+        </div>
+                        </div>	
+                        
+         
+                    </div>
+                    <div class="slds-col slds-no-flex slds-align-bottom" style="float:right;margin-top: -48px;">
+                    <div class="slds-button-group" role="group">
+                        <lightning:button type="Neutral"  class="" label="Update Inventory Locations" onclick="{!c.updateInvLocation}"></lightning:button>&nbsp;
+                        <lightning:button variant="Neutral" class="" label="Heat Map View" onclick="{!c.onHeatMapView}"></lightning:button>&nbsp;
+                        <lightning:button variant="Neutral" class="" label="Reset" onclick="{!c.onCancel}"></lightning:button>&nbsp;
+                    </div>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+     
+        
+        <!--div class="slds-is-relative slds-p-horizontal_small slds-m-top_small slds-scrollable heightfix">-->
+        <!--<div class="slds-card__body slds-card__body_inner"> <aura:if isTrue="{!empty(v.setInventoryPositions)}">-->  
+       <aura:if isTrue="{!v.showtable}">
+        <div class="slds-is-relative slds-p-horizontal_small slds-table--header-fixed_container slds-scrollable_x" style="height:400px;">
+            <div class = "slds-scrollable_y" style="width:2287px;">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-table--header-fixed">
+               
+                <thead>
+                    <tr>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"><lightning:input type="checkbox" aura:id="selectAll" name="selectAll" value="{!v.isAllSelected}" onchange="{!c.onSelectAllChange}"/> </div></th>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Receipt Date">Receipt Date</div></th>
+                          <th style="cursor: pointer;" onclick="{!c.onSortOrders}" data-sortfield="Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name">
+                            <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">PO Number&nbsp;
+                           <aura:if isTrue="{!v.orderField == 'Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name'}">
+                                <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                            	<aura:set attribute="else">
+                                    &#9660;
+                                </aura:set>
+                            </aura:if>
+                            </div>
+                        </th>
+
+                        <th style="cursor: pointer;" onclick="{!c.onSortOrders}" data-sortfield="Product_Name__r.Name">
+                            <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Product Name
+                       <aura:if isTrue="{!v.orderField == 'Product_Name__r.Name'}">
+                                <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                            	<aura:set attribute="else">
+                                    &#9660;
+                                </aura:set>
+                            </aura:if>
+</div>
+</th>
+                         <th> <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" data-id="Rack__r.Name">Supplier Name</div></th>
+                        <th> <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" data-id="Rack__r.Name">Batch ID </div></th>
+                        <th> <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" data-id="Rack_Level__r.Name">UID </div></th>
+                        <th> <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" data-id="Bin_Location__r.Name">Recv. Qty </div></th>
+                        <th> <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" data-id="Ownership__r.Name">PA Qty </div></th>
+                        <th> <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box" data-id="Qty_On_Hand__c">Site </div></th>
+                        <th style="cursor: pointer;" onclick="{!c.onSortOrders}" data-sortfield="Ownership__r.Name">
+                            <div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box">Ownership<aura:if isTrue="{!v.orderField == 'Ownership__r.Name'}">
+                                <aura:if isTrue="{!v.direction == 'ASC'}">
+                                    &#9650;
+                                    <aura:set attribute="else">
+                                        &#9660;
+                                    </aura:set>    
+                                </aura:if>
+                            	<aura:set attribute="else">
+                                    &#9660;
+                                </aura:set>
+                            </aura:if>
+                                </div>
+							</th>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Rack</div></th>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Level</div></th>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Bin</div></th>
+                        <th><div class="slds-truncate slds-align_absolute-center slds-cell-fixed" title="Check Box"> Inventory Position</div></th>
+                    </tr>
+                </thead>
+               
+                <tbody>
+                       <aura:iteration items="{!v.setInventoryPositions}" var="invPos">
+                        <tr> 
+                            <td style="width:61px !important">
+                                
+                                <aura:if isTrue="{!invPos.QARecCheck==false }">
+                                    
+                                    <aura:set attribute="else">
+                                        <lightning:input type="checkbox" aura:id="myCheckboxes" name="selectSingle" checked="{!invPos.isSelected}" value="{!invPos.isSelected}"/>
+                                        
+                                    </aura:set>
+                                </aura:if>    
+                                
+                            </td>
+                            <td><lightning:formattedDateTime value="{!invPos.invPositionSO.Date_Received__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true" timeZone="{! $Locale.timezone }"/>
+                              
+                            </td>
+                            <td><a href="{!'/' + invPos.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}">{!invPos.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name}</a></td> 
+                                                     
+ 
+                            <td><a href="{!'/' + invPos.invPositionSO.Product_Name__c}">{!invPos.invPositionSO.Product_Name__r.Name}</a></td>
+                           <td>{!invPos.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Supplier_Name__r.Name}</td>
+                            <td>{!invPos.invPositionSO.Harvest_Batch_Code__r.Name}</td>
+                            <td>{!invPos.invPositionSO.UID_New__r.Name}</td>
+                            <td style="width:90px">{!invPos.invPositionSO.Qty_On_Hand__c}</td>
+                            <td  style="width:90px"><lightning:input type="number" name="inputQty" step="0.01" value="{!invPos.qtyToPutAway}"/></td>
+                            <td><a href="{!'/' + invPos.invPositionSO.Site__c}">{!invPos.invPositionSO.Site__r.Name}</a></td>
+                            <td><a href="{!'/' + invPos.invPositionSO.Ownership__c}">{!invPos.invPositionSO.Ownership__r.Name}</a></td>
+                            <td> 
+                                <lightning:select name="{!invPos}" onchange="{!c.loadRackLevels}" variant="label-hidden">
+                                    <option value="">--None--</option>
+                                    <aura:iteration items="{!invPos.rackOptionsL}" var="proTitle">
+                                        <option value="{!proTitle.label}">{!proTitle.value}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td> <lightning:select name="{!invPos}" onchange="{!c.loadbinLocation}" variant="label-hidden">
+                                   
+                                    <aura:iteration items="{!invPos.rackLevelOptionsL}" var="proTitle">
+                                        <option value="{!proTitle.Id}">{!proTitle.Name}</option>
+                                    </aura:iteration>
+                                </lightning:select></td>
+                            <td>  
+                                <lightning:select name="{!invPos}" onchange="{!c.loadBalanceQtyToPutAway}" variant="label-hidden">
+                               
+                                    <aura:iteration items="{!invPos.binLocationOptionsL}" var="proTitle">
+                                        <option value="{!proTitle.Id}">{!proTitle.Name}  </option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td><a href="{!'/' + invPos.invPositionSO.Id}">{!invPos.invPositionSO.Name}</a>
+                                <div style="margin-left: 165px;margin-top:-20px;">
+                                    <!-- <aura:if isTrue="{!or(invPos.DisplayEyeIcon == true,invPos.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.QA_Status__c != null,invPos.invPositionSO.Last_IP_Location__c== undefined )}">
+                                   yes
+                                       
+                                    </aura:if>-->
+
+                                      <aura:if isTrue="{!invPos.DisplayEyeIcon == true}">
+                                            <lightning:buttonIcon class="slds-popover__body" iconClass="eyeIcon" iconName="utility:preview" size="large" alternativeText="{!invPos.Displayvalues +  '' + invPos.invPositionSO.Last_IP_Location__c }" />
+                                            
+                                    </aura:if>
+                                    
+                                 <!--   <aura:if isTrue="{!invPos.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.QA_Status__c != null}">
+                                    <aura:if isTrue="{!invPos.DisplayEyeIcon == false}">
+
+                                            <lightning:buttonIcon class="slds-popover__body" iconClass="eyeIcon" iconName="utility:preview" size="large" alternativeText="{!invPos.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.QA_Status__c}" />
+                                    </aura:if>
+                                    </aura:if>-->
+                                  
+                             </div>
+                                
+                            </td>
+                           
+                        </tr>
+                    </aura:iteration>
+                   <!--<aura:if isTrue="{!empty(v.setInventoryPositions)}">
+                        <br/>
+                        <tr>
+                            <td colspan="17" style="text-align: center;">
+                            	<h2 style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">No search results found</h2>
+                            </td>
+                        </tr>
+                        <br/>
+                    </aura:if>-->
+                </tbody>
+            </table>
+            </div> 
+        </div> 
+        
+        </aura:if>
+           <br/>
+       <aura:if isTrue="{!v.tableerror}">
+        <div>
+        <p style="font-size:13px;text-align:center;">No Search Records Found</p>
+        </div>
+           
+        </aura:if>
+         <br/> <br/>
+        <div style="width:98%;margin-left: 13px;">
+            <lightning:layout>
+                <!--lightning:layoutItem>
+                    <lightning:button label="First" onclick="{!c.onFirst}"> </lightning:button>&nbsp;&nbsp;
+                    <lightning:button label="Previous" onclick="{!c.onPrevious}"> </lightning:button>
+                </lightning:layoutItem-->
+                <lightning:layoutItem flexibility="grow">
+                    <div style="display: flex;padding-left:25%;margin-top:-24px;">
+                        <p style="">
+                            <lightning:button label="First" onclick="{!c.onFirst}"> </lightning:button>&nbsp;
+                            <lightning:button label="Previous" onclick="{!c.onPrevious}"> </lightning:button>
+                            <!--Displaying {!v.startingRecord} to 
+                            {!v.endingRecord} of 
+                            {!v.totalRecountCount} records.-->
+                            Page {!v.page} of {!v.totalPage} 
+                            <lightning:button label="Next" onclick="{!c.onNext}"></lightning:button>&nbsp;
+                            <lightning:button label="Last" onclick="{!c.onLast}"> </lightning:button>
+                            &nbsp; Page Size : &nbsp;</p>
+                        <div style="width:100px;">
+                            <lightning:select aura:id="selectPageSize" name="selectPageSize" variant="label-hidden" onchange="{!c.onPageSizeChange}">
+                                <option value="25" selected="{!v.pageSize == 25}">25</option>
+                                <option value="50" selected="{!v.pageSize == 50}">50</option>
+                                <option value="75" selected="{!v.pageSize == 75}">75</option>
+                                <option value="100" selected="{!v.pageSize == 50}">100</option>
+                            </lightning:select>
+                        </div>
+                        <p style="margin-top:3px;margin-left:-8px">
+                        	&nbsp;Displaying {!v.startingRecord} to 
+                            {!v.endingRecord} of 
+                            {!v.totalRecountCount} records
+                        </p>
+                    </div>
+                </lightning:layoutItem>
+                <!--lightning:layoutItem>
+                    <lightning:button label="Next" onclick="{!c.onNext}"></lightning:button>&nbsp;&nbsp;
+                    <lightning:button label="last" onclick="{!c.onLast}"> </lightning:button>
+                </lightning:layoutItem-->
+            </lightning:layout>
+        </div>
+    
+    
+   
+
+       
+              
+</lightning:card>
+</aura:component>

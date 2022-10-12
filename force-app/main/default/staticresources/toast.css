@@ -1,0 +1,27 @@
+.slds-toast {}
+
+.slds-notify_container {
+	top: 63px;
+}
+
+.slds-notify--toast {
+	margin: 0;
+	border-radius: 0;
+}
+
+.slds-icon-utility-error {
+	display: none;
+}
+
+.toastMessage {
+	font-size: 13px;
+}
+
+.toastClose {
+	top: 10px;
+}
+
+.toastClose .slds-button__icon--large {
+	height: 1rem;
+	width: 1rem;
+}

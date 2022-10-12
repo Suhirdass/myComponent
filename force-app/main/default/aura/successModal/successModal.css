@@ -1,0 +1,51 @@
+.THIS {
+  position: fixed;
+  z-index: 1001;
+  background: rgba(0,0,0,0.85);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: visibility 200ms linear, opacity 200ms ease;
+  visibility: hidden;
+  opacity: 0;
+    font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+
+.THIS.is-active {
+  transition: visibility 0ms linear, opacity 200ms ease;
+  visibility: visible;
+  opacity: 1;
+}
+
+.THIS .success-modal {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  padding: 24px 90px 68px;
+  background: token(tanLight);
+}
+
+.THIS h2 {
+  font-size: 24px;
+}
+.THIS .slds-button{
+    background-color :token(land);
+    color:token(daze);
+    font-family:'Alliance Neue';
+}
+.THIS p {
+  color: token(grayMid);
+}
+.THIS .ipadModal{
+	width:586px;
+    margin-left: -19%;   
+}
+.THIS .desktopMpdal{
+    width:495px;
+    margin-left: -9%;
+}

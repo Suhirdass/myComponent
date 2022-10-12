@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Update_Excise_Tax_Amount_Invoice1</name>
+        <label>Update Excise Tax Amount - Invoice</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Update_Excise_Tax_Amount_Invoice</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Apply_Excise_Tax__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reset_INVLI_ReCalc_Excise_Tax</targetReference>
+            </connector>
+            <label>Update Excise Tax Amount - Invoice</label>
+        </rules>
+    </decisions>
+    <formulas>
+        <name>UpdateExciseTaxAmountInvoice</name>
+        <dataType>Currency</dataType>
+        <expression>IF({!$Record.Apply_Excise_Tax__c} = &apos;Yes&apos; &amp;&amp;  
+{!$Record.Sales_Order_Line__r.Brand_Quote_Line__r.Apply_Excise_Tax__c}=&apos;Yes&apos;  &amp;&amp; 
+TEXT({!$Record.InvoiceLine_Status__c} )  &lt;&gt; &apos;Rejected&apos; &amp;&amp;  
+TEXT( {!$Record.InvoiceLine_Status__c} )  &lt;&gt; &apos;Cancelled&apos;, 
+if( {!$Record.Invoice__r.Ship_Confirmation_Date__c} &lt;= Date( 2019,12,31), {!$Record.Line_Total_Product_Price__c} * (1.6) *(0.15), {!$Record.Line_Total_Product_Price__c} * (1.8) *(0.15))
+, 0)</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>Update Excise Tax Amount - Invoice {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update Excise Tax Amount - Invoice</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Reset_INVLI_ReCalc_Excise_Tax</name>
+        <label>Reset INVLI ReCalc Excise Tax</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <connector>
+            <targetReference>Update_Excise_Tax_Amount_Invoices_0</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ReCalc_Excise_Tax__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Excise_Tax_Amount_Invoices_0</name>
+        <label>Update Excise Tax Amount - Invoice</label>
+        <locationX>50</locationX>
+        <locationY>575</locationY>
+        <inputAssignments>
+            <field>Excise_Tax_Amount__c</field>
+            <value>
+                <elementReference>UpdateExciseTaxAmountInvoice</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_Excise_Tax_Amount_Invoice1</targetReference>
+        </connector>
+        <object>Invoice_Line__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

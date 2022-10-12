@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Credit_Reconciled_Amount__c</fullName>
+    <description>Sum of all credit account where reconciled flag is true</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Sum of all credit account where reconciled flag is true</inlineHelpText>
+    <label>Total Credit Reconciled Balance</label>
+    <summarizedField>Register_Entry_Line__c.Credit_Amount__c</summarizedField>
+    <summaryFilterItems>
+        <field>Register_Entry_Line__c.Reconciled__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Register_Entry_Line__c.Bank_Register__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

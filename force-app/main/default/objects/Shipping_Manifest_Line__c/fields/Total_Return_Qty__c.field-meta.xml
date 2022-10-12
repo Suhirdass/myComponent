@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Return_Qty__c</fullName>
+    <externalId>false</externalId>
+    <label>Total Return Qty</label>
+    <summarizedField>Return_Line__c.Return_Qty__c</summarizedField>
+    <summaryFilterItems>
+        <field>Return_Line__c.Return_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Return_Line__c.Shipping_Manifest_Line__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

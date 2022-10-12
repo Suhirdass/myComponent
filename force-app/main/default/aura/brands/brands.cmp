@@ -1,0 +1,81 @@
+<aura:component
+	extends="c:utility"
+	controller="ProductsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+	access="global"
+>
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+	<aura:handler
+		name="paginatorChangeEvt"
+		event="c:paginatorChangeEvt"
+		action="{!c.fetchBrands}"
+	/>
+	<aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+	<aura:attribute name="brandsTitle" type="String" default="" />
+	<aura:attribute name="filters" type="Map" default="" />
+	<aura:attribute name="hasFilter" type="Boolean" default="false" />
+	<aura:attribute name="searchTerm" type="String" default="" />
+    <aura:attribute name="selectedType" type="String" default="All" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+	<div class="slds-is-relative slds-p-horizontal_small">
+		<lightning:spinner
+            variant="brand"
+            alternativeText="{!v.processingMessage}"
+            class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+        <lightning:layout multipleRows="true">
+            <div class="flex slds-size_full">
+                <div class="slds-m-right_x-large">
+                    <!--lightning:buttonGroup>
+                        <lightning:button variant="{!if(equals(v.selectedType,'All'),'brand','neutral')}" label="All" onclick="{!c.changeBrands}"/>
+                        <lightning:button variant="{!if(equals(v.selectedType,'Cultivator'),'brand','neutral')}" label="Cultivator" onclick="{!c.changeBrands}"/>
+                        <lightning:button variant="{!if(equals(v.selectedType,'Manufacturer'),'brand','neutral')}" label="Manufacturer" onclick="{!c.changeBrands}"/>
+                    </lightning:buttonGroup-->
+                    <h2 class="slds-text-heading_medium slds-p-top_small slds-p-bottom_small" style="margin-top: -15px;margin-bottom: 20px; font-family:Alliance Neue;">
+                        Brands
+                    </h2>
+                </div>
+                <div class="flex m-left_auto">
+					<div class="slds-m-right_small select__hidden-label">
+                        <lightning:select value="" label="" variant="label-hidden" onchange="{!c.onOrderChange}">
+                            <option value="" style="color:#42472a;font-size:14px;">Sort By</option>
+                            <option value="DBA__c ASC" style="color:#42472a;font-size:14px;">Name A-Z</option>
+                            <option value="DBA__c DESC" style="color:#42472a;font-size:14px;">Name Z-A</option>
+                        </lightning:select>
+                    </div>
+                    <div style="width: 263px;" class="slds-m-left_small">
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                            <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                            <input type="text" style="#42472a;font-size:14px;height:32px;" aura:id="searchRec" id="searchRec" oninput="{!c.handleSearch}" placeholder="Search by name, dba or location" variant="label-hidden" class="slds-input" value="{!v.searchString}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--div class="flex slds-size_full">
+            	<h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_small">
+                    Brands
+                </h2>
+            </div-->            
+            <lightning:layoutItem size="12">
+                <aura:if isTrue="{!v.records.length > 0}">
+                    <lightning:layout  multipleRows="true">
+                        <aura:iteration items="{!v.records}" var="record" indexVar="indx">
+                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6">
+                                <c:brandView isBrand="{!v.isBrand}" brand="{!record}" isRight="{!mod(indx,2)}"/>
+                            </lightning:layoutItem>
+                        </aura:iteration>
+                    </lightning:layout>
+                    <aura:set attribute="else">
+                        <div class="flex slds-size_full noRecord">
+                            <h3
+                                class="slds-section-title_divider slds-text-align_center"
+                                style="font-weight: 700;font-family:Alliance Neue;">
+                                NO BRANDS FOUND.
+                            </h3>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>        
+        <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+    </div>
+</aura:component>

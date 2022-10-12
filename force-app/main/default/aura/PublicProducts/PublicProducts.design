@@ -1,0 +1,3 @@
+<design:component label="public products">
+    <design:attribute name="perPage" min="1" max="50000" default="10" label="public products" description="public products" />
+</design:component>

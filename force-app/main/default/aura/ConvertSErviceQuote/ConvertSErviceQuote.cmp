@@ -1,0 +1,12 @@
+<aura:component implements="flexipage:availableForRecordHome,force:lightningQuickAction,force:hasRecordId" access="global"  controller="ConvertServiceTicketLineController"  extends="c:utility">
+    <aura:attribute name="recordId" type="String" />
+        <aura:attribute name="stlSEobj" type="object" />
+    <aura:attribute name="BQsService" type="object" />
+        <aura:attribute name="statusBQ" type="Boolean" />
+    <aura:attribute name="exc" type="String" />
+
+    <aura:attribute name="errors" type="String[]"/>
+    <aura:handler name="init" value="{!this }" action="{!c.doInit}"/>
+    
+    
+</aura:component>

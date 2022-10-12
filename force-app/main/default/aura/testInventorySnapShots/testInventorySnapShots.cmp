@@ -1,0 +1,29 @@
+<aura:component extends="c:utility" controller="TestInventorySnapshotCtlr"  implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="records" type="List" default="[]"/>
+    <table class="slds-table slds-table_cell-buffer">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Product Name
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                        <aura:iteration items="{!v.records}" var="st" indexVar="index">
+                            <tr>
+                                
+                                <td>
+                                    <div class="ticketNumber slds-truncate" data-id="{!st.id}" data-ticketnumber="{!st.Name}" onclick="{!c.onViewTicket}" style="color:#518397">{!st.Name}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{!st.Product_Name__r.Name}</div>
+                                </td>
+                            </tr>
+                </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>

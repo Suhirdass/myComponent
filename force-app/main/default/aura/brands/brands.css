@@ -1,0 +1,25 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .search-container {
+    width: 100%;
+    max-width: 548px;
+}
+.THIS .select__hidden-label label{
+	display: none;
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  /*color: rgb(6, 94, 102);*/
+    color:token(fontColor);
+  opacity: 1; /* Firefox */
+}
+.THIS .slds-select{
+	/*color :rgb(6, 94, 102);*/
+    color:token(fontColor);
+	font-size:14px;
+}
+.THIS .noRecord{
+    background-color: white;
+    padding-left: 41%;
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_Eligible_POs</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>PO_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Brand_Quote__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Supplier_DBA__c</columns>
+    <columns>Sold_to_Party_Legal_Name__c</columns>
+    <columns>Payment_Terms__c</columns>
+    <columns>Retailer_Collection_Status__c</columns>
+    <columns>Last_Payment_Date__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Cost__c</columns>
+    <columns>Next_Payable_Date__c</columns>
+    <columns>Supplier_Payment_Settled_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Payment_Eligible__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>Payment Eligible POs</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

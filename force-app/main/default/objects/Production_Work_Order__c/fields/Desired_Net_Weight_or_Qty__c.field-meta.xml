@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Desired_Net_Weight_or_Qty__c</fullName>
+    <externalId>false</externalId>
+    <label>Desired Net Weight or Qty</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Desired_Net_Weight_or_Qty</valueSetName>
+    </valueSet>
+</CustomField>

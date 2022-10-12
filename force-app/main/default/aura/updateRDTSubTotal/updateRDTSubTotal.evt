@@ -1,0 +1,2 @@
+<aura:event type="APPLICATION" description="Update sub total on RDT.">
+</aura:event>

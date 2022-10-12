@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_Pending_Date_Window</fullName>
+    <columns>Site__c</columns>
+    <columns>Planned_Ship_Transfer_Date__c</columns>
+    <columns>Metrc_Manifest__c</columns>
+    <columns>NAME</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Window_Start_End__c</columns>
+    <columns>Driver__c</columns>
+    <columns>Vehicle__c</columns>
+    <columns>Receiver_DBA__c</columns>
+    <columns>Delivery_City__c</columns>
+    <columns>Total_Price__c</columns>
+    <columns>RECORDTYPE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Planned_Ship_Transfer_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Shipping_Manifest__c.Cash_Collection,Shipping_Manifest__c.Product_TSM,Shipping_Manifest__c.RSM,Shipping_Manifest__c.Transfer</value>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Draft,Shipment Pending,Approved</value>
+    </filters>
+    <filters>
+        <field>Total_Line_Items__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <label>1. Pending Date &amp; Window</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

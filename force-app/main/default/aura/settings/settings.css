@@ -1,0 +1,62 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .pLevel{
+	height: 41px;
+	
+	color: token(land);
+	font-family: token(salesforceSans);
+	font-size: 13px;
+	
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+    padding-top: 6px;
+    padding-right: 14px;
+    background: token(tableHeaderColor);
+            position: absolute;
+    right: 12px;
+    /*top: 10px;font-weight: bold;width: 150px;*/
+}
+.THIS .mLevel{
+        float: right;
+    position: absolute;
+    padding-top: 20px;
+    right: 23px;
+}
+.THIS .slds-tabs_scoped__nav {
+    background-color: var(--c-tableHeaderColor,#d1cdb0);
+    height: 45px;
+}
+.THIS .slds-tabs_scoped__link {
+    color: var(--c-fontColor,#42472a);
+    height: 45px;
+}
+.THIS .header{
+    background-color:#ccc;
+}
+.THIS .clickable{
+    cursor: pointer;
+}
+.THIS .updateBtn{
+    background-color:token(land);
+    color:token(daze);
+}
+
+.THIS .slds-form-element__label{
+    color:token(fontColor);
+}
+.THIS .slds-tabs_scoped__link{
+     color: token(fontColor);
+}
+.THIS .slds-is-active .slds-tabs--scoped__link {
+     background-color: token(tableHeaderColor);
+}
+.THIS .slds-tabs_default__nav, .THIS  .slds-tabs_scoped__nav{
+    background-color: token(tableHeaderColor);
+}
+.THIS .slds-box__header {
+    background-color: token(tableHeaderColor);
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <formulas>
+        <name>UCT1Id</name>
+        <dataType>Currency</dataType>
+        <expression>IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 9.65/28.35*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;OZ&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 9.65*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;LB&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 154.4*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Leaves&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)),  {!$Record.Unit_Cannabis_Weight_1__c} * 2.87/28.35*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Leaves&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;OZ&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 2.87*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Leaves&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;LB&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 45.92*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Fresh&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 1.35/28.35*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Fresh&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;OZ&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 1.35*{!$Record.Cannabis_Ratio_1__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_1__c},&apos;Fresh&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;LB&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_1__c} * 21.60*{!$Record.Cannabis_Ratio_1__c},null)))))))))</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>UCT2Id</name>
+        <dataType>Currency</dataType>
+        <expression>IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 9.65/28.35*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} *  9.65*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 154.4*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 2.87/28.35*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 2.87*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 45.92*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 1.35/28.35*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 1.35*{!$Record.Cannabis_Ratio_2__c},
+IF(OR(ISPICKVAL({!$Record.Cannabis_Category_2__c},&apos;Flower&apos;),ISPICKVAL({!$Record.Cannabis_Weight_UOM__c},&apos;GM&apos;),ISPICKVAL( {!$Record.Apply_Cultivation_Tax__c},&apos;Yes&apos;)), {!$Record.Unit_Cannabis_Weight_2__c} * 21.60*{!$Record.Cannabis_Ratio_2__c},
+null)))))))))</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>WAVGId</name>
+        <dataType>Number</dataType>
+        <expression>IF(ISBLANK({!$Record.Unit_Cannabis_Weight_2__c}),{!$Record.Unit_Cannabis_Weight_1__c},({!$Record.Unit_Cannabis_Weight_1__c}*{!$Record.Cannabis_Ratio_1__c})+({!$Record.Unit_Cannabis_Weight_2__c}*{!$Record.Cannabis_Ratio_2__c}))</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>Calculate Product Unit Cannabis WAVG {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Calculate Product Unit Cannabis WAVG</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Calculate_UCT_1</name>
+        <label>Calculate UCT 1</label>
+        <locationX>176</locationX>
+        <locationY>335</locationY>
+        <connector>
+            <targetReference>Calculate_WAVG_Cannabis_Weight</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Unit_Cultivation_Tax_1__c</field>
+            <value>
+                <elementReference>UCT1Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Calculate_UCT_2</name>
+        <label>Calculate UCT 2</label>
+        <locationX>176</locationX>
+        <locationY>575</locationY>
+        <inputAssignments>
+            <field>Unit_Cultivation_Tax_2__c</field>
+            <value>
+                <elementReference>UCT2Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Calculate_WAVG_Cannabis_Weight</name>
+        <label>Calculate WAVG Cannabis Weight</label>
+        <locationX>176</locationX>
+        <locationY>455</locationY>
+        <connector>
+            <targetReference>Calculate_UCT_2</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Cannabis_Weight__c</field>
+            <value>
+                <elementReference>WAVGId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Calculate_UCT_1</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>LastModifiedDate</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Product2</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

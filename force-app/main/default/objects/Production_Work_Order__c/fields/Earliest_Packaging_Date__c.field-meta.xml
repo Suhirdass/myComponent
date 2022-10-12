@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Earliest_Packaging_Date__c</fullName>
+    <description>Marked for delete...</description>
+    <externalId>false</externalId>
+    <formula>IF( 
+AND( 
+ISBLANK(Pick_up_or_Arrival_Date__c), 
+ISBLANK(Jar_Bag_Arrival_Date__c), 
+ISBLANK(Label_Arrival_Date__c), 
+ISBLANK(Scope_Established_Date__c),
+ISBLANK(QA_Compliance_Sign_off_Date__c), 
+ISBLANK(COA_Received_Date__c)), 
+NULL, 
+DATE(1900, 01, 01) + 
+MAX( 
+BLANKVALUE(Pick_up_or_Arrival_Date__c , DATE(1900, 01, 01)) - DATE(1900, 01, 01), 
+BLANKVALUE(Jar_Bag_Arrival_Date__c, DATE(1900, 01, 01)) - DATE(1900, 01, 01), 
+BLANKVALUE(Label_Arrival_Date__c , DATE(1900, 01, 01)) - DATE(1900, 01, 01), 
+BLANKVALUE(Scope_Established_Date__c, DATE(1900, 01, 01)) - DATE(1900, 01, 01),
+BLANKVALUE(QA_Compliance_Sign_off_Date__c, DATE(1900, 01, 01)) - DATE(1900, 01, 01), 
+BLANKVALUE(COA_Received_Date__c, DATE(1900, 01, 01)) - DATE(1900, 01, 01))) + 3</formula>
+    <label>Earliest Packaging Date</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

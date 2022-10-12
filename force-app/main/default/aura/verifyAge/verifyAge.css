@@ -1,0 +1,149 @@
+.THIS #verify-age{
+    z-index: 5000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.3);
+    transition: 500ms;
+}
+.THIS .va-window{
+    -webkit-text-size-adjust: 100%;
+    
+    position: absolute;
+    top: 300px;
+    left: 50%;
+    width: 430px;
+    height: 215px;
+    margin-left: -200px;
+    margin-top: -125px;
+    overflow: hidden;
+    padding: 0px;
+    background-color: #32402a;
+    /*border: 6px solid #32402a;*/
+    border-radius: 6px;
+    box-sizing: border-box;
+    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
+    transition: 700ms;
+}
+.THIS .va-title{
+        -webkit-text-size-adjust: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+    font-family: token(salesforceSans);
+    color: #e3e0ce;
+    line-height: 18px;
+}
+.THIS .bg{
+    
+background-image: url('/resource/assets/marketplace-background-original.png') !important; 
+}
+.THIS .yes{
+    -webkit-text-size-adjust: 100%;
+    margin-left: 15px;
+    line-height: normal;
+    text-transform: none;
+    -webkit-appearance: button;
+    cursor: pointer;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 41%;
+    height: 45px;
+    border-radius: 20px;
+    color: #32402a;
+    font-size: 18px;
+    background-color: #959a5f;
+    margin-top: 20px;
+    font-family: token(salesforceSans);
+    transform: scale(1);
+    transition: .2s;
+    float: left;
+    
+}
+.THIS .yes:hover{
+    transform: scale(1.1);
+    
+    background-color: #abaf7d;
+} 
+.THIS .no:hover{
+    transform: scale(1.1);
+    /*box-shadow: 0 20px 60px rgb(0 0 0 / 20%);*/
+    background-color: #abaf7d;
+} 
+.THIS .no{
+        -webkit-text-size-adjust: 100%;
+    
+    line-height: normal;
+    text-transform: none;
+    -webkit-appearance: button;
+    cursor: pointer;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 41%;
+    height: 45px;
+    color: #32402a;
+    font-size: 18px;
+    border-radius: 20px;
+    background-color: #959a5f;
+    margin-top: 20px;
+    font-family: token(salesforceSans);
+    transform: scale(1);
+    transition: .2s;
+    float: right;
+}
+.THIS .va-underBox{
+        font-family: token(salesforceSans);
+    -webkit-text-size-adjust: 100%;
+    position: absolute;
+    width: 430px;
+    height: 215px;
+    padding: 40px;
+    left: 0;
+    border-radius: 6px;
+    right: 0;
+    background-color: #e7e7e7;
+    transition: 700ms;
+    box-sizing: border-box;
+    top: 0;
+}
+.THIS .filigreenContents{
+    padding :0px !important;
+}
+.THIS .contentRegion {
+    padding :0px !important;
+}
+.THIS .underBox-title{
+    font-family: token(salesforceSans);
+    display: block;
+    text-align: center;
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #065e66 !important;
+}
+.THIS .va-back{
+    font-family: token(salesforceSans);
+    display: block;
+    float: none;
+    margin: auto;
+    background-color: #32402a;
+    color: #959a5f !important;
+    margin-top: 20px;
+    width: 48%;
+    height: 45px;
+    border-radius: 20px;
+    font-size: 18px;
+    border: none;
+    /*border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));*/
+}
+.THIS .va-back:hover{
+    transform: scale(1.1);
+    color: #32402a !important;
+    background-color: #959a5f;
+}

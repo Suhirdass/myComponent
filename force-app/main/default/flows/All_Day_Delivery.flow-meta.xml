@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>All_Day_Deliveries</name>
+        <label>All Day Deliveries</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>All_Day_Delivery</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Full_Day_Delivery__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Full_Day_Delivery__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_All_day_delivery_Start_Time</targetReference>
+            </connector>
+            <label>All Day Delivery</label>
+        </rules>
+    </decisions>
+    <interviewLabel>All Day Delivery {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>All Day Delivery</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_All_day_delivery_Start_Time</name>
+        <label>Update All day delivery Start Time</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <connector>
+            <targetReference>Update_All_day_last_delivery_Time_0</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Earliest_Delivery_Window__c</field>
+            <value>
+                <stringValue>06:00 AM PST</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_All_day_last_delivery_Time_0</name>
+        <label>Update All day last delivery Time</label>
+        <locationX>50</locationX>
+        <locationY>575</locationY>
+        <inputAssignments>
+            <field>Last_Delivery_Window__c</field>
+            <value>
+                <stringValue>10:00 PM PST</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>All_Day_Deliveries</targetReference>
+        </connector>
+        <object>Delivery_Window__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

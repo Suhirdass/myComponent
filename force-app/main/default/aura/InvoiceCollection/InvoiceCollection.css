@@ -1,0 +1,25 @@
+.THIS .searchBox {
+    width: 100% !important;
+    background-color: white !important;
+    padding-top: 1% !important;
+    padding-bottom: 1% !important;
+}
+.THIS .slds-page-header{
+	display:none;
+}
+.THIS .submitButton{
+    border: 1px solid rgb(221, 219, 218);
+    background-clip: border-box;
+    color: rgba(27, 82, 151, 1);
+    font-size: .75rem;
+    line-height: 1.875rem;
+    text-decoration: none;
+    white-space: normal;
+    border-radius: .25rem;
+}
+.THIS .cancelButton{
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    font-size: .75rem;
+}

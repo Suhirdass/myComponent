@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Metrc_UOM__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE(UOM__c ,
+&quot;BBL&quot;,&quot;Barrel&quot;,
+&quot;BCK&quot;,&quot;Bucket&quot;,
+&quot;BG&quot;,&quot;Bag&quot;,
+&quot;BT&quot;,&quot;Bottle&quot;,
+&quot;BX&quot;,&quot;Box&quot;,
+&quot;CS&quot;,&quot;Case&quot;,
+&quot;CT&quot;,&quot;Count&quot;,
+&quot;DAY&quot;,&quot;Day&quot;,
+&quot;DZ&quot;,&quot;Dozen&quot;,
+&quot;EA&quot;,&quot;Each&quot;,
+&quot;FT&quot;,&quot;Feet&quot;,
+&quot;GL&quot;,&quot;Gallons&quot;,
+&quot;HR&quot;,&quot;Hour&quot;,
+&quot;IN&quot;,&quot;Inch&quot;,
+&quot;LB&quot;,&quot;Pounds&quot;,
+&quot;LI&quot;,&quot;Liters&quot;,
+&quot;LT&quot;,&quot;Liters&quot;,
+&quot;MG&quot;,&quot;Milligrams&quot;,
+&quot;MI&quot;,&quot;Mile&quot;,
+&quot;MIN&quot;,&quot;Minute&quot;,
+&quot;ML&quot;,&quot;Milliliters&quot;,
+&quot;OZ&quot;,&quot;Ounces&quot;,
+&quot;PT&quot;,&quot;Pints&quot;,
+&quot;QT&quot;,&quot;Quarts&quot;,
+&quot;SEC&quot;,&quot;Second&quot;,
+&quot;SF&quot;,&quot;Square Foot&quot;,
+&quot;SQ&quot;,&quot;SQ&quot;,
+&quot;GM&quot;,&quot;Grams&quot;,&quot;NONE&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Metrc_UOM</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

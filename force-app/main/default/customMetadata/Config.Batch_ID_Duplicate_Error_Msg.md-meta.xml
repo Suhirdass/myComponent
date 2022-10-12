@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Batch ID Duplicate Error Msg</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Key__c</field>
+        <value xsi:type="xsd:string">Batch ID Duplicate Error Msg</value>
+    </values>
+    <values>
+        <field>Related_To__c</field>
+        <value xsi:type="xsd:string">Batch ID</value>
+    </values>
+    <values>
+        <field>Used_In__c</field>
+        <value xsi:type="xsd:string">CRM &amp; Marketplace</value>
+    </values>
+    <values>
+        <field>Value__c</field>
+        <value xsi:type="xsd:string">Batch ID with name {0} already exists in record &lt;a href=/{1}&gt;{2}&lt;/a&gt;</value>
+    </values>
+</CustomMetadata>

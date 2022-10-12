@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Full_Day_Delivery__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Any time delivery between 5AM PST - 10PM PST</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Any time delivery between 5AM PST - 10PM PST</inlineHelpText>
+    <label>Full Day Delivery</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,132 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global" extends="c:utility" controller="ProductsCtlr" >
+    <!--ltng:require styles="{! $Resource.box }" /-->
+    <aura:attribute name="caseDetails" type="Case"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="fileDet" type="List" default="[]"/>
+    
+    <section class="slds-card no-padding-x">
+        <h2 class="bg__tan ticket-header slds-text-heading_small">
+            Case Details
+            <span class="print-export" onclick="{!c.printDetails}">PRINT | EXPORT</span>
+        </h2>
+        <div class="bg__white ticket-body">
+            <div class="slds-grid">
+                <div class="slds-col slds-size_9-of-12">
+                    <div class="rectangle slds-show_inline-block">
+                        <!---->
+                        <aura:if isTrue="{!not(empty(v.caseDetails.Account.Image_URL__c))}">
+                            <img class="brandLogo" src="{!v.caseDetails.Account.Image_URL__c}"/>
+                            <aura:set attribute="else">
+                                <img class="brandLogo" src="/filigreenb2b/resource/community/image_comingsoon.png"/>
+                            </aura:set>
+                        </aura:if> 
+                        <!--<img class="brandLogo" src="{!v.caseDetails.Account.Image_URL__c}"/>-->
+                    </div>
+                    <div class="slds-show_inline-block" style="vertical-align: top; margin-top: 6px; margin-left: 18px;">
+                        <p class="slds-text-heading_small brandName">{!v.caseDetails.Account.Name}</p>
+                        <p class="serviceTicketNumber">
+                            {!v.caseDetails.CaseNumber}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap slds-m-top_small">
+                <section class="slds-col slds-size_1-of-1">
+                    <div class="slds-box height-full slds-is-relative">
+                        <aura:if isTrue="{!equals(v.caseDetails.Status,'Closed')}">
+                            <div class="completedST">
+                                <lightning:icon iconName="utility:check" alternativeText="Closed" size="small" title="Closed" />
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="STStatus">
+                                    <lightning:buttonIcon
+                                                          variant="bare"
+                                                          iconClass="{!'editIcon'}"
+                                                          iconName="utility:edit"
+                                                          size="large"
+                                                          onclick="{!c.editCase}"
+                                                          alternativeText="Edit"/>
+                                    <!--<lightning:buttonIcon variant="bare" iconName="utility:edit" size="large" onclick="{!c.editCase}" alternativeText="Edit" />-->
+                                </div>
+                            </aura:set>
+                        </aura:if> 
+                        <h2 class="{!'sl-ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium '+ if(equals(v.caseDetails.Status,'Closed'),'bg__complete','bg__tan')}">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_3-of-4 slds-p-horizontal_medium STHeader leftAlign">
+                                    {!v.caseDetails.Type}
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-p-left_medium STHeader slds-text-align_right">   
+                                    {!v.caseDetails.Status}
+                                </div>
+                            </div>
+                        </h2>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Case Number</label>
+                                <div class="slds-truncate">{!v.caseDetails.CaseNumber}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Status</label>
+                                <div class="slds-truncate">{!v.caseDetails.Status}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Type</label>
+                                <div class="slds-truncate">{!v.caseDetails.Type}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Priority</label>
+                                <div class="slds-truncate">{!v.caseDetails.Priority}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Created Date &amp; Time</label>
+                                <div class="slds-truncate"><ui:outputDateTime format="MM/dd/yyyy hh:mm a" value="{!v.caseDetails.CreatedDate}"/></div>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Contact Preference</label>
+                                <div class="slds-truncate">{!v.caseDetails.Contact_Preference__c}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Contact Email</label>
+                                <div class="slds-truncate">{!v.caseDetails.ContactEmail}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                <label class="slds-form-element__label">Contact Phone</label>
+                                <div class="slds-truncate">{!v.caseDetails.ContactPhone}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-p-around_medium">
+                                <label class="slds-form-element__label">Subject</label>
+                                <div class="text-overflow-3-lines"   title="{!v.caseDetails.Subject}">{!v.caseDetails.Subject}</div>
+                            </div>
+                            
+                            
+                            <div class="slds-col slds-size_1-of-1 slds-p-around_medium">
+                                <label class="slds-form-element__label">Message</label>
+                                <div class="text-overflow-3-lines"   title="{!v.caseDetails.Description}">{!v.caseDetails.Description}</div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-p-around_medium">
+                                <label class="slds-form-element__label">Filigreen Notes</label>
+                                <div class="text-overflow-3-lines" title="{!v.caseDetails.Owner_Information_Notes__c}">{!v.caseDetails.Owner_Information_Notes__c}</div>
+                            </div>
+                            <aura:iteration items="{!v.fileDet}" var="file" indexVar="index">
+                                <aura:if isTrue="{!!file.hasAttchment}">
+                                    <div class="slds-col slds-size_1-of-4 hasAttchment slds-p-around_medium">
+                                        <lightning:fileUpload name="fileUploader" accept=".pdf, .png, .jpg, .doc, .docx, .xls, .xlsx" multiple="true" recordId="{!v.caseDetails.Id}" label ="Upload Document" onuploadfinished="{!c.doInit}" />
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Attachment</label>
+                                            <div data-id="{!file.documentId}" onclick="{!c.onViewCompliance}">
+                                                <h3 class="attachmentFile clickable">{!file.documentTitle} </h3>
+                                            </div>
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section> 
+</aura:component>

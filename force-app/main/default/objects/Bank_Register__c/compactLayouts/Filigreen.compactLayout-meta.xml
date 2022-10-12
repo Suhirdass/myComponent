@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Filigreen</fullName>
+    <fields>Account__c</fields>
+    <fields>Bank_Name__c</fields>
+    <fields>Name</fields>
+    <fields>Account_Number__c</fields>
+    <fields>Total_Running_Balance_Amount__c</fields>
+    <fields>Ending_Balance__c</fields>
+    <fields>Bank_Balance__c</fields>
+    <label>Filigreen</label>
+</CompactLayout>

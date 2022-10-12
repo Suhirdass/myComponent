@@ -1,0 +1,53 @@
+.THIS .setFont{
+    font-size: .9rem;
+    line-height: 2rem;
+}
+.THIS .productPrice{
+    color:#000;/*#f5e6d8;*/
+}
+.THIS .noData{
+    margin: 0 auto;
+    height: 100%;
+    padding-top: 10%;
+    width:100%;
+        text-align: center;
+}
+
+.THIS .capitalize{
+    text-transform: capitalize;
+}
+.THIS .ps{
+  height: 500px;
+}
+.THIS .jumptotop{
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}
+.THIS .categoryContainer{
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    margin-bottom:10px;
+}
+.THIS .categoryIcon{
+    display: inline-block;
+    text-align: center;
+    width: 80px;
+    transition: all .5s;
+}
+
+.THIS .categoryIcon img {
+    margin: 0 auto;
+    vertical-align: middle;
+        display: block;
+}
+.THIS .categoryIcon a, .THIS .categoryIcon a:active {
+    text-decoration: none;
+}
+.THIS .inline-block{
+    display: inline-block;
+}

@@ -1,0 +1,79 @@
+<aura:component access="global" implements="flexipage:availableForAllPageTypes">
+    <div >
+        <lightning:layout verticalAlign="stretch" multipleRows="true" class="x-large">
+            <lightning:layoutItem flexibility="auto" class="padd">
+                <lightning:card variant="Narrow" title="IRRATIONAL RACCOON LLC" iconName="standard:location">
+                    <p class="slds-p-horizontal_small">
+                        <table>
+                            <tr>
+                                <td><b>dba WOVN</b></td>
+                                <td></td>
+                                <td rowspan="6"><img style="float:right" src="https://www.dropbox.com/s/l936avkkz9lrnzb/IRRQRCode1.png?raw=1" width="100"/></td>
+                            </tr>
+                            <tr>
+                                <td>2089 Ingalls st,</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Unit 3, San Francisco,CA 94124</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td >&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+                                <td ></td>
+                            </tr>
+                            <tr>
+                                <td ><b>C11-0000371-LIC</b> Exp:06/13/2022</td>
+                                <td rowspan="2"><a href="https://wovn.lightning.force.com/lightning/r/ContentDocument/0696A000005OsvnQAC/view" >
+                                    <lightning:buttonIcon iconName="utility:download" variant="border-filled" alternativeText="Download"/>
+                                    </a></td>
+                            </tr>
+                            <tr>
+                                <td>Ph:415-480-4643</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </p>
+                </lightning:card>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="auto" >
+                <!--Adult-Use and Medicinal - Distributor License Provisional-->
+                <lightning:card variant="Narrow" title="ZASP" iconName="standard:location" >
+                    
+                    <p class="slds-p-horizontal_small">
+                        <table>
+                            <tr>
+                                <td><b>dba ZASP</b></td>
+                                <td></td>
+                                <td rowspan="6"><img style="float:right" src="https://www.dropbox.com/s/gbnhsn04q8ewuwr/ZASPQRCODE.png?raw=1" width="100"/></td>
+                            </tr>
+                            <tr>
+                                <td>11308 Hartland st,</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>N Hollywood, CA 91605-6309</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td >&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+                                <td ></td>
+                            </tr>
+                            <tr>
+                                <td><b>C11-0000497-LIC</b> Exp:06/24/2022</td>
+                                <td rowspan="2">
+                                    <a href="https://wovn.lightning.force.com/lightning/r/ContentDocument/0694o000008YaNMAA0/view" >
+                                        <lightning:buttonIcon iconName="utility:download" variant="border-filled" alternativeText="Download"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Ph:415-480-4643</td>
+                            </tr>
+                        </table>
+                    </p>
+                </lightning:card>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

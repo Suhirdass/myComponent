@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Check_Batch_ID_Lab_Test_Status_Decision</name>
+        <label>Check Batch ID Lab Test Status Decision</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Batch_ID_Lab_Test_Status</name>
+            <conditionLogic>1 AND 2 AND 3 AND 4</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lab_Test_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Passed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Lab_Test_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Failed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Harvest_Batch_Code__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Lab_Test_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Expired COA</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Sync_with_Batch_ID_Lab_Status</targetReference>
+            </connector>
+            <label>Check Batch ID Lab Test Status</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Inventory Position to Batch ID Sync {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>InventoryPosition to Batch ID Sync</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Sync_with_Batch_ID_Lab_Status</name>
+        <label>Sync with Batch ID Lab Status</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <inputAssignments>
+            <field>Lab_Test_Status__c</field>
+            <value>
+                <elementReference>$Record.Harvest_Batch_Code__r.Lab_Test_Status__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Batch_ID_Lab_Test_Status_Decision</targetReference>
+        </connector>
+        <object>Inventory_Position__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

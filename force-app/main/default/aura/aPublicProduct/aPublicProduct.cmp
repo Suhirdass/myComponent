@@ -1,0 +1,128 @@
+<aura:component extends="c:utility" controller="FiligreenProductsCtrl" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+
+  <ltng:require 
+                scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js', 
+                         $Resource.perfectScrollbar + '/jquery.zoom.js')}" 
+                afterScriptsLoaded="{!c.onScriptsLoaded}" />
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+  <aura:attribute name="product" type="Map" default="" />
+  <aura:attribute name="totalReviews" type="Integer" default="0" />
+  <aura:attribute name="ratingsSummary" type="List" default="[]" />
+  <aura:attribute name="reviews" type="List" default="" />
+    <aura:attribute name="isPublic" type="Boolean" default="true" />
+  <aura:attribute name="quantity" type="Integer" default="1" />
+
+  <div class="slds-is-relative">
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+	<a href="/filigreenb2b/s/filigreenproducts">SHOP</a>&nbsp;>&nbsp;<a href="javascript:void(0)" onclick="{!c.onCategoryClick}">{!v.selectedCategory}</a>
+    <aura:if isTrue="{!!empty(v.product)}">
+      <lightning:layout horizontalAlign="center" multipleRows="true">
+        <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="7">
+          <div class="slds-box slds-box_small" style="border-radius: 0;">
+            <lightning:layout multipleRows="true">
+              <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6">
+                <div class="slds-card__body">
+                  <ul class="slds-has-inline-block-links">
+                      
+                    <li class="productName">{!v.product.name}</li>
+                    <!--slds-text-heading_large -->
+                    <!--li>
+                      <c:productRating product="{!v.product}" rating="{!v.product.rating}" ratingsSummary="{!v.ratingsSummary}" showReviews="true" totalReviews="{!v.totalReviews}" />
+                    </li-->
+                    <li>
+                      <aura:renderIf isTrue="{!v.product.discount>0}">
+                        <ui:outputCurrency class="productPrice" value="{!v.product.salePrice}" />&nbsp;
+                      </aura:renderIf>
+                      <ui:outputCurrency class="{!'productPrice'+if(v.product.discount>0,' line-through','')}" value="{!v.product.price.unitPrice}" />
+                    </li>
+                    <li class="producerName">{!v.product.producerName}</li>
+                    <li>{!v.product.description}</li>
+                  </ul>
+                  <table>
+                    <tr>
+                      <th>THC:*
+                        <!--lightning:helptext class="resetSize" content="Amounts are averages, actual product may vary" iconName="utility:frozen" /-->
+                      </th>
+                      <td>{!v.product.THCPercent} - {!v.product.THCMG}</td>
+                    </tr>
+                    <tr>
+                      <th>CBD:*
+                        <!--lightning:helptext class="resetSize" content="Amounts are averages, actual product may vary" iconName="utility:frozen" /-->
+                      </th>
+                      <td>{!v.product.CBDPercent} - {!v.product.CBDMG}</td>
+                    </tr>
+                    <tr>
+                      <th>Terpene:*
+                        <!--lightning:helptext class="resetSize" content="Amounts are averages, actual product may vary" iconName="utility:frozen" /-->
+                      </th>
+                      <td>{!v.product.TerpenePercent}</td>
+                    </tr>
+                    <tr>
+                      <th>Strain Name:</th>
+                      <td>{!v.product.strainName}</td>
+                    </tr>
+                    <tr>
+                      <th>Strain Type:</th>
+                      <td><!--{!v.product.strainType}-->
+                          <span style="{!'padding: 0 3px;border-radius: 3px;'+if(equals(v.product.strainTypeBGColor,'','','color:#fff;background-color:'+v.product.strainTypeBGColor))}">{!v.product.strainType}</span>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%;">Cultivation Method:</th>
+                      <td>{!v.product.cultivationMethod}</td>
+                    </tr>
+                    <tr>
+                      <th>Units Per Case (MOQ):</th>
+                      <td>{!v.product.MOQ}</td>
+                    </tr>
+                      <tr>
+                          <th >Available Qty:</th>
+                          <td >{!v.product.availableQty}</td>
+                      </tr>
+                  </table>
+                </div>
+                <aura:if isTrue="{!!empty(v.product.productDetails)}">
+                  <div style="font-weight: bold;">
+                    Product Details:
+                  </div>
+                  <div class="slds-show_inline-block slds-scrollable">
+                    <aura:unescapedHtml value="{!v.product.productDetails}" />
+                  </div>
+                </aura:if>
+              </lightning:layoutItem>
+              <lightning:layoutItem flexibility="grow" class="slds-text-align_right" size="12" smallDeviceSize="6">
+                <lightning:layout horizontalAlign="end" multipleRows="true">
+                  <lightning:layoutItem flexibility="grow" size="12">
+                    <div style="height: 270px;" class="slds-float_right">
+                        <span class="zoom" id="aPImage">
+                            <img  src="{!v.product.imageUrl}" alt="{!v.product.name}" class="max250 responsive" style="float:right" />
+                        </span>
+                    </div>
+                  </lightning:layoutItem>
+                  <lightning:layoutItem flexibility="grow" size="12" class="slds-p-vertical_x-small">
+                    <c:addToCart isBrand="{!v.isBrand}" product="{!v.product}" showQuantityInput="true" allowSample="true" isPublic="{!v.isPublic}"/>
+                      <br/><lightning:button variant="brand" disabled="{!or(!v.product.complianceFileId,equals(v.product.complianceFileId,''))}" class="slds-show_inline-block theme workSansSemiBold uppserCase fullWidth complianceButton"
+            label="VIEW COMPLIANCE" title="View Compliance" onclick="{!c.onViewCompliance}"/>
+                  </lightning:layoutItem>
+                  <lightning:layoutItem flexibility="grow" size="12">
+                  </lightning:layoutItem>
+                </lightning:layout>
+              </lightning:layoutItem>
+              <lightning:layoutItem flexibility="grow" size="12">
+                <!--lightning:icon iconName="utility:frozen" size="x-small" /--><span class="estric">*</span>&nbsp;Amounts are averages, actual product may vary.
+              </lightning:layoutItem>
+            </lightning:layout>
+          </div>
+        </lightning:layoutItem>
+          <lightning:layoutItem flexibility="grow" size="12">
+              <br/>
+          </lightning:layoutItem>
+          <lightning:layoutItem flexibility="grow" size="12">
+              <c:filigreenEmergingProducts/>
+          </lightning:layoutItem>
+      </lightning:layout>
+    </aura:if>
+  </div>
+</aura:component>

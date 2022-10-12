@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Company_Swag</fullName>
+        <description>Company Swag!</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Filigreen_Email_ID__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>OnBoarding_Templates/Company_Swag</template>
+    </alerts>
+    <alerts>
+        <fullName>New_Company_Email_Signature</fullName>
+        <description>New Company Email Signature!</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Filigreen_Email_ID__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>OnBoarding_Templates/New_Company_Email_Signature</template>
+    </alerts>
+    <alerts>
+        <fullName>New_IT_Onboarding_Request</fullName>
+        <description>New IT-Onboarding Request</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>OnBoarding_Templates/New_IT_OnBoarding_Request</template>
+    </alerts>
+    <alerts>
+        <fullName>New_IT_Onboarding_Request_COMPLETE</fullName>
+        <description>New IT-Onboarding Request - COMPLETE</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <recipient>khanh@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>max@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>tracey@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>OnBoarding_Templates/IT_OnBoarding_Request_COMPLETE</template>
+    </alerts>
+    <alerts>
+        <fullName>New_IT_Onboarding_Request_Email_Ready</fullName>
+        <description>New IT-Onboarding Request - Email Ready</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <recipient>jj@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>khanh@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>max@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>tracey@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/IT_OnBoarding_Request_FG_Email_Ready</template>
+    </alerts>
+    <rules>
+        <fullName>New IT request</fullName>
+        <actions>
+            <name>New_IT_Onboarding_Request</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>IT_On_Boarding_Request__c.Type__c</field>
+            <operation>contains</operation>
+            <value>Employee,Contractor</value>
+        </criteriaItems>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>New IT request - COMPLETE</fullName>
+        <actions>
+            <name>New_IT_Onboarding_Request_COMPLETE</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>IT_On_Boarding_Request__c.IT_Request_Complete__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>New IT request - FG Email Ready</fullName>
+        <actions>
+            <name>Company_Swag</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>New_Company_Email_Signature</name>
+            <type>Alert</type>
+        </actions>
+        <actions>
+            <name>New_IT_Onboarding_Request_Email_Ready</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>AND( Filigreen_Email__c  = true,
+ Filigreen_Email_ID__c  &lt;&gt; &apos;&apos;,
+ ISCHANGED(Filigreen_Email_ID__c  ) 
+
+)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

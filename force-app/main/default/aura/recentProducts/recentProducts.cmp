@@ -1,0 +1,75 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+  access="global">
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+  <aura:attribute name="products" type="List" default="[]" />
+  <aura:attribute name="warehouseTotalOrderedMap" type="Map" default="" />
+  <aura:dependency resource="markup://c:productDetails" />
+
+
+  <lightning:overlayLibrary aura:id="overlay" />
+  <div class="slds-is-relative">
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />
+    <aura:if isTrue="{!!empty(v.products)}">
+      <lightning:layout multipleRows="true" horizontalAlign="center">
+        <lightning:layoutItem flexibility="grow" size="12" padding="around-small slds-is-relative">
+          <span class="productName">Emerging Products</span>
+        </lightning:layoutItem>
+        <lightning:layoutItem flexibility="grow" size="12" padding="around-small slds-is-relative">
+          <div class="slds-is-absolute clickable scrollLeft scrollIcon deepJade" onclick="{!c.scrollLeft}">
+            <lightning:icon iconName="utility:chevronleft" class="whiteIcons" size="small" />
+          </div>
+          <div class="slds-is-absolute clickable scrollRight scrollIcon deepJade" onclick="{!c.scrollRight}">
+            <lightning:icon iconName="utility:chevronright" class="whiteIcons" size="small" />
+          </div>
+          <ul class="slds-list_horizontal scroller" aura:id="scroller">
+            <aura:iteration items="{!v.products}" var="product" indexVar="productIndex">
+              <li>
+                <article class="slds-card productArticle slds-p-around_small slds-m-right_small" style="width: 370px;">
+                  <div class="slds-grid">
+                    <header class="slds-media slds-has-flexi-truncate max200">
+                      <img src="{!product.imageUrl}" style="display: table; margin: 0 auto;max-height:100%;max-width:100%" class="responsive clickable"
+                        data-index="{!productIndex}" onclick="{!c.onProductClick}" />
+                    </header>
+                  </div>
+                  <div class="">
+                    <ul class="slds-has-inline-block-links clickable" data-index="{!productIndex}" onclick="{!c.onProductClick}">
+
+                      <!--li class="productName slds-truncate" title="{!product.name}">{!product.name}</li-->
+                      <li class="producerName slds-truncate" title="{!product.producerName}">{!product.producerName}</li>
+                      <li class="productName slds-truncate workSans" title="{!product.shortDescrption}">{!product.shortDescrption}</li>
+                      <li>
+                        <aura:if isTrue="{!product.discount>0}">
+                          <ui:outputCurrency class="productPrice" value="{!product.salePrice}" />&nbsp;
+                        </aura:if>
+                        <c:availableInventoryComponent isCurrencyFld="true" label="{!product.price.unitPrice}" labelClass="{!'productPrice'+if(product.discount>0,' line-through','')}" helpText="{!product.warehouseInventoryDetails}" required="false"/>
+                      </li>
+                      <li class="productText slds-truncate" title="{!v.product.strainName}">{!product.strainName}</li>
+                      <li class="productText slds-truncate" title="{!v.product.strainType}">
+                          <span style="{!'padding: 0 3px;border-radius: 3px;'+if(equals(product.strainTypeBGColor,'','','color:#fff;background-color:'+product.strainTypeBGColor))}">{!product.strainType}</span>&nbsp;
+                        </li>
+                    </ul>
+                    <c:addToCart isBrand="{!v.isBrand}" product="{!product}" allowSample="true" showQuantityInput="{!v.isBrand}"/>
+                    <!--c:productRating product="{!product}" rating="{!product.rating}" /-->
+                  </div>
+                </article>
+              </li>
+            </aura:iteration>
+            <li>
+              <article class="slds-card productArticle slds-p-around_small slds-m-right_small" style="width: 210px; height: 100%;">
+                <div class="slds-grid">
+                  <header class="slds-media slds-has-flexi-truncate max200 clickable" onclick="{!c.onViewAll}" style="align-items:center;justify-content: center;">
+                      <div class="viewAll">VIEW ALL</div>
+                    <!--img src="https://via.placeholder.com/200x200?text=View%20All" style="display: table; margin: 0 auto;"
+                      class="responsive max200 clickable" onclick="{!c.onViewAll}" /-->
+                  </header>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </lightning:layoutItem>
+      </lightning:layout>
+    </aura:if>
+  </div>
+</aura:component>

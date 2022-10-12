@@ -1,0 +1,300 @@
+<aura:component extends="c:utility" controller="CreateCreditMemoToInvoiceController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="recordId" type="String" />
+
+     <aura:attribute name="invoice" type="Invoice__c" default="{'sobjectType': 'Invoice__c',
+                                                        'Name':''
+                                                        }"/> 
+     <aura:attribute name="errorQB" type="String"/>
+    <aura:attribute name="InvoiceLine" type="Invoice_Line__c" />
+    
+    <aura:attribute name="setInvoiceLines" type="CreateCreditMemoToInvoiceController.InvoiceLineWrapper[]" />
+    <aura:attribute name="InvoiceLines" type="Object" />
+
+    <aura:attribute name="hasInvoiceLines" type="Boolean"/>
+    
+    <aura:attribute name="master" type="Boolean" default="false"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="error" type="String" />
+     <aura:attribute name="Err_Msg_greater_than_Invoice_Qty" type="String" />
+     <aura:attribute name="Err_Msg_Greater_than_0_Qty_to_Credit" type="String" />
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        /*min-width: 90%;*/
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .back {
+        	background-color: white;
+        	height: 100%;
+        }
+        .backTwo {
+        	background-color: white;
+        	max-height: 200%;
+        }
+        .dataTables_filter{
+        	display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        .SOtable{
+        border-collapse: collapse;
+  		width: 100%;
+        height: 100%;
+        }
+        .SOtable td, .SOtable th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+       
+
+		.SOtable tr:hover {background-color: #F5F5F5;}
+        .SOtable th {
+          background-color: #F5F5F5;
+         border: 1px solid #D9D7D7;
+        }
+        .textCap{
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        margin-right: 5px;
+        }
+         .title-align {
+    	padding-left: 10px;
+        padding-top: 5px;
+        }
+         .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+       
+    </aura:html>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+<article class="slds-card">
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom93" title="custom93" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">{!$Label.c.Invoice_Detail}</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+           <lightning:button class="slds-button slds-button--neutral textCap" label="{!$Label.c.Create_Credit_Memo}" onclick="{!c.createInvoices}"/>
+           <lightning:button class="slds-button slds-button--neutral textCap" label="{!$Label.c.Cancel}" onclick="{!c.onCancel}"/>   
+      </div>
+    </div>
+  </div>
+</div>
+<br/>
+<aura:If isTrue="{!v.hasInvoiceLines}">       
+    <div class="slds-is-relative slds-p-horizontal_small">
+           <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+               
+               <div class="slds-col">
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Sales Order</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.invoice.Sales_Order__c}" style="color:#0070D2;" ><u>{!v.invoice.Sales_Order__r.Name}</u></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Brand Quote</b></div>
+                            <div class="slds-size_1-of-2 slds-truncate" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.invoice.Brand_Quote__c}" style="color:#0070D2;" ><u>{!v.invoice.Brand_Quote__r.Name}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Order or Service #</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><span>{!v.invoice.Customer_PO_or_Quote__c}</span></div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Site</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%; width:150px;">
+                       		<a href="{!'/' + v.salesOrderSO.Site__c}" style="color:#0070D2;"><u>{!v.invoice.Site__r.Name}</u></a><span>, </span> {!v.invoice.Site__r.Warehouse_Name__c}
+                       </div>	
+                    </div>
+               </div>
+               
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Receiver Name</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.invoice.Receiver_Name__c}" style="color:#0070D2;" ><u>{!v.invoice.Receiver_Name__r.Name}</u></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Distributor</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.invoice.Distributor_Name__c}" style="color:#0070D2;"><u>{!v.invoice.Distributor_Name__r.Name}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Payment Terms</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.invoice.Payment_Terms__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Ship Confirmation Date</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><ui:outputDate value="{!v.invoice.Ship_Confirmation_Date__c}" format="MM/DD/YYYY"/></div>	
+                    </div>
+               </div>
+             
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Invoice Due Date</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><ui:outputDate value="{!v.invoice.Invoice_Due_Date__c}" format="MM/DD/YYYY"/></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Total Product Price</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber style="currency" value="{!v.invoice.Total_Product_Price__c}" maximumFractionDigits="2"/></div>	
+                    </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Total Excise Tax Amount</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber style="currency" value="{!v.invoice.Total_Excise_Tax_Amount__c}" maximumFractionDigits="2"/></div>	
+                    </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Total Invoice Amount</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber style="currency" value="{!v.invoice.Total_Invoice_Amount__c}" maximumFractionDigits="2"/></div>	
+                    </div>
+              </div>
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Collections Status</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.invoice.Collections_Status__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Excise Tax Balance</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber style="currency" value="{!v.invoice.Excise_Tax_Balance__c}" maximumFractionDigits="2"/></div>	
+                    </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Invoice Balance</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber style="currency" value="{!v.invoice.Invoice_Balance__c}" maximumFractionDigits="2"/></div>	
+                    </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Invoice Aged</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber value="{!v.invoice.Invoice_Aged__c}" /></div>	
+                    </div>
+              </div>
+            </div>   
+            </div> 
+        </aura:If>
+        <br/>
+</article>
+    <br/> 
+<article class="slds-card">
+              <div class="slds-page-header heightfix" role="banner">
+                  <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                      <div class="slds-media">
+                         <lightning:icon iconName="standard:product" title="product" /> 
+                        <div class="slds-media__body">
+                          <div class="slds-grid">
+                           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Select Invoice Lines to Credit</h1> 
+                            </div>
+                        </div>	
+                      </div>
+                    </div>
+                  </div>
+            </div> 
+    		<br/>  
+    <aura:If isTrue="{!v.hasInvoiceLines}">
+            <div class="slds-is-relative slds-p-horizontal_small">
+                <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small" style="max-height: 100% !important;">
+                    <!-- <table class="dataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">-->
+                    <table class="SOtable back">
+                        <thead>
+                            <tr class="slds-text-title">
+                                <th scope="col"> <div title="select"><lightning:input type="checkbox" name="inputMaster" checked="{!v.master}" aura:id="selectAll" value="{!v.master}" onchange="{!c.selectAllCheckboxes}"/></div> </th>
+                                <th scope="col"> <div title="INLI"> INLI </div> </th>
+                                <th scope="col"> <div title="SOLI">SOLI</div></th>
+                                <th scope="col"> <div title="Product">Product</div> </th>
+                                <th scope="col"> <div title="Description">Description</div> </th>
+                                <th scope="col"> 
+                                    <div title="Unit Amount">Unit Amount</div>
+                                </th>
+                                <th scope="col"> 
+                                    <div title="Unit Excise Tax">Unit Excise Tax</div> 
+                                </th>
+                                <th scope="col"> <div title="Invoice Qty">Invoice Qty</div> </th>
+                                <th scope="col"> <div title="Available Qty to Credit">Available Qty to Credit</div> </th>
+                                <th scope="col"> <div title="Qty to Credit">Qty to Credit</div> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           <aura:iteration items="{!v.setInvoiceLines}" var="il" indexVar="index"> 
+                                <tr >
+                                    <td>
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!il.isSelected}" checked="{!il.isSelected}" disabled="{!il.isDisabled}" onchange="{!c.selectCheckbox}"/>
+                                    </td>
+                                    <td><div><a href="{!'/' + il.invoiceLine.Id}" style="color:#0070D2;" ><u>{!il.invoiceLine.Name}</u></a></div></td>
+                                    <td><div><a href="{!'/' + il.invoiceLine.Sales_Order_Line__c}" style="color:#0070D2;" ><u>{!il.invoiceLine.Sales_Order_Line__r.Name}</u></a></div></td>
+                                    <td><div><a href="{!'/' + il.invoiceLine.Product_Name__c}" style="color:#0070D2;" ><u>{!il.invoiceLine.Product_Name__r.Name}</u></a></div></td>
+                                    <td><div>{!il.invoiceLine.Product_Description__c}</div></td>
+                                    <td>
+                                        <div>
+                                            <aura:if isTrue="{!equals(il.invoiceLine.RecordType.Name,'Tax')}">
+                                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{!il.invoiceLine.Unit_Cultivation_Tax__c}" maximumFractionDigits="2"/>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{!equals(il.invoiceLine.Product_Name__r.Family,'Discount')}">
+                                                        (<lightning:formattedNumber style="currency" currencyCode="USD" value="{!il.invoiceLine.Retail_Wholesale_Price__c * -1}" maximumFractionDigits="2"/>)
+                                                        <aura:set attribute="else">
+                                                            <lightning:formattedNumber style="currency" currencyCode="USD" value="{!il.invoiceLine.Retail_Wholesale_Price__c}" maximumFractionDigits="2"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </td>    
+                                    <td>
+                                        <div>
+                                            <aura:if isTrue="{!equals(il.invoiceLine.Product_Name__r.Family,'Discount')}">
+                                                (<lightning:formattedNumber style="currency" currencyCode="USD" value="{!il.invoiceLine.Unit_Excise_Tax__c * -1}" maximumFractionDigits="2"/>)
+                                                <aura:set attribute="else">
+                                                    <lightning:formattedNumber style="currency" currencyCode="USD" value="{!il.invoiceLine.Unit_Excise_Tax__c}" maximumFractionDigits="2"/>
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </td>
+                                    <td><div ><lightning:formattedNumber aura:id="fixQty" value="{!il.invoiceLine.Invoice_Qty__c}"/></div></td>
+                                    <td><div><lightning:formattedNumber aura:id="passQty" value="{!il.invoiceQty}"/></div><div class="slds-hidden" Style="display:none;"><lightning:formattedNumber aura:id="avlQty" value="{!il.AvlQty}"/></div></td>
+                                    <td><div><lightning:input name="{!index}" type="number" aura:id="recQty" value="{!il.qtyToCredit}" onchange="{!c.onChangeInput}" disabled="{!il.isDisabled}" /></div></td>
+                                    
+                               </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+        
+        <aura:set attribute="else">
+            {!v.error}
+        </aura:set>
+        </aura:If>        
+<br/>  
+ </article>
+    <br/> 
+</aura:component>

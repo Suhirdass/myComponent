@@ -1,0 +1,51 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="MassQAController">
+	<aura:handler name="init" action="{!c.init}" value="{!this}" />
+    <aura:attribute name="showpopup" type="boolean" default="false"/>
+    <aura:attribute name="Confirmation_for_QA_Record" type="String"/>
+    <aura:attribute name="rlIds" type="list[]"/>
+        
+    <aura:html tag="style">
+         .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+    </aura:html>
+    <aura:if isTrue="{!v.showpopup}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+        
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Quality Assurance</h2>
+      </header>
+    
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+          
+			<ui:outputText value="{!v.Confirmation_for_QA_Record}" aura:id="errorMsg"/>
+          
+       </div>
+      <footer class="slds-modal__footer"  style="width: 600px !important;">
+          
+              <lightning:button label="Yes" onclick="{!c.handleConfirmDialogYes}" class="slds-button_brand " />
+              <lightning:button label="No" onclick="{!c.handleConfirmDialogNo}" class="slds-button_neutral " />
+          
+      </footer>
+        
+    </aura:if>
+         <!--section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-slide-up-open slds-modal_medium " >
+  <div class="slds-modal__container" style="width: 600px !important;">
+    
+    <div class="slds-modal__header">
+      <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Quality Assurance</h1>
+    </div>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="border-radius: 0px;">
+        {!v.Confirmation_for_QA_Record}
+      </div>
+    <div class="slds-modal__footer">
+      <lightning:button label="Yes" onclick="{!c.handleConfirmDialogYes}" class="slds-button_brand " />
+        <lightning:button label="No" onclick="{!c.handleConfirmDialogNo}" class="slds-button_brand " />
+    </div>
+  </div>
+</section-->
+   
+        
+        
+</aura:component>

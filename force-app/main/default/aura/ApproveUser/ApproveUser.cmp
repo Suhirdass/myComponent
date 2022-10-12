@@ -1,0 +1,52 @@
+<aura:component controller="ApproveSelfRegisterUser" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    <!--aura:attribute name="profiles" type="List"/-->
+    <aura:attribute name="isActivated" type="Boolean" default="false"/>
+    <aura:attribute name="selectedRecord" type="Object" default="" description="selected Record Details" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading--medium" >Approve User</h4>
+    </div>
+    
+    <!-- MODAL BODY / INPUT FORM -->    
+    <div class="slds-modal__content slds-p-around--x-small slds-size_1-of-1 slds-is-relative" aura:id="modalbody" id="modalbody">
+        <aura:if isTrue="{!v.isActivated}" >
+            <div> User already activated.</div>
+            <aura:set attribute="else">
+                <lightning:select name="profileId" label="License Type" required="true" aura:id="profileVal">
+                    <option text="Select" value=""></option>
+                    <option text="Standard" value="Customer Community User Custom"></option>
+                    <!--option text="Standard with PLUS" value="Customer Community Plus User Custom"></option-->
+                </lightning:select>
+                <c:customLookup selectedRecord="{!v.selectedRecord}" objectName="Account" fieldName="Name" label="Map to Existing Account" iconName="standard:account" placeholder="Search Accounts" />
+            </aura:set>
+        </aura:if> 
+        
+    </div>   
+    <!-- End of Modal Content -->  
+    
+    <!-- MODAL FOOTER --> 
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <div class="forceChangeRecordTypeFooter">
+            <ui:button class="slds-button slds-button_neutral" label="Cancel" press="{!c.closeModal}" /> 
+            <aura:if isTrue="{!!v.isActivated}">
+            	<ui:button class="slds-button slds-button--brand"
+                       label="Approve" press="{!c.createUser}"/>
+            </aura:if>
+        </div>
+    </div>
+    
+</aura:component>

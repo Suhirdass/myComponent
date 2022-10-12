@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Update_Collection_Status</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Paid in Full</literalValue>
+        <name>Update Collection Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Collection_Status_to_Past_Due</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Past Due</literalValue>
+        <name>Update Collection Status to Past Due</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Invoice_Collection_Status</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Paid in Full</literalValue>
+        <name>Update Invoice Collection Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Last_Payment_Date</fullName>
+        <field>Last_Payment_Date__c</field>
+        <formula>Ship_Confirmation_Date__c</formula>
+        <name>Update Last Payment Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Partial_Payment</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Partial Payment</literalValue>
+        <name>Update Partial Payment</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Post_Date</fullName>
+        <field>Posted_Date__c</field>
+        <formula>Ship_Confirmation_Date__c</formula>
+        <name>Update Post Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Product_Invoice</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Past Due</literalValue>
+        <name>Update Product Invoice</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Rejected_or_Cancelled_Invoice</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Not Collectable</literalValue>
+        <name>Update Rejected or Cancelled Invoice</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Service_Invoice_Status</fullName>
+        <field>AR_Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Update Service Invoice Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Tax_Invoice_Collection_Status</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Past Due</literalValue>
+        <name>Update Tax Invoice Collection Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_the_status_to_Rejected</fullName>
+        <field>AR_Status__c</field>
+        <literalValue>Rejected</literalValue>
+        <name>Update the status to Rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Updated_Overpaid_to_Paid_in_Full</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Paid in Full</literalValue>
+        <name>Updated Overpaid to Paid in Full</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Updated_to_Paid_in_Full</fullName>
+        <field>Collections_Status__c</field>
+        <literalValue>Paid in Full</literalValue>
+        <name>Updated to Paid in Full</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Update Cancelled or Rejected Invoice Collect Status</fullName>
+        <actions>
+            <name>Update_Rejected_or_Cancelled_Invoice</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED(LastModifiedDate) &amp;&amp; OR(ISPICKVAL(AR_Status__c, &apos;Cancelled&apos;),ISPICKVAL(AR_Status__c, &apos;Rejected&apos;))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Payment Status to Paid in Full</fullName>
+        <actions>
+            <name>Update_Last_Payment_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Post_Date</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>NOT(ISBLANK( Ship_Confirmation_Date__c )) &amp;&amp;
+ISCHANGED(LastModifiedDate) &amp;&amp; 
+Invoice_Balance__c = 0.00 &amp;&amp;  
+ISBLANK(Posted_Date__c)&amp;&amp; OR(ISPICKVAL(AR_Status__c,&apos;Approved&apos;),ISPICKVAL(AR_Status__c,&apos;Shipped&apos;))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Product Invoice Collection Status to Past Due</fullName>
+        <actions>
+            <name>Update_Collection_Status_to_Past_Due</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>AND(Invoice_Balance__c &gt;0.0, OR(ISPICKVAL(AR_Status__c,&apos;Approved&apos;),
+ISPICKVAL(AR_Status__c,&apos;Shipped&apos;)),   
+Invoice_Due_Date__c &lt; TODAY(),ISCHANGED( LastModifiedDate))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

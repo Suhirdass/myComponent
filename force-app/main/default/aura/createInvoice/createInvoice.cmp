@@ -1,0 +1,275 @@
+<aura:component extends="c:utility" controller="CreateInvoiceController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="recordId" type="String" />
+    <!--<aura:attribute name="salesOrderSO" type="Sales_Order__c" default="{! Name}"/> -->
+     <aura:attribute name="salesOrderSO" type="Sales_Order__c" default="{'sobjectType': 'Sales_Order__c',
+                                                        'Name':''
+                                                        }"/> 
+     <aura:attribute name="errorQB" type="String"/>
+    <aura:attribute name="OBCreatedMsg" type="String"/>
+    <aura:attribute name="isOBCreate" type="Boolean" default="false"/>
+    <aura:attribute name="SoLineSos" type="Sales_Order_Line__c" />
+    
+    <aura:attribute name="setSalesOrderLines" type="CreateInvoiceController.SalesOrderLineWrapper[]" />
+    <aura:attribute name="salesOrderLines" type="Object" />
+    <aura:attribute name="invoiceData" type="list" />
+    <aura:attribute name="invoiceDataString" type="list" />
+    <aura:attribute name="hasSalesOrderLines" type="Boolean"/>
+    <aura:attribute name="statusSO" type="String" />
+    <aura:attribute name="allocatedSO" type="Boolean"/>
+    <aura:attribute name="master" type="Boolean" default="false"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="error" type="String" />
+    
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        /*min-width: 90%;*/
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .back {
+        	background-color: white;
+        	height: 100%;
+        }
+        .backTwo {
+        	background-color: white;
+        	max-height: 200%;
+        }
+        .dataTables_filter{
+        	display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        .SOtable{
+        border-collapse: collapse;
+  		width: 100%;
+        height: 100%;
+        }
+        .SOtable td, .SOtable th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+       
+
+		.SOtable tr:hover {background-color: #F5F5F5;}
+        .SOtable th {
+          background-color: #F5F5F5;
+         border: 1px solid #D9D7D7;
+        }
+        .textCap{
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+         .title-align {
+    	padding-left: 10px;
+        padding-top: 5px;
+        }
+         .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+       
+    </aura:html>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    <aura:if isTrue="{!v.isOBCreate}">
+         <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-slide-up-open slds-modal_medium" >
+  <div class="slds-modal__container" style="width: 600px !important;">
+    
+    <div class="slds-modal__header">
+      <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!v.salesOrderSO.Name}</h1>
+    </div>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="border-radius: 0px;">
+        {!v.OBCreatedMsg}
+      </div>
+    <div class="slds-modal__footer">
+      <lightning:button label="Yes" onclick="{!c.yesOB}" class="slds-button_brand " />
+        <lightning:button label="No" onclick="{!c.noOB}" class="slds-button_brand " />
+    </div>
+  </div>
+</section>
+         
+      
+    </aura:if>
+    
+<article class="slds-card">
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom93" title="custom93" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">{!$Label.c.Invoice_Detail}</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+           <lightning:button class="slds-button slds-button--neutral textCap" label="{!$Label.c.Create_Invoice}" onclick="{!c.createInvoices}"/>
+           <lightning:button class="slds-button slds-button--neutral textCap" label="{!$Label.c.Cancel}" onclick="{!c.onCancel}"/>   
+      </div>
+    </div>
+  </div>
+</div>
+<br/>
+<aura:If isTrue="{!v.hasSalesOrderLines}">       
+    <div class="slds-is-relative slds-p-horizontal_small">
+           <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+               
+               <div class="slds-col">
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Sales Order</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.salesOrderSO.Id}" style="color:#0070D2;" ><u>{!v.salesOrderSO.Name}</u></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>SO Date</b></div>
+                            <div class="slds-size_1-of-2 slds-truncate" style="text-align: left; padding-left: 2%;"><ui:outputDate value="{!v.salesOrderSO.SO_Date__c}" format="MM/DD/YYYY"/></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Total Price</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><lightning:formattedNumber style="currency" value="{!v.salesOrderSO.Total_Price__c}" maximumFractionDigits="2"/></div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Invoice</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%; width:150px;"><aura:iteration items="{!v.invoiceData}" var="inv" indexVar="index">
+                            <a href="{!'/' + inv.Id}" style="color:#0070D2;" ><u>{!inv.Name}</u></a>
+                              &nbsp;
+                        </aura:iteration></div>	
+                    </div>
+               </div>
+               
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Order or Service #</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.salesOrderSO.Customer_PO_or_Quote__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Supplier</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.salesOrderSO.Supplier_Name__c}" style="color:#0070D2;"><u>{!v.salesOrderSO.Supplier_DBA__c}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Distributor</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.salesOrderSO.Distributor_Name__c}" style="color:#0070D2;"><u>{!v.salesOrderSO.Distributor_DBA__c}</u></a></div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Receiver</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.salesOrderSO.Receiver_Name__c}" style="color:#0070D2;"><u>{!v.salesOrderSO.Receiver_DBA__c}</u></a></div>	
+                    </div>
+               </div>
+             
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Payment Terms</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.salesOrderSO.Payment_Terms__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Site</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.salesOrderSO.Site__c}" style="color:#0070D2;"><u>{!v.salesOrderSO.Site__r.Name}</u></a><span>, </span> {!v.salesOrderSO.Site__r.Warehouse_Name__c}</div>	
+                    </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Total Lines</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.salesOrderSO.Total_Line_Items__c}</div>	
+                    </div>
+              </div>
+            </div>   
+            </div> 
+        </aura:If>
+        <br/>
+</article>
+        <br/> 
+<article class="slds-card">
+              <div class="slds-page-header heightfix" role="banner">
+                  <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                      <div class="slds-media">
+                         <lightning:icon iconName="standard:product" title="product" /> 
+                        <div class="slds-media__body">
+                          <div class="slds-grid">
+                           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Sales Order Line Items</h1> 
+                            </div>
+                        </div>	
+                      </div>
+                    </div>
+                  </div>
+            </div> 
+    		<br/>  
+    <aura:If isTrue="{!v.hasSalesOrderLines}">
+            <div class="slds-is-relative slds-p-horizontal_small">
+                <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small" style="max-height: 100% !important;">
+                    <!-- <table class="dataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">-->
+                    <table class="SOtable back">
+                        <thead>
+                            <tr class="slds-text-title">
+                                <th scope="col"> <div title="select"><lightning:input type="checkbox" name="inputMaster" checked="{!v.master}" aura:id="selectAll" value="{!v.master}" onchange="{!c.selectAllCheckboxes}"/></div> </th>
+                                <th scope="col"> <div title="SO Line"> SO Line </div> </th>
+                                <th scope="col"> <div title="Is Sample">Is Sample</div></th>
+                                <th scope="col"> <div title="Product Name">Product Name</div> </th>
+                                <th scope="col"> <div title="Product Description">Product Description</div> </th>
+                                <th scope="col"> <div title="UID">UID</div> </th>
+                                <th scope="col"> <div title="Brand Name">Brand Name</div> </th>
+                                <th scope="col"> <div title="Qty per Case (MOQ)">Qty per Case (MOQ)</div> </th>
+                                <th scope="col"> <div title="Order Qty (Cases)">Order Qty (Cases)</div> </th>
+                                <th scope="col"> <div title="Qty Ordered">Qty Ordered</div> </th>
+                                <th scope="col"> <div title="Balance To Invoice" >Balance To Invoice</div> </th>
+                                <th scope="col"> <div title="Qty to Bill">Qty to Bill</div> </th>
+                                <th scope="col"> <div title="Line Total Price" >Total Price</div> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           <aura:iteration items="{!v.setSalesOrderLines}" var="sol" > 
+                                <tr >
+                                    <td>
+                                        <lightning:input type="checkbox" aura:id="checkContact" value="{!sol.isSelected}" checked="{!sol.isSelected}" disabled="{!sol.isDisabled}" onchange="{!c.selectCheckbox}"/>
+                                    </td>
+                                    <td><div><a href="{!'/' + sol.salesOrderLineSO.Id}" style="color:#0070D2;" ><u>{!sol.salesOrderLineSO.Name}</u></a></div></td>
+                                    <td><ui:outputCheckbox aura:id="checkbox" value="{!sol.salesOrderLineSO.Is_Sample__c}"/></td>
+                                    <td><div><a href="{!'/' + sol.salesOrderLineSO.Product_Name__c}" style="color:#0070D2;" ><u>{!sol.salesOrderLineSO.Product_Name__r.Name}</u></a></div></td>
+                                    <td><div>{!sol.salesOrderLineSO.Product_Description__c}</div></td>
+                                    <td><div><aura:unescapedHtml value="{!sol.salesOrderLineSO.UID__c}" /></div></td>    
+                                    <td><div>{!sol.salesOrderLineSO.Producer_Name__c}</div></td>
+                                    <td><div>{!sol.salesOrderLineSO.MOQ__c}</div></td>
+                                    <td><div>{!sol.salesOrderLineSO.Quantity_Cases__c}</div></td>
+                                    <td><div>{!sol.salesOrderLineSO.Qty_Ordered__c}</div></td>
+                                    <td><div><lightning:formattedNumber aura:id="passQty" value="{!sol.salesOrderLineSO.Qty_To_Invoiced__c}"/></div></td>
+                                     <td><div><lightning:input type="number" aura:id="recQty" value="{!sol.qtyToBill}"  disabled="{!sol.isDisabled}" /></div></td>
+                                    <td><div><lightning:formattedNumber style="currency" value="{!sol.salesOrderLineSO.Line_Total_Price__c}" maximumFractionDigits="2"/></div></td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+     
+            <aura:set attribute="else">
+            	{!v.error}
+            </aura:set>
+        </aura:If>        
+<br/>  
+ </article>
+    <br/> 
+</aura:component>

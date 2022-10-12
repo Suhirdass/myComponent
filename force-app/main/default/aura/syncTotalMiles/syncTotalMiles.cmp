@@ -1,0 +1,11 @@
+<aura:component controller="SyncTotalMilesController" extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    
+    <aura:html tag="style">
+        
+        .slds-modal__container{
+        	display: none !important;
+        }  
+    </aura:html>
+</aura:component>

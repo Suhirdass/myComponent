@@ -1,0 +1,81 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+
+<!-- PARENT COMPONENT-->
+<template>
+    <!-- Align content in centerally & container is custom class -->
+    <!-- Todo manager container-->
+    <lightning-layout class="slds-align_absolute-center slds-text-align_center container" multiple-rows="true">
+        <lightning-layout-item size="12">
+            <!-- Instead of static value (08.15) , we can Getting Time & Greeting as property from JS File
+            This property should be declare with in {} -->
+            <div class="time">{time}</div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="12">
+            <div class="greeting">{greeting}</div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="12">
+            <div class="slds-text-heading_large slds-m-vertical_large">What is Your Main focus for Today?</div>
+        </lightning-layout-item>
+
+        <!-- Input box-->
+        <!-- Define input box length depands upon device (current context) it will change -->
+        <lightning-layout-item size="12" large-device-size="6" medium-device-size="10" small-device-size="12"
+            class="slds-m-top_large">
+            <lightning-layout>
+                <lightning-layout-item size="11">
+                    <lightning-input type="text" label="Whats In You Mind" variant="label-hidden"
+                        placeholder="Whats In You Mind"></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="1">
+                    <lightning-button-icon icon-name="utility:add" title="Add toDo" onclick={addToDoHandler}>
+                    </lightning-button-icon>
+                </lightning-layout-item>
+            </lightning-layout>
+        </lightning-layout-item>
+
+        <!--List of items-->
+        <lightning-layout-item size="12">
+            <div class="slds-m-top_large slds-text-heading_label">UPCOMING TASKS</div>
+            <!-- ForEach Directive To display Data from Array (todos) & Here data is local variable of todos (array) -->
+            <template for:each={upcomingTodos} for:item="data">
+                <!-- Display the Items/Data/Value-->
+                <!-- When we are using forEach directive, we need to use key attribute in the next tag because it will show only updated value for 
+    the particular item (key attribute is unique for each iteration & generate id - Ex : key={data.Id})-->
+
+
+                <!-- Calling Child Component (camelCase letter converter into kabab case - Ex : toDoItem ==> to-do-item)-->
+                <!-- The Parent component listen  firing event of child component & handling custom event in parent (on + event name == onupdate)-->
+                <c-to-do-item key={data.todoId} todo-id={data.todoId} todo-name={data.todoName} onupdate={upDateHandler}
+                    ondelete={deleteHandler}></c-to-do-item>
+
+            </template>
+
+            <div class="slds-m-top_large slds-text-heading_label">COMPLETED TASKS</div>
+            <!-- ForEach Directive To display Data from Array (todos) & Here data is local variable of todos (array) -->
+            <template for:each={completedTodos} for:item="data">
+                <!-- Display the Items/Data/Value-->
+                <!-- When we are using forEach directive, we need to use key attribute in the next tag because it will show only updated value for 
+    the particular item (key attribute is unique for each iteration & generate id)-->
+
+                <!-- Calling Child Component (camelCase letter converter into kabab case - Ex : toDoItem ==> to-do-item)-->
+                <!-- The Parent component listen  firing event of child component & handling custom event in parent (on + event name == onupdate)-->
+                <c-to-do-item key={data.todoId} todo-id={data.todoId} todo-name={data.todoName} onupdate={upDateHandler}
+                    ondelete={deleteHandler} done></c-to-do-item>
+            </template>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>
+
+<!-- The below Code is used as Child Component-->
+<!-- <div key={todo.id} class="todo">
+    <lightning-button-icon icon-name="utility:check" class="slds-p-horizontal_medium" variant="bare"
+        onclick={updateTodo} title="Update Todo">
+    </lightning-button-icon>
+    <span class="slds-text-heading_label">{todo.todoName}</span>
+    <lightning-button-icon icon-name="utility:close" class="slds-p-horizontal_medium" variant="bare"
+        onclick={deleteTodo} title="Delete Todo">
+    </lightning-button-icon>
+</div> -->

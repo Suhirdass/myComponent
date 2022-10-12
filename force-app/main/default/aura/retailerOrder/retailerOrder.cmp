@@ -1,0 +1,487 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="RMAList" type="List" default="[]"/>
+    <aura:attribute name="invoices" type="List" default="[]"/>
+    <aura:attribute name="shipManifests" type="List" default="[]"/>
+    <aura:attribute name="products" type="List" default="[]"/>
+    <aura:attribute name="allProducts" type="List" default="[]"/>
+    <aura:attribute name="retailOrder" type="Map" default="{}" />
+    <aura:attribute name="isDisabled" type="Boolean" default="true" />
+    <aura:attribute name="Retail_MOV_Fee" type="String" default="" />
+    <aura:attribute name="searchString" type="String" default="" />
+    <aura:attribute name="sortType" type="String" default="ASC"/>
+    <aura:attribute name="sortField" type="String" default="shortDescription"/>
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="isShowConfirm" type="Boolean" default="false" />
+    <aura:attribute name="invoicesIdsList" type="List" />
+    <aura:attribute name="smIdsList" type="List" />
+    
+    <aura:handler name="confirmModalEvent" event="c:confirmModalEvent" action="{!c.handleConfirmEvent}"/>
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchProducts}" />
+    <lightning:overlayLibrary aura:id="overlay" />
+    
+    <div class="slds-is-relative slds-p-horizontal_small" style="min-height: calc(100vh - 63px);">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <section class="slds-card no-padding-x">
+            <h2 class="bg__tan ticket-header slds-text-heading_small">
+                Order Details #{! v.retailOrder.name }
+                
+                <span class="print-export" onclick="{!c.printDetails}">PRINT | EXPORT</span>
+                <a href="" class="print-export" onclick="{!c.onClone}" style="width:35px;color:#32402A;margin-right: 23px;">DUPLICATE</a>
+            </h2>
+            <div class="bg__white ticket-body">
+                
+                <div class="slds-grid slds-m-top_large">
+                    <div class="slds-col slds-size_9-of-12">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_large">
+                                <p class="text__bold slds-m-bottom_xxx-small">Order Date</p>
+                                <p style="max-width: 80%;" class="slds-truncate"><ui:outputDate value="{!v.retailOrder.orderDate}" /></p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_large">
+                                <p class="text__bold slds-m-bottom_xxx-small">Requested Ship Date</p>
+                                <p style="max-width: 80%;" class="slds-truncate"><ui:outputDate value="{!v.retailOrder.requestShipDate}" format="MM/dd/YYYY"/></p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_large">
+                                <p class="text__bold slds-m-bottom_xxx-small">Earliest Delivery Time</p>
+                                <p style="max-width: 80%;" class="slds-truncate">{!v.retailOrder.requestEarliestTime}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_large">
+                                <p class="text__bold slds-m-bottom_xxx-small">Latest Delivery Time</p>
+                                <p style="max-width: 80%;" class="slds-truncate">{!v.retailOrder.requestLatestTime}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_large">
+                                <p class="text__bold slds-m-bottom_xxx-small">Total Line Items</p>
+                                <p style="max-width: 80%;" class="slds-truncate">{!v.retailOrder.items.length}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_large">
+                                <p class="text__bold slds-m-bottom_xxx-small">Status</p>
+                                <p style="max-width: 80%;" class="slds-truncate">
+                                    <aura:if isTrue="{!v.retailOrder.status != 'Approved'}">
+                                        {!v.retailOrder.status}
+                                        <aura:set attribute="else">
+                                            {!v.retailOrder.RSMStatus}
+                                            <aura:renderIf isTrue="{!!(or(v.retailOrder.SMStatus == undefined,equals(v.retailOrder.SMStatus, '')))}">
+                                                -{!v.retailOrder.SMStatus}
+                                            </aura:renderIf>
+                                        </aura:set>
+                                    </aura:if>
+                                </p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                <p class="text__bold slds-m-bottom_xxx-small">Planned Ship Date</p>
+                                <p style="max-width: 80%;" class="slds-truncate"><ui:outputDate value="{!v.retailOrder.SMPlannedShipDate}" format="MM/dd/YYYY"/></p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                <p class="text__bold slds-m-bottom_xxx-small">METRC</p>
+                                <p style="max-width: 80%;" class="slds-truncate">{!v.retailOrder.SMMetrc}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                <div style="padding-top: 5px;">
+                                    <a href="#z" style="font-size:13px;font-weight: bold;color:#518397;">
+                                        Order Invoice &amp; Manifest
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_3-of-12 slds-col_bump-left slds-text-body_regular">
+                        <div class="flex slds-m-bottom_medium">
+                            <p class="text__bold totalTextLabel">{!v.allProducts.length} Products - Subtotal</p>
+                            <p class="m-left_auto text__semibold totalText">
+                                <ui:outputCurrency class="productPrice" value="{!v.retailOrder.lineSubTotal}" />
+                            </p>
+                        </div>
+                        <div class="flex slds-m-bottom_medium">
+                            <p class="text__bold totalTextLabel">Excise Tax</p>
+                            <p class="m-left_auto text__semibold totalText">
+                                <ui:outputCurrency class="productPrice" value="{!v.retailOrder.exciseTotal}" />
+                            </p>
+                        </div>
+                        <div class="flex slds-m-bottom_medium">
+                            <p class="text__bold totalTextLabel">Total</p>
+                            <p class="m-left_auto slds-text-heading_large text__semibold" style="font-size: x-large;">
+                                <ui:outputCurrency class="productPrice" value="{!v.retailOrder.cartTotal}" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_2-of-6">
+                                <div class="slds-form-element" style="max-width: 260px;">
+                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                                        <input type="text" style="color:rgb(6, 94, 102);font-size: 14px;" aura:id="searchRec" id="searchRec" oninput="{!c.onChangeSearchProduct}" placeholder="{!'Search from ' + v.retailOrder.items.length +' items'}" class="slds-input" value="{!v.searchString}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container slds-m-top_large">
+                    <table class="slds-table table--double-border">
+                        <thead>
+                            <tr>
+                                <th width="64" style="background-color:#d1cdb0;"></th>
+                                <th onclick="{!c.sortProducts}" data-sortfield="producerName" style="cursor:pointer; background-color:#d1cdb0;">
+                                    Brand
+                                    <aura:if isTrue="{!equals(v.sortField,'producerName')}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!equals(v.sortType,'ASC')}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th onclick="{!c.sortProducts}" data-sortfield="shortDescription" style="cursor:pointer; background-color:#d1cdb0;">
+                                    Product Name
+                                    <aura:if isTrue="{!equals(v.sortField,'shortDescription')}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!equals(v.sortType,'ASC')}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th onclick="{!c.sortProducts}" data-sortfield="lineTotalQty" style="cursor:pointer; background-color:#d1cdb0;">
+                                    Total Units
+                                    <aura:if isTrue="{!equals(v.sortField,'lineTotalQty')}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!equals(v.sortType,'ASC')}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th onclick="{!c.sortProducts}" data-sortfield="unitPrice" style="cursor:pointer; background-color:#d1cdb0;">
+                                    Unit Price
+                                    <aura:if isTrue="{!equals(v.sortField,'unitPrice')}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!equals(v.sortType,'ASC')}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th style="cursor:pointer; background-color:#d1cdb0;">Unit Excise Tax</th>
+                                <th style="cursor:pointer; background-color:#d1cdb0;" title="Total Product Price">TPP</th>
+                                <th style="cursor:pointer; background-color:#d1cdb0;" title="Total Excise Tax">TET</th>
+                                <th style="cursor:pointer; background-color:#d1cdb0;" onclick="{!c.sortProducts}" data-sortfield="total">
+                                    Subtotal
+                                    <aura:if isTrue="{!equals(v.sortField,'total')}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!equals(v.sortType,'ASC')}">
+                                                &#8593;
+                                                <aura:set attribute="else">
+                                                    &#8595;
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th style="cursor:pointer; background-color:#d1cdb0;">Compliance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:if isTrue="{!not(empty(v.products))}">
+                                <aura:iteration items="{!v.products}" var="item">
+                                    <tr style="border-top:none;">
+                                        <td style="width:10%;min-width:65px;">
+                                            <div>
+                                                <img src="{!item.imageUrl}" style="width: 40px; height: 40px; border: 1px solid #ccc" />
+                                            </div>
+                                        </td>
+                                        <td style="width:15%;max-width:120px;">
+                                            <div class="slds-truncate" title="{!item.producerName}">
+                                                <aura:if isTrue="{!not(empty(item.producerId))}">
+                                                    <a data-id="{!item.producerId }" onclick="{!c.onBrandClick}" style="color:#518397">{!item.producerName}</a>
+                                                	<aura:set attribute="else">
+                                                        {!item.producerName}
+                                                    </aura:set>
+                                                </aura:if>
+                                            </div>
+                                        </td>
+                                        <td data-label="Product" style="width:15%;max-width:120px;">
+                                            <p class="slds-truncate">
+                                                <aura:if isTrue="{!item.isSample}">
+                                                    <div class="slds-truncate" title="{!item.shortDescription}" style="color:#518397">
+                                                        {!item.shortDescription}
+                                                    </div>
+                                                    <aura:set attribute="else">
+                                                        <div class="slds-truncate clickable" title="{!item.shortDescription}">
+                                                            <a data-id="{!item.pricebookId }" onclick="{!c.onProductClick}" style="color:#518397">{!item.shortDescription}</a>
+                                                        </div>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </p>
+                                        </td>
+                                        <td data-label="Quantity" style="width:10%;"><!--text-align:center; quantity -->
+                                            {!item.lineTotalQty}
+                                        </td> 
+                                        <td data-label="unitPrice" style="width:10%;">
+                                            <ui:outputCurrency  value="{!item.unitPrice}" />
+                                        </td>
+                                        <td data-label="lineExciseTax" style="width:10%;">
+                                            <ui:outputCurrency  value="{!item.lineExciseTax}" />
+                                        </td>
+                                        <td data-label="lineTotalCost" style="width:10%;">
+                                            <ui:outputCurrency  value="{!item.lineTotalCost}" />
+                                        </td>
+                                        <td data-label="lineTotalExciseTax" style="width:10%;">
+                                            <ui:outputCurrency  value="{!item.lineTotalExciseTax}" />
+                                        </td>
+                                        <td data-label="total" style="width:10%;">
+                                            <ui:outputCurrency  value="{!item.total}" />
+                                        </td>
+                                        <td data-label="Review" class="slds-text-align_right" style="padding-right: 2.5rem;">
+                                            <aura:if isTrue="{!!or(!item.fileIds,equals(item.fileIds,''))}">
+                                                <a data-id="{!item.fileIds}" title="View Compliance" onclick="{!c.onViewCompliance}" >
+                                                    <lightning:icon class="utility:preview" iconName="utility:preview" size="small" />
+                                                </a>
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="" variant="error" iconName="utility:preview" size="small" />
+                                                </aura:set>
+                                            </aura:if>
+                                            <!--aura:if isTrue="{!!or(!item.fileIds,equals(item.fileIds,''))}"
+                                            	<div class="{!or(!item.fileIds,equals(item.fileIds,'')) ? 'disableColorView buttonContent viewCompliance' : 'clickable viewCompliance'}" disabled="{!or(!item.fileIds,equals(item.fileIds,''))}" data-value="{!item.fileIds}" title="View Compliance" onclick="{!c.onViewCompliance}"></div>
+                                            </aura:if-->
+                                            <!--lightning:button class="{!or(!item.fileIds,equals(item.fileIds,'')) ? 'disableColorView buttonContent' : 'submitButtonGreen buttonContent'}" disabled="{!or(!item.fileIds,equals(item.fileIds,''))}" value="{!item.fileIds}"
+                                                              label="View Compliance" title="View Compliance" onclick="{!c.onViewCompliance}"/-->
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <tr>
+                                        <td colspan="10">
+                                            <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large">No records found</p>
+                                        </td>
+                                    </tr>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                    <c:paginator aura:id="paginator" perPage="{!v.perPage}"/>
+                </div>
+                <br/>
+                <h3 class="slds-text-heading_small slds-m-bottom_small" style="font-family:Alliance Neue;"><a name="z"></a>Invoice</h3>
+                <div class="table-container" style="">
+                    <table class="slds-table table-double-border">
+                        <thead>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Invoice</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Status</th>
+                            <!--th>Brand Quote</th>
+                            <th>Receiver DBA</th-->
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Terms</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Collection Status</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Balance</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Ship Date</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">View</th>
+                        </thead>
+                        <tbody>
+                            <aura:if isTrue="{!not(empty(v.invoices))}">
+                                <aura:iteration items="{!v.invoices}" var="inv">
+                                    <tr style="border-top:none;">
+                                        <td style="width:20.50%;">
+                                            <div class="slds-truncate sortable" title="{!inv.Name}">
+                                                <a data-id="{!inv.Id}" onclick="{!c.onSMClick}" style="color:#518397">{!inv.Name}</a>
+                                            </div>
+                                        </td>
+                                        <td style="width:16.28%;">{!inv.AR_Status__c}</td>
+                                        <!--td>
+                                            <div class="slds-truncate sortable" title="{!inv.Brand_Quote__r.Name}">
+                                                <a data-id="{!inv.Brand_Quote__r.Id}" onclick="{!c.onSMClick}" style="color:#006DCC">{!inv.Brand_Quote__r.Name}</a>
+                                            </div>
+                                        </td>
+                                        <td>{!inv.Receiver_DBA__c}</td-->
+                                        <td style="width:16.28%;">{!inv.Payment_Terms__c}</td>
+                                        <td style="width:17.28%;">{!inv.Collections_Status__c}</td>
+                                        <td style="width:14.28%;"><ui:outputCurrency value="{!inv.Invoice_Balance__c}"/></td>
+                                        <td style="width:14.28%;"><ui:outputDate value="{!inv.Ship_Confirmation_Date__c}" format="MM/dd/YYYY"/></td>
+                                        <td style="padding-right: 2rem;">
+                                            <aura:if isTrue="{!not(empty(v.invoicesIdsList))}">
+                                                <aura:iteration items="{!v.invoicesIdsList}" var="cus" indexVar="key">
+                                                    <aura:if isTrue="{!equals(cus.key,inv.Id)}">
+                                                        <aura:if isTrue="{!not(empty(cus.value))}">
+                                                            <a data-id="{!cus.value}" onclick="{!c.onViewInvoice}" >
+                                                                <lightning:icon class="utility:preview" iconName="utility:preview" size="small" />
+                                                            </a>
+                                                            <aura:set attribute="else">
+                                                                <lightning:icon class="" variant="error" iconName="utility:preview" size="small" />
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="" variant="error" iconName="utility:preview" size="small" />
+                                                </aura:set>
+                                            </aura:if>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <tr>
+                                        <td colspan="10">
+                                            <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large">No records found</p>
+                                        </td>
+                                    </tr>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <h3 class="slds-text-heading_small slds-m-bottom_small" style="font-family:Alliance Neue;">Shipping Manifest</h3>
+                <div class="table-container" style="">
+                    <table class="slds-table table-double-border">
+                        <thead>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Shipping Manifest</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Status</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">METRC Manifest</th>
+                            <!--th>Terms</th>
+                            <th>Brand Quote</th>
+                            <th>Receiver DBA</th--> 
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Ship Date</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">Total Lines</th>
+                            <th style="cursor:pointer; background-color:#d1cdb0;">View</th>
+                        </thead>
+                        <tbody>
+                            <aura:if isTrue="{!not(empty(v.shipManifests))}">
+                                <aura:iteration items="{!v.shipManifests}" var="ship">
+                                    <tr style="border-top:none;">
+                                        <td style="width:23.66%;">
+                                            <div class="slds-truncate sortable" title="{!ship.Name}">
+                                                <a data-id="{!ship.Id}" onclick="{!c.onSMClick}" style="color:#518397">{!ship.Name}</a>
+                                            </div>
+                                        </td>
+                                        <td style="width:20.66%;">{!ship.Status__c}</td>
+                                        <td style="width:18.66%;">{!ship.Metrc_Manifest__c}</td>
+                                        <!--td>{!ship.Payment_Terms__c}</td-->
+                                        <td style="width:18.66%;"><ui:outputDate value="{!ship.Ship_Confirmation_Date__c}" format="MM/dd/YYYY"/></td>
+                                        <td style="width:14.66%;">{!ship.Total_Line_Items__c}</td>
+                                        <td style="padding-right: 2rem;">
+                                            <aura:if isTrue="{!not(empty(v.smIdsList))}">
+                                                <aura:iteration items="{!v.smIdsList}" var="cus" indexVar="key">
+                                                    <aura:if isTrue="{!equals(cus.key,ship.Id)}">
+                                                        <aura:if isTrue="{!not(empty(cus.value))}">
+                                                            <a data-id="{!cus.value}" onclick="{!c.onViewInvoice}" >
+                                                                <lightning:icon class="utility:preview" iconName="utility:preview" size="small" />
+                                                            </a>
+                                                            <aura:set attribute="else">
+                                                                <lightning:icon class="" variant="error" iconName="utility:preview" size="small" />
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="" variant="error" iconName="utility:preview" size="small" />
+                                                </aura:set>
+                                            </aura:if>
+                                        </td>
+                                        <!--td>
+                                            <div class="slds-truncate sortable" title="{!ship.Brand_Quote__r.Name}">
+                                                <a data-id="{!ship.Brand_Quote__r.Id}" onclick="{!c.onSMClick}" style="color:#006DCC">{!ship.Brand_Quote__r.Name}</a>
+                                            </div>
+                                        </td>
+                                        <td>{!ship.Receiver_DBA__c}</td>
+                                        <td><ui:outputCurrency  value="{!ship.Total_Product_Cost__c}"/></td-->
+                                    </tr>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <tr>
+                                        <td colspan="10">
+                                            <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large">No records found</p>
+                                        </td>
+                                    </tr>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <!--h3 class="slds-text-heading_small slds-m-bottom_small">RMA Records</h3>
+                <div class="table-container" style="border-bottom: none;">
+                    <table class="slds-table table-double-border">
+                        <thead>
+                            <th>&nbsp;</th>
+                            <th>RMA #</th>
+                            <th>RMA Status</th>
+                            <th>Shipping Menifest</th>
+                            <th>Total Return Qty</th>
+                        </thead>
+                        <tbody>
+                            <aura:if isTrue="{!not(empty(v.RMAList))}">
+                                <aura:iteration items="{!v.RMAList}" var="RMA">
+                                <tr style="border-top: none;" >
+                                    <td>
+                                        <lightning:buttonIcon value="{!RMA.id}" iconName="utility:edit" variant="bare" onclick="{!c.onEditRMA}" alternativeText="Edit" disabled="{!!equals(RMA.status, 'New')}" />
+                                    </td>
+                                    <td>
+                                        
+                                        <div class="ticketNumber slds-truncate sortable" data-id="{!RMA.id}" onclick="{!c.onViewRMA}" style="color:#006DCC">{!RMA.name}</div>
+                                    </td>
+                                    <td>
+                                        {!RMA.status}
+                                    </td>
+                                    <td>
+                                        {!RMA.SMName}	                                	
+                                    </td>
+                                    <td>
+                                        {!RMA.totalQty}
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                                <aura:set attribute="else">
+                                    <tr>
+                                        <td colspan="10">
+                                            <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large">No RMA records found</p>
+                                        </td>
+                                    </tr>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                </div>
+                <br/><br/-->
+            </div>
+        </section>
+        
+        <div class="action-bar">
+            <lightning:layout>
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right">
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right">
+                    <lightning:button class="{!!equals(v.retailOrder.status, 'Pending') ? 'disableColor' : 'submitButtonGreen'}" disabled="{!!equals(v.retailOrder.status, 'Pending')}" value="{!v.retailOrder.id}"
+                                      label="Cancel Order" onclick="{!c.onOrderCancel}" />
+                    <!--lightning:button class="{!v.isDisabled ? 'disableColor': 'submitButtonGreen'}" disabled="{!v.isDisabled}" value="{!v.retailOrder.id}"
+                                      label="Create RMA Request" onclick="{!c.onNewRMA}" /-->
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.isShowConfirm}">
+        <c:confirmModal title="Are you sure, you want to Cancel Order?"/>
+    </aura:if>
+</aura:component>

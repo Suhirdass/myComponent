@@ -1,0 +1,68 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .ticket-header {
+  padding: 6px 14px 4px;
+   border-bottom: 2px solid token(tableHeaderColor);
+    background-color:token(tableHeaderColor);
+    font-family:token(salesforceSans);
+}
+
+.THIS th{
+    text-align : center;
+    padding: 5px;
+}
+.THIS td{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+    text-align : center;
+    padding: 5px;
+}
+
+.THIS .slds-tabs_default__nav, .THIS  .slds-tabs_scoped__nav{
+    background-color: token(tableHeaderColor);
+    color:token(fontColor);
+    border-top-right-radius: var(--lwc-borderRadiusMedium,0rem);
+}
+.THIS .slds-box__header {
+    background-color: token(tableHeaderColor);
+    color:token(fontColor);
+}
+.THIS .print-export{
+	height: 41px;
+	width: 78px;
+	color: token(land);
+	font-family: token(salesforceSans);
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+    padding-top: 13px;
+    padding-right: 5px;
+	cursor:pointer;
+    background: token(tableHeaderColor);
+            position: absolute;
+    right: 10px;
+    /*top: 10px;*/
+}
+.THIS .print-export2{
+	height: 26px;
+	width: 78px;
+	color: token(land);
+	font-family: token(salesforceSans);
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+    padding-top: 6px;
+    padding-right: 5px;
+	cursor:pointer;
+    background: token(tableHeaderColor);
+            position: absolute;
+    right: 10px;
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Update_Excise_Tax_Amount_BQLI</fullName>
+        <field>Excise_Tax_Amount__c</field>
+        <formula>IF( Apply_Excise_Tax__c = &apos;Yes&apos;  &amp;&amp;  Brand_Quote_Number__r.Apply_Excise_Tax__c = true
+, 
+
+if(Brand_Quote_Number__r.Ship_Confirmation_Date__c &lt;= Date( 2019,12,31),(Retail_Wholesale_Price__c * Line_Total_Qty__c) * (1.6) *(0.15) ,
+(Retail_Wholesale_Price__c * Line_Total_Qty__c) * (1.8) *(0.15) )
+
+, 0)</formula>
+        <name>Update Excise Tax Amount - BQLI</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Update Excise Tax Amount - BQLI</fullName>
+        <actions>
+            <name>Update_Excise_Tax_Amount_BQLI</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Brand_Quote_Line__c.Apply_Excise_Tax__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

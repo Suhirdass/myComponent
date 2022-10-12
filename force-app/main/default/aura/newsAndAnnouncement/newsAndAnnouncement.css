@@ -1,0 +1,31 @@
+.THIS {
+    font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+.THIS.is-active {
+  transition: visibility 0ms linear, opacity 200ms ease;
+  visibility: visible;
+  opacity: 1;
+}
+.THIS .success-modal {
+  width: 100%;
+  border-radius: 8px;
+  padding: 0px 15px 0px;
+  background: token(tanLight);
+  overflow-y: auto;
+  max-height: 365px;
+    
+}
+.THIS h2 {
+  font-size: 24px;
+    font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+.THIS  b {
+    color: #42472a !important;
+    font-family:'Alliance Neue' !important;
+    
+}
+.THIS p {
+ /*color: #080707;token(grayMid);*/
+}

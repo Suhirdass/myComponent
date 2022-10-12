@@ -1,0 +1,13 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+    <aura:attribute name="recordId" type="Id" />
+    <header class="slds-modal__header" style="width: 600px !important;">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">QA Confirm</h2>
+    </header>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+        <p>QA Confirm! Are you Sure ?</p>
+    </div>
+    <footer class="slds-modal__footer"  style="width: 600px !important;">
+        <lightning:button class="slds-button_brand" onclick="{!c.qaConfirm}" label="Yes" />
+        <lightning:button class="slds-button_neutral" onclick="{!c.cancel}" label="No" />
+    </footer>
+</aura:component>

@@ -1,0 +1,511 @@
+<aura:component extends="c:utility"	controller="routeScheduleRestWebService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global">	
+    
+    <!--attributes-->
+    <aura:attribute name="ShippingManifestValue" type="Shipping_Manifest__c"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="signPad" type="boolean" default="false"/>
+    <aura:attribute name="ccDate" type="String"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="errors" type="Object" default="[]"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    <aura:attribute name="DueDate" type="Date"/>
+    <aura:attribute name="payementValues" type="List"/>
+    <aura:attribute name="ProductAmount" type="List"/>
+    <aura:attribute name="ExciseTaxAmount" type="List"/>
+    <aura:attribute name="paymentMemo" type="List"/>
+    <aura:attribute name="pReceivername" type="String"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean" default="false" description="flag for rendered save and cancel buttons in aura:if "/>
+    <aura:attribute name="currentInvoiceWrapperList" type="InventoryPositionWrapper[]"/>
+    <aura:attribute name="openpendingInvoiceWrapperList" type="object[]"/>
+    <!-- create 2 aura handler with waiting and donewaiting events--> 
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" />
+    <ltng:require scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js',
+                           $Resource.datatable+ '/js/jquery.dataTables.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    <!-- handlers-->
+    <aura:handler name="init" action="{!c.doInit}"   value="{!this}" access="global" />	
+    <aura:attribute name="rowsCount" type="integer" default="0"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="smId" type="String"  />
+   
+    <aura:attribute name="setRouteSchedule" type="Route_Schedule__c"/> 
+    <aura:attribute name="setRsmLines" type="Route_Schedule_Line__c" />
+    <aura:attribute name="getRsmLines"  type="Shipping_Manifest_Line__c[]" />
+    <aura:attribute name="message" type="String" />
+    
+        <aura:attribute name="selectedDriver" type="Object" default="" description="selected Driver Details"/>
+    <aura:attribute name="selectedVehicle" type="Object" default="" description="selected Vehicle Details"/>.
+        <aura:attribute name="assignedVehicleId" type="String"/> 
+    <aura:attribute name="assignedDriverId" type="String"/> 
+  
+    
+    <aura:html tag="style">
+        .slds-card__header {
+        
+        margin-bottom: -25px;
+        }
+        .slds-page-header__name h1 {
+        margin-left: 8px;
+        }
+        .slds-table td {
+        width: 172px;
+        }
+        .slds-modal__container {
+        min-width: 35%;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        margin-bottom:7px;
+        }
+        .slds-card
+        {
+        margin-top: 9px;
+        margin-left: 17px;
+        margin-right: 17px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        }
+        .title-align {
+        padding-left: 10px;
+        padding-top: 5px;
+        }
+        .title-align-two {
+        padding-left: 10px;
+        }
+        .title-align-two li{
+        padding-bottom: 0px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 20px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-media{
+        padding-bottom: 0px;
+        }
+        .text-center{
+        text-align: center;
+        }
+        .heightfixprint {
+        width: 638px;
+        margin-left: -31px;
+        margin-top: -23px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-card__header {
+        padding: var(--lwc-varSpacingVerticalSmall,0.75rem) var(--lwc-varSpacingHorizontalMedium,1rem) 0;
+        margin: 0 0 var(--lwc-varSpacingVerticalSmall,0.75rem);
+        }
+        .slds-wrap {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        }
+        .slds-grid {
+        display: flex;
+        }
+        ol, ul {
+        list-style: none;
+        }
+        .cAssignVehicleToSalesOrder .lstpadding {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 15px;
+        }
+        .slds-page-header__title::first-letter  {
+        text-transform:uppercase;
+        }
+        .paddings {
+        font-size: 14px;
+        margin-top: 13px;
+        }
+        span.slds-form-element__label.slds-truncate {
+        display: inline;
+        }
+        
+        .nlink a {
+        display: inline-block;
+        vertical-align: top;
+        border-bottom: 1px dotted;
+        }
+        
+        
+        span.toastMessage.slds-text-heading--small.forceActionsText {
+        white-space: pre-line !important;
+        } 
+        .slds-size_1-of-6.slds-max-small-size_1-of-3.slds-sizetsm {
+        width: 13.666667% !important;
+        }
+        
+        lightning-timepicker.slds-form-element {
+        width: 100px  !important;
+        }
+        lightning-datepicker.slds-form-element {
+        width: 120px !important;
+        }        
+        div#dropdown-element-294{
+        position: relative !important;
+        Z-index: 999 !important;
+        display: block !important;
+        
+        height:50px !important;
+        }
+         .acolor{
+         color:#0070D2;
+         }
+        
+         .dcnf{
+         display:none;
+         }
+        .trbg{
+        background-color:#F5F5F5;
+        }
+        .fltright{
+        float:right;
+         
+        }
+        .inmaxhgt{
+        max-height: 100% !important;
+        }
+        .inmaxhgtwd{
+        max-height: 100% !important;
+        width: 100% !important;
+        }
+        .cansig{
+        border:2px solid #ddd;
+        background: transparent;
+        }
+        .padtop10{
+        padding-top:10px;
+        }
+          .padleft10{
+        padding-left:10px;
+        }
+        .actname{
+        padding-top:10px;
+        padding-left: 10px;
+        }
+        .actdate{
+        padding-top:10px;
+        float:right;
+        }
+        .btnSec{
+         
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        
+        .flex-container {
+          display: flex;
+          flex-wrap: nowrap;
+        }
+        .flex-container .boxCamera {
+          width: 50%;
+          margin: 10px;
+        }
+        .flex-container .boxOutput {
+          width: 50%;
+          margin: 10px;
+        }
+        /*
+        @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait) { 
+        .btnSec,.fltright{display:block !important;}
+        .btnSec:before,.fltright:before{clear:both !important;}
+        }
+        @media all and (device-width: 1024px) and (device-height: 768px) and (orientation:landscape) {
+        .btnSec,.fltright{display:block !important;}  
+        .btnSec:before,.fltright:before{clear:both !important;}
+        }*/
+        
+        .slds-modal__content {
+        padding: 2em 3em !important;
+        border-radius: 1px !important;
+        }
+        .slds-modal__container {
+        width: 500px !important;
+        }
+        
+table.slds-table_bordered.slds-table_col-bordered {
+             border: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+             border-spacing: 0;
+             table-layout: fixed;
+             margin-left: auto;
+         }
+        
+         td.slds-text-align-right.trrem {
+             word-wrap: break-word!important;
+             padding: 10px;
+             font-size: 13px;
+             padding-left:5px !important;
+         }
+         td.cell-breakAll {
+           word-wrap: break-word!important;
+    padding: 10px;
+    font-size: 13px;
+    padding-left: 5px !important;
+         }
+
+         th.cell-breakAll {
+           word-wrap: break-word!important;
+    padding: 10px;
+    font-size: 13px;
+    padding-left: 5px !important;
+         }
+        
+        .slds-form-element.cUtility.cLightningLookup {
+    width: 60%;
+    padding-bottom: 5px;
+}
+        h1.slds-page-header__title.slds-m-right--small.slds-truncate.slds-align-middle {
+    padding-left: 5px;
+}
+         span.utc {
+    margin-left: -24px !important;
+    color: #ffffff !important;
+    background-color: white !important;
+}
+    </aura:html>
+    <!--loading spinner start... style=Brand Medium (blue dots)-->
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- Loading spinner end-->
+    
+   
+    
+    
+    <!-- Create Invoice Conformation Popup -->
+
+    
+    <ui:scrollerWrapper class="scrollerSize">
+        
+
+        
+        <div class="innerDivWrapper">
+            <article class="slds-card cAssignVehicleToSalesOrder" >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom98" title="custom98" /> 
+                                <div class="slds-media__body">
+                                    <div class="slds-grid"> 
+                                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Route Schedule Detail</h1>
+            
+                                        <ui:outputText aura:id="metricId" value="{!v.setSM.Metrc_Manifest__c}" class="smName" > </ui:outputText>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                               <div class="slds-col slds-no-flex slds-align-bottom">
+          <div class="slds-button-group" role="group">
+               <lightning:button class="slds-button slds-button--neutral" label="Save"  onclick="{!c.onSave}"/>
+            <lightning:button class="slds-button slds-button--neutral" label="Save &amp; Publish" onclick="{!c.onSave}"/>   
+              <lightning:button class="slds-button slds-button--neutral" label="Cancel" onclick="{!c.onCancel}"/>   
+          </div>
+        </div>
+                    
+                        
+                    </div>
+                </div>
+                
+                 <br />
+                           <div class="slds-is-relative slds-p-horizontal_small">
+           <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+               
+               <div class="slds-col">
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Route#</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.setRouteSchedule.Id}" class="acolor"> <span ><ui:outputText value="{!v.setRouteSchedule.Name}"/>	</span></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Site</b></div>
+                            <div class="slds-size_1-of-2 slds-truncate" style="text-align: left; padding-left: 2%;">
+                                <a href="{!'/' + v.setRouteSchedule.Site__c}" class="acolor"> <span ><ui:outputText value="{!v.setRouteSchedule.Site__r.Name}"/>	</span></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Planned Ship Date</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">          <span >
+                                                      <lightning:input  aura:id="shmainDate" type="text" class="dcnf" value="{!v.setRouteSchedule.Route_Date__c}"></lightning:input>
+                                                <lightning:formattedDateTime value="{!v.setRouteSchedule.Route_Date__c}" year="numeric" month="numeric" day="numeric" />
+                                                </span></div>	
+                    </div>
+                   
+
+               </div>
+               
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Start Time</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">
+                              <span > <lightning:formattedDateTime value="{!v.setRouteSchedule.Route_Start_Time__c}" hour="2-digit" minute="2-digit" timeZone="UTC"
+                                                                   timeZoneName="short"/>  <span class="utc">UTCtt</span></span></div>
+                      
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>End Time</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">
+                                 <span > <lightning:formattedDateTime value="{!v.setRouteSchedule.Route_End_Time__c}" hour="2-digit" minute="2-digit" timeZone="UTC"
+                                 timeZoneName="short"/> <span class="utc">UTCtt</span>
+                                </span></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Status</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setRouteSchedule.Status__c}</div>	
+                    </div>
+                   
+                  
+               </div>
+             
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Driver</b></div>
+                            <div class="slds-size_2-of-3" style="text-align: left;">
+                                                           <c:lightningLookup objectName="Drivers__c" fieldName="Name" aura:id="dname"  label="" value="{!v.setRouteSchedule.Driver__c}" selectedRecord="{!v.selectedDriver}" isRequired="false"  hideLabel="true"  allowCreate="true"/>
+</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Vehicle</b></div>
+                        	<div class="slds-size_2-of-3" style="text-align: left;">
+                                <c:lightningLookup objectName="Vehicles__c" fieldName="Name" label="" aura:id="vName"  value="{!v.setRouteSchedule.Vehicle__c}" selectedRecord="{!v.selectedVehicle}" isRequired="false"  hideLabel="true"  allowCreate="true"/></div> 
+                   </div>
+                   
+                    
+                  
+              </div>
+            </div>   
+            </div> 
+       
+                <br />
+            </article> 
+            
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom96" title="custom96" />
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                  
+                                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Route Schedule Lines</h1>
+                                      
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div> 
+                <div  class="slds-card__header ">
+                    
+                                        <table class="slds-table_bordered slds-table_col-bordered  rsmlinetable " id="tableids">
+
+                        <thead>
+                            <tr class="trbg"  >
+                                <th scope="col" class="cell-breakAll">Name</th> 
+                                  <th scope="col" class="cell-breakAll">Sq No</th>
+                                <th scope="col" class="cell-breakAll">Window Start</th>
+                                <th scope="col" class="cell-breakAll">Window End</th>
+                                <th scope="col" class="cell-breakAll">Arival Time</th>
+                                <th scope="col" class="cell-breakAll">Departure Time</th>
+                                  <th scope="col" class="cell-breakAll">Address</th>
+                                <th scope="col" class="cell-breakAll">Shipping Manifest</th>
+                                <th scope="col" class="cell-breakAll">Sales Order</th>
+                                <th scope="col" class="cell-breakAll">Purchase Order</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody id="databody">
+                            <!--### display all records of getRsmLines attribute one by one by aura:iteration ###-->
+                            <aura:if isTrue="{!not(empty(v.setRsmLines))}">  
+                                <aura:iteration items="{!v.setRsmLines}" var="res" indexVar="index"> 
+                                    <tr >
+                                        
+      <td class="cell-breakAll acolor"  ><div><a href="{!'/' + res.Id}" class="acolor"  target="__blank" >{!res.Name} </a></div></td>
+                                        <td class="cell-breakAll" >{!res.Schedule_sequence__c} </td>
+                                         <td class="cell-breakAll" id="" > <span style="display:none"> {!res.Schedule_sequence__c}</span>
+                                             
+
+
+                                            <lightning:formattedDateTime value="{!res.Window_Start__c}" hour="2-digit" minute="2-digit"  timeZone="UTC"
+                                 timeZoneName="short"/><span class="utc">UTC</span></td>
+                                        <td class="cell-breakAll"  > <span style="display:none"> {!res.Schedule_sequence__c} </span>
+                                            
+                                            <lightning:formattedDateTime value="{!res.Window_End__c}" hour="2-digit" minute="2-digit"  timeZone="UTC"
+                                 timeZoneName="short"/><span class="utc">UTC</span> </td>
+                                          <td class="cell-breakAll"> 
+                                              <span style="display:none"> {!res.Schedule_sequence__c} </span> 
+                                              <lightning:formattedDateTime value="{!res.Planned_Arrival_Time__c}" hour="2-digit" minute="2-digit" timeZone="UTC"
+                                 timeZoneName="short"/><span class="utc">UTC</span></td>
+                                        <td class="cell-breakAll"> <span style="display:none"> {!res.Schedule_sequence__c} </span>
+                                            <lightning:formattedDateTime value="{!res.Planned_Departure_Time__c}" hour="2-digit" minute="2-digit"  timeZone="UTC"
+                                 timeZoneName="short"/><span class="utc">UTC</span></td>
+                                         <td scope="col" class="cell-breakAll"  >{!res.Delivery_Address__c} </td>
+                                        <td class="cell-breakAll"><a href="{!'/' + res.Shipping_Manifest__c}" class="acolor"  target="__blank" >{!res.Shipping_Manifest__r.Name}</a></td>
+                                        <td class="cell-breakAll"><a href="{!'/' + res.Sales_Order__c}" class="acolor"  target="__blank" >{!res.Sales_Order__r.Name}</a></td>
+                                        <td class="cell-breakAll"><a href="{!'/' + res.Purchase_Order__c}" class="acolor"  target="__blank" >{!res.Purchase_Order__r.Name}</a></td>
+                                        
+                                        
+                                     
+                                      
+                                    </tr>
+                                </aura:iteration>
+                                <aura:set attribute="else">
+                                    <td>
+                                        <ui:outputText class="text-center" value="No data available in table"/>	
+                                    </td>
+                                </aura:set>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                    
+                   
+                    
+                </div>
+            </article> 
+            
+     
+            
+    
+            
+       
+            
+        </div>
+    </ui:scrollerWrapper>
+</aura:component>

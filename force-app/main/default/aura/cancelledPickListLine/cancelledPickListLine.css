@@ -1,0 +1,61 @@
+.THIS .slds-page-header__title {
+    margin-left:10px;
+   
+}
+.THIS .heightfix{
+    padding:8px !important;
+}
+.THIS .slds-media__body{
+    padding-top:5px;
+}
+
+.THIS table{
+   
+
+      border:var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218)); 
+    border-spacing: 0px; 
+            table-layout: fixed; 
+            margin-left: auto; 
+            margin-right: auto; 
+                margin-bottom: 25px;
+}
+            
+         .THIS table tr:hover {background-color: #F5F5F5;} 
+
+
+.THIS .cell-breakAll {
+   
+    word-wrap: break-word !important; 
+        padding: 7px;
+        font-family: var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+    font-size: 13px;
+
+}
+        
+        .THIS .slds-form-element__label{
+   
+    word-wrap: break-word !important; 
+        font-family: var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+        font-size: var(--lwc-fontSize4);
+
+}
+
+.THIS .talignCenter{
+    text-align: center;
+    width:4% !important;
+                                    
+}
+
+.THIS .textCap{
+    text-transform: capitalize;
+ 
+                                    
+}
+ .THIS .textCappop{
+    text-transform: capitalize;
+  border-radius: 5px !important;
+                                    
+}                               
+.THIS .mrgright{
+   margin-right: -6px !important; 
+}

@@ -1,0 +1,38 @@
+.THIS .height50{
+    height: 50px;
+}
+.THIS .fullWidth{
+    width: 100%;
+}
+.THIS .setCheckbox input{
+    float: left;
+    margin-right: .25rem;
+}
+
+.THIS .selected{
+    border: 1px solid #43654b;
+}
+.THIS button{
+    text-transform: uppercase;
+}
+.THIS .orderHeaderLastColumn{
+    padding-right:1.5rem;
+}
+.THIS .ps{
+  height: 500px;
+}
+.THIS .jumptotop{
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}
+.THIS .complianceButton{
+    width:250px!important;
+    float:right;
+    margin-top:5px;
+}
+.THIS .headerBackground{
+  background: #e5e5e5;
+}

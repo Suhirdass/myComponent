@@ -1,0 +1,32 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - CancelETR
+-->
+<apex:page standardController="Excise_Tax_Receipt__c"  
+           extensions="CancelETRController"  
+           action="{!cancelETR}" 
+           title="Cancel ETR">
+    <apex:form >
+        <apex:pageBlock title="Cancel ETR">
+            <apex:actionStatus id="idRefreshingStatus" style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!redirectToETR}" value="Return" status="idRefreshingStatus"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Warnings and Errors Associated with Cancel ETR" columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:pageMessages escape="false"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

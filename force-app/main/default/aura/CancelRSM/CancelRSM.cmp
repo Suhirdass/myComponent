@@ -1,0 +1,408 @@
+<aura:component   extends="c:utility"	 controller="CancelRSMController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" > 
+    <!--attributes-->
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="ShippingManifestRsmLines" type="Shipping_Manifest_Line__c[]" />
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global"/>
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <lightning:navigation aura:id="navService"/>
+    <aura:attribute name="hasServiceInvoice" type="Boolean" />
+    <aura:attribute name="setRsmLines" type="CancelRSMController.rsmlinesWrapper[]" />
+    <aura:attribute name="setSM" type="Shipping_Manifest__c" default="{'sobjectType': 'Shipping_Manifest__c',
+                                                                      'Name':''
+                                                                      }"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="isOpenService" type="boolean" default="false"/>
+    <aura:attribute name="getRejectionReasonData" type="Map"/>
+    <aura:attribute name="rejectedReasonData" type="Map"/>
+    <aura:html tag="style">
+        .slds-card__header {
+        
+        margin-bottom: -25px;
+        }
+        .slds-page-header__name h1 {
+        margin-left: 8px;
+        }
+        .slds-table td {
+        width: 172px;
+        }
+        .slds-modal__container {
+        min-width: 35%;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        margin-bottom:7px;
+        }
+        .slds-card
+        {
+        margin-top: 9px;
+        margin-left: 17px;
+        margin-right: 17px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        }
+        .title-align {
+        padding-left: 10px;
+        padding-top: 5px;
+        }
+        .title-align-two {
+        padding-left: 10px;
+        }
+        .title-align-two li{
+        padding-bottom: 0px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 20px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-media{
+        padding-bottom: 0px;
+        }
+        .text-center{
+        text-align: center;
+        }
+        .heightfixprint {
+        width: 638px;
+        margin-left: -31px;
+        margin-top: -23px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-card__header {
+        padding: var(--lwc-varSpacingVerticalSmall,0.75rem) var(--lwc-varSpacingHorizontalMedium,1rem) 0;
+        margin: 0 0 var(--lwc-varSpacingVerticalSmall,0.75rem);
+        }
+        .slds-wrap {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        }
+        .slds-grid {
+        display: flex;
+        }
+        ol, ul {
+        list-style: none;
+        }
+        .cAssignVehicleToSalesOrder .lstpadding {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 15px;
+        }
+        .slds-page-header__title::first-letter  {
+        text-transform:uppercase;
+        }
+        .paddings {
+        font-size: 14px;
+        margin-top: 13px;
+        }
+        span.slds-form-element__label.slds-truncate {
+        display: inline;
+        }
+        
+        .nlink a {
+        display: inline-block;
+        vertical-align: top;
+        border-bottom: 1px dotted;
+        }
+        .slds-size_1-of-6.slds-max-small-size_1-of-3 {
+        width: 15.666667% !important;
+        }
+        .closeIcon{
+        	right: 0em !important;
+        	top: -3rem !important;
+        }
+        .slds-form-element__control.slds-grow {
+        padding: 5px;
+        }
+        <!-- toastMessage error line break class -->
+          span.toastMessage.slds-text-heading--small.forceActionsText {
+        white-space: pre-line !important;
+        } 
+    </aura:html>
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    <aura:if isTrue="{!v.isOpenService}">
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="margin-left: 365px;" >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="padding-top: 20px; width: 830px;">
+                    <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                    
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeService }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close closeIcon"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.setSM.Name}</h2>
+                </header>
+                <span style="height:14px !important;width: 35px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                
+                <footer class="slds-modal__footer"  style="width: 830px; height: 60px; z-index: 2; display:inline-flex !important;">
+                    <span style="height: 65px !important;width: 30px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-left: -16px;"></span>
+                    <span style="height: 50px !important; width: 730px  !important; z-index: 1;">
+                        <!--lightning:button class="slds-button_neutral textCappop"  label="Cancel All Service Invoice lines" title="Cancel All Service Invoice lines"  onclick="{! c.onCancel }"/-->
+                        <lightning:button class="slds-button_neutral textCappop"  label="Cancel only Mileage/Weight Service lines" title="Cancel only Mileage/Weight Service lines"  onclick="{! c.onCancelOnlyMileage }"/>
+                        <lightning:button class="slds-button_neutral textCappop"  label="Cancel SM Only" title="Cancel SM Only"  onclick="{! c.onCancelSMOnly }"/>
+                    </span>
+                    <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                </footer>
+                <span style="height: 67px !important;background-color: white !important;z-index: 2;margin-top: -64px; width: 30px;margin-right: -40px;margin-left: 800px;"></span>
+                
+                
+                <div style="padding-bottom: 60px;height:56px; width: 830px; background-color: white; border-radius: 3px; margin-top: -5px; z-index: 1;"></div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <aura:if isTrue="{!v.isOpen}">
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="margin-left: 407px;" >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="padding-top: 20px; width: 650px;height: 63px;">
+                    <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                    
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="margin-top: -12px;">{!v.setSM.Name}</h2>
+                </header>
+                <span style="height:14px !important;width: 35px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                
+                <!--###### MODAL BOX BODY Part Start######-->
+                <span style="height:14px !important;margin-left:636px;width:14px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right:250px;"></span>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 650px;padding: 29px;">
+                    
+                    <p class="slds-m-left_xx-large" style="margin-left:31px;">Cancel Shipping Manifest Lines. Are you sure?</p>
+                    
+                </div>
+                
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                
+                <footer class="slds-modal__footer"  style="width: 650px; height: 60px; z-index: 2; display:inline-flex !important;margin-top:-11px;">
+                    <span style="height: 65px !important;width: 30px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-left: -16px;"></span>
+                    <span style="height: 50px !important; width: 560px  !important; z-index: 1;margin-left: 26px;">
+                        
+                        <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                       <lightning:button class="slds-button_brand textCappop"  label="Yes" title="Yes"  onclick="{!c.onCancel}"/>
+                        <aura:set attribute="else"> 
+                           <lightning:button class="slds-button_brand textCappop"  label="Yes" title="Yes"  onclick="{!c.onYesClick}"/>
+                        </aura:set>
+                    </aura:if> 
+                        
+                        
+                        
+                        <lightning:button class="slds-button_neutral textCappop"  label="No" title="No"  onclick="{! c.closeModel }"/>
+                    </span>
+                    <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                </footer>
+                <span style="height: 69px !important;background-color: white !important;z-index: 2;margin-top: -64px; width: 12px;margin-right: -40px;margin-left: 638px;"></span>
+                
+                
+                <div style="padding-bottom: 36px;height:76px; width: 650px; background-color: white; border-radius: 3px; margin-top: -5px; z-index: 1;"></div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    
+    
+    <article class="slds-card cAssignVehicleToSalesOrder" >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom98" title="custom98" /> 
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Shipping Manifest Details</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col">
+                </div>
+                <div style="float:right;text-transform: capitalize;">
+                    <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                        <lightning:button class="textCap mrgright"  label="Cancel Manifest" onclick="{!c.tsmCancel}"   />
+                        <aura:set attribute="else"> 
+                            <lightning:button class="textCap mrgright"  label="Cancel Manifest" onclick="{!c.cancelRsm}"   />
+                        </aura:set>
+                    </aura:if>                    
+                    <lightning:button class="textCap" label="Return" onclick="{!c.onReturn}"  />
+                </div>
+            </div>
+        </div>
+        <div class="slds-card__header ">
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container">         
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Shipping Manifest Name</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">   <a href="{!'/' + v.setSM.Id}" style="color:#0070D2;" > <span >{!v.setSM.Name} </span></a></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b> Status  </b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.setSM.Status__c}</div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Distributor Name</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3 slds-truncate" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Distributor_Name__c}" style="color:#0070D2;" >{!v.setSM.Distributor_Name__r.DBA__c}</a></div> 
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Record Type</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.setSM.RecordType.Name}  </div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Order or Service#</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Order_Number__r.Id }" style="color:#006dcc;">{!v.setSM.Customer_PO_or_Quote__c} </a></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Supplier Name</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Supplier_Name__c}" style="color:#0070D2;" >{!v.setSM.Supplier_Name__r.DBA__c}</a>   </div>
+                   <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Brand Quote  </b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Brand_Quote__c}" style="color:#006dcc;">{!v.setSM.Brand_Quote__r.Name}</a> </div>
+                 <aura:set attribute="else"> 
+                                     <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Picklist  </b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Picklist__r.Id}" style="color:#006dcc;">{!v.setSM.Picklist__r.Name}</a> </div>
+
+                         </aura:set>
+                        </aura:if>
+                     
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>METRC Manifest#</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.setSM.Metrc_Manifest__c} </div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Receiver Name  </b></div>
+                <div class="slds-size_1-of-5 slds-max-small-size_1-of-4" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Receiver_Name__c}" style="color:#0070D2;" > {!v.setSM.Receiver_Name__r.DBA__c}</a> </div>
+                 <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                     
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Purchase Order</b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Purchase_Order__c}" style="color:#0070D2;" >{!v.setSM.Purchase_Order__r.Name}</a></div>
+                <aura:set attribute="else"> 
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Sales Order</b></div>
+                                  <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Sales_Order__r.Id}" style="color:#0070D2;" >{!v.setSM.Sales_Order__r.Name}</a></div>
+
+                         </aura:set>
+                        </aura:if>
+                     
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Site</b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.setSM.Site__r.Id}" style="color:#0070D2;" >{!v.setSM.Site__r.Name}</a> </div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Receiver Contact </b></div>
+                <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><!--<a href="{!'/' + v.setSM.Receiver_Contact__r.Id}" style="color:#0070D2;" > -->{!v.setSM.Receiver_Contact__r.Name} <!--</a>--> </div>
+            </div>  
+        </div>
+    </article> 
+    <article class="slds-card " >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom96" title="custom96" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Select Shipping Manifest Lines</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div  class="slds-card__header ">
+            <table class="slds-table_bordered slds-table_col-bordered  ">
+                <thead>
+                    <tr style="background-color:#F5F5F5;" >
+                        <th class="talignCenter"><label class="slds-checkbox">
+                            <!--header checkbox for select all-->
+                            <ui:inputCheckbox aura:id="box3" change="{!c.selectAll}"/>
+                            <span class="slds-checkbox--faux"></span>
+                            <span class="slds-form-element__label text"></span>
+                            </label></th>
+                        <th class="cell-breakAll">SM Line</th> 
+                        <th class="cell-breakAll">Product Name</th>
+                        <th class="cell-breakAll">Producer Name</th>
+                        <th class="cell-breakAll">Product Description</th>
+                        <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                            
+                            <th class="cell-breakAll">Qty Ordered</th>
+                            <th class="cell-breakAll">Line Total Cost</th>
+                            <th class="cell-breakAll">PO Line</th> 
+                            
+                            <aura:set attribute="else"> 
+                                
+                                <th class="cell-breakAll">Shipment Qty</th>
+                                <th class="cell-breakAll">Retail Wholesale Price</th>
+                                <th class="cell-breakAll">Qty Received</th>
+                                <th class="cell-breakAll">Line Total Price</th>
+                                <th class="cell-breakAll">Picklist Line</th>   
+                                <th class="cell-breakAll">SO Line</th>  
+                                <th class="cell-breakAll">Rejection Reason</th>  
+                                
+                            </aura:set>
+                        </aura:if>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <!--### display all records of getRsmLines attribute one by one by aura:iteration ###-->
+                    <aura:if isTrue="{!not(empty(v.setRsmLines))}"> 
+                        <aura:iteration items="{!v.setRsmLines}" var="res" indexVar="index"> 
+                            <tr >
+                                <td  class="talignCenter cell-breakAll">
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <aura:if isTrue="{!res.rsmlinesIL.SMLine_Status__c!='Cancelled'}">
+                                                <label class="slds-checkbox">
+                                                    <ui:inputCheckbox text="{!res.rsmlinesIL.Id}" aura:id="boxPack" value="" change="{!c.checkboxSelect}"/>{!res.rsmlinesIL.ID}
+                                                    <span class="slds-checkbox--faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="cell-breakAll"><div><a href="{!'/' + res.rsmlinesIL.Id}" style="color:#0070D2;" ><u>{!res.rsmlinesIL.Name}</u></a></div></td>
+                                <td class="cell-breakAll"> <a href="{!'/' + res.rsmlinesIL.Product_Name__r.Id}" style="color:#0070D2;" >{!res.rsmlinesIL.Product_Name__r.Name}</a></td>
+                                <td class="cell-breakAll">{!res.rsmlinesIL.Producer_Name__c}</td>
+                                <td class="cell-breakAll">{!res.rsmlinesIL.Product_Description__c}</td>
+                                
+                                  <aura:if isTrue="{!v.setSM.RecordType.Name=='Product TSM'}">
+                                        <td class="cell-breakAll" style="text-align:left"> {!res.rsmlinesIL.Qty_Ordered__c}</td>
+                                <td class="cell-breakAll"> <ui:outputCurrency value="{!res.rsmlinesIL.Line_Total_Cost__c}"/></td>
+                                <td class="cell-breakAll"> <a href="{!'/' + res.rsmlinesIL.Purchase_Order_Line__c}" style="color:#0070D2;" >{!res.rsmlinesIL.Purchase_Order_Line__r.Name}</a></td>
+                                  <aura:set attribute="else"> 
+                                <td class="cell-breakAll" style="text-align:left"> {!res.rsmlinesIL.Shipment_Qty__c}</td>
+                                <td class="cell-breakAll"> <ui:outputCurrency value="{!res.rsmlinesIL.Retail_Wholesale_Price__c}"/></td>
+                                <td class="cell-breakAll" style="text-align:left"> 
+                                    <ui:outputNumber aura:id="recQty"  value="{!res.rsmlinesIL.Shipment_Qty__c}" /></td>
+                                <td class="cell-breakAll"> <ui:outputCurrency value="{!res.rsmlinesIL.Line_Total_Price__c}"/></td>
+                                <td  class="cell-breakAll"> <a href="{!'/' + res.rsmlinesIL.Picklist_Line__c}" style="color:#0070D2;" >{!res.rsmlinesIL.Picklist_Line__r.Name}</a></td>
+                                <td class="cell-breakAll"> <a href="{!'/' + res.rsmlinesIL.Sales_Order_Line__c}" style="color:#0070D2;" >{!res.rsmlinesIL.Sales_Order_Line__r.Name}</a></td>
+                                      <td>
+                                          
+                                           <aura:if isTrue="{!res.rsmlinesIL.SMLine_Status__c!='Cancelled'}">
+                                                <lightning:select  value="{!res.rsmlinesIL.Rejection_Reason__c}" >
+                                          <aura:iteration items="{!v.rejectedReasonData}" var="res" indexVar="key">
+                                              <option value="{!res.value}" selected="{!res.key == res.rsmlinesIL.Rejection_Reason__c}">{!res.key}</option>
+                                          </aura:iteration>
+                                          </lightning:select>
+                                               <aura:set attribute="else">
+                                                   <div style="padding:3px" class="text-center"> {!res.rsmlinesIL.Rejection_Reason__c} </div>
+                                               </aura:set>
+                                            </aura:if>
+                                          
+                                          </td>
+                              </aura:set>
+                        </aura:if>
+                                
+                            </tr>
+                        </aura:iteration>
+                        <aura:set attribute="else">
+                            <td colspan="11" >
+                                <div style="padding:10px" class="text-center">
+                                    <ui:outputText  value="No data available in table"/>	
+                                </div>
+                            </td>
+                        </aura:set>
+                    </aura:if>
+                </tbody>
+            </table>
+        </div>
+    </article> 
+</aura:component>

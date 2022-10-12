@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FAQ_Category__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>FAQ category</inlineHelpText>
+    <label>FAQ Category</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>ONBOARDING</fullName>
+                <default>false</default>
+                <label>ONBOARDING</label>
+            </value>
+            <value>
+                <fullName>ORDERS</fullName>
+                <default>false</default>
+                <label>ORDERS</label>
+            </value>
+            <value>
+                <fullName>DELIVERY</fullName>
+                <default>false</default>
+                <label>DELIVERY</label>
+            </value>
+            <value>
+                <fullName>TESTING</fullName>
+                <default>false</default>
+                <label>TESTING</label>
+            </value>
+            <value>
+                <fullName>SERVICES</fullName>
+                <default>false</default>
+                <label>SERVICES</label>
+            </value>
+            <value>
+                <fullName>CULTIVATION TAX</fullName>
+                <default>false</default>
+                <label>CULTIVATION TAX</label>
+            </value>
+            <value>
+                <fullName>MINIMUM ORDER QUANTITIES (MOQ)</fullName>
+                <default>false</default>
+                <label>MINIMUM ORDER QUANTITIES (MOQ)</label>
+            </value>
+            <value>
+                <fullName>SUPPLIER PAYMENTS</fullName>
+                <default>false</default>
+                <label>SUPPLIER PAYMENTS</label>
+            </value>
+            <value>
+                <fullName>SAMPLING</fullName>
+                <default>false</default>
+                <label>SAMPLING</label>
+            </value>
+            <value>
+                <fullName>SALESFORCE MARKETPLACE &amp; PORTAL</fullName>
+                <default>false</default>
+                <label>SALESFORCE MARKETPLACE &amp; PORTAL</label>
+            </value>
+            <value>
+                <fullName>REPORTS AND DASHBOARDS</fullName>
+                <default>false</default>
+                <label>REPORTS AND DASHBOARDS</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

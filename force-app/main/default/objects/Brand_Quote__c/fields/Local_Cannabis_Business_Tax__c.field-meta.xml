@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Local_Cannabis_Business_Tax__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( Delivery_City__c = &quot;San Diego&quot;, (Total_Product_Price__c * 0.32) *0.08, 0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Local Cannabis Business Tax</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

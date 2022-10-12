@@ -1,0 +1,62 @@
+.THIS{
+    font-family:token(salesforceSans) !important;
+}
+.THIS .headerBackground{
+    background: token(grayLight);
+}
+.THIS button{
+    /*text-transform: uppercase;*/
+    font-size:13px;
+}
+.THIS .selectBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .nonSelectBtn{
+    color:token(land);
+}
+.THIS .hoverCss:hover{
+    background-color:token(grayLightStd);
+}
+.THIS .slds-box {
+	padding: 0;
+	background-color: white;
+}
+
+.THIS .slds-box__header {
+	background: token(tan);
+	border-bottom: 2px solid token(grayAccent);
+}
+.THIS .ticketNumber{
+    height: 32px;
+    color: token(grayDark);
+    font-family: token(salesforceSans);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 32px;
+}
+.THIS .tbData{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .link{
+    color:token(wovnlink);
+    cursor:pointer;
+}
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}
+.THIS .slds-icon-text-default{
+    /*fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));*/
+    fill:token(land);
+}   
+.THIS  .slds-table
+{
+    
+}
+
+.THIS  .slds-table .First_Th {
+   
+	width: 190px;    
+}

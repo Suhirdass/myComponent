@@ -1,0 +1,48 @@
+<aura:component controller="Metrc_PicklistSyncData_LT" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickActionWithoutHeader,lightning:actionOverride,force:hasSObjectName,force:appHostable" access="global" >
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="sObjectName" type="String"/>
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="showDataSyncModal" type="Boolean" default="false" />
+    <aura:attribute name="showError" type="Boolean" default="false"/>
+	 <aura:if isTrue="{!v.showDataSyncModal}">
+                <div>
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Send Data to Metrc</h2>
+                    </header>
+                </div>
+                <!-- ********* MODAL BODY Part Start ********* -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p class="slds-text-align_center">Are you sure you want to Send the data to Metrc ?</p>
+                    <div style="height:50px;"></div>
+                </div>
+                <!-- ********* MODAL FOOTER Part Start ********* -->
+                <div>
+                    <div class="slds-float_right">
+                        <lightning:button variant="brand" 
+                                          label="Yes"
+                                          title="Yes"
+                                          onclick="{!c.syncDataToMetrc}"/>
+                        <lightning:button variant="brand" 
+                                          label="No"
+                                          title="No"
+                                          onclick="{!c.cancelModal}"/>
+                    </div>
+                </div>
+
+	</aura:if>
+    <aura:if isTrue="{!v.showError}">
+        <br></br>
+        <div class="slds-notify slds-notify_toast slds-theme_error slds-align_absolute-center">
+            <span class="slds-assistive-text">ERROR</span>
+            <div class="slds-notify__content">
+                <h5 class="slds-text-heading_medium slds-align_absolute-center">
+                    <lightning:icon lable="error" iconName="utility:error" variant="inverse" iconPosition="left" size="small" alternativeText="Error"/>
+                    Error Message </h5>
+                <br/>
+                <h3 class="slds-align_absolute-center">Dont have sufficent acesss</h3>               
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

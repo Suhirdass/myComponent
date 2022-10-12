@@ -1,0 +1,49 @@
+.THIS .header-profile {
+    position: relative;
+}
+
+.THIS .header-profile-toggle {
+    border: 2px solid token(daze);
+    border-radius: 20px;
+    /*background-color: token(greenMid);*/
+    width: 40px;
+    height: 40px;
+    display: flex;
+    
+}
+
+.THIS .header-profile-toggle span {
+    margin: auto;
+    color: token(daze);
+    font-size: 14px;/*1.25em;*/
+    padding: 1px 0 0;
+    line-height: 0.8em;
+}
+
+.THIS .header-profile-toggle:hover {
+    border-color: white;
+}
+
+.THIS .header-profile-dropdown.uiMenuList {
+    position: absolute;
+    top: calc(100% + 11px);
+    right: -1em;
+    left: auto;
+    width: 160px;
+    background-color: token(activeTabColor);
+    border: none;
+    border-top: 3px solid token(activeTabColor);
+    border-radius: 0 0 4px 4px;
+    transform: none;
+    margin-top: 0;
+}
+
+.THIS .header-profile-dropdown a {
+	color: token(daze);
+}
+
+.THIS .header-profile-dropdown a:hover,
+.THIS .header-profile-dropdown a:focus {
+	color: white;
+	background-color: token(selectedTabColor);
+}

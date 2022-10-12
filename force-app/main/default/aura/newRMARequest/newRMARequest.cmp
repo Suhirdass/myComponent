@@ -1,0 +1,53 @@
+<aura:component extends="c:infiniteLoading" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="returnCode" type="List" default="[]" />
+    <aura:attribute name="retailOrder" type="Map" default="{}" />
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <div class="slds-box slds-box_small slds-m-vertical_small" style="padding: 0;">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                    <span class="productName">Retail Order</span>
+                    <div class="slds-show_inline-block slds-float_right">
+                        <lightning:button class="theme workSansSemiBold uppserCase" variant="brand" onclick="{!c.onSave}" label="Submit" />
+                        <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onCancel}" label="Cancel" />
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input disabled="true" label="Order #" value="{!v.retailOrder.name}" />
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input disabled="true" type="date" label="Order Date" value="{!v.retailOrder.orderDate}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input disabled="true" label="Order Status" value="{!v.retailOrder.status}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input disabled="true" label="Shipping Manifest" value="{!v.retailOrder.SMName}" />
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                    <lightning:input disabled="true" label="Total Line Items" value="{!v.retailOrder.items.length}" />
+                </lightning:layoutItem>
+            </lightning:layout>
+            <lightning:layout multipleRows="true" horizontalAlign="left">
+                <lightning:layoutItem flexibility="grow" size="12">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                        <span class="productName">Retail Order Line Item</span>
+                    </lightning:layoutItem>
+                <aura:iteration items="{!v.retailOrder.items}" var="item" indexVar="index">
+                    
+                    <c:newRMALineItem aura:id="newRMALineItem" retailOrderLineItem="{!item}" returnCode="{!v.returnCode}"/>
+                </aura:iteration>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="12" padding="around-small">
+                    <div class="slds-show_inline-block slds-float_right">
+                        <lightning:button class="theme workSansSemiBold uppserCase" variant="brand" onclick="{!c.onSave}" label="Submit" />
+                        <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onCancel}" label="Cancel" />
+                    </div>
+                </lightning:layoutItem>
+
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

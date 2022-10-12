@@ -1,0 +1,51 @@
+.THIS {
+    font-family:token(salesforceSans);
+    color :token(land);
+}
+.THIS .select__hidden-label label {
+	display: none;
+}
+.THIS .selectBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .nonSelectBtn{
+    color:token(land);
+}
+/*.THIS .slds-table tbody td {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+*/
+.THIS .sortIcon{
+    color:token(land);
+    font-size: 9px;
+    padding-left: 4px;
+    filter: grayscale(1);
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  /*color: rgb(6, 94, 102);*/
+    color:token(fontColor);
+  opacity: 1; /* Firefox */
+}
+.THIS .slds-select{
+	color :token(land);
+	font-size:14px;
+}
+.THIS .eyeIcon{
+    fill: token(land);
+}
+.THIS .category-more-btn svg {
+	margin: 0 0.25rem;
+	color: var(--sds-c-button-color-text, var(--lwc-brandAccessible,rgb(6, 94, 102)))
+}
+.THIS .category-more-btn lightning-primitive-icon + lightning-primitive-icon {
+	display: none;
+}
+            .THIS .hightlightedIcon{
+                background-color:token(land);
+                color:token(daze);
+            }
+            .THIS .hightlightedIcon a{
+                color:token(daze);
+            }

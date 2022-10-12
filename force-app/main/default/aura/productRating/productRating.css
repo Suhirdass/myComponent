@@ -1,0 +1,10 @@
+.THIS {
+}
+
+.THIS .totalReviews:hover + .ratingsSummary{
+    display : block !important;
+}
+
+.THIS .ratingsSummary:hover{
+    display: block !important;
+}

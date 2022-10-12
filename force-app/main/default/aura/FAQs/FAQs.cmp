@@ -1,0 +1,61 @@
+<aura:component extends="c:utility" controller="FAQsController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <ltng:require scripts="{!join(',', $Resource.ratingPlugin + '/js/jquery.min.js')}"/>
+    <aura:attribute name="FAQs" type="List" default="[]"/>
+    <aura:attribute name="categoryQuestions" type="List" default="[]"/>
+    <aura:attribute name="isCategorySection" type="Boolean" default="true"/>
+    <aura:attribute name="selectedCategory" type="String" default=""/>
+    <aura:attribute name="sectionFirstItem" type="String" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <div class="slds-text-align_center">
+            <h1 class="{!$Browser.isTablet ? 'FAQHeaderTablet slds-show_inline-block' : 'FAQHeader slds-show_inline-block'}">Frequently Asked Questions</h1>
+            <div class="slds-m-right_medium slds-float_right">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                    <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                    <input type="text" style="color:rgb(6, 94, 102);font-size:14px;" aura:id="faqSearch" id="faqSearch" oninput="{!c.onSearchFAQs}" placeholder="Search" variant="label-hidden" class="slds-input searchAndExport" value="{!v.searchString}"/>
+                </div>
+            </div>
+        </div>
+        <aura:renderIf isTrue="{!v.FAQs.length > 0}">
+            <div>
+                <aura:iteration items="{!v.FAQs}" var="FAQ">
+                    <div class="sqs-block html-block sqs-block-html">
+                        <div class="sqs-block-content">
+                            <h1 style="white-space:pre-wrap;">{!FAQ.category}</h1>
+                        </div>
+                    </div>
+                    <div class="sqs-block markdown-block sqs-block-markdown">
+                    	<div class="sqs-block-content">
+                            <aura:iteration items="{!FAQ.FAQs}" var="q">
+                                <h3 style="cursor: pointer;" data-id="{!q.id}"  onclick="{!c.expandAnswer}">+ {!q.question}</h3>
+                                <p class="answerSec" id="{!'answerSec-'+q.id}" style="display:none"><aura:unescapedHtml value="{!q.answer}"/></p>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                    <!--div class="{!'FAQCategory'+if(v.selectedCategory == FAQ.id,' slds-button_brand amber','')}" data-id="{!FAQ.id}" onclick="{!c.onCategoryClick}">
+                        {!FAQ.category}
+                    </div-->
+                </aura:iteration>
+            </div>
+            <!--aura:renderIf isTrue="{!v.selectedCategory != ''}">
+                <lightning:card>
+                    <lightning:accordion aura:id="accordion" activeSectionName="{!v.sectionFirstItem}">
+                        <aura:iteration items="{!v.categoryQuestions}" var="FAQ">
+                            <lightning:accordionSection name="{!FAQ.id}" label="{!FAQ.question}">
+                                <div style="padding-left:25px;letter-spacing: 1px;"><aura:unescapedHtml value="{!FAQ.answer}"/></div>
+                            </lightning:accordionSection>
+                        </aura:iteration>
+                    </lightning:accordion> 
+                </lightning:card>
+            </aura:renderIf-->
+            <aura:set attribute="else">
+                <div class="noData">
+                    No FAQs Found.
+                </div>
+            </aura:set>
+            </aura:renderIf>
+            
+    </div>
+</aura:component>

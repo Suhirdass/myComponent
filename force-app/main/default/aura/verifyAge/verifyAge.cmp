@@ -1,0 +1,59 @@
+<aura:component extends="c:utility" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:html tag="style">
+        .filigreenContents{
+        padding :0px !important;
+        }
+        .contentRegion {
+        padding :0px !important;
+        }
+        #verify-age{
+        z-index: 5000;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(50,50,50,.9);
+        transition: 500ms;
+        }
+        
+        .cBrandProductTheme .filigreenContents{
+        margin-top: 45px !important; 
+        margin-left: 0px;
+        }
+         .cPublicProducts {
+    padding: 0;
+    margin-left: 0;
+    width: calc(100% + 1.5rem);
+    background-color: var(--c-tanLight,#FAFAF7);
+}
+    </aura:html>
+    <ltng:require
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js', $Resource.perfectScrollbar + '/jquery.zoom.js')}"
+                  afterScriptsLoaded="{!c.onScriptsLoaded}"
+                  />
+    <ltng:require scripts="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"/>
+    
+    <aura:attribute name="isVerifyAge" type="Boolean"  />
+    
+    <div class="bg">
+        <img src="{!$Resource.WOVNResources+'/assets/marketplace-background-original.png'}" style="margin-left: -12px;margin-top: -12px;"/>	   
+    </div>
+    <div id="verify-age">
+        <div class="va-window">
+            <div class="mainDiv">
+            <span class="va-title" Style="margin-top: 40px;">Welcome to WOVN!</span>
+            <span class="va-title">Are you at least 21 years of age?</span>
+            <button style="margin-left: 28px;" class="yes" onclick="{!c.overAge}">Yup!</button>
+            <button style="margin-right: 28px;" class="no" onclick="{!c.underAge}">Nope</button>
+            </div>
+            <div class="va-underBox" style="position:absolute;top:150px;display:none;">
+                <span class="underBox-title" >Bummer!</span>
+                <span class="underBox-title" >
+                    You need to be at least 21 to view our website.
+                </span>
+                <button class="va-back" onclick="{!c.goBack}">Go Back</button>
+            </div>
+        </div>
+    </div>
+</aura:component>

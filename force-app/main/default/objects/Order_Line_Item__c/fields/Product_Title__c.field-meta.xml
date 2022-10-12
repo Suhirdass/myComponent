@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Title__c</fullName>
+    <description>Used in Order to Opportunity conversion process</description>
+    <externalId>false</externalId>
+    <formula>if( CONTAINS(Order__r.Account__r.Community_Price_Book__r.Name, &apos;Standard&apos;), 
+&apos;Supplier&apos;, &apos;Distributor&apos;)</formula>
+    <label>Product Title</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

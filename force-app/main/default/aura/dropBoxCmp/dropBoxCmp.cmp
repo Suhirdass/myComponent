@@ -1,0 +1,120 @@
+<aura:component access="global" extends="c:utility" controller="DropboxUploadController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="parentId" type="Id" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:attribute name="fileName" type="String" default="Allowed file format: png / jpeg / jpg" />
+    <aura:attribute name="product" type="Object" default="" />
+    <aura:attribute name="account" type="Object" default="" />
+    
+    <aura:attribute name="isAccount" type="boolean" default="false"/>
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    
+    <aura:attribute name="fName" type="String" default="" />
+    <aura:attribute name="fileContents" type="String" default="" />
+    <aura:attribute name="file" type="Object" default="" />
+    
+    <aura:attribute name="startPosition" type="Integer"/>
+    <aura:attribute name="endPosition" type="Integer"/>
+    <aura:attribute name="session_id" type="String" default="session_id"/>
+    <aura:attribute name="totalOffset" type="Integer" default="0"/>
+    <aura:attribute name="count" type="Integer" default="1"/>
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    
+    <aura:html tag="style">
+        
+        .cUtility .slds-file-selector__button{
+        	background-color: white;
+        	color: var(--lwc-brandAccessible,rgb(0, 112, 210));
+        	padding-top: inherit;
+        	padding-bottom: inherit;
+        }
+        .slds-p-around--medium {
+        	padding: 0 !important;
+        }
+        .cUtility button {
+    		text-transform: initial;
+        	border-radius: var(--lwc-buttonBorderRadius,.25rem);
+        }
+        
+    </aura:html>
+        
+    <div>
+        <header class="slds-modal__header" style="width:615px !important;padding-top: 20px;">
+            <aura:if isTrue="{!v.isAccount}">
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Upload Account Logo</h2>
+                <aura:set attribute="else">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Upload Product Image</h2>
+                </aura:set>
+            </aura:if>
+        </header>
+        
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width:615px !important;">
+            <lightning:input variant="label-hidden" aura:id="fileId" accept="image/png, image/jpg, image/jpeg" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Image to DropBox" multiple="false"/>
+            <div class="slds-text-body_small ">{!v.fileName}</div>
+            
+            <aura:if isTrue="{!v.showLoadingSpinner}">
+                <div class="slds-text-body_small slds-text-color_error">Uploading... 
+                    <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+                </div>
+            </aura:if>
+        </div>
+        <br/><br/>
+        <footer class="slds-modal__footer" style="width:615px !important;">
+            <span style="height: 50px !important; width: 560px  !important; z-index: 1;">
+                <lightning:button class="slds-button_brand textCap"  label="Upload Image"  onclick="{!c.doSave}"/>
+                <lightning:button class="slds-button_neutral textCap"  label="Cancel" title="Cancel"  onclick="{! c.closeModel }"/>
+            </span>
+        </footer>
+    </div>
+    
+    <!--Component Start-->
+    <aura:if isTrue="{!v.showConfirmDialog}">
+        <div class="slds-m-around_xx-large">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container" style="width:75%;">
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Warning</h1>
+                    </header>
+                    
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <br/><center>
+                        <aura:if isTrue="{!v.isAccount}">
+                            <lightning:icon iconName="utility:warning" size="small"/>This will overwrite existing Account Logo. Are you sure?
+                            <aura:set attribute="else">
+                            	<lightning:icon iconName="utility:warning" size="small"/>This will overwrite existing Product Image. Are you sure?
+                            </aura:set>
+                        </aura:if>
+                        
+                        </center><br/>
+                    </div>
+                    
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                        <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </div>
+    </aura:if>
+    <!--Component End-->
+
+    
+    <!--div style="background-color:white;">
+        <div style="margin:20px;">
+            <lightning:input variant="label-hidden" aura:id="fileId" accept="image/png, image/jpg, image/jpeg" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Image to DropBox" multiple="false"/>
+            <div class="slds-text-body_small slds-text-color_error">{!v.fileName}</div>
+            
+            <aura:if isTrue="{!v.showLoadingSpinner}">
+                <div class="slds-text-body_small slds-text-color_error">Uploading... 
+                    <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+                </div>
+            </aura:if>
+            <br/>
+            
+            <button class="slds-button slds-button brand" onclick="{!c.doSave}">Upload Image</button>
+            
+        </div>
+    </div> -->
+</aura:component>

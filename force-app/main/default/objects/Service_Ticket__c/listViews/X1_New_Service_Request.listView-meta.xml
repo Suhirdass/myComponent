@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_New_Service_Request</fullName>
+    <columns>CREATED_DATE</columns>
+    <columns>NAME</columns>
+    <columns>Status__c</columns>
+    <columns>Brand_Name__c</columns>
+    <columns>Brand_Contact__c</columns>
+    <columns>Opportunity__c</columns>
+    <columns>Total_Service_Lines__c</columns>
+    <columns>Request_Date_Time__c</columns>
+    <columns>Special_Instruction__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Pending</value>
+    </filters>
+    <filters>
+        <field>Transfer_Method__c</field>
+        <operation>equals</operation>
+        <value>Product Conversions</value>
+    </filters>
+    <label>1. New Service Request</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

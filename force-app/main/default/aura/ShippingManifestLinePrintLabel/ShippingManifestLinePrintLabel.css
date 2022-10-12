@@ -1,0 +1,61 @@
+.THIS .righta{
+    
+    text-align: right;
+}
+
+.THIS .lefta{
+      text-align: left;
+}
+.THIS .right{
+      float: right;
+}
+.THIS table{
+   
+    
+      border:var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218)); 
+   /* border-spacing: 0px; 
+            table-layout: fixed; 
+            margin-left: auto; 
+            margin-right: auto; */
+}
+            
+         .THIS table tr:hover {background-color: #F5F5F5;} 
+
+
+.THIS .cell-breakAll {
+   
+    word-wrap: break-word !important; 
+        padding: 7px;
+        font-family: var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+    font-size: 13px;
+
+}
+ .THIS .cell-breakAll2 {
+   
+    word-wrap: break-word !important; 
+        padding: 8px;
+        font-family: var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+    font-size: 13px;
+
+}                   
+        
+        .THIS .slds-form-element__label{
+   
+    word-wrap: break-word !important; 
+        font-family: var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+        font-size: var(--lwc-fontSize4);
+
+}
+
+.THIS .talignCenter{
+    text-align: center;
+}
+
+.THIS .textCap{
+    text-transform: capitalize;
+}
+/*.THIS .mrgright{
+   margin-right: -6px !important; 
+}*/
+ .THIS table tr:hover 
+    {background-color: #F5F5F5;}

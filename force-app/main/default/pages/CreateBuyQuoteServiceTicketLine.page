@@ -1,0 +1,7 @@
+<apex:page standardController="Service_Ticket_Line__c" extensions="ConvertServiceTicketLineController" action="{!createBuyQuote}">
+    <apex:form >
+        <apex:sectionHeader title="Create Brand Quote"/>
+        <apex:pageMessages />
+        <apex:commandButton action="{!cancel}" value="Back"/>
+    </apex:form>
+</apex:page>

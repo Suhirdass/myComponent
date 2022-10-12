@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product</fullName>
+    <active>true</active>
+    <compactLayoutAssignment>Filigreen</compactLayoutAssignment>
+    <description>Used for Product Payments</description>
+    <label>Product</label>
+    <picklistValues>
+        <picklist>Bank_Name__c</picklist>
+        <values>
+            <fullName>Armed Forces Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Avid Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BAC Community Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BBVA USA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Banc of California</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of America</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of England</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of Hope</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of Marin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of Stockton</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of the Sierra</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank of the West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Banner Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Beneficial State Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CIT Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CTBC Bank Corp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cathay Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Century Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Citi Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Citizens Business Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>City National Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coastal Central Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Comerica Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Community Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Community Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Community First Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Community West Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Compass Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperative Center Federal Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Discover Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>East West Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Emerald Beach Financial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ever Trust Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Exchange Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Filigreen</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Filigreen ACH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Filigreen Wire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First Foundation Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fremont Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fresno First Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gain Financial Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Grandpoint Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HERRING BANK</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HSBC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hanmi Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Heritage Bank of Commerce</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Homestreet Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>JP Morgan Chase Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Key Point Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lead Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Luther Burbank Savings</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MUFG Union Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manufacturers Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mechanics Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mission Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>North Bay Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Northern Redwood FCU</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Open Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Opus Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PLUMAS BANK</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pacific Premier Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pacific Valley Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pacific Western Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parke Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Partner Colorado Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Patelco Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Poppy Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Preferred Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rabobank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Radius Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>River City Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Royal Business Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SALAL Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SELF-HELP FCU</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Safe Harbor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>San Francisco Federal Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Santa Cruz Community CU</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Santa Cruz County Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Scott Valley Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>South Bay Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stride Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SunTrust</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Technicolor Federal Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tri Counties Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>U%2ES Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Umpqua Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>United Business Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>United Security Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vocality Community Credit Union</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wells Fargo Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Westamerica Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>iPay Solutions</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Credit_to_Account__c</picklist>
+        <values>
+            <fullName>Clearing Account</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Thread Holdings</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Thread Property</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Thread Technology</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Irrational Raccoon</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Safe</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Payment_Form__c</picklist>
+        <values>
+            <fullName>ACH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cash</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Clearing Account</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Credit Card</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Debit Card</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Excise Tax Deposit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wire</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Valid_Thru_Month__c</picklist>
+        <values>
+            <fullName>Apr</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aug</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dec</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feb</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Jan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Jul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Jun</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>May</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nov</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Oct</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sep</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Valid_Thru_Year__c</picklist>
+        <values>
+            <fullName>2020</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2021</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2022</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2023</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2024</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2025</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2026</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2027</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2028</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2029</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2030</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2031</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2032</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2033</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2034</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2035</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2036</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2037</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2038</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2039</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2040</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2041</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2042</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2043</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2044</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2045</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2046</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2047</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2048</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2049</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2050</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

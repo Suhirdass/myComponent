@@ -1,0 +1,763 @@
+<aura:component extends="c:utility" controller="RetailDeliveryTicketsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+
+    <!-- styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" -->
+    <ltng:require
+                styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}"
+                scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                         $Resource.ratingPlugin + '/js/jquery-ui.js',
+                         $Resource.perfectScrollbar + '/jquery.zoom.js')}"
+                afterScriptsLoaded="{!c.onScriptsLoaded}" />
+	<lightning:overlayLibrary aura:id="overlay" />
+    <aura:attribute name="warehouseAvailableInventoryMap" type="Map"/>
+    <aura:attribute name="warehouseTotalOrderedMap" type="Map"/>
+    <aura:handler event="c:updateRDTSubTotal" action="{!c.updateSubTotal}" />
+    <aura:handler name="retailerContactsMultiselectEvt" event="c:retailerContactsMultiselectEvt" action="{!c.onSelectChange}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="paymentTerms" type="List" default="[]" />
+    <aura:attribute name="products" type="List" default="[]" />
+    <aura:attribute name="allProducts" type="List" default="[]" />
+    <aura:attribute name="completeProducts" type="List" default="[]" />
+    <aura:attribute name="removeProducts" type="List" default="[]" />
+    <aura:attribute name="retailers" type="List" default="[]" />
+    <aura:attribute name="licenses" type="List" default="[]" />
+    <aura:attribute name="retailerlicenses" type="List" default="[]" />
+    <aura:attribute name="statelicenses" type="Map" default="{}" />
+    <aura:attribute name="selectedWarehouse" type="String" default="" />
+    <aura:attribute name="isClone" type="String" default="" />
+    <aura:attribute name="contacts" type="List" default="[]" />
+    <aura:attribute name="brandContacts" type="List" default="[]" />
+    <aura:attribute name="salesReps" type="List" default="[]" />
+    <aura:attribute name="contactsOptions" type="List" default="[]" />
+    <aura:attribute name="retailerDetails" type="List" default="[]" />
+    <aura:attribute name="newRetailDeliveryTicket" type="Map" default="{}" />
+    <aura:attribute name="newRDTLI" type="Map" default="{}" />
+    <aura:attribute name="retailersDetail" type="Map" default="{}" />
+    <aura:attribute name="newRetailDeliveryTicketLineItems" type="List" default="[]" />
+    <aura:attribute name="allNewRetailDeliveryTicketLineItems" type="List" default="[]" />
+    <aura:attribute name="completeRDTLineItems" type="List" default="[]" />
+    <aura:attribute name="disableExcludeExciseTax" type="boolean" default="true"/>
+    <aura:attribute name="excludeExciseTaxTypes" type="List" default="[]"/>
+    <aura:attribute name="excludeExciseTaxTypesText" type="String" default=""/>
+    <aura:attribute name="Additional_Brand_Contact_Help_Text" type="String" default=""/>
+    <aura:registerEvent name="updateCartTotalEvt" type="c:updateCartTotalEvt" />
+    <aura:handler name="retailDeliveryTicketLineEvt" event="c:retailDeliveryTicketLineEvt" action="{!c.updateTicketLineItem}"/>
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.recordIdChanges}"/>
+    <aura:attribute name="selectedContactIds" type="String" default=""/>
+    <aura:attribute name="RDTRecordId" type="String" default="{!v.recordId}"/>
+    <aura:attribute name="commSetting" type="Object" default=""/>
+    <aura:attribute name="otherReletecContactIds" type="String[]" default="[]"/>
+    <aura:attribute name="subTotal" type="decimal" default="0"/>
+    <aura:attribute name="companySetting" type="Object" default="{}"/>
+    <aura:attribute name="totalExcisetax" type="decimal" default="0.00"/>
+    <aura:attribute name="grandTotal" type="decimal" default="0.00"/>
+    <aura:attribute name="distribution" type="decimal" default="0.00"/>
+    <aura:attribute name="totalServicesfee" type="decimal" default="0.00"/>
+    <aura:attribute name="orderInfo" type="string" default=""/>
+    <aura:attribute name="orderProcessingFee" type="decimal" default="0.00"/>
+    <aura:attribute name="shippingFee" type="decimal" default="0.00"/>
+    <aura:attribute name="routeMiles" type="decimal" default="0.00"/>
+    <aura:attribute name="pickPackfee" type="decimal" default="0.0"/>
+    <aura:attribute name="QAFee" type="decimal" default="0.0"/>
+    <aura:attribute name="orderBookingFee" type="decimal" default="0.00"/>
+    <aura:attribute name="stageAndManifestFee" type="decimal" default="0.00"/>
+    <aura:attribute name="Minimum_Order_Value" type="decimal" default="0.00"/>
+    <aura:attribute name="Max_Discount_Value" type="decimal" default="0.00"/>
+    <aura:attribute name="isEnable" type="boolean" default="false"/>
+    <aura:attribute name="addresses" type="List" default="[]" />
+    <aura:attribute name="wAddresses" type="List" default="[]" />
+    <aura:attribute name="productOrderedQtyMap" type="Map" default="{}" />
+    <aura:attribute name="brandfee" type="Boolean" default="false"/>
+    <aura:attribute name="retailerFee" type="Boolean" default="false"/>
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="requestDateTime" type="Date" default=""/>
+    <aura:attribute name="requestDateTimeHide" type="Date" default=""/>
+    <aura:attribute name="reqTempDate" type="String" default=""/>
+    <aura:attribute name="isDateChanged" type="Boolean" default="false"/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+	<aura:attribute name="factoringRelationships" type="List" default="[]" />
+    <aura:attribute name="factoringAssignees" type="List" default="[]" />
+    <aura:attribute name="factoringRelationshipContactsMap" type="Map" default="{}" />
+    <aura:attribute name="factoringRelationshipContacts" type="List" default="[]" />
+    <aura:attribute name="factoringRelationshipTerms" type="List" default="[]" />
+    <aura:attribute name="factoringDiscount" type="decimal" default="0.00"/>
+    <aura:attribute name="factoringRate" type="decimal" default="0.00"/>
+    <aura:attribute name="cliRegularProductWithSamplePrice" type="String"/>
+    <aura:attribute name="activeTab" type="String" default="all"/>
+    <aura:attribute name="searchString" type="String" default=""/>
+    <aura:attribute name="isSearchCalled" type="Boolean" default="false"/>
+    <aura:attribute name="isShowSuccess" type="Boolean" default="false"/>
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="sortType" type="String" default="ASC"/>
+    <aura:attribute name="learnMoreUrl" type="String"/>
+    <aura:attribute name="shippingToolTip" type="String"/>
+    <aura:attribute name="distributionToolTip" type="String"/>
+    <aura:attribute name="factoringDiscountToolTip" type="String"/>
+    <aura:attribute name="qtyTooLow" type="Boolean" default="false"/>
+    <aura:attribute name="uPriceTooLow" type="Boolean" default="false"/>
+    <aura:attribute name="uPriceSample" type="Boolean" default="false"/>
+    <aura:attribute name="buttonStatus" type="String"/>
+    <aura:attribute name="successMsgTitle" type="String"/>
+    <aura:attribute name="Err_Msg_Add_Atleat_One_OLI" type="String"/>
+    <aura:attribute name="ERR_MSG_ORDER_QTY_GT_AVAILABLE_QTY" type="String"/>
+	<aura:attribute name="initializationCompleted" type="Boolean" default="false" />
+    <aura:attribute name="isTablet" type="Boolean" default="false" />
+    <aura:attribute name="Orders_Requiring_QR_Codes" type="String"/>
+    <aura:attribute name="Orders_Requiring_Bar_Codes" type="String"/>
+    <aura:attribute name="Orders_Requiring_Third_Party_Scheduler" type="String"/>
+    <aura:attribute name="Orders_Requiring_TPS_and_or_QR_Code" type="String"/>
+    <aura:attribute name="Orders_Requiring_TPS_and_or_Bar_Code" type="String"/>
+    <aura:attribute name="Orders_Requiring_TPS_and_Bar_Code_and_QR" type="String"/>
+    <aura:attribute name="Orders_Requiring_BarCodes_and_or_QR_Code" type="String"/>
+    <aura:attribute name="BarCodeORQRCodeMSG" type="String" default=""/>
+    <aura:attribute name="ThirdPartySchedulerMSG" type="String" default=""/>
+    
+    <aura:handler name="numberInputEvt" event="c:numberInputEvent" action="{!c.handleNumberEvent}"/>
+    <aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/>
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchProducts}" />
+    
+    <aura:attribute name="Factoring_Contact_Required_For_Order" type="String"/>
+    <aura:attribute name="Factoring_Terms_Required_For_Order" type="String"/>
+	<aura:attribute name="bulkProductErrorToolTip" type="String"/>
+    <aura:attribute name="Total_product_amount_tooltip" type="String"/>
+    <aura:attribute name="Warning_Message_Of_Minimum_Order_Value" type="String"/>
+    <aura:attribute name="Err_Msg_all_line_items_as_isSample" type="String"/>
+    <aura:attribute name="Err_Msg_of_OLI_is_Promo" type="String"/>
+    <aura:attribute name="isLIPromo" type="Boolean" default="false" />
+    <aura:attribute name="Msg_for_isPromo_Tooltip" type="String"/>
+    <aura:attribute name="Msg_for_isSample_Tooltip" type="String"/>
+    <aura:attribute name="Msg_for_Preapproved_Tooltip" type="String"/>
+    <aura:attribute name="Msg_Exclude_Excise_Tax_Tooltip" type="String"/>
+    
+    <aura:handler name="timePickerEvt" event="c:timePickerEvent" action="{!c.handleTimePickerEvent}"/>
+    <aura:attribute name="requestEarTime" type="String" default=""/>
+    <aura:attribute name="requestLatTime" type="String" default=""/>
+    <aura:attribute name="earTime" type="String" default=""/>
+    <aura:attribute name="letTime" type="String" default=""/>
+    <aura:attribute name="hasEarliestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="hasLatestTimeError" type="Boolean" default="false"/>
+    <aura:attribute name="hasDateError" type="Boolean" default="false"/>
+    <aura:attribute name="latesDateAfterEarliestDateError" type="Boolean" default="false"/>
+    <aura:attribute name="EARLIEST_DELIVERY_TIME" type="String" default="08:00" />
+    <aura:attribute name="LATEST_DELIVERY_TIME" type="String" default="06:00" />
+    <aura:attribute name="isThird_Party_Scheduler" type="Boolean" default="false"/>
+    <aura:attribute name="Sample_Products_tooltip" type="String" default=""/>
+    
+    <aura:attribute name="SampleOrderParentFamilyMap" type="Map"/>
+    <aura:attribute name="SampleOrderFamilyMap" type="Map"/>
+    <aura:attribute name="Sample_Limitation_Error_Msg" type="String"/>
+    
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:messages />
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />
+
+        <div class="slds-grid slds-gutters slds-m-top_small">
+            <section class="slds-col slds-size_2-of-3" style="height: fit-content;">
+                <div class="slds-box height-full">
+                    <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                        Customer Information
+                    </h2>
+                    <div class="slds-p-horizontal_xx-small">
+                        <div class="slds-grid slds-m-vertical_large">
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<c:multiselect mslabel="Ship To" isRequired="true" aura:id="multiSelect" isMultiSelect="false" msoptions="{! v.retailers }" selectedValuesName="{!v.newRetailDeliveryTicket.retailerDBA}" selectedValuesId="{!v.newRetailDeliveryTicket.retailer}"/>
+                                </aura:if>
+                                <!--lightning:select aura:id="validate" label="Business Name" value="{!v.newRetailDeliveryTicket.retailer}" required="true"
+                                      onchange="{!c.onRetailerChange}">
+                                    <option value="">Select</option>
+                                    <aura:iteration items="{!v.retailers}" var="r">
+                                        <option value="{!r.id}" selected="{!r.id == v.newRetailDeliveryTicket.retailer}">{!r.name}</option>
+                                    </aura:iteration>
+                                </lightning:select-->
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<c:multiselect mslabel="Shipping Address" isRequired="true" aura:id="multiSelect" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" isMultiSelect="false" msoptions="{! v.licenses }" selectedValuesName="{!v.newRetailDeliveryTicket.stateLicenseName}" selectedValuesId="{!v.newRetailDeliveryTicket.stateLicense}"/>
+                                </aura:if>
+                                <!--lightning:select aura:id="validate" label="License #" value="{!v.newRetailDeliveryTicket.stateLicense}"
+                                                  required="true" onchange="{!c.onLicenseChange}" disabled="{!v.newRetailDeliveryTicket.retailer == ''}">
+                                    <option value="">Select</option>
+                                    <aura:iteration items="{!v.licenses}" var="l">
+                                        <option value="{!l.id}" selected="{!l.id == v.newRetailDeliveryTicket.stateLicense}">{!l.address}</option>
+                                    </aura:iteration>
+                                </lightning:select-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning:input label="Purchase Order #"  value="{!v.newRetailDeliveryTicket.retailerPO}" onblur="{!c.onPOBlur}" maxlength="100" disabled="{!v.newRetailDeliveryTicket.retailer == ''}"/>
+                            </div>
+                        </div>
+
+                        <div class="slds-grid slds-m-vertical_large">
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<c:multiselect mslabel="Payment Terms" isRequired="true" aura:id="multiSelect" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" isMultiSelect="false" msoptions="{! v.paymentTerms }" selectedValuesName="{!v.newRetailDeliveryTicket.paymentTerms}" selectedValuesId="{!v.newRetailDeliveryTicket.paymentTerms}"/>
+                                </aura:if>
+                                <!--lightning:select aura:id="validate" label="Payment Terms" value="{!v.newRetailDeliveryTicket.paymentTerms}"
+                                                  required="true" onchange="{!c.onPaymentTermsChange}" disabled="{!v.newRetailDeliveryTicket.retailer == ''}">
+                                    <option value="">Select</option>
+                                    <aura:iteration items="{!v.paymentTerms}" var="r">
+                                        <option value="{!r.value}" selected="{!r.value == v.newRetailDeliveryTicket.paymentTerms}">{!r.label}</option>
+                                    </aura:iteration>
+                                </lightning:select-->
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <c:multiselect mslabel="Retail Contact" isRequired="true" aura:id="multiSelect" msoptions="{!v.contacts}" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" selectedValuesName="{!v.newRetailDeliveryTicket.retailerContactName}" selectedValuesId="{!v.newRetailDeliveryTicket.retailerContact}"/>
+                                </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3" >
+                                
+                                    <label class="slds-form-element__label cLabelWithHelpText"></label><br/>
+                                    <div style="display:flex;">
+                                        <lightning:input type="checkbox" label="Preapproved" value="{!v.newRetailDeliveryTicket.isPreapproved}"
+                                                         checked="{!v.newRetailDeliveryTicket.isPreapproved}" disabled="{!v.isThird_Party_Scheduler}"/>
+                                        <!--lightning:helptext class="slds-m-top_xxx-small "
+                                                        content="Select for sample orders on next available route, mileage fee waived" /-->
+                                        <c:availableInventoryComponent helpText="{!v.Msg_for_Preapproved_Tooltip}" required="false" >
+                                        </c:availableInventoryComponent>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-m-vertical_large">
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<c:multiselect mslabel="Sales Rep" isMultiSelect="false" aura:id="multiSelect" msoptions="{! v.salesReps }" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" selectedValuesName="{!v.newRetailDeliveryTicket.salesPersonName}" selectedValuesId="{!v.newRetailDeliveryTicket.salesPersonIds}"/>
+                                </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<c:multiselect mslabel="Additional Brand Contact" aura:id="multiSelect" msoptions="{! v.brandContacts }" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" selectedValuesName="{!v.newRetailDeliveryTicket.brandContactName}" selectedValuesId="{!v.newRetailDeliveryTicket.brandContactIds}"/>
+                                </aura:if>
+                            </div>
+                           <!-- <div class="slds-col slds-size_1-of-3" >
+                                
+                                    <label class="slds-form-element__label cLabelWithHelpText"></label><br/>
+                                    <div style="display:flex;">
+                                        <lightning:input type="checkbox" label="Sample Order" value="{!v.newRetailDeliveryTicket.isSample}"
+                                                         checked="{!v.newRetailDeliveryTicket.isSample}" disabled="{!v.isThird_Party_Scheduler}"/>
+                                        lightning:helptext class="slds-m-top_xxx-small "
+                                                        content="Select for sample orders on next available route, mileage fee waived" /
+                                        <c:availableInventoryComponent helpText="{!v.Msg_for_isSample_Tooltip}" required="false" >
+                                        </c:availableInventoryComponent>
+                                    </div>
+                                
+                            </div> -->
+                        </div>
+                        <div class="slds-grid slds-m-vertical_large">
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                <label class="slds-form-element__label cLabelWithHelpText">Requested Delivery Date</label><br/>
+                                <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:100%">
+                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                        
+                                        <input type="text" class="slds-input slds-show_inline-block" id="datepickerId" style="vertical-align:top" value="{!if(v.newRetailDeliveryTicket.isPreapproved,v.requestDateTime,'')}" disabled="{!or(v.newRetailDeliveryTicket.retailer == '',not(v.newRetailDeliveryTicket.isPreapproved))}"/>
+                                        <button class="{!and(v.hasDateError,v.newRetailDeliveryTicket.isPreapproved)?'slds-button slds-button_icon slds-input__icon slds-input__icon_right hasError':'slds-button slds-button_icon slds-input__icon slds-input__icon_right'}" title="Select a date" onclick="{!c.showDatePicker}" >
+                                            <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview"/>
+                                        </button>
+                                        <div class="{!v.hasDateError?' hasError':''}">
+                                            <aura:if isTrue="{!and(v.hasDateError,v.newRetailDeliveryTicket.isPreapproved)}">
+                                                <div class="error-message">Complete this field.</div>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <label class="slds-form-element__label cLabelWithHelpText">Earliest Delivery Time</label><br/>
+                                <aura:if isTrue="{!or(v.newRetailDeliveryTicket.retailer == '',not(v.newRetailDeliveryTicket.isPreapproved))}">
+                                    <lightning:input style="width: 100%;" type="time" variant="label-hidden" value="None" name="reqLTime" label="Earliest Delivery Time" disabled="{!or(v.newRetailDeliveryTicket.retailer == '',not(v.newRetailDeliveryTicket.isPreapproved))}"/>
+                                    <aura:set attribute="else">
+                                        <div class="{!v.hasLatestTimeError?' hasError':''}">
+                                            <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="true" fieldName="{!v.newRetailDeliveryTicket.EarTime}" selectedTimeLabel="{!v.newRetailDeliveryTicket.EarTime}" label="Earliest Delivery Time" />
+                                            <aura:if isTrue="{!v.hasLatestTimeError}">
+                                                <div class="error-message">Complete this field.</div>
+                                            </aura:if>
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                                
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <label class="slds-form-element__label cLabelWithHelpText">Latest Delivery Time</label><br/>
+                                <aura:if isTrue="{!or(v.newRetailDeliveryTicket.retailer == '',not(v.newRetailDeliveryTicket.isPreapproved))}">
+                                    <lightning:input style="width: 100%;" type="time" variant="label-hidden" value="None" name="reqLTime" label="Earliest Delivery Time" disabled="{!or(v.newRetailDeliveryTicket.retailer == '',not(v.newRetailDeliveryTicket.isPreapproved))}"/>
+                                    <aura:set attribute="else">
+                                        <div class="{!v.hasLatestTimeError?' hasError':''}">
+                                        <c:timePicker startTime="{!v.EARLIEST_DELIVERY_TIME}" endTime="{!v.LATEST_DELIVERY_TIME}" aura:id="fieldId" isRequired="true" fieldName="{!v.newRetailDeliveryTicket.LatTime}" selectedTimeLabel="{!v.newRetailDeliveryTicket.LatTime}" label="Latest Delivery Time" />
+                                        <aura:if isTrue="{!v.hasLatestTimeError}">
+                                            <div class="error-message">Complete this field.</div>
+                                        </aura:if>
+                                        
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                                
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-m-vertical_large">
+                            <div class="slds-col slds-size_1-of-3">
+                                <!-- @dev connect actual contacts -->
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<c:multiselect mslabel="Factoring Assignee" aura:id="multiSelect" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" isMultiSelect="false" msoptions="{! v.factoringAssignees }" selectedValuesName="{!v.newRetailDeliveryTicket.factoringAssigneeName}" selectedValuesId="{!v.newRetailDeliveryTicket.factoringAssigneeId}"/>
+                                </aura:if>
+                                <!--lightning:select aura:id="validate" label="Factoring Assignee" value="{!v.newRetailDeliveryTicket.factoringAssigneeId}"
+                                                  required="false" onchange="{!c.onFactoringAssigneeChange}" disabled="{!v.newRetailDeliveryTicket.retailer == ''}">
+                                    <option value="">Select</option>
+                                    <aura:iteration items="{!v.factoringAssignees}" var="fr">
+                                        <option value="{!fr.Factoring_Assignee__c}" selected="{!fr.Factoring_Assignee__c == v.newRetailDeliveryTicket.factoringAssigneeId}">{!fr.Factoring_Assignee__r.DBA__c}</option>
+                                    </aura:iteration>
+                                </lightning:select-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <c:multiselect mslabel="Factoring Contact" aura:id="multiSelect" disabledOption="{!v.newRetailDeliveryTicket.retailer == ''}" isMultiSelect="false" msoptions="{! v.factoringRelationshipContacts }" selectedValuesName="{!v.newRetailDeliveryTicket.factoringContactName}" selectedValuesId="{!v.newRetailDeliveryTicket.factoringContactId}"/>
+                                </aura:if>
+                                <!--lightning:select aura:id="validate" label="Factoring Contact" value="{!v.newRetailDeliveryTicket.factoringContactId}"
+                                                  required="{!!empty(v.newRetailDeliveryTicket.factoringAssigneeId)}" disabled="{!v.newRetailDeliveryTicket.retailer == ''}">
+                                    <option value="">Select</option>
+                                    <aura:iteration items="{!v.factoringRelationshipContacts}" var="fr">
+                                        <option value="{!fr.Id}" selected="{!fr.Id == v.newRetailDeliveryTicket.factoringContactId}">{!fr.Name}</option>
+                                    </aura:iteration>
+                                </lightning:select-->
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <!-- @dev connect terms -->
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                	<aura:if isTrue="{! or(empty(v.newRetailDeliveryTicket.retailer), empty(v.newRetailDeliveryTicket.factoringAssigneeId)) }">
+                                        <c:multiselect mslabel="Factoring Terms" aura:id="multiSelect" disabledOption="true" isMultiSelect="false" msoptions="[]" selectedValuesName="{!not(empty(v.newRetailDeliveryTicket.factoringTerms)) ? v.newRetailDeliveryTicket.factoringTerms + ' - ' + v.newRetailDeliveryTicket.factoringRate + '%' : ''}" selectedValuesId="{!v.newRetailDeliveryTicket.factoringTerms}"/>
+                                        <aura:set attribute="else">
+                                        	<c:multiselect mslabel="Factoring Terms" aura:id="multiSelect" disabledOption="{! or(empty(v.newRetailDeliveryTicket.retailer), empty(v.newRetailDeliveryTicket.factoringAssigneeId)) }" isMultiSelect="false" msoptions="{! v.factoringRelationshipTerms }" selectedValuesName="{!not(empty(v.newRetailDeliveryTicket.factoringTerms)) ? v.newRetailDeliveryTicket.factoringTerms + ' - ' + v.newRetailDeliveryTicket.factoringRate + '%' : ''}" selectedValuesId="{!v.newRetailDeliveryTicket.factoringTerms}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:if>
+                                <!--lightning:select label="Factoring Terms" value="{!v.newRetailDeliveryTicket.factoringTerms}" onchange="{!c.onFactoringTermsChange}"
+                                                  disabled="{! or(v.newRetailDeliveryTicket.retailer == '', v.newRetailDeliveryTicket.factoringAssigneeId == '') }">
+                                    <option value="">Select</option>
+                                    <aura:iteration items="{!v.factoringRelationshipTerms}" var="fr">
+                                        <option value="{!fr.Payment_Terms__c}" selected="{!fr.Payment_Terms__c == v.newRetailDeliveryTicket.factoringTerms}">{!fr.Payment_Terms__c} - <lightning:formattedNumber value="{!fr.Factoring_Rate__c}" minimumFractionDigits="2"/>%</option>
+                                    </aura:iteration>
+                                </lightning:select-->
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-m-vertical_large">
+                            <div class="slds-col slds-size_2-of-3">
+                                <lightning:textarea label="Order Notes" value="{!v.newRetailDeliveryTicket.specialDeliveryInstructions}" maxlength="2000"
+                                                    placeholder="Optional note for WOVN." disabled="{!v.newRetailDeliveryTicket.retailer == ''}"
+                                                    />
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning:textarea label="Invoice Memo" value="{!v.newRetailDeliveryTicket.invoiceMemo}" maxlength="2000"
+                                                    placeholder="Optional note for Retailer." disabled="{!v.newRetailDeliveryTicket.retailer == ''}"
+                                                    />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="slds-col slds-size_1-of-3">
+                <div class="slds-box height-full">
+                    <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                        Order Total
+                    </h2>
+                    <div class="slds-p-horizontal_medium">
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p>{! v.allNewRetailDeliveryTicketLineItems.length } Products - Subtotal</p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.subTotal }" />
+                            </p>
+                        </div>
+                        <div class="slds-m-vertical_large">
+                            <div class="flex items-center">
+                                <p>Total Excise Tax</p>
+                                <p class="m-left_auto text__bold">
+                                    <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.totalExcisetax }" />
+                                </p>
+                            </div>
+
+                            <div class="flex items-center slds-m-top_xx-small slds-m-left_x-small">
+                                <lightning:input
+                                    type="checkbox"
+                                    aura:id="validate"
+                                    label="Exclude Excise Tax"
+                                    checked="{! v.newRetailDeliveryTicket.excludeExciseTax }"
+                                    disabled="{!v.disableExcludeExciseTax}"             
+                                    class="exclude-excise-checkbox"
+                                    onchange="{! c.calculateExcludeTex }"
+                                />
+                                <c:availableInventoryComponent helpText="{!v.Msg_Exclude_Excise_Tax_Tooltip +''+ v.excludeExciseTaxTypesText}" required="false" >
+                                </c:availableInventoryComponent>
+                                <!--lightning:helptext class="slds-m-top_xxx-small "
+                                    content="{!'Option available for State License '+v.excludeExciseTaxTypesText}"
+                                /-->
+                            </div>
+                        </div>
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p>Grand Total</p>
+                            <p class="m-left_auto slds-text-heading_large text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.grandTotal }" />
+                            </p>
+                        </div>
+                        <aura:if isTrue="{!empty(v.newRetailDeliveryTicketLineItems)}">
+                        	<div class="cart-upsell cart-upsell--empty">                            
+                                Your cart is empty. Click on Add to get started.<br/>
+                                {!v.BarCodeORQRCodeMSG}
+                            </div>
+                            <aura:if isTrue="{!v.ThirdPartySchedulerMSG== ''}">
+                                    <hr style="margin:0;"/>
+                                    <aura:set attribute="else">
+                                        <div class="cart-upsell cart-upsell--empty">
+                                        	{!v.ThirdPartySchedulerMSG}
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{!v.Minimum_Order_Value > 0}">
+                                <div class="cart-upsell cart-upsell--empty">
+                                        	Minimum Order Value is <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.Minimum_Order_Value }" /> 
+                                 </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.BarCodeORQRCodeMSG== ''}">
+                                    <hr style="margin:0;"/>
+                                    <aura:set attribute="else">
+                                        <div class="cart-upsell cart-upsell--empty">
+                                        	{!v.BarCodeORQRCodeMSG}
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                                <aura:if isTrue="{!v.ThirdPartySchedulerMSG== ''}">
+                                    <hr style="margin:0;"/>
+                                    <aura:set attribute="else">
+                                        <div class="cart-upsell cart-upsell--empty">
+                                        	{!v.ThirdPartySchedulerMSG}
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:set>
+                        </aura:if>
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p class="flex items-center">
+                                Order Processing
+                                <c:availableInventoryComponent helpText="{!v.orderInfo}" required="false" >
+                                </c:availableInventoryComponent>
+                            </p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{!v.orderProcessingFee}" />
+                            </p>
+                        </div>
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p class="flex items-center">
+                                Shipping
+                                <!--c:availableInventoryComponent helpText="{!v.shippingToolTip}" required="false" >
+                                </c:availableInventoryComponent-->
+                            </p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.shippingFee }" />
+                            </p>
+                        </div>
+                        <hr style="margin:0;"/>
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p class="flex items-center">
+                                Distribution {! v.distribution }%
+                                <!--c:availableInventoryComponent helpText="{!v.distributionToolTip}" required="false" >
+                                </c:availableInventoryComponent-->
+                            </p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.totalServicesfee }" />
+                            </p>
+                        </div>
+                        <div class="flex items-center slds-m-vertical_large">
+                            <p class="flex items-center">
+                                Factoring Discount
+                                <c:availableInventoryComponent helpText="{!v.factoringDiscountToolTip}" required="false" >
+                                </c:availableInventoryComponent>
+                            </p>
+                            <p class="m-left_auto text__bold">
+                                <lightning:formattedNumber style="currency" currencyCode="USD" value="{! v.factoringDiscount }" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="flex slds-m-vertical_large">
+            <div class="slds-size_1-of-3">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right" onkeyup="{!c.onChangeSearchProduct}">
+                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                        <input type="text" style="color:#42472a;font-size:14px;" aura:id="searchRec" id="searchRec"  placeholder="Search by name, sku or price" class="slds-input" value="{!v.searchString}"/>
+                    </div>
+                </div>
+                <!--lightning:input type="search" onchange="{!c.onChangeSearchProduct}" placeholder="Search by name, sku, category or price" variant="label-hidden" value="{!v.searchString}"/-->
+            </div>
+            <div class="{!v.isTablet ? 'slds-size_2-of-3 m-left_auto slds-p-left_medium' : 'slds-size_1-of-3 m-left_auto slds-p-left_medium'}">
+                <lightning:buttonGroup class="slds-size_full flex">
+                    <lightning:button
+                        onclick="{! c.setActiveTab }"
+                        aura:id="all"
+                        label="All My Products"
+                        variant="{! equals(v.activeTab, 'all') ? 'brand' : 'neutral' }"
+                        class="{! equals(v.activeTab, 'all') ? 'flex-1 selectBtn' : 'bg__tan flex-1 nonSelectBtn' }"
+                    />
+                    <lightning:button
+                        onclick="{! c.setActiveTab }"
+                        aura:id="active"
+                        variant="{! equals(v.activeTab, 'active') ? 'brand' : 'neutral' }"
+                        class="{! equals(v.activeTab, 'active') ? 'slds-is-relative flex-1 active-order-btn selectBtn' : 'bg__tan slds-is-relative flex-1 active-order-btn nonSelectBtn' }"
+                    >
+                        Review Order
+                        <lightning:icon
+                            iconName="utility:cart"
+                            class="slds-m-left_xx-small cart-icon" size="small" />
+                        <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom active-order-tooltip"
+                            role="tooltip" id="help" >
+                            <div class="slds-popover__body">
+                                View items in your order
+                            </div>
+                        </div>
+                    </lightning:button>
+                </lightning:buttonGroup>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="order-table slds-table table--double-border slds-text-body">
+                <thead>
+                    <tr>
+                        <th width="64" style="background-color:#d1cdb0;"></th>
+                        <th onclick="{!c.sortProducts}" style="cursor:pointer;background-color:#d1cdb0;">
+                            Brand
+                            <aura:if isTrue="{!v.sortType == 'ASC'}">
+                            	<lightning:icon iconName="utility:arrowdown" alternativeText="arrowdown" title="arrowdown" size="xx-small"/>
+                            </aura:if>
+                            <aura:if isTrue="{!v.sortType != 'ASC'}">
+                            	<lightning:icon iconName="utility:arrowup" alternativeText="arrowup" title="arrowup" size="xx-small"/>
+                            </aura:if>
+                        </th>
+                        <th style="background-color:#d1cdb0;">SKU</th>
+                        <th style="background-color:#d1cdb0;">Product Name</th>
+                        <!--th width="64">Category</th-->
+                        <!--th></th-->
+                        <th style="background-color:#d1cdb0;">Available Cases</th>
+                        <th style="background-color:#d1cdb0;"><span style="margin-right: -8px;">Promo</span>
+                            <!--lightning:helptext class="slds-m-top_xxx-small "
+                                                        content="{!v.Msg_for_isPromo_Tooltip}" /--> 
+                        <c:availableInventoryComponent helpText="{!v.Msg_for_isPromo_Tooltip}" required="false" >
+                                </c:availableInventoryComponent>
+                        </th>
+                        <th width="80" class="slds-text-align_center" style="background-color:#d1cdb0;">Unit Price</th>
+                        <th style="background-color:#d1cdb0;">Subtotal</th>
+                        <!--th style="background-color:#d1cdb0;">Is Sample</th-->
+                        <th style="background-color:#d1cdb0;" width="100" class="slds-text-align_center">Case Quantity</th>
+                        <th style="background-color:#d1cdb0;" width="70" class="slds-text-align_center">Actions</th>
+                    </tr>
+                </thead>
+                <!--
+                    @dev: Incomplete: Need to iterate over actual line items
+
+                    If the active tab is "all" we should iterative over all the products otherwise
+                    use the items in the active order to iterate over and display in table.
+                -->
+                <tbody>
+                    <aura:if isTrue="{! equals(v.activeTab, 'all') ? not(empty(v.products)) : not(empty(v.newRetailDeliveryTicketLineItems)) }">
+                        <aura:iteration items="{! equals(v.activeTab, 'all') ? v.products : v.newRetailDeliveryTicketLineItems }" var="product" indexVar="index">
+                            <tr>
+                                <td style="min-width: 65px;">
+                                    <img src="{!product.imageUrl}"
+                                         style="width: 40px; height: 40px; border: 1px solid #ccc" />
+                                </td>
+                                
+                                <td>
+                                    <!--<aura:if isTrue="{!product.whiteLabelled}">
+                                        <p class="truncate" style="font-size: 13px;" title="{!product.licenseeName}">
+                                            <div class="text__blue truncate" style="cursor:pointer;" data-id="{!product.licenseeId}" onclick="{!c.onViewBrand}">{!product.licenseeName}</div>
+                                        </p>
+                                        <aura:set attribute="else">
+                                            <p class="truncate" style="font-size: 13px;" title="{!product.producerName}">
+                                                <div class="text__blue truncate" style="cursor:pointer;" data-id="{!product.producerId}" onclick="{!c.onViewBrand}">{!product.producerName}</div>
+                                            </p>
+                                        </aura:set>
+                                    </aura:if>-->
+                                   <!-- <p class="truncate" style="font-size: 13px;" title="{!product.brandName}">
+                                    <div class="text__blue slds-truncate" style="cursor:pointer;" data-id="{!product.brandId}" onclick="{!c.onViewBrand}"><ui:outputText title="{!product.brandName}" value="{!product.brandName}"/></div>
+                                    </p> -->
+                                    <p class="truncate" style="font-size: 13px;" title="{!product.brandName}">
+                                    <div data-id="{!product.brandId}" ><ui:outputText title="{!product.brandName}" value="{!product.brandName}"/></div>
+                                    </p>
+                                </td>
+                                
+                                <td style="max-width: 100px;">
+                                    <p class="truncate" style="max-width: 180px;font-size: 13px;">
+                                        <aura:if isTrue="{!v.activeTab == 'all'}">
+                                            <div class="text__blue truncate" style="cursor:pointer;" data-id="{!product.price.id}" onclick="{!c.onProductDetail}" title="{!product.name}">{! product.name }</div>
+                                        	<aura:set attribute="else">
+                                                <div class="text__blue truncate" style="cursor:pointer;" data-id="{!product.priceBookid}" onclick="{!c.onProductDetail}" title="{!product.productName}">{! product.productName }</div>
+                                            </aura:set>
+                                        </aura:if>
+                                    </p>
+                                </td>
+                                <td style="max-width: 170px;">
+                                    <p class="truncate" style="font-size: 12px;" title="{!product.shortDescription}">
+                                        <aura:if isTrue="{!v.activeTab == 'all'}">
+                                            <div class="text__blue truncate" style="cursor:pointer;" data-id="{!product.price.id}" onclick="{!c.onProductDetail}" title="{!product.shortDescription}">{! product.shortDescription }</div>
+                                            <aura:set attribute="else">
+                                                <div class="text__blue truncate" style="cursor:pointer;" data-id="{!product.priceBookid}" onclick="{!c.onProductDetail}" title="{!product.shortDescription}">{! product.shortDescription }</div>
+                                            </aura:set>
+                                        </aura:if>
+                                    </p>
+                                </td>
+                                <!--td>{! product.productFamily }</td-->
+                                <!--td>
+                                    <c:availableInventoryComponent iconSize="small" isRightAlign="true" iconName="utility:preview" helpText="{!product.warehouseInventoryDetails}" required="false" >
+                                    </c:availableInventoryComponent>
+                                </td-->
+                                <td style="font-size: 12px;">
+                                    <aura:if isTrue="{!product.isDiscountProduct != true}">
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                        <c:availableInventoryComponent iconSize="small" isRightAlign="true" iconName="utility:preview" helpText="{!product.warehouseInventoryDetails}" required="false" >
+                                        </c:availableInventoryComponent>
+                                        &nbsp;&nbsp;<lightning:formattedNumber value="{!product.availableQty / product.MOQ}" maximumFractionDigits="4" minimumFractionDigits="4"/> (<lightning:formattedNumber value="{!product.availableQty}" /> units)
+                                        <aura:set attribute="else">
+                                            <c:availableInventoryComponent iconSize="small" isRightAlign="true" iconName="utility:preview" helpText="{!product.warehouseInventoryDetails}" required="false" >
+                                            </c:availableInventoryComponent>
+                                            &nbsp;&nbsp;<lightning:formattedNumber value="{!product.availableQty / product.MOQ}" minimumFractionDigits="4"/> (<lightning:formattedNumber value="{!product.availableQty}" /> units)
+                                        </aura:set>
+                                    </aura:if>
+                                    </aura:if>
+                                </td>
+                                <td class="slds-text-align_center">
+                                    <div style="display:flex;">
+                                    <aura:if isTrue="{!and(product.isLIPromo,not(product.isPromo))}">
+                                    <div class="slds-form-element slds-show_inline-block slds-is-relative">
+                                        <div class="slds-popover slds-popover--tooltip slds-nubbin--right-top toggleme" role="tooltip" id="help" style="position:absolute;top:-15px;right:25px;min-width:max-content;" aura:id="tooltip">
+                                            <div class="slds-popover__body"><aura:unescapedHtml value="{!v.Err_Msg_of_OLI_is_Promo}"/></div>
+                                        </div>
+                                    </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                    <ui:inputCheckbox aura:id="checkbox" label="{!product.id}" labelClass="uilabel" click="{!c.onSalesPriceBlur}" updateOn="click" disabled="{!or(product.isProductSample,not(equals(product.productRecordTypeName,'Product')))}" value="{!product.isPromo}"/>
+                                    <aura:set attribute="else">
+                                        <ui:inputCheckbox aura:id="checkbox" label="{!product.Product}" labelClass="uilabel" click="{!c.onSalesPriceBlur}" updateOn="click" disabled="{!or(product.isProductSample,not(equals(product.productRecordTypeName,'Product')))}" value="{!product.isPromo}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                        </div>
+                                </td>
+                                <td class="slds-text-align_center" style="min-width: 90px;">
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                        
+                                        <ui:inputCurrency label="{!product.id}" value="{!product.salePrice}" labelClass="uilabel" blur="{!c.onSalesPriceBlur}" updateOn="keyup" format="$0###.00" class="{!or(and(v.uPriceTooLow,lessthanorequal(product.salePrice, 0))) ? 'errorBorder' : ''}" disabled="{!product.isProductSample}"/>
+                                        
+                                         <!--lightning:input type="number" value="{!product.salePrice}"
+                                                     formatter="currency" step=".01" variant="label-hidden" label=""/-->
+                                        <aura:set attribute="else">
+                                            <ui:inputCurrency label="{!product.Product}" value="{!product.salesPrice}" labelClass="uilabel" blur="{!c.onSalesPriceBlur}" disabled="{!product.isProductSample}"   keyup="{!c.onSalesPriceChange}" updateOn="keyup" format="$0###.00" class="{!or(and(v.uPriceTooLow,lessthanorequal(product.salesPrice, 0))) ? 'errorBorder' : ''}" />
+                                            <!--lightning:input onchange="{!c.onSalesPriceChange}" aura:id="validate" type="number" value="{!product.salesPrice}"
+                                                             formatter="currency" step=".01" variant="label-hidden" label=""/-->
+                                        </aura:set>
+                                    </aura:if>
+                                    <aura:if  isTrue="{!and(v.uPriceTooLow, equals(v.activeTab, 'all') ? lessthanorequal(product.salePrice, 0) : lessthanorequal(product.salesPrice, 0)  )}" >
+                                        <p style="font-size: 11px;color: #42472a;"> Price is not valid</p>
+                                    </aura:if>
+                                    <aura:if  isTrue="{!and(v.uPriceSample, equals(v.activeTab, 'all') ? and(equals(product.salePrice, 0.01),!product.isSample) : and(equals(product.salesPrice, 0.01),!product.isSample) )}" >
+                                        <p style="font-size: 11px;color: #42472a;">{!v.cliRegularProductWithSamplePrice}</p>
+                                    </aura:if>
+                                </td>
+                                <td style="font-size: 12px;">
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                        <lightning:formattedNumber style="currency" currencyCode="USD" value="{!product.salePrice * product.MOQ}" />
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue="{!product.isDiscountProduct}">
+                                                (<lightning:formattedNumber style="currency" currencyCode="USD" value="{!product.salesPrice * product.orderQty * product.MOQ}" />)
+                                                <aura:set attribute="else">
+                                                    <lightning:formattedNumber style="currency" currencyCode="USD" value="{!product.salesPrice * product.orderQty * product.MOQ}" />
+                                                </aura:set>
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                <!--td class="slds-text-align_center">
+                                    <ui:inputCheckbox aura:id="checkbox" label=""  disabled="{!or(or(product.isProductSample,product.isDiscountProduct),or(equals(product.recordTypeName,'Product'),equals(product.productRecordTypeName,'Product')))}" value="{!product.isSample}"/>
+                                     <   
+                                    	<ui:inputCheckbox aura:id="checkbox" label="" value="{!product.isSample}"/>
+									>
+                                </td-->
+                                <td class="slds-text-align_center">
+                                    <div style="width: 90px;">
+                                        <aura:if isTrue="{!v.activeTab == 'all'}">
+                                            <c:numberInput isDisabled="{!empty(v.newRetailDeliveryTicket.stateLicense)}" index="{!index}" value="{!product.quantity}" min="0" max="99" recordId="{!product.id}" showInRed="{!and(v.qtyTooLow,lessthanorequal(product.quantity, 0))}"/>
+                                            <aura:set attribute="else">
+                                                <c:numberInput isDisabled="{!empty(v.newRetailDeliveryTicket.stateLicense)}" index="{!index}" min="0" max="99" recordId="{!product.Product}" value="{!product.orderQty}" isActive="true" showInRed="{!and(v.qtyTooLow,lessthanorequal(product.orderQty, 0))}"/>
+                                            </aura:set>
+                                        </aura:if>
+                                        <aura:if  isTrue="{!and(v.qtyTooLow, equals(v.activeTab, 'all') ? lessthanorequal(product.quantity, 0) : lessthanorequal(product.orderQty, 0)  )}" >
+  											<p style="font-size: 11px;color: rgb(194, 57, 52);"> Number is too low</p>
+                                        </aura:if>
+                                    </div>
+                                </td>
+                                <td class="slds-text-align_center">
+                                    <aura:if isTrue="{!v.activeTab == 'all'}">
+                                        <div data-productId="{!product.id}" onclick="{!c.onProductChange}">
+                                            <lightning:button label="Add" variant="brand" disabled="{!v.newRetailDeliveryTicket.stateLicense == ''}" class="{!if(equals(v.newRetailDeliveryTicket.stateLicense,''),'','selectBtn')}"/>
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div onclick="{!c.onRemoveRow}" data-productid="{!product.Product}" data-index="{!index}">
+                                                <lightning:button label="Remove" variant="brand" value="{!index}" class="selectBtn"/>
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                        <aura:set attribute="else">
+                            <tr>
+                                <td colspan="10" style="font-size: var(--lwc-fontSize5,1rem);">
+                                    <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large" style="font-size: var(--lwc-fontSize5,1rem);font-family:'Alliance Neue';">No items in order</p>
+                                </td>
+                            </tr>
+                        </aura:set>
+                    </aura:if>
+                </tbody>
+            </table>
+            <aura:if isTrue="{!v.activeTab == 'all'}">
+                <c:paginator aura:id="paginator" perPage="{!v.perPage}"/>
+                <aura:set attribute="else">
+                    <c:paginator aura:id="paginatorActive" perPage="{!v.perPage}"/>
+                </aura:set>
+            </aura:if>
+        </div>
+
+        <div class="action-bar">
+            <lightning:layout>
+                <lightning:layoutItem flexibility="grow" size="6">
+                    <lightning:button onclick="{!c.onCancel}" class="cancelButton" label="Cancel" />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right">
+                    <lightning:button aura:id="Draft" class="saveDraft" onclick="{!c.onSave}" label="Save Draft" disabled="{!v.newRetailDeliveryTicket.retailer == ''}"/>
+                    &nbsp;&nbsp;
+                    <lightning:button aura:id="Pending" class="{!v.newRetailDeliveryTicket.retailer == '' ? 'submitOrder' : 'submitOrderEnable'}" onclick="{!c.onSave}" label="Submit Order" disabled="{!v.newRetailDeliveryTicket.retailer == ''}" />
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+
+    <aura:if isTrue="{!v.isShowSuccess}">
+        <c:successModal
+                        title="{!v.buttonStatus == 'Draft' ? 'Order saved successfully!' : v.successMsgTitle}"
+                        description="Our team will begin working on your order right away. You'll recieve an email confirmation shortly."
+                        buttons="[
+                                 { href: '/filigreenb2b/s', label: 'Home', variant: 'neutral',screenName:'Home' },
+                                 { href: '/filigreenb2b/s/newbrandorder', label: 'New Order', variant: 'neutral',removeIdsFromCache:'retailDeliveryTicketId',screenName:'Create Order' },
+                                 { href: '/filigreenb2b/s/brandorders', label: 'View Orders', variant: 'brand', screenName:'View My Orders' },
+                                 ]"
+                        />
+    </aura:if>
+
+</aura:component>

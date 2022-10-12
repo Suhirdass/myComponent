@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Account Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Bank</fullName>
+                <default>false</default>
+                <label>Bank</label>
+            </value>
+            <value>
+                <fullName>COGS</fullName>
+                <default>false</default>
+                <label>COGS</label>
+            </value>
+            <value>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+                <label>Credit Card</label>
+            </value>
+            <value>
+                <fullName>Current Assets</fullName>
+                <default>false</default>
+                <label>Current Assets</label>
+            </value>
+            <value>
+                <fullName>Current Liabilities</fullName>
+                <default>false</default>
+                <label>Current Liabilities</label>
+            </value>
+            <value>
+                <fullName>Discounts</fullName>
+                <default>false</default>
+                <label>Discounts</label>
+            </value>
+            <value>
+                <fullName>Equity</fullName>
+                <default>false</default>
+                <label>Equity</label>
+            </value>
+            <value>
+                <fullName>Expense</fullName>
+                <default>false</default>
+                <label>Expense</label>
+            </value>
+            <value>
+                <fullName>Fixed Assets</fullName>
+                <default>false</default>
+                <label>Fixed Assets</label>
+            </value>
+            <value>
+                <fullName>Income</fullName>
+                <default>false</default>
+                <label>Income</label>
+            </value>
+            <value>
+                <fullName>Liability Accounts</fullName>
+                <default>false</default>
+                <label>Liability Accounts</label>
+            </value>
+            <value>
+                <fullName>Long-Term Liability</fullName>
+                <default>false</default>
+                <label>Long-Term Liability</label>
+            </value>
+            <value>
+                <fullName>Other Assets</fullName>
+                <default>false</default>
+                <label>Other Assets</label>
+            </value>
+            <value>
+                <fullName>Other Current Assets</fullName>
+                <default>false</default>
+                <label>Other Current Assets</label>
+            </value>
+            <value>
+                <fullName>Other Expenses</fullName>
+                <default>false</default>
+                <label>Other Expenses</label>
+            </value>
+            <value>
+                <fullName>Other Income</fullName>
+                <default>false</default>
+                <label>Other Income</label>
+            </value>
+            <value>
+                <fullName>Short-Term Liability</fullName>
+                <default>false</default>
+                <label>Short-Term Liability</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

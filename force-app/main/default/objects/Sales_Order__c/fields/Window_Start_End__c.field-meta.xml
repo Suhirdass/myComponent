@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Window_Start_End__c</fullName>
+    <description>/*TEXT(Window_Start__c) + &quot; - &quot; +  TEXT(Window_End__c)*/</description>
+    <externalId>false</externalId>
+    <formula>IF(ISNULL(Window_Start__c),&quot;&quot;,
+IF(HOUR(Window_Start__c) = 0, &apos;12&apos;,IF(HOUR(Window_Start__c) &gt; 12, IF((HOUR(Window_Start__c)-12) &lt;10,&quot;0&quot;&amp;TEXT(HOUR(Window_Start__c)-12),TEXT(HOUR(Window_Start__c)-12)),IF(HOUR(Window_Start__c) &lt;10,&quot;0&quot;&amp;TEXT(HOUR(Window_Start__c)),TEXT(HOUR(Window_Start__c)))))&amp; &quot;:&quot; &amp; IF(MINUTE(Window_Start__c)
+&lt;10,&quot;0&quot;&amp; TEXT(MINUTE(Window_Start__c)),TEXT(MINUTE(Window_Start__c)))&amp; &quot;:&quot; &amp; IF(SECOND(Window_Start__c)&lt;10,&quot;0&quot;&amp;TEXT(SECOND(Window_Start__c)),TEXT(SECOND(Window_Start__c)))&amp;&quot; &quot;&amp; IF(HOUR(Window_Start__c) &gt;= 12 , &apos;PM&apos;,&apos;AM&apos;)
+&amp; &quot; - &quot; )&amp; 
+IF(ISNULL(Window_End__c),&quot;&quot;,
+IF(HOUR(Window_End__c) = 0, &apos;12&apos;,IF(HOUR(Window_End__c) &gt; 12, IF((HOUR(Window_End__c)-12) &lt;10,&quot;0&quot;&amp;TEXT(HOUR(Window_End__c)-12),TEXT(HOUR(Window_End__c)-12)),IF(HOUR(Window_End__c) &lt;10,&quot;0&quot;&amp;TEXT(HOUR(Window_End__c)),TEXT(HOUR(Window_End__c)))))&amp; &quot;:&quot; &amp; IF(MINUTE(Window_End__c)&lt;10,&quot;0&quot;&amp;TEXT(MINUTE(Window_End__c)),TEXT(MINUTE(Window_End__c)))&amp; &quot;:&quot; &amp; IF(SECOND(Window_End__c)&lt;10,&quot;0&quot;&amp;TEXT(SECOND(Window_End__c)),TEXT(SECOND(Window_End__c)))&amp;&quot; &quot;&amp; IF(HOUR(Window_End__c) &gt;= 12 , &apos;PM&apos;,&apos;AM&apos;))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Window Start &amp; End</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

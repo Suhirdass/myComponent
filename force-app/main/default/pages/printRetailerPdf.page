@@ -1,0 +1,249 @@
+<apex:page controller="printRetailerPdfCtrl"  showHeader="false"
+           sidebar="false" renderAs="pdf" applyBodyTag="false" applyHtmlTag="false">
+    <html>
+        <head>
+            <style type="text/css">
+                html,body,div,span,table,thead,tbody,tr,th,td{
+                font-family:'sans-serif';
+                }
+                table
+                {
+                border-collapse: collapse;
+                border: none;
+                }
+                @page{
+                margin-top: 3cm;
+                size: A4 landscape;
+                font-size: 13px;
+                font-family:'sans-serif';
+                font-size:13px;
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 130px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                margin-top: 30px;
+                }
+                div.right {
+                float: right;
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                float:right;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                .sectionHeader {
+                width: 100%;
+                background-color: #eee;
+                font-size: 16pt;
+                padding: 5px;
+                margin: 20px 0px;
+                font-weight: bold;
+                }
+                table {
+                width: 100%;
+                text-align: left;
+                
+                border-collapse: collapse;
+                -fs-table-paginate: paginate;
+                }
+                th,td{
+                padding:4px;
+                vertical-align:top;
+                }
+                th{
+                font-size:12px;
+                }
+                td{
+                font-size:13px;
+                }
+                tr,th,td{
+                border-collapse: collapse;
+                }
+                thead{
+                background: #e7e6e2;
+                text-align: center;
+                }
+                tr.noBorder td {
+                border: 0;
+                }
+                .labelCol {
+                white-space: nowrap;
+                width: 1%;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+            </style>
+        </head>
+        <div class="header"   >
+            <table>
+                <tr>
+                    <td>
+                        <br/>
+                        <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;"/>
+                    </td>
+                    <td>
+                        <br/>
+                        <h1 class="stationName">Retailer Detail(s)</h1>
+                    </td>
+                </tr>
+            </table>
+            
+        </div> 
+        
+        <div class="footer">
+            <div class="footerAlign" id="footerId">
+                <apex:outputText value=" {!NOW()}"/>
+            </div> 
+        </div>
+        <div class="tbl-header">
+            <table border="1" cellpadding="6" cellspacing="0" style="border-color: #000;border-width:1px;">
+                <tr>
+                    <td style="width:30%;">
+                        <div class="brandLeftPanel" style="padding:20px;">
+                            <span style="font-weight: normal;font-size:18px;">
+                                {! retailerRec.retailerDBA }
+                            </span>
+                            <br/><br/>
+                            <div class="slds-m-vertical_medium" style="font-size:14px;">
+                                <p style="line-break: strict;"><span style="color:#74787D;"> Retailer Name</span> <br/><b>{! retailerRec.retailerName }</b> </p><br/>
+                                <apex:outputPanel layout="none" rendered="{! retailerRec.businessLine != '' }">
+                                	<p style="line-break: strict;"><span style="color:#74787D;"> Business Type</span> <br/><b>{! retailerRec.businessLine }</b> </p><br/>
+                                </apex:outputPanel>
+                                <p style="line-break: strict;"> <span style="color:#74787D;"> Sales Rep </span> <br/><b> {!retailerRec.salesPersonName}</b></p><br/>
+								<p style="line-break: strict;"> <span style="color:#74787D;"> Phone</span> <br/><b> {!retailerRec.Phone}</b></p><br/>
+								<p style="line-break: strict;"> <span style="color:#74787D;"> Fax</span> <br/><b> {!retailerRec.fax}</b></p><br/>
+                                <p style="line-break: strict;">
+                                    <span style="color:#74787D;"> Website </span><br/><b><apex:outputLink value="{!retailerRec.Website}">{!retailerRec.Website}</apex:outputLink></b>
+                                </p><br/>
+                                <p style="line-break: strict;">
+                                    <span style="color:#74787D;"> Shipping Address </span><br/><b> {!retailerRec.billingAddress}</b>
+                                </p><br/>
+                                
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width:70%;">
+                        <div style="padding:20px;">
+                            <p style="font-size:16px;">
+                                <b>{!retailerRec.fullDescription}</b> 
+                            </p><br/>
+                            <p style="font-size:15px;">
+                                <apex:outputText escape="false" value="{!retailerRec.aboutus}"></apex:outputText>
+                                
+                            </p>
+                            <apex:outputPanel layout="none" rendered="{!isBrand}">
+                                <br/>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                Retailer Account Rating: {!retailerRec.retailAccountRating}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Mutual Payment Terms: {!retailerRec.mutualPaymentTerms}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Onboard Date:
+                                                <apex:outputText value=" {0,date,MM/dd/yyyy}"> <apex:param value="{!retailerRec.onBoardDate}" /> </apex:outputText>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </apex:outputPanel>
+                        </div>
+                        <div>
+                            <div style="padding:10px;">
+                                <span style="font-size:15px;">
+                                    StateLicense(s)<br/><br/>
+                                </span>
+                                <table border="1" cellpadding="6" width="100%" cellspacing="0" style="border-color: #000;border-width:0.5px;">
+                                    <thead><tr>
+                                        
+                                        <th aria-sort="ascending"  data-sortfield="License_Address__c">
+                                            <span class="headerText">Address</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Class__c">
+                                            <span class="headerText">License Class</span>
+                                            
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Type__c">
+                                            <span class="headerText">License Type</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Number__c">
+                                            <span class="headerText">License Number</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Status__c">
+                                            <span class="headerText">Status</span>
+                                        </th>
+                                        <th aria-sort="ascending"  data-sortfield="License_Expiration_Date__c">
+                                            <span class="headerText">Expire Date</span>
+                                        </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat var="licenses" value="{!LicenseAddress}">
+                                            <tr>
+                                                <td>{!licenses.shipping.street}, <br/>
+                                                    {!licenses.shipping.city}, {!licenses.shipping.province}, {!licenses.shipping.country}, {!licenses.shipping.postalCode}</td>
+                                                <td >{!licenses.licenseClass}</td>
+                                                <td>{!licenses.licenseType}</td>
+                                                <td>{!licenses.licenseNumber}</td>
+                                                <td >{!licenses.licenseStatus}</td>
+                                                <td>
+                                                    <apex:outputText value="{0,date,M/d/yyyy}">
+                                                        <apex:param value="{!licenses.expirationDate}"/>
+                                                        </apex:outputText>
+                                                    
+                                                    
+                                                </td>
+                                            </tr>    
+                                        </apex:repeat>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>                               
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
+        </div>
+    </html>    
+</apex:page>

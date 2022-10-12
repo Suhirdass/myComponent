@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Email_Sell_Quote</fullName>
+    <availability>online</availability>
+    <description>&amp;EmailSubject=Your+Filigreen.com+Order+of+{!Brand_Quote__c.Supplier_DBA__c}+|+{!Brand_Quote__c.Name}&amp;CongaEmailTemplateId=a046A00000AxrNd
+&amp;EmailAdditionalTo={!Brand_Quote__c.Supplier_Email__c}
+2/3/19 - &amp;ReportId=[bqli]00O6A0000061EPy?pv0={!Brand_Quote__c.Id}</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Email Sell Quote</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/APXTConga4__Conga_Composer
+?serverUrl={!API.Partner_Server_URL_370}
+&amp;Id={!Brand_Quote__c.Id}
+&amp;QueryId=[bqline]a056A00000W8ESa?pv0={!Brand_Quote__c.Id}
+&amp;EmailRelatedToId={!Brand_Quote__c.Id}
+&amp;DefaultPDF=1
+&amp;EmailSubject=Your+WOVN+Order+for+{!Brand_Quote__c.Name}+requires+approval!
+&amp;EmailToId={!Brand_Quote__c.Receiver_ContactId__c}
+&amp;EmailAdditionalTo={!IF( Brand_Quote__c.Receiver_DBA__c =&apos;7 Stars Holistic Healing Center&apos;,&apos;joe@7starshhc.com,ashley@7starshhc.com,gabriel@7starshhc.com,ashera@7starshhc.com,zee@7starshhc.com&apos;, &apos;&apos;)}{!IF(Brand_Quote__c.Receiver_DBA__c =&apos;Emerald Pharms&apos;,&apos;chelsea@emeraldpharms.com,elizabeth@emeraldpharms.com&apos;, &apos;&apos;)},{!IF(Brand_Quote__c.Receiver_DBA__c =&apos;Chemistry&apos;,&apos;john.jennings@trychemistry.com&apos;, &apos;&apos;)}
+&amp;EmailCC={!Brand_Quote__c.Supplier_Email__c},brandquote@wearewovn.com{!IF(CONTAINS(Brand_Quote__c.Supplier_DBA__c, &quot;Triple J&quot;),&apos;,joshua@originalminijoints.com,sales@originalminijoints.com,matt@originalminijoints.com,z.rollingoaks@gmail.com&apos;, &apos;&apos;)}
+&amp;AC0=1
+&amp;AC1=Sent+Sell+Quote+{!Brand_Quote__c.Name}
+&amp;UF0=1
+&amp;MFTS0=BQ_Status__c
+&amp;MFTSValue0=Submitted
+&amp;TemplateGroup=BrandSellQuote
+&amp;TemplateId=a0F6A000001kH69
+&amp;CongaEmailTemplateId=a046A00000CjmyN
+&amp;CongaEmailTemplateGroup=EmailSellQuote</url>
+    <width>900</width>
+</WebLink>

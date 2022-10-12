@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GDrive_Access__c</fullName>
+    <externalId>false</externalId>
+    <label>GDrive Access</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>BCC Regulations - Read</fullName>
+                <default>false</default>
+                <label>BCC Regulations - Read</label>
+            </value>
+            <value>
+                <fullName>BCC Regulations - Read/Write</fullName>
+                <default>false</default>
+                <label>BCC Regulations - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Biscotti Buy Sell Docs - Read</fullName>
+                <default>false</default>
+                <label>Biscotti Buy Sell Docs - Read</label>
+            </value>
+            <value>
+                <fullName>Biscotti Buy Sell Docs - Read/Write</fullName>
+                <default>false</default>
+                <label>Biscotti Buy Sell Docs - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Brand Marketing - Read</fullName>
+                <default>false</default>
+                <label>Brand Marketing - Read</label>
+            </value>
+            <value>
+                <fullName>Brand Marketing - Read/Write</fullName>
+                <default>false</default>
+                <label>Brand Marketing - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Buy Sell Templates - Read</fullName>
+                <default>false</default>
+                <label>Buy Sell Templates - Read</label>
+            </value>
+            <value>
+                <fullName>Buy Sell Templates - Read/Write</fullName>
+                <default>false</default>
+                <label>Buy Sell Templates - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Certificate Of Analysis - Read</fullName>
+                <default>false</default>
+                <label>Certificate Of Analysis - Read</label>
+            </value>
+            <value>
+                <fullName>Certificate Of Analysis - Read/Write</fullName>
+                <default>false</default>
+                <label>Certificate Of Analysis - Read/Write</label>
+            </value>
+            <value>
+                <fullName>CSA - Read</fullName>
+                <default>false</default>
+                <label>CSA - Read</label>
+            </value>
+            <value>
+                <fullName>CSA - Read/Write</fullName>
+                <default>false</default>
+                <label>CSA - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Cultivation Tax Receipts - Read</fullName>
+                <default>false</default>
+                <label>Cultivation Tax Receipts - Read</label>
+            </value>
+            <value>
+                <fullName>Cultivation Tax Receipts - Read/Write</fullName>
+                <default>false</default>
+                <label>Cultivation Tax Receipts - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Customer Quotes - Read</fullName>
+                <default>false</default>
+                <label>Customer Quotes - Read</label>
+            </value>
+            <value>
+                <fullName>Customer Quotes - Read/Write</fullName>
+                <default>false</default>
+                <label>Customer Quotes - Read/Write</label>
+            </value>
+            <value>
+                <fullName>DV1 - Read</fullName>
+                <default>false</default>
+                <label>DV1 - Read</label>
+            </value>
+            <value>
+                <fullName>DV1 - Read/Write</fullName>
+                <default>false</default>
+                <label>DV1 - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Dymo Label Templates - Read</fullName>
+                <default>false</default>
+                <label>Dymo Label Templates - Read</label>
+            </value>
+            <value>
+                <fullName>Dymo Label Templates - Read/Write</fullName>
+                <default>false</default>
+                <label>Dymo Label Templates - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Excise Tax Receipts - Read</fullName>
+                <default>false</default>
+                <label>Excise Tax Receipts - Read</label>
+            </value>
+            <value>
+                <fullName>Excise Tax Receipts - Read/Write</fullName>
+                <default>false</default>
+                <label>Excise Tax Receipts - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Filigreen Templates - Read</fullName>
+                <default>false</default>
+                <label>Filigreen Templates - Read</label>
+            </value>
+            <value>
+                <fullName>Filigreen Templates - Read/Write</fullName>
+                <default>false</default>
+                <label>Filigreen Templates - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Filigreen and Henry&apos;s Original Buy Sell Docs - Read</fullName>
+                <default>false</default>
+                <label>Filigreen and Henry&apos;s Original Buy Sell Docs - Read</label>
+            </value>
+            <value>
+                <fullName>Filigreen and Henry&apos;s Original Buy Sell Docs - Read/Write</fullName>
+                <default>false</default>
+                <label>Filigreen and Henry&apos;s Original Buy Sell Docs - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Filigreen Customer Portal Icons - Read</fullName>
+                <default>false</default>
+                <label>Filigreen Customer Portal Icons - Read</label>
+            </value>
+            <value>
+                <fullName>Filigreen Customer Portal Icons - Read/Write</fullName>
+                <default>false</default>
+                <label>Filigreen Customer Portal Icons - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Filigreen Images - Read</fullName>
+                <default>false</default>
+                <label>Filigreen Images - Read</label>
+            </value>
+            <value>
+                <fullName>Filigreen Images - Read/Write</fullName>
+                <default>false</default>
+                <label>Filigreen Images - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Filigreen Marketing - Read</fullName>
+                <default>false</default>
+                <label>Filigreen Marketing - Read</label>
+            </value>
+            <value>
+                <fullName>Filigreen Marketing - Read/Write</fullName>
+                <default>false</default>
+                <label>Filigreen Marketing - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Gold Flora - Read</fullName>
+                <default>false</default>
+                <label>Gold Flora - Read</label>
+            </value>
+            <value>
+                <fullName>Gold Flora - Read/Write</fullName>
+                <default>false</default>
+                <label>Gold Flora - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Henry&apos;s Compliance Doc Sets - Read</fullName>
+                <default>false</default>
+                <label>Henry&apos;s Compliance Doc Sets - Read</label>
+            </value>
+            <value>
+                <fullName>Henry&apos;s Compliance Doc Sets - Read/Write</fullName>
+                <default>false</default>
+                <label>Henry&apos;s Compliance Doc Sets - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Invoices - Read</fullName>
+                <default>false</default>
+                <label>Invoices - Read</label>
+            </value>
+            <value>
+                <fullName>Invoices - Read/Write</fullName>
+                <default>false</default>
+                <label>Invoices - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Job Descriptions - Read</fullName>
+                <default>false</default>
+                <label>Job Descriptions - Read</label>
+            </value>
+            <value>
+                <fullName>Job Descriptions - Read/Write</fullName>
+                <default>false</default>
+                <label>Job Descriptions - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Job Guides - Read</fullName>
+                <default>false</default>
+                <label>Job Guides - Read</label>
+            </value>
+            <value>
+                <fullName>Job Guides - Read/Write</fullName>
+                <default>false</default>
+                <label>Job Guides - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Lab Test - Read</fullName>
+                <default>false</default>
+                <label>Lab Test - Read</label>
+            </value>
+            <value>
+                <fullName>Lab Test - Read/Write</fullName>
+                <default>false</default>
+                <label>Lab Test - Read/Write</label>
+            </value>
+            <value>
+                <fullName>LOIs - Read</fullName>
+                <default>false</default>
+                <label>LOIs - Read</label>
+            </value>
+            <value>
+                <fullName>LOIs - Read/Write</fullName>
+                <default>false</default>
+                <label>LOIs - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Marketplace Brand Pictures - Read</fullName>
+                <default>false</default>
+                <label>Marketplace Brand Pictures - Read</label>
+            </value>
+            <value>
+                <fullName>Marketplace Brand Pictures - Read/Write</fullName>
+                <default>false</default>
+                <label>Marketplace Brand Pictures - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Marketplace Photos - Read</fullName>
+                <default>false</default>
+                <label>Marketplace Photos - Read</label>
+            </value>
+            <value>
+                <fullName>Marketplace Photos - Read/Write</fullName>
+                <default>false</default>
+                <label>Marketplace Photos - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Marketplace Product Pictures - Read</fullName>
+                <default>false</default>
+                <label>Marketplace Product Pictures - Read</label>
+            </value>
+            <value>
+                <fullName>Marketplace Product Pictures - Read/Write</fullName>
+                <default>false</default>
+                <label>Marketplace Product Pictures - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Market Data - Read</fullName>
+                <default>false</default>
+                <label>Market Data - Read</label>
+            </value>
+            <value>
+                <fullName>Market Data - Read/Write</fullName>
+                <default>false</default>
+                <label>Market Data - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Purchase Orders - Read</fullName>
+                <default>false</default>
+                <label>Purchase Orders - Read</label>
+            </value>
+            <value>
+                <fullName>Purchase Orders - Read/Write</fullName>
+                <default>false</default>
+                <label>Purchase Orders - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Production Marketplace Patches - Read</fullName>
+                <default>false</default>
+                <label>Production Marketplace Patches - Read</label>
+            </value>
+            <value>
+                <fullName>Production Marketplace Patches - Read/Write</fullName>
+                <default>false</default>
+                <label>Production Marketplace Patches - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Proforma FY2018 - Read</fullName>
+                <default>false</default>
+                <label>Proforma FY2018 - Read</label>
+            </value>
+            <value>
+                <fullName>Proforma FY2018 - Read/Write</fullName>
+                <default>false</default>
+                <label>Proforma FY2018 - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Quotes and Receipts - Read</fullName>
+                <default>false</default>
+                <label>Quotes and Receipts - Read</label>
+            </value>
+            <value>
+                <fullName>Quotes and Receipts - Read/Write</fullName>
+                <default>false</default>
+                <label>Quotes and Receipts - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Retail Shipping Manifest - Read</fullName>
+                <default>false</default>
+                <label>Retail Shipping Manifest - Read</label>
+            </value>
+            <value>
+                <fullName>Retail Shipping Manifest - Read/Write</fullName>
+                <default>false</default>
+                <label>Retail Shipping Manifest - Read/Write</label>
+            </value>
+            <value>
+                <fullName>RSM - Read</fullName>
+                <default>false</default>
+                <label>RSM - Read</label>
+            </value>
+            <value>
+                <fullName>RSM - Read/Write</fullName>
+                <default>false</default>
+                <label>RSM - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Salesforce - Read</fullName>
+                <default>false</default>
+                <label>Salesforce - Read</label>
+            </value>
+            <value>
+                <fullName>Salesforce - Read/Write</fullName>
+                <default>false</default>
+                <label>Salesforce - Read/Write</label>
+            </value>
+            <value>
+                <fullName>SFDC Dev Requirements - Read</fullName>
+                <default>false</default>
+                <label>SFDC Dev Requirements - Read</label>
+            </value>
+            <value>
+                <fullName>SFDC Dev Requirements - Read/Write</fullName>
+                <default>false</default>
+                <label>SFDC Dev Requirements - Read/Write</label>
+            </value>
+            <value>
+                <fullName>SFDC DevOps - Read</fullName>
+                <default>false</default>
+                <label>SFDC DevOps - Read</label>
+            </value>
+            <value>
+                <fullName>SFDC DevOps - Read/Write</fullName>
+                <default>false</default>
+                <label>SFDC DevOps - Read/Write</label>
+            </value>
+            <value>
+                <fullName>SOPs - Read</fullName>
+                <default>false</default>
+                <label>SOPs - Read</label>
+            </value>
+            <value>
+                <fullName>SOPs - Read/Write</fullName>
+                <default>false</default>
+                <label>SOPs - Read/Write</label>
+            </value>
+            <value>
+                <fullName>TSM - Read</fullName>
+                <default>false</default>
+                <label>TSM - Read</label>
+            </value>
+            <value>
+                <fullName>TSM - Read/Write</fullName>
+                <default>false</default>
+                <label>TSM - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Weekly Reconciliation for Supplier Settlement - Read</fullName>
+                <default>false</default>
+                <label>Weekly Reconciliation for Supplier Settlement - Read</label>
+            </value>
+            <value>
+                <fullName>Weekly Reconciliation for Supplier Settlement - Read/Write</fullName>
+                <default>false</default>
+                <label>Weekly Reconciliation for Supplier Settlement - Read/Write</label>
+            </value>
+            <value>
+                <fullName>Workflows - Read</fullName>
+                <default>false</default>
+                <label>Workflows - Read</label>
+            </value>
+            <value>
+                <fullName>Workflows - Read/Write</fullName>
+                <default>false</default>
+                <label>Workflows - Read/Write</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>6</visibleLines>
+</CustomField>

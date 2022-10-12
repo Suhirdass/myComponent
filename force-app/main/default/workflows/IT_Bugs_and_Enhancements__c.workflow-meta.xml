@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>BE_Ready_2_Deploy</fullName>
+        <description>BE Ready 2 Deploy</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>khanh@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/BE_Ready2Deploy_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>BE_Ready_2_Test</fullName>
+        <description>BE Ready 2 Test</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>khanh@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/BE_Ready2Test_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>BE_Testing_failed</fullName>
+        <description>BE Testing failed</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/BE_Testing_Complete_OR_Failed</template>
+    </alerts>
+    <alerts>
+        <fullName>BE_completed</fullName>
+        <description>BE completed</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>khanh@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/BE_Closed_notification</template>
+    </alerts>
+    <alerts>
+        <fullName>New_IT_BERequest_LIVE_in_Salesforce</fullName>
+        <description>New IT-BERequest - LIVE in Salesforce</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Filigreen_Admin_Users</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/BE_DEPLOYED_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>New_Task_Assignment</fullName>
+        <description>New Task Assignment</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Assigned_To_Dev__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>IT_Team_Templates/New_WOVN_Task_Assigned</template>
+    </alerts>
+    <rules>
+        <fullName>BE Approved to Deploy Notification</fullName>
+        <actions>
+            <name>BE_Ready_2_Deploy</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED(Status__c) &amp;&amp;
+OR(
+TEXT( Status__c )  = &apos;Approved to Deploy - Staging&apos; ,
+TEXT( Status__c )  = &apos;Approved to Deploy - PROD&apos;,
+TEXT( Status__c )  = &apos;Deployed&apos;
+)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>BE LIVE Alert</fullName>
+        <actions>
+            <name>BE_completed</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>AND (
+ISCHANGED(Status__c),
+ISCHANGED( Released_Date__c ),
+CONTAINS (TEXT( Status__c ) , &apos;Live in PROD&apos;),
+Released_Date__c  &lt;&gt; null )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>BE LIVE Notification</fullName>
+        <actions>
+            <name>New_IT_BERequest_LIVE_in_Salesforce</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>ISCHANGED(Status__c) = true &amp;&amp; 
+ISCHANGED( Released_Date__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>BE Ready2Test Notification</fullName>
+        <actions>
+            <name>BE_Ready_2_Test</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED(Status__c) &amp;&amp;
+OR (
+TEXT( Status__c )  = &apos;Ready to Test&apos;, 
+TEXT( Status__c )  = &apos;Ready to Test - Staging&apos;)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>BE Testing Complete OR Failed Notification</fullName>
+        <actions>
+            <name>BE_Testing_failed</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED(Status__c) &amp;&amp;
+OR(
+TEXT( Status__c )  = &apos;Tested Changes Required&apos;,
+TEXT( Status__c )  = &apos;Tested Failed&apos;,
+TEXT( Status__c )  = &apos;Tested Failed - Staging&apos;)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>New BE for Development</fullName>
+        <actions>
+            <name>New_Task_Assignment</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <formula>OR(
+
+AND (Assigned_To_Dev__c  &lt;&gt; null,ISNEW(), ISNULL(Released_Date__c)) ,
+
+AND(ISCHANGED(Assigned_To_Dev__c ), ISNULL(Released_Date__c))
+
+)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

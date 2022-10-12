@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>License_Class__c</columns>
+    <columns>License_ID__c</columns>
+    <columns>License_Name__c</columns>
+    <columns>License_Number__c</columns>
+    <columns>Warehouse_Name__c</columns>
+    <columns>Active__c</columns>
+    <columns>Sort_Order__c</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <columns>CREATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

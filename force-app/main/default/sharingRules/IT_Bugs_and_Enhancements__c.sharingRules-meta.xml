@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingOwnerRules>
+        <fullName>Share_BE_to_Imran</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Custom sharing rule to enable all dev items to Imran</description>
+        <label>Share BE to Imran</label>
+        <sharedTo>
+            <group>IT_Dev_Team_VJ_and_Imran</group>
+        </sharedTo>
+        <sharedFrom>
+            <portalRole>IrrationalRaccoonTechCustomerUser</portalRole>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

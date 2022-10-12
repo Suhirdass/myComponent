@@ -1,0 +1,125 @@
+@font-face{
+    font-family:'Alliance Neue';
+    src:url('/filigreenb2b/resource/WOVNResources/Fonts/Alliance/Alliance-NeueRegular.woff') format('woff');
+    
+}
+.THIS {
+    position: relative;
+    z-index: 1;
+    /*min-width: 1500px;*/
+    height: 1px;
+}
+.THIS .slds-large-size_2-of-12 {
+    width: 200px !important;
+}
+.THIS ::selection { 
+	background: #F4F3EE; 
+}
+
+.THIS .deepJade{
+    background-color:#065E66 !important;
+}
+.THIS .welcomeFont{
+    color:#fff;
+    font-size:10px;
+	font-family: 'Work Sans', sans-serif;
+    letter-spacing: 4px;
+}
+.THIS #mainWrapper, .THIS .filigreenHeader{
+    background-color: token(land);
+    color: white;
+    position: fixed;
+    top: 0;
+    height: 63px;
+    z-index: 1000;
+   /* background-color: #e7e7e7 ;*//*#242529;*/
+    /*height:135px;
+    padding:4.5rem 1.5rem 4.5rem 1.5rem;*/
+    /*height: 80px;
+    padding: 1.5rem 1.5rem 3.5rem 1.5rem;*/
+    /*height: 25px;*/
+    padding-bottom: 36px;
+    padding-top: 18px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    margin-bottom:3px;
+    width:100%;
+}
+.THIS .searchBar, .THIS .profilebar{
+    /*padding-top:2%;*/
+    text-align:right
+}
+.THIS .navigationBar{
+    background-color: #e7e7e7;/*#242529;*/
+}
+.THIS #contentHolder{
+	padding-top: 3%;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-bottom: .5%;
+}
+
+.THIS #topContents{
+	margin-bottom: 2%;
+	overflow: visible;
+}
+
+.THIS #filigreenLogo{
+	width: 20%;
+	float: left;
+	text-align: center;
+}
+
+.THIS #searchBar{
+	width: 50%;
+	float: left;
+	margin-right: 10px;
+} 
+
+.THIS #profileBar{
+	width: 25%;
+	height: 64px;
+    float: right;
+}
+
+.THIS #navbar{
+	width: 100%;
+}
+.THIS .filigreenContents{
+    margin-top:63px;
+    padding:0 1.5rem;
+}
+.THIS #mainBody{
+	min-height: 600px;
+	position: relative;
+}
+@media (min-width: 1280px){
+    .THIS.bs .FiligreenLogo{
+        padding-top:2%;
+    }
+}
+.THIS .FiligreenLogo{
+}
+.THIS .btn
+{
+    /*width: 100%;*/
+    height: 40px;
+    color: #fff;/*#556d4d;*/
+    background-color: #0C0D0D;/*#f5e6d8;*/
+    font-size: 12px;
+    font-family:'Work Sans';
+    /*font-weight: bold;*/
+    letter-spacing : 4px;
+    border-style: none;
+    transition: .3s ease-out;
+    transition-property: initial;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    transition-delay: initial;
+    outline: 0;
+    font-weight: 500;
+    border-radius: 0;
+}
+.THIS .minWidth130{
+    min-width: 130px;
+}

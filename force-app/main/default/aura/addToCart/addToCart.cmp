@@ -1,0 +1,116 @@
+<aura:component extends="c:utility" controller="ProductsCtlr">
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+	<aura:attribute name="product" type="Map" default="" required="true" />
+	<aura:attribute name="showQuantityInput" type="Boolean" default="false" />
+	<aura:attribute name="quantity" type="Integer" default="1" />
+	<aura:attribute name="actionTitle" type="String" default="Add to Cart" />
+	<aura:attribute name="isUpdate" type="Boolean" default="false" />
+	<aura:attribute name="isSample" type="Boolean" default="false" />
+	<aura:attribute name="allowSample" type="Boolean" default="false" />
+	<aura:attribute name="showDetails" type="Boolean" default="false" />
+	<aura:attribute name="updated" type="String" default="false" />
+	<aura:attribute name="isPublic" type="Boolean" default="false" />
+	<aura:attribute name="passiveAction" type="Boolean" default="false" />
+    <aura:attribute name="isFromCartInput" type="Boolean" default="false" />
+    <aura:attribute name="isFromCartUpdate" type="Boolean" default="false" />
+    <aura:attribute name="fromPublicProducts" type="Boolean" default="false" />
+	<aura:attribute name="ERR_MSG_ORDER_QTY_GT_AVAILABLE_QTY" type="String"/>
+    
+	<lightning:navigation aura:id="navService" />
+	<aura:registerEvent name="updateCartTotalEvt" type="c:updateCartTotalEvt" />
+
+	<div class="{!v.passiveAction ? 'slds-is-relative passiveVariant' : 'slds-is-relative passive'}">
+		<lightning:spinner
+			variant="brand"
+			size="small"
+			alternativeText="Adding item to cart."
+			class="{!(v.isProcessing? 'slds-show': 'slds-hide')}"
+		/>
+
+		<lightning:layout multipleRows="true">
+			<lightning:layoutItem
+				flexibility="grow"
+				size="12"
+				class="add-to-card__container slds-text-align_right"
+			>
+				<aura:if
+					isTrue="{!or(v.isBrand, greaterthanorequal(v.product.availableQty, v.product.MOQ))}"
+				>
+					<aura:if isTrue="{!!v.isFromCartInput}">
+                        <aura:if isTrue="{!!v.fromPublicProducts}">
+                            <lightning:button
+                                              disabled="{! !v.product.hasSampleChild }"
+                                              class="{!$Browser.isTablet ? 'slds-show_inline-block slds-float_left ipadButton ' : 'slds-show_inline-block slds-float_left '+(v.product.hasSampleChild ? 'reqSampleBtn': '' ) }"
+                                              label="Request Sample"
+                                              title="Request Sample"
+                                              onclick="{!c.onSampleRequest}"
+                                              />
+                        </aura:if>
+                    </aura:if>
+					<aura:if isTrue="{!!v.fromPublicProducts}">
+                    <aura:if isTrue="{!!v.isFromCartUpdate}">
+                        <aura:if isTrue="{!v.showQuantityInput}">
+                            <!-- <lightning:input disabled="{!v.isSample}" type="number" min="1" value="{!v.quantity}" step="1" class="slds-m-right_xx-small width60 hide-label inputPadding" /> -->
+                            <div class="slds-m-horizontal_xx-small slds-show_inline">
+                                <c:numberInput
+                                               isDisabled="{!v.isSample}"
+                                               value="{!v.quantity}"
+                                               small="{!v.passiveAction}"
+                                               />
+                            </div>
+                        </aura:if>
+                    </aura:if>
+                    </aura:if>
+                    <aura:if isTrue="{!!v.isFromCartInput}">
+                        <aura:if isTrue="{!equals(v.actionTitle, 'Update')}">
+                            <lightning:icon
+                                            iconName="action:approval"
+                                            alternativeText="Update"
+                                            title="Update"
+                                            size="xx-small"
+                                            onclick="{!c.onAddToCart}"
+                                            class="update"
+                                            />
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{!!v.fromPublicProducts}">
+                                    <lightning:button
+                                                      variant="{!v.passiveAction ? 'brand-outline' : 'brand'}"
+                                                      class="{!$Browser.isTablet ? 'slds-show_inline-block  ipadButton ' : 'slds-show_inline-block ipadButton2' + (equals(v.actionTitle, 'Update')? 'adjustPadding': '' )}"
+                                                      label="{!v.actionTitle}"
+                                                      title="{!v.actionTitle}"
+                                                      onclick="{!c.onAddToCart}"
+                                                      disabled="{!v.product.isDisableProduct}"
+                                                      />
+                                    <aura:set attribute="else">
+                                         
+                                        <lightning:button
+                                                      variant="{!v.passiveAction ? 'brand-outline' : 'brand'}"
+                                                      class="{!$Browser.isTablet ? 'slds-show_inline-block  ipadButton selectedBtnCss' : 'slds-show_inline-block selectedBtnCss ' + (equals(v.actionTitle, 'Update')? 'adjustPadding': '' )}"
+                                                      label="Order now"
+                                                      title="Order now"
+                                                      onclick="{!c.orderNow}"
+                                                      />
+                                    </aura:set>
+                                </aura:if>
+                                
+                            </aura:set>
+                        </aura:if>
+                    </aura:if>
+					<aura:set attribute="else">
+						<aura:if isTrue="{!and(!equals(v.actionTitle, 'Update'),!v.isPublic)}">
+							<span class="slds-text-title_caps slds-text-color_error outOfStock" style="font-size: 11px; text-transform: unset;font-family:'Alliance Neue';">OUT OF STOCK!</span>
+							<aura:set attribute="else">
+								<span
+									class="slds-text-color_error outOfStock"
+									style="font-size: 11px; text-transform: unset;font-family:'Alliance Neue';"
+									>Out Of Stock!
+								</span>
+							</aura:set>
+						</aura:if>
+					</aura:set>
+				</aura:if>
+			</lightning:layoutItem>
+		</lightning:layout>
+	</div>
+</aura:component>

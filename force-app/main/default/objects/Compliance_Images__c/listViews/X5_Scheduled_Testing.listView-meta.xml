@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X5_Scheduled_Testing</fullName>
+    <columns>NAME</columns>
+    <columns>Producer_Name__c</columns>
+    <columns>Product__c</columns>
+    <columns>Harvest_Batch_Code__c</columns>
+    <columns>Laboratory_Name__c</columns>
+    <columns>Brand_Test_Request_Date__c</columns>
+    <columns>Brand_Test_Confirmaton__c</columns>
+    <columns>Lab_Request_Date__c</columns>
+    <columns>Batch_Size__c</columns>
+    <columns>Lab_Test_Status__c</columns>
+    <columns>Sample_Collection_Date__c</columns>
+    <columns>Estimated_Completion_Date__c</columns>
+    <columns>COA_Issued_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Lab_Test_Status__c</field>
+        <operation>equals</operation>
+        <value>Not Tested,Sampled,Failed</value>
+    </filters>
+    <filters>
+        <field>COA_Issued_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>5. Scheduled Testing</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

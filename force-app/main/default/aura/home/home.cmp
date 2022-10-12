@@ -1,0 +1,248 @@
+<aura:component extends="c:utility" controller="HomeController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <aura:attribute name="isBrand" type="Boolean" default="false"/>
+    <aura:attribute name="isLimited" type="Boolean" default="false"/>
+    <aura:attribute name="baseUrl" type="String" default=""/>
+    <aura:attribute name="INVESTOR_DASHBOARD_ID" type="String" default=""/>
+    <aura:handler event="c:newsAndAnnouncementEvent" action="{!c.showNewsAndAnnouncement}" />
+    <aura:attribute name="hasNewsAndAnnouncemnets" type="Boolean" default=""/> 
+    <aura:attribute name="newsAndAnnouncemnets" type="List" default=""/>
+    <lightning:overlayLibrary aura:id="overlay" />
+    <aura:attribute name="recentOrdersList" type="List" default="[]"/>
+    <aura:attribute name="topBuyingRetailers" type="List" default="[]"/>
+    <aura:attribute name="topSellingProducts" type="List" default="[]"/>
+    <aura:attribute name="newAccountOrdersList" type="List" default="[]"/>
+    <aura:attribute name="coldAccountsList" type="List" default="[]"/>
+    <aura:attribute name="isDataLoad" type="Boolean" default="false"/>
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <ltng:require scripts="{!join(',',$Resource.chartjs + '/chartjs/Chart.min.js')}" afterScriptsLoaded="{!c.onInit}"/>
+    <ltng:require scripts="{!$Resource.jsChart}"></ltng:require>
+    <!--<ltng:require scripts="{!join(',',$Resource.d3files + '/d3files/jquery.min.js',$Resource.d3files + '/d3files/d3.v4.min.js',$Resource.d3files + '/d3files/d3.v5.min.js',$Resource.d3files + '/d3files/d3.legend.js')}" afterScriptsLoaded="{!c.onInit}"/>-->
+    <div class="slds-is-relative" style="height:calc(100vh - 63px)">    	
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />    	    
+        <div class="demo-only demo-only--sizing slds-grid slds-wrap" style="{!'display:'+if(and(v.isDataLoad,v.isBrand),'flex','none')}" id="MGMChartDiv">
+            <aura:if isTrue="{!and(v.isDataLoad,v.isBrand)}" >
+                <div class=" slds-size_12-of-12 slds-small-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_6-of-12">
+                    <div class="slds-box slds-box_x-small slds-m-around_x-small MainDiv">
+                        <h2 class="ticket-header slds-text-heading_small">
+                            <b>Recent Orders</b>
+                        </h2>
+                        <div class="table-container slds-m-top_small" style="overflow: auto;height: 272px;">
+                            <table class="slds-table table--double-border">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #d1cdb0;">Retailer DBA</th>
+                                        <th style="background-color: #d1cdb0;">Total Product Price</th>
+                                        <th style="background-color: #d1cdb0;">Status</th>
+                                        <th style="background-color: #d1cdb0;">Ship Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.recentOrdersList}" var="order" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                <div class="ticketNumber slds-truncate sortable" style="width: 125px;" title="{!order.Retailer_DBA__c}">
+                                                    <a data-id="{!order.Retailer__c}" data-ordername="{!order.Retailer_DBA__c}" onclick="{!c.onViewOrder}" style="color:#518397">{!order.Retailer_DBA__c}</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <ui:outputCurrency  value="{!order.Total_Product_Price__c}" />
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!order.Status__c }</div>
+                                            </td>
+                                            <td>
+                                                <ui:outputDate format="MM/dd/yyyy" value="{!order.Request_Ship_Date__c}"/>
+                                                
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+            <div class=" slds-size_12-of-12 slds-small-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_6-of-12">
+                <div class="{!and(v.isDataLoad,v.isBrand) ? 'slds-box slds-box_x-small slds-m-around_x-small ':''}" style="overflow: auto;">
+                    <aura:if isTrue="{!and(v.isDataLoad,v.isBrand)}" >
+                        <h2 class="ticket-header slds-text-heading_small">
+                            <b>Month over Month - Sales</b>
+                        </h2>
+                    </aura:if>
+                    <canvas id="MGMChart" style="margin-top:2%;"></canvas>
+                </div>
+            </div>
+            <aura:if isTrue="{!and(v.isDataLoad,v.isBrand)}" >
+                <div class=" slds-size_12-of-12 slds-small-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_6-of-12">
+                    <div class="slds-box slds-box_x-small slds-m-around_x-small MainDiv">
+                        <h2 class="ticket-header slds-text-heading_small">
+                            <b>Top Selling Products - Past 3 months</b>
+                        </h2>
+                        <div class="table-container slds-m-top_small" style="overflow: auto;height: 272px;">
+                            <table class="slds-table table--double-border">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #d1cdb0;">Product Name</th>
+                                        <th style="background-color: #d1cdb0;">Product Family</th>
+                                        <th style="background-color: #d1cdb0;">Quantity</th>
+                                        <th style="background-color: #d1cdb0;">Total Product Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.topSellingProducts}" var="topSellingProduct" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                <div class="ticketNumber slds-truncate sortable" style="width: 125px;" title="{!topSellingProduct.productName}">
+                                                    <a data-id="{!topSellingProduct.priceBookEntryId}" data-topsellingproductname="{!topSellingProduct.productName}" onclick="{!c.onViewtopSellingProduct}" style="color:#518397">{!topSellingProduct.productName}</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {!topSellingProduct.productFamily}
+                                            </td>
+                                            <td>
+                                                {!topSellingProduct.Quantity}
+                                            </td>
+                                            <td>
+                                                <ui:outputCurrency  value="{!topSellingProduct.totalPrice}" />
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class=" slds-size_12-of-12 slds-small-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_6-of-12">
+                    <div class="slds-box slds-box_x-small slds-m-around_x-small MainDiv">
+                        <h2 class="ticket-header slds-text-heading_small">
+                            <b>Top Buying Retailers - Past 3 months</b>
+                        </h2>
+                        <div class="table-container slds-m-top_small" style="overflow: auto;height: 272px;">
+                            <table class="slds-table table--double-border">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40%;background-color: #d1cdb0;" >Retailer DBA</th>
+                                        <th style="width:20%;background-color: #d1cdb0;" >City</th>
+                                        <th style="width:20%;background-color: #d1cdb0;" >Total Product Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.topBuyingRetailers}" var="topBuyingRetail" indexVar="index">
+                                        <tr>
+                                            <td  style="width:40%">
+                                                <div class="ticketNumber slds-truncate sortable" style="max-width:250px" title="{!topBuyingRetail.retailerDba}">
+                                                    <a data-id="{!topBuyingRetail.retailerId}" data-retailername="{!topBuyingRetail.retailerDba}" onclick="{!c.onViewtopBuyingRetailer}" style="color:#518397">{!topBuyingRetail.retailerDba}</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {!topBuyingRetail.retailercity}
+                                            </td>
+                                            <td>
+                                                <ui:outputCurrency  value="{!topBuyingRetail.totalPrice}" />
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class=" slds-size_12-of-12 slds-small-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_6-of-12">
+                    <div class="slds-box slds-box_x-small slds-m-around_x-small MainDiv">
+                        <h2 class="ticket-header slds-text-heading_small">
+                            <b>New &amp; Recovered Accounts</b>
+                        </h2>
+                        <div class="table-container slds-m-top_small" style="overflow: auto;height: 272px;">
+                            <table class="slds-table table--double-border">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #d1cdb0;">Retailer DBA</th>
+                                        <th style="background-color: #d1cdb0;">City</th>
+                                        <th style="background-color: #d1cdb0;">Ship Date</th>
+                                        <th style="background-color: #d1cdb0;">Total Product Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.newAccountOrdersList}" var="order" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                <div class="ticketNumber slds-truncate sortable" style="width: 125px;" title="{!order.Retailer__r.DBA__c}">
+                                                    <a data-id="{!order.Retailer__c}" data-retailername="{!order.Retailer__r.DBA__c}" onclick="{!c.onViewtopBuyingRetailer}" style="color:#518397;">{!order.Retailer__r.DBA__c}</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {!order.State_License__r.License_City__c}
+                                            </td>
+                                            <td><lightning:formattedDateTime value="{!order.Order_Date__c}" year="numeric" month="numeric" day="numeric"/></td>
+                                            <td>
+                                                <ui:outputCurrency  value="{!order.Total_Product_Price__c}" />
+                                            </td>                                    
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class=" slds-size_12-of-12 slds-small-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_6-of-12">
+                    <div class="slds-box slds-box_x-small slds-m-around_x-small MainDiv">
+                        <div  onclick="{!c.onAllColdAccounts}" style="cursor:pointer;">
+                            <h2 class="ticket-header slds-text-heading_small">
+                                <b>Cold Accounts</b>
+                            </h2>
+                        </div>
+                        <div class="table-container slds-m-top_small" style="overflow: auto;height: 272px;">
+                            <table class="slds-table table--double-border">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #d1cdb0;">Retailer DBA</th>
+                                        <th style="background-color: #d1cdb0;">City</th>
+                                        <th style="background-color: #d1cdb0;">Ship Date</th>
+                                        <th style="background-color: #d1cdb0;">Total Product Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.coldAccountsList}" var="order" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                <div class="ticketNumber slds-truncate sortable" style="width: 125px;" title="{!order.Retailer__r.DBA__c}">
+                                                    <a data-id="{!order.Retailer__c}" data-retailername="{!order.Retailer__r.DBA__c}" onclick="{!c.onViewtopBuyingRetailer}" style="color:#518397">{!order.Retailer__r.DBA__c}</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {!order.Retailer__r.BillingCity}
+                                            </td>
+                                            <td><lightning:formattedDateTime value="{!order.Order_Date__c}" year="numeric" month="numeric" day="numeric"/></td>
+                                            <td>
+                                                <ui:outputCurrency  value="{!order.Total_Product_Price__c}" />
+                                            </td>                                    
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+            <div class="slds-size_1-of-1">
+                <div class="{!and(v.isDataLoad,v.isBrand) ? 'slds-box slds-box_x-small slds-m-around_x-small ':''}" style="overflow: auto;">
+                    <aura:if isTrue="{!and(v.isDataLoad,v.isBrand)}" >    
+                        <h2 class="ticket-header slds-text-heading_small">
+                            <b>Aging Inventory - Total Units</b>
+                        </h2>
+                    </aura:if>
+                    <canvas id="AgingChart" style="margin-top:2%;" width="1030" height="450"></canvas>
+                </div>
+            </div>
+        </div>   
+        <aura:if isTrue="{!and(v.isDataLoad,not(v.isBrand))}" >
+            <aura:if isTrue="{!v.isLimited}">
+                <iframe src="{!v.baseUrl+'/desktopDashboards/dashboardApp.app?dashboardId='+v.INVESTOR_DASHBOARD_ID+'&amp;displayMode=view'}" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" width="100%"></iframe>
+                <!--forceCommunity:waveDashboard dashboardId="01Z7b000000GuffEAC" /-->
+            	<aura:set attribute="else">
+                	<c:products/>
+                </aura:set>
+            </aura:if>            
+        </aura:if>
+    </div>
+</aura:component>

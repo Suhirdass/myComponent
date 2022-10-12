@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Serial_Service_Tag_Number__c</fullName>
+    <description>PC users : Press Windows key + R. Type cmd and enter. On command window paste &quot;WMIC BIOS GET SERIALNUMBER&quot; to get your service tag number.
+
+MAC Users : https://support.apple.com/en-us/HT204308</description>
+    <externalId>false</externalId>
+    <inlineHelpText>PC users : Press Windows key + R. Type cmd and enter. On command window paste &quot;WMIC BIOS GET SERIALNUMBER&quot; to get your service tag number.
+
+MAC Users : https://support.apple.com/en-us/HT204308</inlineHelpText>
+    <label>Serial/Service Tag Number</label>
+    <length>255</length>
+    <required>true</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

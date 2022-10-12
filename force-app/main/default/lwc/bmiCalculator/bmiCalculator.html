@@ -1,0 +1,12 @@
+<template>
+    <lightning-card title={cardTitle} padding="around-medium" margin="around-medium">
+    <lightning-input type="number" label="Weight in Kilogram" steps="0.01" onchange={onWeightHandler}></lightning-input>
+    <lightning-input type="number" label="Weight in Height" steps="0.01" onchange={onHeightHandler}></lightning-input>
+    <lightning-button label="Get BMI" onclick={calculateBMI}></lightning-button>
+  <!--  <p> Your BMI is : {bmi}</p> -->
+  <!-- Displaying data through object by using @track decorator -->
+  <!--  <p> Your BMI is : {bmiData.result}</p> -->
+<!-- Display Data by using getter properties -->
+  <p> {bmiValue}</p>
+ </lightning-card>
+</template>

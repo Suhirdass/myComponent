@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Calculate_Local_Cannabis_Tax</fullName>
+        <field>Subtotal_Local_Cannabis_Tax__c</field>
+        <formula>if( Product_Name__c  &lt;&gt; &apos;01t6A0000038irg&apos;,
+Line_Total_Product_Price__c * 0.32 * 0.08,0)</formula>
+        <name>Calculate Local Cannabis Tax</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Reset_INVLI_ReCalc_Excise_Tax</fullName>
+        <field>ReCalc_Excise_Tax__c</field>
+        <literalValue>0</literalValue>
+        <name>Reset INVLI ReCalc Excise Tax</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Excise_Tax_Amount</fullName>
+        <description>Invoice__r.Sales_Order__r.Brand_Quote__r.Apply_Excise_Tax__c = true</description>
+        <field>Excise_Tax_Amount__c</field>
+        <formula>IF( Apply_Excise_Tax__c = &apos;Yes&apos; &amp;&amp;  
+Sales_Order_Line__r.Brand_Quote_Line__r.Apply_Excise_Tax__c =&apos;Yes&apos;  &amp;&amp; 
+TEXT( InvoiceLine_Status__c )  &lt;&gt; &apos;Rejected&apos; &amp;&amp;  
+TEXT( InvoiceLine_Status__c )  &lt;&gt; &apos;Cancelled&apos;, 
+
+if( Invoice__r.Ship_Confirmation_Date__c &lt;= Date( 2019,12,31), Line_Total_Product_Price__c * (1.6) *(0.15), Line_Total_Product_Price__c * (1.8) *(0.15))
+
+, 0)</formula>
+        <name>Update Excise Tax Amount - Invoice</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Invoice_Line_Status</fullName>
+        <field>InvoiceLine_Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Update Invoice Line Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Unit_Cultivation</fullName>
+        <field>Unit_Cultivation_Tax__c</field>
+        <formula>TSM_Line__r.Unit_Cultivation_Tax__c</formula>
+        <name>Update Unit Cultivation</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Update Excise Tax Amount - Invoice</fullName>
+        <actions>
+            <name>Reset_INVLI_ReCalc_Excise_Tax</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Excise_Tax_Amount</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Invoice_Line__c.Apply_Excise_Tax__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

@@ -1,0 +1,116 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+
+	<ltng:require styles="{! $Resource.tabset }" />
+	<!--ltng:require styles="{! $Resource.box }" /-->
+  <ltng:require
+                scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                         $Resource.perfectScrollbar + '/jquery.zoom.js')}"
+                afterScriptsLoaded="{!c.onScriptsLoaded}" />
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+  <aura:attribute name="product" type="Map" default="" />
+  <aura:attribute name="totalReviews" type="Integer" default="0" />
+  <aura:attribute name="ratingsSummary" type="List" default="[]" />
+  <aura:attribute name="reviews" type="List" default="" />
+  <aura:attribute name="quantity" type="Integer" default="1" />
+    <aura:attribute name="products" type="List" default="" />
+    <aura:attribute name="warehouseTotalOrderedMap" type="Map" default="" />
+<aura:attribute name="descriptionHeight" type="String" default="500px" />
+  <div class="slds-is-relative">
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    <aura:if isTrue="{!!empty(v.product)}">
+      <lightning:layout horizontalAlign="center" multipleRows="true">
+        <lightning:layoutItem flexibility="grow" size="9" padding="around-small">
+            
+          <div class="slds-box" aura:id="description">
+              <span class="print-export" onclick="{!c.onDuplicate}">DUPLICATE</span>
+            <lightning:tabset selectedTabId="description" class="productTabs">
+                
+              <lightning:tab label="Description" id="description" >
+                <c:productDetails
+                  product="{!v.product}" isDetails="true" isBrand="{!v.isBrand}"
+                />
+              </lightning:tab>
+
+              <lightning:tab label="Product Details" id="product-details" >
+                  <div style="{!'min-height:'+v.descriptionHeight}">
+                      <aura:unescapedHtml value="{!v.product.productDetails}"/>
+                  </div>
+              </lightning:tab>
+                
+            </lightning:tabset>
+          </div>
+        </lightning:layoutItem>
+
+        <lightning:layoutItem flexibility="grow" size="3" padding="around-small">
+          <div class="slds-box">
+            <lightning:layout multipleRows="true">
+              <lightning:layoutItem padding="around-small" class="slds-box__header">
+                <h2 class="slds-box__heading-1" style="font-family:'Alliance Neue';">Featured Products</h2>
+              </lightning:layoutItem>
+
+              <lightning:layoutItem padding="around-small">
+                  <aura:iteration items="{!v.products}" var="p">
+                      <div class="product-card clickable" data-name="{!p.shortDescrption}" data-id="{!p.price.id}" onclick="{!c.onProductClick}">
+                          <img data-name="{!p.shortDescrption}" data-id="{!p.price.id}" src="{!p.imageUrl}" class="product-card__image" />
+                          
+                          <div class="product-card__description" data-name="{!p.shortDescrption}" data-id="{!p.price.id}">
+                              <p class="text__grey" data-name="{!p.shortDescrption}" data-id="{!p.price.id}">{!p.shortDescrption}</p>
+                              <p class="text__bold" data-name="{!p.shortDescrption}" data-id="{!p.price.id}"><ui:outputCurrency class="{!'text__semibold'+if(p.discount>0,'line-through')}" value="{!p.price.unitPrice}" /></p>
+                          </div>
+                      </div>
+                  </aura:iteration>
+                <!--div class="product-card">
+                  <img src="https://drive.google.com/uc?export=view&amp;id=1a2eBSonwPXLWlPf_AVQ8YmcMqh1sEgZM" class="product-card__image" />
+
+                  <div class="product-card__description">
+                    <p class="text__grey">Cartridge, Chernobyl Live Sauce 500(mg), Sativa</p>
+                    <p class="text__bold">$15.00</p>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <img src="https://drive.google.com/uc?export=view&amp;id=1a2eBSonwPXLWlPf_AVQ8YmcMqh1sEgZM" class="product-card__image" />
+
+                  <div class="product-card__description">
+                    <p class="text__grey">Cartridge, Chernobyl Live Sauce 500(mg), Sativa</p>
+                    <p class="text__bold">$15.00</p>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <img src="https://drive.google.com/uc?export=view&amp;id=1a2eBSonwPXLWlPf_AVQ8YmcMqh1sEgZM" class="product-card__image" />
+
+                  <div class="product-card__description">
+                    <p class="text__grey">Cartridge, Chernobyl Live Sauce 500(mg), Sativa</p>
+                    <p class="text__bold">$15.00</p>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <img src="https://drive.google.com/uc?export=view&amp;id=1a2eBSonwPXLWlPf_AVQ8YmcMqh1sEgZM" class="product-card__image" />
+
+                  <div class="product-card__description">
+                    <p class="text__grey">Cartridge, Chernobyl Live Sauce 500(mg), Sativa</p>
+                    <p class="text__bold">$15.00</p>
+                  </div>
+                </div>
+
+                <div class="product-card">
+                  <img src="https://drive.google.com/uc?export=view&amp;id=1a2eBSonwPXLWlPf_AVQ8YmcMqh1sEgZM" class="product-card__image" />
+
+                  <div class="product-card__description">
+                    <p class="text__grey">Cartridge, Chernobyl Live Sauce 500(mg), Sativa</p>
+                    <p class="text__bold">$15.00</p>
+                  </div>
+                </div-->
+              </lightning:layoutItem>
+            </lightning:layout>
+          </div>
+        </lightning:layoutItem>
+      </lightning:layout>
+    </aura:if>
+  </div>
+</aura:component>

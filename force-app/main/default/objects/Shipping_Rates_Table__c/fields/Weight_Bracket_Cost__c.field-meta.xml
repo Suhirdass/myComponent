@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Weight_Bracket_Cost__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Company Calculated Dimensional (DIM) or Gross Weight Cost based on SG&amp;A and Work Center Load</inlineHelpText>
+    <label>Weight Bracket Cost</label>
+    <precision>15</precision>
+    <required>false</required>
+    <scale>3</scale>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

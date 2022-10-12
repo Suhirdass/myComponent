@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="69px" height="67px" viewBox="0 0 69 67" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>22DB8B45-6D83-40E2-9E61-D972CAFA8B70</title>
+    <defs>
+        <filter x="-1.1%" y="-13.3%" width="102.2%" height="126.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.260462194 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Filigreen-2.5-Source" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Marketplace-Brand" transform="translate(-1357.000000, -272.000000)" stroke="#195458" stroke-width="1.10943396">
+            <g id="Group-2" filter="url(#filter-1)" transform="translate(256.000000, 264.000000)">
+                <g id="C--Flowers-Copy-11" transform="translate(1085.000000, 0.000000)">
+                    <g id="black-icons-64px-12" transform="translate(26.265306, 18.000000)">
+                        <path d="M11.0730566,20.9793962 L8.56256604,23.7196981 L0.885396226,20.1584151 C0.577412451,20.0402853 0.345239893,19.7832498 0.260963677,19.4671132 C0.17668746,19.1509766 0.250509487,18.8140082 0.459509434,18.5608302 C1.25524528,17.1518491 7.68837736,6.03532075 7.68837736,6.03532075 L16.6544151,1.59758491 C16.6544151,4.0050566 19.7140755,5.94656604 23.4910189,5.94656604 C27.2679623,5.94656604 30.3276226,4.0050566 30.3276226,1.59758491 L39.8876604,5.94656604 L47.8450189,19.1488302 C47.8450189,19.1488302 48.1588302,19.7812075 47.3294717,20.1584151 C46.5001132,20.5356226 39.2264151,24.1190943 39.2264151,24.1190943 L37.1081887,20.4579623" id="Path"></path>
+                        <path d="M11.2075472,19.1377358 C10.8601132,27.2033208 9.72815094,45.7641509 9.72815094,45.7641509 C9.72815094,45.7641509 9.52641509,47.1620377 10.8489057,47.2840755 C12.1713962,47.4061132 35.987434,47.2840755 35.987434,47.2840755 C36.5256275,47.3000878 37.044434,47.0845039 37.4098233,46.6930185 C37.7752126,46.3015331 37.9513447,45.7725458 37.892717,45.242717 C37.892717,43.0238491 37.2314717,25.7610566 37.1081887,18.3944151" id="Path"></path>
+                        <path d="M31.9303019,2.34090566 C31.9303019,5.26981132 28.1981887,7.644 23.6030943,7.644 C19.008,7.644 15.2758868,5.26981132 15.2758868,2.34090566" id="Path"></path>
+                        <path d="M16.6992453,1.55320755 C18.9653057,0.780163845 21.341003,0.368241801 23.7375849,0.332830189 C26.0124477,0.258435132 28.2764268,0.674857719 30.3724528,1.55320755" id="Path"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

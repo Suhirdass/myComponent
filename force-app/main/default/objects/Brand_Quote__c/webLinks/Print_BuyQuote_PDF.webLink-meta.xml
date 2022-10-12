@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Print_BuyQuote_PDF</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Print BuyQuote(PDF)</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/BuyQuotePDF?id={!Brand_Quote__c.Id}&amp;QueryId=[bqline]a1u4o000001MH46AAG?pv0={!Brand_Quote__c.Id}&amp;TemplateId=a1v6s000000S1J8AAK&amp;TemplateGroup=BrandBuyQuote</url>
+</WebLink>

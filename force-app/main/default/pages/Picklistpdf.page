@@ -1,0 +1,192 @@
+<apex:page Controller="PicklistController" sidebar="false" id="pp1" docType="html-5.0" applyHtmlTag="false"
+           applyBodyTag="false" showHeader="false" standardstylesheets="false"   renderAs="pdf" > 
+    <!-- renderAs="pdf"  -->
+    <html>
+        
+
+        
+        <head>
+            <style type="text/css" media="print">
+                .myClass { width: 400px; }
+                
+                @page{
+                size: A4 landscape;
+                
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 100px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                padding-top: 130px;
+                }
+                div.right {
+                float: right;
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                .sectionHeader {
+                width: 100%;
+                background-color: #eee;
+                font-size: 16pt;
+                padding: 5px;
+                margin: 20px 0px;
+                font-weight: bold;
+                }
+                table {
+                width: 100%;
+                text-align: left;
+                border-collapse: collapse;
+                border-spacing: 0;
+                padding:0!important;
+                /*border: 1px solid black;*/
+                }
+                table, th, td {
+                border: 1px solid black;
+                font-size: 14px;
+                border-spacing: 0;
+                
+                }
+                th, td {
+                /*border: 1px solid black;*/
+                padding: 3px;
+                text-align: left;
+                font-size: 14px;
+                }
+                thead{
+                /*border: 1px solid black;*/
+                background: #CFCFCF;
+                font-size: 14px;
+                text-align: center;
+                }
+                tr.noBorder td {
+                border: 0;
+                }
+                .labelCol {
+                white-space: nowrap;
+                width: 1%;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+                
+            </style>
+            
+                 
+        </head>
+        <body>
+            
+            
+            <div class="header"   >
+                <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;margin-top:15px;"/>
+            </div> <br/> 
+            <h1 class="stationName">{!picklist.Name} - {!picklist.Sales_Order__r.name}</h1>
+            <div class="header">
+                <h1 class="stationName" style="margin-top: 10px;">{!picklist.Name} - {!picklist.Sales_Order__r.name}</h1>
+            </div>
+            
+            <div class="footer">
+                <div class="footerAlign" id="footerId">
+                    <apex:outputText value=" {!NOW()}"/>
+                </div> 
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Picklist Information </th>
+                    </tr>
+                </thead>
+            </table>
+            <apex:pageBlock id="pb1">
+                
+                <apex:pageBlockSection columns="3" >
+                    
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Sales_Order__c.Label}" value="{!picklist.Sales_Order__r.name}"/>
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Assigned_To_Name__c.Label}" value="{!picklist.Assigned_To_Name__c}"/>
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Receiver_DBA__c.Label}" value="{!picklist.Receiver_DBA__c}"/>       
+                    
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Status__c.Label}" value="{!picklist.Status__c}"/>
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Scheduled_Pick_Date__c.Label}" value="{!picklist.Scheduled_Pick_Date__c}"/>
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Delivery_City__c.Label}" value="{!picklist.Delivery_City__c}"/>
+                    
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Name.Label}" value="{!picklist.Name}"/>
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Picklist_Lines__c.Label}" value="{!picklist.Picklist_Lines__c}"/>
+                    <apex:outputField label="{!$ObjectType.Picklist__c.Fields.Planned_Ship_Date__c.Label}" value="{!picklist.Planned_Ship_Date__c}"/>
+                </apex:pageBlockSection>
+                
+                <br/><br/>
+                <div>
+                    <table> 
+                        <thead>
+                            <tr>
+                                <th>Product Summary Details</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>  
+                
+                <div style="width:100%;page-break-inside:avoid;font-size: 14px !important;padding:0!important;margin:0!important" >
+                    <!--apex:pageBlockSection columns="1" showHeader="false" collapsible="false"-->
+                 <apex:variable var="rowNum" value="{!0}"/>
+
+                        <apex:pageBlockTable width="100%" frame="none" cellpadding="3" cellspacing="0" value="{!picklistLineList}" var="item"  id="example">
+                                               
+                              <apex:column width="10%" value="{!item.picklistLineObj.Name}" headerValue="Picklist Line" />
+                            <apex:column width="10%" value="{!item.picklistLineObj.Product_Name__r.Name}" headerValue="Product" />
+                            <apex:column width="20%" value="{!item.picklistLineObj.Product_Description__c}" headerValue="Description" />
+                            <apex:column width="10%" value="{!item.picklistLineObj.Producer_Name__c}" headerValue="Brand" />
+                            <apex:column width="10%" headerValue="Inventory Location" >
+                                {!item.picklistLineObj.Inventory_Location__c}&nbsp;-&nbsp;{!item.picklistLineObj.Rack__c}&nbsp;-&nbsp;
+                                {!item.picklistLineObj.Rack_Level__c}&nbsp;-&nbsp;
+                                {!item.picklistLineObj.Bin_Location__c}
+                            </apex:column>
+                            <apex:column width="10%" value="{!item.picklistLineObj.Purchase_Order__c}" />
+                            <apex:column width="10%" headerValue="UID" value="{!item.uid}" />
+                            <apex:column width="10%" headerValue="Harvest Batch/Lot Code" value="{!item.harvestBatchOrLotCode}" />
+                            <apex:column width="7%" value="{!item.qtytoPick }" headerValue="Qty to Pick"/>
+                            <apex:column width="7%" headerValue="Type" style="text-align:center;" >
+                                <apex:outputText value="Promo" rendered="{!item.picklistLineObj.IsPromo__c}"/>
+                                <apex:outputText value="Sample" rendered="{!item.picklistLineObj.Is_Sample__c}"/>
+                                    
+                            </apex:column>
+         <!--  <apex:column width="7%" value="{!item.picklistLineObj.sorting__c}" headerValue="Sorting"/> -->
+
+                        </apex:pageBlockTable>
+                    <!--/apex:pageBlockSection-->
+                </div>
+            </apex:pageBlock>
+        </body>
+    </html>
+</apex:page>

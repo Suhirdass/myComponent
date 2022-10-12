@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_All_COAs</fullName>
+    <columns>NAME</columns>
+    <columns>Harvest_Batch_Code__c</columns>
+    <columns>Lab_Test_Status__c</columns>
+    <columns>COA_Number__c</columns>
+    <columns>COA_Issued_Date__c</columns>
+    <columns>COA_Expiration_Date__c</columns>
+    <columns>Product__c</columns>
+    <columns>Producer_Name__c</columns>
+    <columns>THC__c</columns>
+    <columns>THC_MG_G__c</columns>
+    <columns>CBD__c</columns>
+    <columns>CBD_MG_G__c</columns>
+    <columns>Terpene__c</columns>
+    <columns>Terpene_MG_G__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>1. All COAs</label>
+</ListView>

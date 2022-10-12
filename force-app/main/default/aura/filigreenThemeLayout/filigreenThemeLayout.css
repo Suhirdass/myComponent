@@ -1,0 +1,155 @@
+@font-face{
+    font-family:'Alliance Neue';
+    src:url('/filigreenb2b/resource/WOVNResources/Fonts/Alliance/Alliance-NeueRegular.woff') format('woff');
+    
+}
+.THIS{
+    position: relative;
+    z-index: 1;
+    flex-direction: column;
+	background: token(tanLight);
+    min-height: 100vh;
+    font-family: token(salesforceSans) !important;
+}
+.THIS .forceCommunityToastManager .toastContent ,.THIS .toastMessage{
+    font-family:'Alliance Neue';
+}
+.THIS .forceCommunityDashboard{
+    height: calc(100vh - 90px) !important;
+}
+
+.THIS ::selection {
+	background: token(beige);
+}
+
+.THIS .header {
+    background-color: token(land); /*greenPrimary*/
+    color: white;
+    position: fixed;
+    top: 0;
+    height: 63px;
+    z-index: 1000;
+}
+
+.THIS .header > * {
+    height: 100%;
+}
+
+.THIS .logo {
+    background-color: token(land);
+    max-width: 256px;
+    height: 63px;
+    
+}
+
+.THIS .logo a,
+.THIS .logo img {
+    display: block;
+    width: 155px;
+    /*height: 24px;*/
+}
+
+.THIS .breadcrumbs {
+    padding-left: 24px;
+}
+
+.THIS .breadcrumbs a {
+    color: white;
+}
+
+.THIS .slds-breadcrumb__item a {
+    opacity: 0.5;
+    color :white;
+}
+.THIS .slds-breadcrumb__item:last-child a {
+    opacity: 1;
+    color :token(plant);
+}
+
+.THIS .contents {
+    min-height: calc(100vh - 63px);
+    max-height: calc(100vh - 63px);
+}
+
+.THIS .actions {
+	/*width: 600px;*/
+    display: flex;
+    align-content: center;
+    justify-content: flex-end;
+    margin-right: 0.75rem;
+}
+
+.THIS .actions > * + * {
+    margin-left: 1.2rem;
+}
+
+
+.THIS .cart {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    /*background-image: url(/filigreenb2b/resource/BrigadeResources/assets/cart.svg);*/
+    text-decoration: none;
+    color:token(daze);
+    align-items: center;
+    font-size: 13px;
+}
+
+.THIS .cart span {
+    margin: 1px 0 auto auto;
+    color: white;
+    text-align: center;
+    width: 19px;
+    font-size: 0.85em;
+}
+
+.THIS .contents {
+    flex-grow: 1;
+}
+
+.THIS .navigation {
+    position: fixed;
+    top: 63px;
+    left: 0;
+    bottom: 0;
+    background-color: token(greenDark);
+    width: 256px;
+    padding: 0;
+    overflow: auto;
+}
+
+.THIS .body {
+    position: relative;
+	background: token(tanLight);
+    margin-left: 256px;
+    width: calc(100vw - 256px);
+    margin-top : 63px;
+    font-family: token(salesforceSans) !important;
+}
+.THIS .slds-breadcrumb .slds-list__item:before, .THIS .slds-breadcrumb .slds-breadcrumb__item:before {
+    color: #767C82;
+}
+.THIS .WOVNLogo-img{
+    transform: scale(0.55);
+    -webkit-transform: scale(0.40);
+    transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    margin-left: 12px;
+}
+.THIS .square-topright {
+    height:63px;
+    background-color:token(land);
+    right: -89px;
+    top: -18px;
+    width: 40px;
+    position: absolute;
+}
+.THIS .triangle-topright {
+    width: 0;
+    right: -49px;
+    top: -18px;
+    height: 0;
+    position: absolute;
+    border-top: 63px solid token(land);
+    border-left: 20px solid transparent;
+}

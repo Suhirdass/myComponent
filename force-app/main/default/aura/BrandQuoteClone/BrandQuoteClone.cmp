@@ -1,0 +1,269 @@
+<aura:component extends="c:utility" controller="BQCloneController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="bqID" type="String" />
+    <aura:attribute name="bq" type="Brand_Quote__c" default="{'sobjectType': 'Brand_Quote__c','Name':''}"/> 
+    <aura:attribute name="setBQLines" type="BQCloneController.BrandQuoteLineWrapper[]" />
+	<aura:attribute name="hasBQLines" type="Boolean" default="true"/>
+    <aura:attribute name="DLhasExpired" type="Boolean" default="false"/>
+    <aura:attribute name="SLhasExpired" type="Boolean" default="false"/>
+    <aura:attribute name="RLhasExpired" type="Boolean" default="false"/>
+    <aura:attribute name="DLundef" type="Boolean" default="false"/>
+    <aura:attribute name="SLundef" type="Boolean" default="false"/>
+    <aura:attribute name="RLundef" type="Boolean" default="false"/>
+	<aura:attribute name="master" type="Boolean" default="false"/>    
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        	min-width: 90%;
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .back {
+        	background-color: white;
+        	height: 100%;
+        }
+        .backTwo {
+        	background-color: white;
+        	max-height: 2000%;
+        }
+        .dataTables_filter{
+        	display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        .SOtable{
+        border-collapse: collapse;
+  		width: 100%;
+        height: 100%;
+        }
+        .SOtable td, .SOtable th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+		.SOtable tr:hover {background-color: #F5F5F5;}
+        .SOtable th {
+          background-color: #F5F5F5;
+         border: 1px solid #D9D7D7;
+        }
+        .textCap{
+        text-transform: capitalize !important; 
+        }
+         .title-align {
+    	padding-left: 10px;
+        padding-top: 5px;
+        }
+         .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+       .layout-left{
+        text-align: right; 
+        margin-left:-5%;
+        }
+        .layout-left-auto{
+        text-align: right; 
+        }
+        .layout-right{
+        text-align: left;
+        padding-left: 2%;
+        }
+        .layout-right-auto{
+        text-align: left;
+        padding-left: 2%; 
+        width: auto;
+        }
+    </aura:html>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+<article class="slds-card" >
+   <!-- <article class="slds-card back" >
+    <div class="backTwo"> -->
+    <div class="slds-page-header heightfix" role="banner">
+      <div class="slds-grid">
+        <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media">
+            <lightning:icon iconName="custom:custom93" title="custom93" />
+            <div class="slds-media__body">
+              <div class="slds-grid">
+               <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Brand Quote</h1> 
+                </div>
+            </div>	
+          </div>
+        </div>
+           <div class="slds-col slds-no-flex slds-align-bottom">
+          <div class="slds-button-group" role="group">
+               <lightning:button class="slds-button slds-button--neutral textCap" label="Clone Quote" onclick="{!c.saveClone}"/>
+               <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel" onclick="{!c.onCancel}"/>   
+          </div>
+        </div>
+      </div>
+    </div>
+    <br/>
+    
+        <div class="slds-is-relative slds-p-horizontal_small">
+           <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+               
+               <div class="slds-col">
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Brand Quote</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Id}" style="color:#0070D2;" ><u>{!v.bq.Name}</u></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Opportunity Name</b></div>
+                            <div class="slds-size_1-of-2 slds-truncate" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Opportunity_Name__c}" style="color:#0070D2;"><u>{!v.bq.Opportunity_Name__r.Name}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Ownership</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Ownership__c}" style="color:#0070D2;" ><u>{!v.bq.Ownership__r.Name}</u></a></div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Site</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Site__c}" style="color:#0070D2;"><u>{!v.bq.Site__r.Name}</u></a><span>, </span> {!v.bq.Site__r.Warehouse_Name__c}</div>	
+                    </div>
+               </div>
+               
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Order or Service</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.bq.Customer_PO_or_Quote__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Supplier</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Supplier_Name__c}" style="color:#0070D2;"><u>{!v.bq.Supplier_DBA__c}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Distributor</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Distributor_Name__c}" style="color:#0070D2;"><u>{!v.bq.Distributor_DBA__c}</u></a></div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Receiver</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.bq.Receiver_Name__c}" style="color:#0070D2;"><u>{!v.bq.Receiver_DBA__c}</u></a></div>	
+                    </div>
+               </div>
+             
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Payment Terms</b></div>
+                            <div class="slds-size_2-of-3" style="text-align: left;">{!v.bq.Payment_Terms__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Supplier License</b></div>
+                       <div class="slds-size_2-of-3" style="text-align: left; display: inline;">
+                           {!v.bq.Supplier_License_Type__c}<aura:If isTrue="{!v.SLundef}"><span> - </span></aura:If>
+                           {!v.bq.Supplier_License_Number__c}
+                           <aura:If isTrue="{!v.SLhasExpired}"><span style="color:red;">
+                               (Expired)</span>
+                           </aura:If></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Distributor License</b></div>
+                        <div class="slds-size_2-of-3" style="text-align: left; display: inline;">
+                           {!v.bq.Distributor_License_Type__c}<aura:If isTrue="{!v.DLundef}"><span> - </span></aura:If>
+                           {!v.bq.Distributor_License_Number__c}
+                           <aura:If isTrue="{!v.DLhasExpired}"><span style="color:red;">
+                               (Expired)</span>
+                           </aura:If></div>
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Receiver License</b></div>
+                       <div class="slds-size_2-of-3" style="text-align: left; display: inline;">
+                           {!v.bq.Receiver_License_Type__c}<aura:If isTrue="{!v.RLundef}"><span> - </span></aura:If>
+                           {!v.bq.Receiver_License_Number__c}
+                           <aura:If isTrue="{!v.RLhasExpired}"><span style="color:red;">
+                               (Expired)</span>
+                           </aura:If></div>
+                    </div>
+              </div>
+            </div>   
+            </div> 
+                <br/>
+       
+</article>
+        <br/>
+<article class="slds-card">
+              <div class="slds-page-header heightfix" role="banner">
+                  <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                      <div class="slds-media">
+                         <lightning:icon iconName="standard:product" title="product" /> 
+                        <div class="slds-media__body">
+                          <div class="slds-grid">
+                           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Brand Quote Line Items</h1> 
+                            </div>
+                        </div>	
+                      </div>
+                    </div>
+                  </div>
+            </div> 
+    		<br/>
+                <div class="slds-is-relative slds-p-horizontal_small">
+                    <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small" style="max-height: 100% !important;">
+                        <table class="SOtable back">
+                            <thead>
+                                <tr class="slds-text-title">
+                                    <th scope="col"> <div title="select"><lightning:input type="checkbox" name="inputMaster" checked="{!v.master}" aura:id="selectAll" value="{!v.master}" onchange="{!c.selectAllCheckboxes}"/></div> </th>
+                                    <th scope="col"> <div title="BQ Line">BQ Line</div> </th>
+                                    <th scope="col" style="width:15%;"> <div title="Product">Product</div> </th>
+                                    <th scope="col"> <div title="Description">Description</div> </th>
+                                    <th scope="col"> <div title="Brand Name">Brand Name</div> </th>
+                                    <th scope="col" style="width:7%;"> <div title="Retail Wholesale Price" >Retail Wholesale Price</div></th>
+                                    <th scope="col" style="width:7%;"> <div title="Qty/Case (MOQ)">Qty/Case (MOQ)</div> </th>
+                                    <th scope="col" style="width:7%;"> <div title="Order Qty (Cases)">Order Qty (Cases)</div> </th> 
+                                    <th scope="col" style="width:7%;"> <div title="Qty to Bill">Line Total Qty</div></th>
+                                    <th scope="col" style="width:7%;"> <div title="Line Total Price" >Line Total Cost</div> </th>
+                                    <th scope="col"> <div title="Apply Excise Tax?">Ownership</div> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:If isTrue="{!v.hasBQLines}">
+                               <aura:iteration items="{!v.setBQLines}" var="bql" > 
+                                    <tr >
+                                        <td><div></div>
+                                            <lightning:input type="checkbox" aura:id="checkContact" value="{!bql.isSelected}" checked="{!bql.isSelected}"/>
+                                        </td>
+                                        <td><div><a href="{!'/' + bql.brandQuoteLineBQ.Id}" style="color:#0070D2;" ><u>{!bql.brandQuoteLineBQ.Name}</u></a></div></td>
+                                        <td style="width:15%;"><div><a href="{!'/' + bql.brandQuoteLineBQ.Product_Name__c}" style="color:#0070D2;" ><u>{!bql.brandQuoteLineBQ.Product_Name__r.Name}</u></a></div></td>
+                                        <td style="width:25%;"><div>{!bql.brandQuoteLineBQ.Product_Description__c}</div></td>   
+                                        <td><div>{!bql.brandQuoteLineBQ.Brand_Name__c}</div></td>
+                                        <td style="width:7%;"><div><ui:outputCurrency value="{!bql.brandQuoteLineBQ.Retail_Wholesale_Price__c}"/></div></td>
+                                        <td style="width:7%;"><div>{!bql.brandQuoteLineBQ.MOQ__c	}</div></td>
+                                        <td style="width:7%;"><div>{!bql.brandQuoteLineBQ.Quantity_Cases__c}</div></td>
+                                        <td style="width:7%;"><div>{!bql.brandQuoteLineBQ.Line_Total_Qty__c}</div></td>
+                                        <td style="width:7%;"><div><ui:outputCurrency value="{!bql.brandQuoteLineBQ.Line_Total_Cost__c}"/></div></td>
+                                        <td><div><a href="{!'/' + bql.brandQuoteLineBQ.Ownership_Code__c}" style="color:#0070D2;" ><u>{!bql.brandQuoteLineBQ.Ownership_Code__r.DBA__c}</u></a></div></td>
+                                    </tr>
+                                </aura:iteration>
+                               <aura:set attribute="else">
+                                <tr><td colspan='11'><div style="color:red; text-align: center;">No Records Found!</div></td></tr> 
+                                </aura:set>
+                         </aura:If>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <br/>
+        
+     </article>
+     <br/>
+</aura:component>

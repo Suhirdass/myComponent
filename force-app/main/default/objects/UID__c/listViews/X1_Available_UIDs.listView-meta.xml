@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_Available_UIDs</fullName>
+    <columns>IRR_UID__c</columns>
+    <columns>Active__c</columns>
+    <columns>NAME</columns>
+    <columns>In_Use__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>In_Use__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>IRR_UID__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>NAME</field>
+        <operation>notEqual</operation>
+        <value>TestUIDforITDEV-1</value>
+    </filters>
+    <label>1. Available UIDs</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

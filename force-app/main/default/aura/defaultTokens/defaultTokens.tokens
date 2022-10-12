@@ -1,0 +1,36 @@
+<aura:tokens extends="c:utilityTokens">
+    <aura:token name="salesforceSans" value="Alliance Neue" />
+	<aura:token name="greenPrimary" value="#195458" />
+	<aura:token name="greenMid" value="#173431" />
+	<aura:token name="greenDark" value="#102321" />
+	<aura:token name="greenSuperDark" value="#0F110F" />
+	<aura:token name="greenAccent" value="#88CBC1" />
+	<aura:token name="greenMint" value="#C0D7D4" />
+    <aura:token name="greenJade" value="#065e66" />
+	<aura:token name="tan" value="#E7E6E2" />
+	<aura:token name="tanLight" value="#FAFAF7" />
+	<aura:token name="beige" value="#F0E6D3" />
+    <aura:token name="grayLight" value="#e5e5e5" />
+    <aura:token name="grayLightStd" value="#D3D3D3" />
+	<aura:token name="grayMid" value="#74787D" />
+	<aura:token name="grayAccent" value="#DDDBDA" />
+    <aura:token name="grayDark" value="#393A3D" />
+    <aura:token name="grayTint" value="#979797" />
+	<aura:token name="black" value="#080707" />
+	<aura:token name="blue" value="#006DCC" />
+    <aura:token name="blueLight" value="#B9BEC5" />
+    <aura:token name="white" value="#FFFFFF" />
+    <aura:token name="linkblue" value="#d6d2b8" /><!--#1672E9-->
+    
+    <!--WOVN Colors Properties-->
+    <aura:token name="plant" value="#959A5F" />
+    <aura:token name="land" value="#32402A" />
+    <aura:token name="activeTabColor" value="#888f5a" />
+    <aura:token name="daze" value="#dcdac6" />
+    <aura:token name="selectedTabColor" value="#a7ab3d" />
+    <aura:token name="fontColor" value="#42472a" />
+    <aura:token name="wovnlink" value="#518397" />
+    <aura:token name="thistleGreen" value="#d6d2b8" />
+    <aura:token name="Rangitoto" value="#1e2619" />
+    <aura:token name="tableHeaderColor" value="#d1cdb0" />
+</aura:tokens>

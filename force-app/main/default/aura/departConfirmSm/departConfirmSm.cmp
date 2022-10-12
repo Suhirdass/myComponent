@@ -1,0 +1,16 @@
+<aura:component  extends="c:utility" controller="DepartConfirmController"  implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="recordId" type="Id" />
+   
+    <aura:attribute name="error" type="String" default=""/> 
+    <aura:attribute name="isCancelled" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="messagelightning" type="String" />
+    <aura:html tag="style">
+        
+        .modal-container.slds-modal__container {
+        display: none;
+        }
+        
+    </aura:html>
+    
+</aura:component>

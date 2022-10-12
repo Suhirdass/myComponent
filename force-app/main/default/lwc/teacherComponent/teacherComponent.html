@@ -1,0 +1,376 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card class="head" if:true={dontShowTeachersScreen}>
+            <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate portal"> Government High School -
+                Teacher's Portal</h1>
+    </lightning-card>
+    <br>
+      <lightning-card>
+        <div class="slds-align_absolute-center">
+            <!--Select Class for Student-->
+            <lightning-button label="Select Class" onclick={teacherLogin} variant="brand"></lightning-button>
+
+            <lightning-combobox name="Class" class="slds-p-bottom_medium slds-p-left_x-large" value={valueClass}
+                placeholder="Select Class" options={optionsClass} onchange={handleKeyChange}
+                if:true={areTeachersVisible} style="color:grey;width:150px">
+            </lightning-combobox>
+
+            <br>
+        </div>
+      </lightning-card>
+
+    <br>
+    <!--Display list of Students respective to the class-->
+
+    <lightning-card if:true={areTeachersVisibleScreen}>
+
+        <!--Teacher's Basic Info-->
+        <div class="slds-modal__header rwd-table">
+            <h3 class="slds-modal__title slds-hyphenate">Class Teacher Details</h3>
+            <div class="slds-clearfix">
+                <div class="slds-float_right">
+                    <lightning-button class="slds-float_right" label="Class Handling" onclick={handleKeyChangeSubmit}
+                        variant="brand"></lightning-button>
+                </div>
+            </div>
+        </div>
+
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered rwd-table"
+            aria-label="Example default base table of Opportunities">
+
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Id</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Name</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Subject Handling</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Class</div>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <template for:each={contacts} for:item="iterate">
+                    <tr class="slds-hint-parent" key={iterate.Id}>
+                        <td>
+                            <div class="slds-truncate">{iterate.Name}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" data-id={iterate.Id}>{iterate.Teacher_Name__c}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate">{iterate.Subject_Handling__c}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate">{iterate.Class__r.Name}</div>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </lightning-card>
+
+    <br>
+
+    <!--Students Marks Modal box-->
+    <template if:true={areStudentListVisibileScreen}>
+
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+            class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title slds-hyphenate">Students List</h1>
+                </div>
+
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                    <table
+                        class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered rwd-table"
+                        aria-label="Example default base table of Opportunities">
+
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">Roll No</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate"></div>Student Name
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">Class Teacher</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">Enter Marks</div>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <template for:each={contacts} for:item="iterate">
+                                <template for:each={iterate.Students__r} for:item="student">
+                                    <tr class="slds-hint-parent" key={student.Id}>
+                                        <td if:true={showOne}>
+                                            <div class="slds-truncate">{student.Name}</div>
+                                        </td>
+                                        <td if:true={showOne}>
+                                            <div class="slds-truncate">{student.Student_Name__c}</div>
+                                        </td>
+                                        <td if:true={showOne}>
+                                            <div class="slds-truncate">{iterate.Name}</div>
+                                        </td>
+                                        <td if:true={showOne}>
+                                            <button class="slds-button slds-button_brand" data-id={student.id}
+                                                onclick={giveMarks} title="Give Marks">Give Marks</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_brand" onclick={submitDetails} title="Ok">Ok</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+
+    <lightning-card if:true={showReportcard}>
+        <div class="slds-modal__header rwd-table">
+            <h3 class="slds-modal__title slds-hyphenate">Report Card</h3>
+            <div class="slds-clearfix">
+                <div class="slds-float_right">
+                    <button class="slds-button slds-button_brand" onclick={createNewRecord} title="New">New
+                        Student</button>
+                </div>
+            </div>
+        </div>
+        <table class=" slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered rwd-table"
+            aria-label="Example default base table of Opportunities">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Roll No</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Student Name</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Class</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Class Teacher</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Minimum Marks</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Maximum Marks</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Minimum Grade</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Maximum Grade</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Marks</div>
+                    </th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+                <template for:each={contacts} for:item="iterate">
+                    <template for:each={iterate.Students__r} for:item="student">
+                        <tr class="slds-hint-parent" key={student.Id}>
+                            <td>
+                                <div class="slds-truncate">{student.Name}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" data-id={student.Id}>{student.Student_Name__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Class__r.Name}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Teacher_Name__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">40</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">100</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">F</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">A+</div>
+                            </td>
+                            <td>
+                                <div class="slds-clearfix">
+                                    <div class="slds-float_right">
+                                        <button class="slds-button slds-button_brand" onclick={inputMarks}
+                                            title="New">Enter Marks</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </template>
+            </tbody>
+        </table>
+
+        <template if:true={enterMarksScreen}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+                class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <h1 class="slds-modal__title slds-hyphenate">Enter Marks</h1>
+                    </div>
+
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+
+                        <table
+                            class=" slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered rwd-table"
+                            aria-label="Example default base table of Opportunities">
+
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Student Name</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">English</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Tamil</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Maths</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Science</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Social</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Total Marks</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Percentage</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Grade</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate">Submit</div>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <template for:each={contacts} for:item="iterate">
+                                    <template for:each={iterate.Students__r} for:item="student">
+                                        <tr class="slds-hint-parent" key={student.Id}>
+                                            <td>
+                                                <div class="slds-truncate" data-id={student.Id}>
+                                                    {student.Student_Name__c}</div>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    class="slds-align_absolute-center slds-truncate widthChange"
+                                                    data-id={student.Id} onchange={marksUpdate} type="Number"
+                                                    label="English" value={student.English__c}>
+                                                </lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    class="slds-align_absolute-center slds-truncate widthChange"
+                                                    data-id={student.Id} onchange={marksUpdate} type="Number"
+                                                    label="Tamil" value={student.Tamil__c}>
+                                                </lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    class="slds-align_absolute-center slds-truncate widthChange"
+                                                    data-id={student.Id} onchange={marksUpdate} type="Number"
+                                                    label="Maths" value={student.Mathematics__c}>
+                                                </lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    class="slds-align_absolute-center slds-truncate widthChange"
+                                                    data-id={student.Id} onchange={marksUpdate} type="Number"
+                                                    label="Science" value={student.Science__c}>
+                                                </lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    class="slds-align_absolute-center slds-truncate widthChange"
+                                                    data-id={student.Id} onchange={marksUpdate} type="Number"
+                                                    label="Social" value={student.Social_Science__c}>
+                                                </lightning-input>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{student.Total_Marks__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{student.Marks_Avrg__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{student.Grade__c}</div>
+                                            </td>
+                                            <td>
+                                                <button class="slds-button slds-button_brand" data-id={student.id}
+                                                    onclick={handleSubmitMarks} title="Give Marks">Submit</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button_brand" onclick={cancelScreenMarks}
+                            title="Cancel">Cancel</button>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+    </lightning-card>
+
+    <template if:true={studentRecordForm}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon">
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h3 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Create New Student</h3>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+
+                    <lightning-record-form record-id='' object-api-name="School_Student__c" fields={fields} columns="2"
+                        mode="edit" onsuccess={handleSuccess} oncancel={onCancel}>
+                    </lightning-record-form>
+
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

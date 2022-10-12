@@ -1,0 +1,45 @@
+<aura:component implements="forceCommunity:themeLayout" access="global" description="Login Page Layout2" >
+    <aura:attribute name="rightSectionContent" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="rightSectionHeader" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="rightSectionFooter" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="leftSectionHeader" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="leftSectionFooter" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="leftSectionFooter2" type="Aura.Component[]" required="false"/>
+    <ltng:require 
+                  styles="{!$Resource.filigreenLogin}"/>
+ 
+    <div class="slds-grid slds-wrap slds-size_12-of-12" style=" height:100vh">
+        
+        <div class="slds-col slds-wrap slds-large-size_4-of-12  slds-medium-size_4-of-12  slds-small-size_12-of-12" style="margin-top: 10%;">
+            <center>
+                <div class="slds-col slds-text-align_center" style="max-width:200px;">
+                    <img src="{!$Resource.filigreenLogoHeader}"/>
+                </div>
+                <br/>
+                <div class="slds-col" ><!--style="max-width:300px;"-->
+                    {!v.body}
+                </div>
+                <br/>
+                <div class="slds-col" >
+                    {!v.leftSectionFooter}
+                </div>
+                <!--<div class="slds-col" style="margin-top:5px;">
+                    {!v.leftSectionFooter2}
+                </div>-->
+           </center>
+            
+        </div>
+        <div class="slds-col slds-grid slds-wrap  slds-large-size_8-of-12  slds-medium-size_8-of-12  slds-small-size_12-of-12">
+            <center style="width:100%">
+                <!--div class="slds-col">
+                    {!v.rightSectionHeader}
+                </div-->
+                
+                <div class="slds-col" >
+                    {!v.rightSectionContent}
+                </div>
+                
+            </center>
+        </div>
+    </div>
+</aura:component>

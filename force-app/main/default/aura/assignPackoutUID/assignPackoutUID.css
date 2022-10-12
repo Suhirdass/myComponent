@@ -1,0 +1,9 @@
+.THIS .swal2-container{
+    z-index:10000;
+}
+.THIS .borderLeft{
+    border-left : var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+}
+.THIS .borderRight{
+    border-right : var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+}

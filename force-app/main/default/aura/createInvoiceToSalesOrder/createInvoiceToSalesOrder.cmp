@@ -1,0 +1,109 @@
+<aura:component extends="c:utility" controller="FullfullmentServiceInvoiceController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader">
+    <aura:handler name="init" action="{!c.navigate}" value="{!this}" />
+    
+    <aura:attribute name="showCreateFullFillMent" type="boolean" default="false"/>
+    <aura:attribute name="showServiceInvoice" type="boolean" default="false"/>
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="RecordType" type="String" />
+    <aura:attribute name="orderType" type="String" />
+    <aura:attribute name="brandAccountType" type="String" />
+    <aura:attribute name="ServiceTypeErr" type="String" />
+    <aura:attribute name="ServiceType" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+ 
+    <aura:html tag="style">
+        
+        
+        .buttonsm{
+        text-transform: capitalize !important;
+        border-radius: 4px !important;
+        }
+         .runtime_platform_actionsQuickActionWrapper {
+    display: flex;
+    flex-direction: unset !important;
+    max-height: 100%;
+}
+    </aura:html>
+    <header class="slds-modal__header" style="width: 600px !important;">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+    </header>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 600px !important;" >
+        <aura:if isTrue="{!v.showCreateFullFillMent}">
+            Create Invoice Fullfillment Services . Are you sure?
+            <aura:set attribute="else">
+                Create new Invoice?
+            </aura:set>
+            
+        </aura:if>
+    
+    </div>
+    <footer class="slds-modal__footer"  style="width: 600px !important;">
+        <aura:if isTrue="{!v.showCreateFullFillMent}">
+            <lightning:button  class="slds-button_brand buttonsm" variant="brand" name='Yes' label='Yes' onclick='{!c.showCreateFullFillMentYes}'/>
+            <lightning:button  class="slds-button_neutral buttonsm" name='No' label='No' onclick='{!c.closeDialog}'/>
+            
+            <aura:set attribute="else">
+                <lightning:button class="slds-button_brand buttonsm" onclick="{!c.onCreateRetailerInvoice}" label="Retailer Invoice" />
+                <aura:if isTrue="{!and(equals(v.orderType,'Brand'),not(equals(v.brandAccountType,'Disty Partner')))}">
+                    <lightning:button class="slds-button_brand buttonsm slds-m-left_medium" onclick="{!c.onCreateFulfillmentInvoice}" label="Invoice fulfillment Service" />
+                    <aura:set attribute="else">
+                        <lightning:button class="slds-button_brand buttonsm slds-m-left_medium" onclick="{!c.onCreateReceivingInvoice}" label="Invoice fulfillment Service" />
+                    </aura:set>
+                </aura:if>
+                <lightning:button class="slds-button_brand textCap" onclick="{!c.createCTI}" label="Create CTI" />
+            </aura:set>
+        </aura:if>
+    </footer>
+    
+    
+    <!--Component showCreateFullFillMent Start-->
+    <!--aura:if isTrue="{!v.showCreateFullFillMent}">
+        <div class="slds-m-around_xx-large">
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container" style="width:75%;">
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading-medium">{!v.recordName}</h1>
+                    </header>
+                    
+                    <div class="slds-modal__content slds-p-around-medium">
+                        <br/><center>Create Invoice Fullfillment Services . Are you sure?</center><br/>
+                    </div>
+                    
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.showCreateFullFillMentYes}'/>
+                        <lightning:button name='No' label='No' onclick='{!c.closeDialog}'/>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop-open"></div>
+        </div>
+    </aura:if-->
+    <!--Component End-->
+    
+    <!--Component showServiceInvoice Start-->
+    <aura:if isTrue="{!v.showServiceInvoice}">
+        <div class="slds-m-around_xx-large">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container" style="width:75%;">
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">{!v.recordName}</h1>
+                    </header>
+                    
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <br/><center>Create New Service Invoice?</center><br/>
+                    </div>
+                    
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.showServiceInvoiceYes}'/>
+                        <lightning:button name='No' label='No' onclick='{!c.closeDialog}'/>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </div>
+    </aura:if>
+    <!--Component End-->
+    
+</aura:component>

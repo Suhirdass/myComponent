@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Bitly Config Details</label>
+    <protected>false</protected>
+    <values>
+        <field>Access_Token__c</field>
+        <value xsi:type="xsd:string">99fbd9fa8385b7277be2893d4aa561f912cc3eab</value>
+    </values>
+    <values>
+        <field>Domain__c</field>
+        <value xsi:type="xsd:string">bit.ly</value>
+    </values>
+    <values>
+        <field>Endpoint_URL__c</field>
+        <value xsi:type="xsd:string">https://api-ssl.bitly.com/v4/shorten</value>
+    </values>
+    <values>
+        <field>Group_Guid__c</field>
+        <value xsi:type="xsd:string">Bl3j5Nn4VqO</value>
+    </values>
+</CustomMetadata>

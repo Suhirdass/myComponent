@@ -1,0 +1,277 @@
+.THIS {
+    padding: 0;
+    margin-left: -0.75rem;
+    width: calc(100% + 1.5rem);
+    background-color: token(tanLight);
+}
+.THIS .product-menu-img{
+    filter: brightness(0.7);
+}
+.THIS .paginatorCls{
+    background-color: token(daze);
+}
+.THIS .banner {
+    margin: -0.75rem -0.75em 0;
+    background-color: #333;
+    color: white;
+    text-shadow: rgba(0,0,0,0.2) 0 2px 4px;
+    background:
+        linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(0,0,0,0.6) 100%),
+        url(/filigreenb2b/resource/WOVNResources/assets/marketplace-background.png);
+    background-position:top;
+}
+.THIS #productSearch::-webkit-input-placeholder {
+  color: token(fontColor);
+  opacity: 1; /* Firefox */
+    
+}
+.THIS .market-search {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 400px;
+}
+
+.THIS .search-input .slds-input__icon,
+.THIS .search-input .button_icon {
+    color: white;
+    fill: white;
+}
+
+.THIS .search-input .slds-input__icon.slds-input__icon_left {
+    left: var(--lwc-spacingMedium);
+}
+
+.THIS .search-input .slds-input__icon.slds-input__icon_right {
+    right: var(--lwc-spacingMedium);
+}
+
+.THIS .search-input {
+    --lwc-heightInput: 48px;
+    padding-left: 20px;
+    padding-right: 40px;
+    font-size: 13px;
+    background-color: token(daze);
+    border: 1px solid token(daze);
+    color: token(fontColor);
+    border-radius: 20px;
+    padding-top: 1px;
+}
+
+.THIS .setFont{
+    font-size: .9rem;
+    line-height: 2rem;
+}
+
+.THIS .productPrice {
+    color:#000;/*#f5e6d8;*/
+}
+
+.THIS .noData {
+    margin: 0 auto;
+    height: 200px;
+    padding: 10px 0;
+    width: 100%;
+    grid-column: span 4;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Alliance Neue';
+}
+
+.THIS .jumptotop {
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}
+.THIS .categoryContainer {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    display: flex;
+}
+.THIS .categoryIcon {
+    display: inline-block;
+    text-align: center;
+    transition: all .5s;
+    flex: 1 1 0px;
+    border: 2px solid #CFCAAC;
+}
+
+.THIS .categoryIcon + .categoryIcon {
+    border-left: 1px solid token(tan);
+}
+
+.THIS .categoryIcon a {
+    display: block;
+    padding: 2px 6px 6px;
+    /*border-top: 4px solid transparent;*/
+}
+
+.THIS .categoryIcon a,
+.THIS .categoryIcon a:active {
+    text-decoration: none;
+}
+
+.THIS .categoryIcon img {
+    margin: 0 auto 0.35em;
+    vertical-align: middle;
+    display: block;
+    height: 68px;
+}
+
+.THIS .active-icon {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.THIS .categoryIcon.is-active a,
+.THIS .categoryIcon:not(.is-active) a:hover,
+.THIS .categoryIcon:not(.is-active) a:focus {
+    /*border-top-color: token(land);*/
+    background-color: token(activeTabColor);
+    /*color: token(daze);*/
+    
+}
+/*.THIS .categoryIcon:not(.is-active) a:hover .product-menu-img,
+.THIS .categoryIcon:not(.is-active) a:focus .product-menu-img {
+ color: token(daze);
+    filter: brightness(1); 
+}*/
+.THIS .categoryIcon.is-active a .active-icon,
+.THIS .categoryIcon:not(.is-active) a:hover .active-icon,
+.THIS .categoryIcon:not(.is-active) a:focus .active-icon {
+    opacity: 1;
+    position: relative;
+    filter: brightness(0.3);
+                        
+}
+
+.THIS .categoryIcon.is-active a .default-icon,
+.THIS .categoryIcon:not(.is-active) a:hover .default-icon,
+.THIS .categoryIcon:not(.is-active) a:focus .default-icon {
+    opacity: 0;
+    position: absolute;
+                        
+}
+
+.THIS .products-menu {
+    position: sticky;
+    top: 63px;
+    z-index: 100;
+    padding-top: 0;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px;
+    background-color: token(daze);
+}
+.THIS .slds-grow {
+	background-color: token(daze);
+}
+.THIS .product-list {
+    display: grid;
+    width: calc(100% - 4.5rem);
+    grid-gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(18.875rem, 1fr));
+    padding: 1.5rem;
+    background-color: token(daze);
+    
+}
+
+.THIS .sort-select {
+    float:right;
+    box-sizing: border-box;
+      width: 104px;
+      border: 1px solid #B0B1B2;
+      border-radius: 4px;
+      background-color: token(daze);
+      color:token(fontColor);
+}
+.THIS .sort-select .slds-select{
+	color:token(fontColor);     
+        font-size: 13px;
+}
+.THIS .sort-select .slds-form-element__label {
+    display: none;
+}
+.THIS .productDescription{
+  height: 14px;
+  width: 238.97px;
+  color: token(greenSuperDark);
+  font-family: token(salesforceSans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 14px;                        
+}
+.THIS .listPriceText {
+  height: 12px;
+  width: 47px;
+  color: #706E6B;
+  font-family: token(salesforceSans);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 12px;
+  text-align: right;
+  text-transform:uppercase;
+  width:100%;
+}
+.THIS .priceText {
+  height: 18px;
+  width: 74px;
+  color: #3E3E3C;
+  font-family: token(salesforceSans);
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 18px;
+  text-align: right;
+}
+.THIS .producerName {
+  height: 15px;
+  width: 124.98px;
+  color: #706E6B;
+  font-family: token(salesforceSans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 15px;
+}
+.THIS .productFamily{
+  height: 16px;
+  width: 154px;
+  color: token(greenPrimary);
+  font-family: token(salesforceSans);
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 16px;
+}
+.THIS .marketplace-footer {
+    background-color: token(daze);/*#E7E6E2*/
+    margin-bottom: -12px;
+}
+
+.THIS .marketplace-footer ul {
+    columns: 3 240px;
+}
+
+.THIS .marketplace-footer li {
+    margin-bottom: 1em;
+}
+
+.THIS .marketplace-footer li,
+.THIS .marketplace-footer a {
+    color: #0F110F;
+    font-size: 12px;
+    font-weight: 600;
+}
+.THIS .productsHeading{
+	color:  token(fontColor);
+	font-size:18px;                        
+}
+.THIS .market-search .slds-icon-text-default{
+	fill: token(white)!important;
+}

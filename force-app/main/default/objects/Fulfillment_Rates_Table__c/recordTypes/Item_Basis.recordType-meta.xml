@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Item_Basis</fullName>
+    <active>true</active>
+    <description>Fulfillment Service Rates Apply to Item and Quantity. Charges are variable.</description>
+    <label>Item Basis</label>
+    <picklistValues>
+        <picklist>Fulfillment_Services__c</picklist>
+        <values>
+            <fullName>Cannabis Waste</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Change Order Fee</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Booking</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pack-Out</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pick %26 Pack</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>QA Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Receiving</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Schedule %26 Dispatch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service Booking</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service Scheduling</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service Staging</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stage %26 Manifest</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Storage</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Membership_Level__c</picklist>
+        <values>
+            <fullName>Boutique</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Business</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Enterprise</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retail</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Standard</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Size_Classification__c</picklist>
+        <values>
+            <fullName>None</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 10</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 11</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 12</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 13</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 15</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 16</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 3</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 6</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 7</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 8</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Type 9</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

@@ -1,0 +1,43 @@
+<template>
+
+<!-- Imperative method Example -->
+    <lightning-card title="All Accounts">
+        <lightning-input label="Number Of Records" type="number" onchange={numOfAccChangeHandler}></lightning-input>
+
+        <p>
+            <lightning-button label="Get Accounts" variant="brand" onclick={getAccounts}></lightning-button>
+        </p>
+        <ul>
+            <template if:true={responseReceived}>
+                <template for:each={accounts} for:item="account">
+                    <li key={account.Id}>
+                        <div class="slds-p-around_medium lgc-bg">
+                            <lightning-tile label={account.Name} type="media">
+                                <lightning-icon slot="media" icon-name="standard:account"></lightning-icon>
+                                <p class="slds-truncate" title={account.Phone}>{account.Phone}</p>
+                            </lightning-tile>
+                        </div>
+                    </li>
+                </template>
+            </template>
+        </ul>
+    </lightning-card>
+
+  <!--  Wire Service Apex Method Example
+      <lightning-card title="All Accounts">
+        <ul>
+            <template if:true={responseReceived}>
+                <template for:each={accounts.data} for:item="account">
+                    <li key={account.Id}>
+                        <div class="slds-p-around_medium lgc-bg">
+                            <lightning-tile label={account.Name} type="media">
+                                <lightning-icon slot="media" icon-name="standard:account"></lightning-icon>
+                                <p class="slds-truncate" title={account.Phone}>{account.Phone}</p>
+                            </lightning-tile>
+                        </div>
+                    </li>
+                </template>
+            </template>
+        </ul>
+    </lightning-card> -->
+</template>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Map_Opp_Max_Discount_from_Account</fullName>
+        <field>Max_Discount_Percentage__c</field>
+        <formula>Account.Max_Discount_Percentage__c</formula>
+        <name>Map Opp Max Discount from Account</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Map Opp Max Discount from Account</fullName>
+        <actions>
+            <name>Map_Opp_Max_Discount_from_Account</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Account.Max_Discount_Percentage__c &gt;0</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+</Workflow>

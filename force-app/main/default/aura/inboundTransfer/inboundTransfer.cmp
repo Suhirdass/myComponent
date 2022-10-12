@@ -1,0 +1,251 @@
+<aura:component extends="c:utility" controller="ServiceTicketsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global" >
+    <!--styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" -->
+    <ltng:require 
+                styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}"
+                scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                         $Resource.ratingPlugin + '/js/jquery-ui.js',
+                         $Resource.perfectScrollbar + '/jquery.zoom.js')}" 
+                afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" /> 
+    <aura:attribute name="products" type="List" default="[]"/>
+    <aura:attribute name="transferMethods" type="List" default="[]"/>
+    <aura:attribute name="productPriceBooks" type="Map" default=""/>
+    <aura:attribute name="contacts" type="List" default="[]"/>
+    <aura:attribute name="newServiceTicket" type="Map" default="{}"/>
+    <aura:attribute name="isBrandSearching" type="Boolean" default="false"/>
+    <aura:attribute name="newSTL" type="Map" default="{}"/>
+    <aura:attribute name="newServiceTicketLines" type="List" default="[]"/>
+    <aura:attribute name="perUnitWeights" type="List" default="[]"/>
+    <aura:attribute name="desiredRetailReadyForms" type="List" default="[]"/>
+    <aura:attribute name="preRollPackagings" type="List" default="[]"/>
+    <aura:attribute name="sites" type="List" default="[]"/>
+    <aura:attribute name="pickUpfrom" type="List" default="[]"/>
+    <aura:attribute name="onSiteContacts" type="List" default="[]"/>
+    <aura:attribute name="licenses" type="List" default="[]"/>
+    <aura:attribute name="filigreenLicenses" type="List" default="[]"/>
+    <aura:attribute name="transportLicenses" type="List" default="[]"/>
+    <aura:attribute name="pickUptransportLicenses" type="List" default="[]"/>
+    <aura:attribute name="dropOfftransportLicenses" type="List" default="[]"/>
+    <aura:attribute name="licensesOptions" type="List" default="[]"/>
+    <aura:attribute name="dropOfflicensesOptions" type="List" default="[]"/>
+    <aura:attribute name="testStatus" type="List" default="[]"/>
+    <aura:attribute name="tamperTypes" type="List" default="[]"/>
+    <aura:attribute name="packageTypes" type="List" default="[]"/>
+    <aura:attribute name="topFrontLabels" type="List" default="[]" />
+    <aura:attribute name="bottomBackLabels" type="List" default="[]" />
+    <aura:attribute name="bodyTubeLabels" type="List" default="[]" />
+    <aura:attribute name="THCCBDClaim_Labels" type="List" default="[]" />
+    <aura:attribute name="Cone_Size" type="List" default="[]" />
+    <aura:attribute name="requestDateTime" type="Date" default=""/>
+    <aura:attribute name="requestDateTimeStr" type="String" default=""/>
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="calendarEvents" type="List" default="[]"/>
+    <aura:attribute name="selectedTime" type="String" default=""/>
+    <aura:attribute name="reqTempDate" type="String" default=""/>
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+    <aura:attribute name="laAddress" type="String" default=""/>
+    <aura:attribute name="laAddressId" type="String" default=""/>
+    <aura:attribute name="defaultLicenseId" type="String" default=""/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+    <aura:attribute name="isShowSuccess" type="Boolean" default="false"/>
+    <aura:attribute name="siteMap" type="Map" default="{}"/>
+    <aura:attribute name="pickupLicenceMap" type="Map" default="{}"/>
+    <aura:attribute name="onSiteContactMap" type="Map" default="{}"/>
+    <aura:attribute name="stateLicenseMap" type="Map" default="{}"/>
+    <aura:attribute name="filigreenStateLicenseMap" type="Map" default="{}"/>
+    <aura:attribute name="defaultStateLicense" type="Map" default="{}"/>
+    <aura:attribute name="selectedStateLicense" type="Map" default="{}"/>
+    <aura:attribute name="selectedStateAddress" type="String" default=""/>
+    <aura:attribute name="selectedSiteAddress" type="String" default=""/>
+    <aura:attribute name="initializationCompleted" type="Boolean" default="false" />
+    <aura:attribute name="isSaveDraft" type="Boolean" default="false" />
+    <aura:attribute name="toolTips" type="Object"/>
+    <aura:attribute name="IT_DISABLE_BATCH_UID_FAMILIES" type="String"/>
+    <aura:attribute name="IT_DISABLE_COA_NUMBER_STATUSES" type="String"/>
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <aura:handler event="c:removeServiceTicketLine" action="{!c.onRemoveRow}" />
+    <aura:handler name="multiSelectEvent" event="c:multiSelectEvent" action="{!c.handleMultiSelectEvent}"/>
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:messages />
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />
+        <div class="slds-grid slds-gutters slds-m-top_small">
+            <section class="slds-col slds-size_1-of-1">
+                <div class="slds-box height-full">
+                    <h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                        {!v.newServiceTicket.brandName} - Inbound Transfer
+                    </h2>
+                    <div class="slds-p-horizontal_xx-small">
+                        <aura:if isTrue="{!!empty(v.newServiceTicket.id)}">
+                        	<div class="slds-m-horizontal_small slds-m-top_small ">Ticket Number</div>
+                            <div class="ticketNumber slds-m-horizontal_small">
+                            	{!v.newServiceTicket.ticketNumber}
+                            </div>
+                        </aura:if>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <c:multiselect mslabel="Transfer Method" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.transferMethods }" selectedValuesName="{!v.newServiceTicket.transferMethod}" selectedValuesId="{!v.newServiceTicket.transferMethod}"/>
+                                </aura:if>
+                            </div>
+                            <aura:if isTrue="{!equals(v.newServiceTicket.transferMethod, 'Pick-up')}">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="Pick Up From" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.pickUpfrom }" selectedValuesName="{!v.newServiceTicket.pickupFromDBAName}" selectedValuesId="{!v.newServiceTicket.pickupFromDBA}"/>
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="{!if(equals(v.newServiceTicket.transferMethod,'Drop-off'),'Destination Site','Pick Up Address')}" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.licensesOptions }" selectedValuesName="{!v.newServiceTicket.licenseName}" selectedValuesId="{!v.newServiceTicket.licensePremise}"/>
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="Transporter" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.transportLicenses }" selectedValuesName="{!v.newServiceTicket.transportLicenseName}" selectedValuesId="{!v.newServiceTicket.transportLicenseId}"/>
+                                    </div>
+                                    
+                                    <!--div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="On-Site Contact" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.onSiteContacts }" selectedValuesName="{!v.newServiceTicket.brandContact}" selectedValuesId="{!v.newServiceTicket.brandContactId}"/>
+                                    </div-->
+                                </aura:if>
+                                
+                            </aura:if>
+                            
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <c:multiselect mslabel="Destination Site" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.sites }" selectedValuesName="{!v.newServiceTicket.destinationSiteName}" selectedValuesId="{!v.newServiceTicket.destinationSiteId}"/>
+                                </aura:if>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <lightning:input type="text" aura:id="validate" label="Destination Address" value="{!v.selectedSiteAddress}" required="false" disabled="true"/>
+                            </div>
+                            
+                            <aura:if isTrue="{!equals(v.newServiceTicket.transferMethod, 'Drop-off')}">
+                                <aura:if isTrue="{!v.isDataLoaded}">
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="Transporter" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.transportLicenses }" selectedValuesName="{!v.newServiceTicket.transportLicenseName}" selectedValuesId="{!v.newServiceTicket.transportLicenseId}"/>
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="{!if(equals(v.newServiceTicket.transferMethod,'Drop-off'),'Originating Entity','Pick Up From')}" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.pickUpfrom }" selectedValuesName="{!v.newServiceTicket.pickupFromDBAName}" selectedValuesId="{!v.newServiceTicket.pickupFromDBA}"/>
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                        <c:multiselect mslabel="{!if(equals(v.newServiceTicket.transferMethod,'Drop-off'),'Originating Address','Pick Up Address')}" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.licensesOptions }" selectedValuesName="{!v.newServiceTicket.licenseName}" selectedValuesId="{!v.newServiceTicket.licensePremise}"/>
+                                    </div>
+                                </aura:if>
+                            </aura:if>
+                            
+                            <div class="slds-col slds-size_1-of-8 slds-m-vertical_small">
+                                <lightning:textarea aura:id="validate" class="specialInstructions" label="Special Instructions" value="{!v.newServiceTicket.specialInstruction}"
+                                                    placeholder="Special Instructions" maxlength="255"/>
+                            </div>
+                            <!--aura:if isTrue="{!equals(v.newServiceTicket.transferMethod, 'Drop-off')}"-->
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <aura:if isTrue="{!v.isDataLoaded}">
+                                        <c:multiselect mslabel="{!if(equals(v.newServiceTicket.transferMethod,'Drop-off'),'Brand Contact','On-Site Contact')}" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.contacts }" selectedValuesName="{!v.newServiceTicket.brandContact}" selectedValuesId="{!v.newServiceTicket.brandContactId}"/>
+                                    </aura:if>
+                                </div>
+                            
+                            <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                <label class="slds-form-element__label">WOVN to provide payment to supplier</label>
+                                		<lightning:input class="slds-form-element__label" type="checkbox" label="" value="{!v.newServiceTicket.passThroughPayment}"
+                                 		checked="{!v.newServiceTicket.passThroughPayment}" />
+                            </div>
+                            <!--/aura:if-->
+                            <div class="slds-col slds-size_2-of-4 slds-m-vertical_small">
+                                <label class="slds-form-element__label">Requested Transfer Date</label>
+                                <div>
+                                    <table>
+                                        <tr>
+                                            <td style="vertical-align:top;">
+                                                <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                                        <input type="text" class="slds-input slds-show_inline-block" id="datepickerId" style="width: 150px;vertical-align:top" value="{!v.newServiceTicket.requestDate}"/>
+                                                        <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}">
+                                                            <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="vertical-align:top;">
+                                                <div class="slds-show_inline-block slds-scrollable" style="max-height:100px;">
+                                                    <aura:iteration items="{!v.calendarEvents}" var="cal">
+                                                        <aura:if isTrue="{!cal.isAvailable}">
+                                                            <div aura:id="test" id="test" class="{!'hoverCss slds-show_inline-block'+if(equals(v.selectedTime,cal.slotTime),' selectedSlot','')}" data-time="{!cal.slotTime}" onclick="{!c.getSlotTime}" style="cursor: pointer;border:1px solid #dcdac6;border-radius:4px;padding:5px;margin:2px;width:100px;text-align:center;font-weight:500">
+                                                                <div >
+                                                                    {!cal.slotTime}
+                                                                </div>
+                                                            </div>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--aura:if isTrue="{!equals(v.newServiceTicket.transferMethod, 'Drop-off')}">
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="validate" label="Driver Name" value="{!v.newServiceTicket.driverAndContactDetails}" required="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="validate" label="DL #" value="{!v.newServiceTicket.DLNumber}" required="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="validate" label="Employee #" value="{!v.newServiceTicket.employeeNumber}" required="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="validate" label="Vehicle Make" value="{!v.newServiceTicket.vehicleMake}" required="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                	<lightning:input type="text" label="Transporter" value="{!v.newServiceTicket.brandDBA}" required="false" disabled="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                	<aura:if isTrue="{!v.isDataLoaded}">
+                                        <c:multiselect mslabel="License Premise" aura:id="multiSelect" isRequired="true" isMultiSelect="false" msoptions="{! v.licensesOptions }" selectedValuesName="{!v.newServiceTicket.licenseName}" selectedValuesId="{!v.newServiceTicket.licensePremise}"/>
+                                    </aura:if>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="validate" label="Vehicle Model" value="{!v.newServiceTicket.vehicleModel}" required="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4 slds-m-vertical_small">
+                                    <lightning:input type="text" aura:id="validate" label="License Plate #" value="{!v.newServiceTicket.licensePlate}" required="true"/>
+                                </div>
+                            </aura:if-->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <aura:if isTrue="{!v.isDataLoaded}">
+            <aura:iteration items="{!v.newServiceTicketLines}" var="STL" indexVar="index">
+                <c:inboundTransferLine toolTips="{!v.toolTips}" SLIndex="{!index}" brandId="{!v.newServiceTicket.brandId}" brandName="{!v.newServiceTicket.brandName}" aura:id="serviceTicketLine" serviceTicketLine="{!STL}" products="{!v.products}" testStatus="{!v.testStatus}" perUnitWeights="{!v.perUnitWeights}" desiredRetailReadyForms="{!v.desiredRetailReadyForms}" tamperTypes="{!v.tamperTypes}" packageTypes="{!v.packageTypes}" preRollPackagings="{!v.preRollPackagings}" topFrontLabels="{!v.topFrontLabels}" bottomBackLabels="{!v.bottomBackLabels}" bodyTubeLabels="{!v.bodyTubeLabels}" THCCBDClaim_Labels="{!v.THCCBDClaim_Labels}" Cone_Size="{!v.Cone_Size}" productPriceBooks = "{!v.productPriceBooks}" IT_DISABLE_COA_NUMBER_STATUSES="{!v.IT_DISABLE_COA_NUMBER_STATUSES}" IT_DISABLE_BATCH_UID_FAMILIES="{!v.IT_DISABLE_BATCH_UID_FAMILIES}"/>
+            </aura:iteration>
+        </aura:if>
+        
+        <div class="action-bar">
+            <lightning:layout>
+                <lightning:layoutItem flexibility="grow" size="1">
+                    <lightning:button onclick="{!c.onCancel}" label="Cancel" class="cancelButton" />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem flexibility="grow" size="11" class="slds-text-align_right">
+                    <lightning:button  onclick="{!c.onAddRow}" class="slds-m-right_medium draftButton" label="Add Service" />
+                    <lightning:button  class="slds-m-right_medium draftButton" onclick="{!c.onSaveDraft}" label="Save Draft" />
+                    <lightning:button  class="submitButtonGreen" onclick="{!c.onSaveAndUpload}" label="Submit &amp; Upload Attachment" />&nbsp;
+                    <lightning:button  class="submitButtonGreen" onclick="{!c.onSave}" label="Submit" />
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.isShowSuccess}">
+        <c:successModal
+                        title="{!'Inbound Transfer '+if(empty(v.newServiceTicket.id), if(v.isSaveDraft,'saved successfully!','submitted successfully!'),'updated successfully!')}"
+                        description="Our team will begin working on your ticket right away. You'll recieve an email confirmation shortly."
+                        buttons="[
+                                 { href: '/filigreenb2b/s', label: 'Home', variant: 'neutral' ,screenName:'Home'},
+                                 { href: '/filigreenb2b/s/inboundtransfer', label: 'New Inbound Transfer', variant: 'neutral',removeIdsFromCache:'serviceTicketId',screenName:'Create Inbound Transfer' },
+                                 { href: '/filigreenb2b/s/inboundtransfers', label: 'View Inbound Transfers', variant: 'brand' ,screenName:'View Inbound Transfers' },
+                                 ]"
+                        />
+    </aura:if>
+</aura:component>

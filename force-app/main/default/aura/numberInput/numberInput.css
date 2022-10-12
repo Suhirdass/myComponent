@@ -1,0 +1,53 @@
+.THIS {
+  max-width: 100px;
+  position: relative;
+  background-color: token(thistleGreen);
+  display: inline-flex;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.THIS .slds-form-element__label {
+  display: none;
+}
+
+.THIS .slds-button {
+  width: 28px;
+  border-radius: 3px;
+}
+
+.THIS .number-input__input input {
+  line-height: 28px;
+  border-width: 0px;
+  border-radius: 0px;
+  padding: 0;
+  text-align: center;
+    height: unset!important;
+    background-color: token(thistleGreen);
+}
+
+.THIS .number-input__decrement,
+.THIS .number-input__increment {
+  position: static;
+  z-index: 10;
+}
+
+.THIS .number-input__decrement {}
+.THIS .number-input__increment {}
+
+.THIS .slds-form-element__help{
+    display: none !important;
+}
+
+.THIS.is-small {
+  max-width: 80px;
+}
+
+.THIS.is-small .slds-button {
+  width: 24px;
+}
+
+.THIS.is-small .number-input__input input {
+  line-height: 22px;
+  font-size: 10px;
+}

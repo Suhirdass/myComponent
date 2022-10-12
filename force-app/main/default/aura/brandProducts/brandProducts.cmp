@@ -1,0 +1,182 @@
+<aura:component extends="c:utility"
+	controller="ProductsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+	access="global">
+    <aura:attribute name="products" type="List" default="[]" />
+    <aura:attribute name="brandId" type="String" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="isBrand" type="Boolean" default="false" />
+    <aura:attribute name="isLCExist" type="Boolean" default="false" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchBrandProducts}"/>
+    <lightning:spinner
+			variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+    <table class="slds-table" style="border: solid 1px gainsboro;">
+        <thead>
+            <tr>
+                <th style="background-color:#d1cdb0;"></th>
+                <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortProducts}" data-field="Product2.Brand_Name__c">
+                    Brand
+                    <aura:if isTrue="{!v.filters.orderByField=='Product2.Brand_Name__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <!--<th class="sortable" onclick="{!c.sortProducts}" data-field="Product2.Name">
+                    SKU
+                    <aura:if isTrue="{!v.filters.orderByField=='Product2.Name'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>-->
+                <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortProducts}" data-field="Product2.Product_Short_Description__c">
+                    Product Name
+                    <aura:if isTrue="{!v.filters.orderByField=='Product2.Product_Short_Description__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <aura:if isTrue="{!!v.isBrand}">
+                    <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortProducts}" data-field="{!(v.isLCExist ? 'UnitPrice': 'Product2.MSRP__c')}">
+                        <aura:if isTrue="{!v.isLCExist}">Price<aura:set attribute="else">MSRP</aura:set></aura:if>
+                          
+                        <aura:if isTrue="{!or(v.filters.orderByField=='Product2.MSRP__c',v.filters.orderByField=='UnitPrice')}">
+                            <span class="sortIcon">
+                                <aura:if isTrue="{!v.filters.isASC}">
+                                    &#8593;
+                                    <aura:set attribute="else">
+                                        &#8595;
+                                    </aura:set>
+                                </aura:if>
+                            </span>
+                        </aura:if>
+                    </th>
+                    <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortProducts}" data-field="Product2.Strain__r.Name">
+                        Strain
+                        <aura:if isTrue="{!v.filters.orderByField=='Product2.Strain__r.Name'}">
+                            <span class="sortIcon">
+                                <aura:if isTrue="{!v.filters.isASC}">
+                                    &#8593;
+                                    <aura:set attribute="else">
+                                        &#8595;
+                                    </aura:set>
+                                </aura:if>
+                            </span>
+                        </aura:if>
+                    </th>
+                </aura:if>
+                <!--<th class="sortable" onclick="{!c.sortProducts}" data-field="Product2.Available_Qty__c">
+                    Case Quantity (Units)
+                    <aura:if isTrue="{!v.filters.orderByField=='Product2.Available_Qty__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>-->
+            </tr>
+        </thead>
+        <tbody>
+            <aura:if isTrue="{!v.products.length > 0}">
+                <aura:iteration items="{!v.products}" var="product" indexVar="index">
+                    <tr>
+                        <td style="min-width: 65px;">
+                            <img src="{!product.imageUrl}"
+                                 style="width: 40px; height: 40px; border: 1px solid #ccc" />
+                        </td>
+                        <!--<aura:if isTrue="{!product.whiteLabelled}">
+                            <td  data-id="{!product.licenseeId }" style="max-width: 300px;">
+                                <div data-id="{!product.licenseeId }" class="text__blue slds-truncate" style="cursor:pointer;"  onclick="{!c.onViewBrand}" title="{!product.licenseeName}">{!product.licenseeName}</div>
+                            </td>
+                            
+                            <aura:set attribute="else">
+                                <td  data-id="{!product.producerId }" style="max-width: 300px;">
+                                    <div data-id="{!product.producerId }" class="text__blue slds-truncate" style="cursor:pointer;"  onclick="{!c.onViewBrand}" title="{!product.producerName}">{!product.producerName}</div>
+                                </td>
+                            </aura:set>
+                        </aura:if>-->
+                        <td  data-id="{!v.brandId }" style="max-width: 300px;">
+                            <!--div data-id="{!v.brandId }" class="text__blue slds-truncate" style="cursor:pointer;"  onclick="{!c.onViewBrand}" title="{!product.brandName}">{!product.brandName}</div-->
+                            <div data-id="{!v.brandId }" class=" slds-truncate" title="{!product.brandName}">{!product.brandName}</div>
+                        </td>
+                        <!--<td style="max-width: 120px;">
+                            <p class="truncate" style="max-width: 200px">
+                                <div class="text__blue slds-truncate" style="cursor:pointer;" data-id="{!product.price.id}" data-name="{! product.name }" onclick="{!c.onProductDetail}"><ui:outputText title="{! product.name }" value="{! product.name }"/></div>
+                            </p>
+                        </td>-->
+                        <td style="max-width: 300px;">
+                            <p class="truncate" style="max-width: 300px">
+                                <aura:if isTrue="{!not(v.isBrand) }">
+                                    <div class="text__blue slds-truncate" style="cursor:pointer;color:#518397;" data-id="{!product.price.id}" data-name="{! product.name }" onclick="{!c.onProductDetail}"><ui:outputText title="{!product.shortDescription}" value="{!product.shortDescription}"/></div>
+                                    <aura:set attribute="else">
+                                        <div data-id="{!product.price.id }" class=" slds-truncate" data-name="{! product.name }"><ui:outputText title="{!product.shortDescription}" value="{!product.shortDescription}"/></div>
+                                    </aura:set>
+                                </aura:if>
+                                
+                                
+                            </p>
+                        </td>
+                        <aura:if isTrue="{!!v.isBrand}">
+                            <td>
+                                <aura:if isTrue="{!v.isLCExist}">
+                                    <aura:renderIf isTrue="{!product.discount>0}">
+                                        <lightning:formattedNumber value="{!product.salePrice}" style="currency" currencyCode="USD"/>&nbsp;
+                                    </aura:renderIf>
+                                    <lightning:formattedNumber class="{!if(product.discount>0,'line-through')}" value="{!product.price.unitPrice}" style="currency" currencyCode="USD"/>
+                                    
+                                    <aura:set attribute="else">
+                                        <lightning:formattedNumber value="{!product.MSRP}" style="currency" currencyCode="USD"/>
+                                    </aura:set>
+                                </aura:if>
+                            </td>
+                            <td>
+                            	{!product.strainName}
+                            </td>
+                        </aura:if>
+                        <!--<td style="font-size: 12px;">
+                            <lightning:formattedNumber value="{!product.availableQty / product.MOQ}" maximumFractionDigits="2"/> (<lightning:formattedNumber value="{!product.availableQty}" /> units)                           
+                        </td>-->
+                    </tr>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    <tr>
+                    	<td colspan="5">
+                        	<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700;font-family:'Alliance Neue';color:#42472a;">
+								NO PRODUCTS FOUND.
+							</h3>
+                        </td>
+                    </tr>
+                </aura:set>
+            </aura:if>
+        </tbody>
+    </table>
+    <c:paginator aura:id="productpaginator" perPage="{!v.perPage}" />
+</aura:component>

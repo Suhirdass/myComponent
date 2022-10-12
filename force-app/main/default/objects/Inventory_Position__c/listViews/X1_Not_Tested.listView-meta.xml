@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X1_Not_Tested</fullName>
+    <columns>NAME</columns>
+    <columns>Receiving_Line__c</columns>
+    <columns>Product_Name__c</columns>
+    <columns>Product_Description__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Inventory_Qty__c</columns>
+    <columns>Sales_Order__c</columns>
+    <columns>Harvest_Batch_Code__c</columns>
+    <columns>UID_New__c</columns>
+    <columns>Lab_Test_Status__c</columns>
+    <columns>Hold__c</columns>
+    <columns>Bin_Location__c</columns>
+    <columns>Rack_Level__c</columns>
+    <columns>Rack__c</columns>
+    <columns>Inventory_Location__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Inventory_Location__c</field>
+        <operation>notEqual</operation>
+        <value>Delivered,Test Sampled,Transferred,Converted,Quarantine,Packaged,Inventory,CannaWaste</value>
+    </filters>
+    <filters>
+        <field>Lab_Test_Status__c</field>
+        <operation>equals</operation>
+        <value>Not Tested</value>
+    </filters>
+    <label>1. Not Tested</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

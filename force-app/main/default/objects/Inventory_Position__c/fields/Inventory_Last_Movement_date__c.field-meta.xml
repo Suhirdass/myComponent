@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Inventory_Last_Movement_date__c</fullName>
+    <description>Capture IP movement date to calculate total inventory days in Site.</description>
+    <externalId>false</externalId>
+    <label>Inventory Last Movement date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

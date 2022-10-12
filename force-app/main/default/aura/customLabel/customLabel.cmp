@@ -1,0 +1,14 @@
+<aura:component >
+    <aura:attribute name="labelClass" type="String" default=""/>
+    <aura:attribute name="label" type="String" default=""/>
+    <aura:attribute name="sublabel" type="String" default=""/>
+    <aura:attribute name="required" type="Boolean" default="false"/>
+    <aura:if isTrue="{!v.required}">
+    	<abbr class="slds-required" title="required">*</abbr>
+    </aura:if>
+    
+    <label class="{!'slds-form-element__label '+v.labelClass}" for="form-element-help-01">{!v.label}&nbsp;</label>
+    <p>{!v.sublabel}</p>
+	{!v.body}
+    
+</aura:component>

@@ -1,0 +1,32 @@
+.THIS .select__hidden-label label {
+  display: none;
+}
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    cursor: pointer;
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}
+.THIS .slds-select{
+	font-size:14px;
+	cursor:pointer;
+}
+.THIS .right-align {
+	float: right;
+}
+.THIS .submitButton{
+    border: 1px solid rgb(221, 219, 218);
+    background-clip: border-box;
+    color: rgba(27, 82, 151, 1);
+    font-size: .75rem;
+    line-height: 1.875rem;
+    text-decoration: none;
+    white-space: normal;
+    border-radius: .25rem;
+}
+.THIS .sortable{
+	Cursor:pointer;
+}
+.THIS .headerTd{
+    text-align: right;
+    font-weight: bold;
+    padding-top: 18px;
+}

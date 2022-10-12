@@ -1,0 +1,46 @@
+.text-align-left {
+  text-align: right;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.margin-left {
+ margin-top: 5px;
+  margin-left: 20px;
+  font-size: 13px;
+}
+
+.table {
+  border: 1px;
+}
+
+table td {
+  border:var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+}
+table th,td {
+  border:var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+
+}
+.prod-description {
+  width: 100px !important;
+}
+table th {
+  text-align: left;
+}
+
+/*.slds-card__header {
+  margin-top: -35px ;
+}*/
+
+.prod-name {
+  width: 70px !important;
+}
+.retail-wholesale {
+  width: 60px !important;
+
+}
+.line-item {
+  width: 40px !important;
+
+}

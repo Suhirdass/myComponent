@@ -1,0 +1,278 @@
+<aura:component extends="c:utility" controller="AssignQAtoRELICtlr" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+	
+    <aura:attribute name="poId" type="String" />
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="poData" type="Purchase_Order__c" default="{'sobjectType': 'Purchase_Order__c', 'Name':'' }"/>
+    <aura:attribute name="ReceivingLines" type="List" />
+    <aura:attribute name="isNewQA" type="boolean" default="false"/>
+    <aura:attribute name="selectedRELI" type="String" default=""/>
+    <aura:attribute name="fields" type="String[]" default="['Failed__c','Failure_Summary__c','Pass_All__c','OwnerId','RecordTypeId','Receiving_Line__c',
+                          'Product_Verification__c','Product_Verification__c','Batch_ID__c','UID__c',
+                          'Clear_and_Legible__c','Net_weight__c','Product_Identification__c','Net_Weight_Threshold__c',
+                          'Universal_Symbol__c','Licensee_Contact_Information__c','Manufacture_and_Packaging_Date__c','Cannabis_Government_Warning__c',
+                          'Packaging_Date__c','Prop65_Warning__c','Best_or_Use_by_Date__c','Product_Ingredients__c','Harvest_Date__c',
+                           'Cannabinoid_Threshold__c','Cannabis_Cannabinoid_Content__c','Cannabis_Product_Cannabinoid_Content__c','Tamper_Evident__c',
+                           'Multi_Layered_Packaging__c','Child_Resistant_Packaging__c','Resealable_for_Multi_Servings__c','Opaque__c']" />
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <aura:html tag="style">
+        .slds-form-element__label {
+        display : none;
+        }
+        .back {
+        	background-color: white;
+        	min-height: 70%;
+        }
+        .backTwo {
+        background-color: white;
+        max-height: 200%;
+        }
+        .dataTables_filter{
+        display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .cUtility button {
+        border-radius: var(--lwc-buttonBorderRadius,.25rem);
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        .SOtable{
+        border-collapse: collapse;
+        width: 100%;
+        height: 100%;
+        }
+        .SOtable td, .SOtable th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+        .SOtable tr:hover {background-color: #F5F5F5;}
+        .SOtable th {
+        background-color: #F5F5F5;
+        
+        border: 1px solid #D9D7D7;
+        }
+        .textCap{
+        text-transform: capitalize !important; 
+        }
+        .title-align {
+        padding-left: 10px !important;
+        padding-top: 5px !important;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-page-header-two {
+        padding: var(--lwc-varSpacingVerticalMedium,1rem) var(--lwc-varSpacingHorizontalMedium,1rem);
+        border-radius: var(--lwc-pageHeaderBorderRadius,0.25rem);
+        background: var(--lwc-pageHeaderColorBackground,rgb(243, 242, 242));
+        background-clip: padding-box;
+        }
+        .cUtility .slds-modal__content {
+    padding: 15px;
+    border-radius: 0px !important;
+}
+        .cUtility .slds-modal__container {
+   
+    left: 109px;
+}
+      .cUtility  .slds-modal__close {
+            top: -3em; 
+            right: -1em;
+        }
+    </aura:html>
+    
+    
+    
+    <article class="slds-card" >
+            <div class="slds-page-header heightfix" role="banner">
+                <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                        <div class="slds-media">
+                            <lightning:icon iconName="custom:custom83" title="custom83" />
+                            <div class="slds-media__body">
+                                <div class="slds-grid">
+                                    <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Receiving Details">Receiving Details</h1> 
+                                </div>
+                            </div>	
+                        </div>
+                    </div>
+                    <div class="slds-col slds-no-flex slds-align-bottom">
+                        <div class="slds-button-group" role="group">
+                            <lightning:button class="slds-button slds-button--neutral textCap" label="Close" onclick="{!c.onCancel}"/>   
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            
+            <div class="slds-card__header ">
+                <div class="slds-grid slds-wrap slds-text-align_center custom-container">  
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Purchase Order</b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">   <a href="{!'/' + v.poData.Id}" style="color:#0070D2;" target="_blank">{!v.poData.Name}</a></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Ownership</b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.poData.Ownership__r.Name} </div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Supplier Name</b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3 slds-truncate" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.poData.Supplier_Name__c}" style="color:#0070D2;" target="_blank">{!v.poData.Supplier_Name__r.Name}</a></div> 
+                    
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Order or Service #  </b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + if(equals(v.poData.Opportunity_Name__r.Order__c,null),v.poData.Opportunity_Name__c,v.poData.Opportunity_Name__r.Order__c)}" style="color:#0070D2;" target="_blank">{!v.poData.Customer_PO_or_Quote__c}</a></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Site</b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.poData.Site__c}" style="color:#0070D2;" target="_blank">{!v.poData.Site__r.Name}</a><span>, </span> {!v.poData.Site__r.Warehouse_Name__c}</div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Supplier DBA </b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"> <a href="{!'/' + v.poData.Supplier_Name__c}" style="color:#0070D2;" target="_blank">{!v.poData.Supplier_DBA__c}</a></div>
+                    
+                    
+                    
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"> </div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"> </div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Supplier Contact </b></div>
+                    <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"> <a href="{!'/' + v.poData.Supplier_Contact__c}" style="color:#0070D2;" target="_blank">{!v.poData.Supplier_Contact__r.Name}</a></div>
+                </div>  
+            </div>
+        <br/>
+    </article>
+    <br/>
+    
+    
+    <article style="background:white !important; border-radius: 5px !important;">
+        
+         <div class="slds-page-header-two heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom96" title="custom96" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Receiving line items">Receiving Line Items</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="slds-is-relative slds-p-horizontal_small">
+                <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small" style="max-height: 100% !important;">
+                    <table class="slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small SOtable" style="margin-bottom:4%;">
+                        <thead>
+                            <tr class="slds-text-title">
+                                
+                                <th scope="col"> <div title="Receiving Record">Receiving Record</div> </th>
+                                <th scope="col"> <div title="Name">Name</div> </th>
+                                <th scope="col"> <div title="Product Name">Product Name</div></th>
+                                <th scope="col"> <div title="Qty">Qty</div></th>
+                                <th scope="col"> <div title="Unit Cost">Unit Cost</div></th>
+                                <th scope="col"> <div title="Batch ID">Batch ID</div></th>
+                                <th scope="col"> <div title="UID">UID</div></th>
+                                <th scope="col"> <div title="Quality Assurance">Quality Assurance</div></th>
+                                <th scope="col"> <div title="Brand Name">Brand Name</div></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            <aura:If isTrue="{!v.ReceivingLines.length > 0 }">
+                            <aura:iteration items="{!v.ReceivingLines}" var="rli" indexVar="index" > 
+                                <tr id ="{!index}" >
+                                    
+                                    <td><div><a href="{!'/' + rli.Receiving_ID__c}" style="color:#0070D2;" target="_blank"><u>{!rli.Receiving_ID__r.Name}</u></a></div></td>
+                                    <td><div>{!rli.Name}</div></td>
+                                    <td><div>{!rli.Product_Name__r.Name}</div></td>
+                                    <td><div>{!rli.Qty_to_Receive__c}</div></td>
+                                    <td><div><ui:outputCurrency value="{!rli.Unit_Cost__c}"/></div></td>
+                                    <td><div>{!rli.Harvest_Batch_Code__r.Name}</div></td>
+                                    <td><div>{!rli.UID_New__r.Name}</div></td>
+                                    <td>
+                                        <aura:If isTrue="{!rli.Quality_Assurances__r.length > 0}">
+                                            <div > <a href="{!'/' + rli.Quality_Assurances__r[0].Id}" style="color:#0070D2;" target="_blank"><u>{!rli.Quality_Assurances__r[0].Name}</u></a> </div>
+                                            <aura:set attribute="else">
+                                            	<div data-id="{!rli.Id}" style="cursor: pointer;" onclick="{!c.handleNewQAClick}"> + New QA </div>
+                                            </aura:set>
+                                        </aura:If>
+                                        </td>
+                                    <td><div>{!rli.Producer_Name__c}</div></td>
+                                    
+                                </tr>
+                            </aura:iteration>
+                            <aura:set attribute="else">
+                            <tr><td colspan='9'><div style="color:red; text-align: center;">No Records Found!</div></td></tr> 
+                        </aura:set>
+                    </aura:If>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        <br/>
+    </article>
+    <br/>
+    <aura:If isTrue="{!v.isNewQA}">
+        
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" >
+                <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="padding-top: 20px; width: 690px;">
+              <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Quality Assurance: QA Receiving Line</h2>
+                </header>
+       
+
+                <!--###### MODAL BOX BODY Part Start######-->
+             
+
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 690px;">
+					
+                    <lightning:recordEditForm aura:id="myRecordForm" objectApiName="Quality_Assurance__c"  onsuccess="{!c.handleSuccess}">
+                        <div class="slds-p-horizontal_xx-small" style="width: 690px;">
+                            <div class="slds-grid slds-wrap">
+                                
+                                <aura:iteration items="{!v.fields}" var="fld"> 
+                                    <div class="slds-col slds-size_1-of-2" style="width: 46%;">
+                                        <aura:If isTrue="{!equals(fld,'RecordTypeId')}">
+                                            <lightning:inputField fieldName="{!fld}" value="0126A000000isIxQAI"/>
+                                            <aura:set attribute="else">
+                                                <aura:If isTrue="{!equals(fld,'Receiving_Line__c')}">
+                                                    <lightning:inputField fieldName="{!fld}" value="{!v.selectedRELI}"/>
+                                                    <aura:set attribute="else">
+                                                        <lightning:inputField fieldName="{!fld}" />
+                                                    </aura:set>
+                                                </aura:If>
+                                            </aura:set>
+                                        </aura:If>
+                                        
+                                    </div>
+                                </aura:iteration>
+                            </div>
+                        </div>
+                        
+                    </lightning:recordEditForm>
+                    
+                </div>
+
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer"  style="width: 690px; height: 60px; z-index: 2; display:inline-flex !important;">
+                            
+                            <span style="height: 50px !important; width: 690px  !important; z-index: 1;">
+                                <lightning:button class="slds-button_neutral textCap"  label="cancel" title="cancel"  onclick="{!c.closeModel}"/>
+                                <lightning:button class="slds-button_brand textCap"  type="submit" label="Save"  onclick="{!c.onSubmit}" />
+                            </span>
+                            <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: 230px;"></span>
+                        </footer>
+            </div>
+
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+   
+    </aura:If>
+</aura:component>

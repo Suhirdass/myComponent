@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Weight_Fee_Amount_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>Fixed_Weight_Fee__c  &amp;&amp;   ISNULL(Fixed_Weight_Amount__c)</errorConditionFormula>
+    <errorDisplayField>Fixed_Weight_Amount__c</errorDisplayField>
+    <errorMessage>* Required</errorMessage>
+</ValidationRule>

@@ -1,0 +1,30 @@
+<aura:component extends="c:utility" controller="ProductsCtlr">
+  <aura:attribute name="class" type="string" default="" />
+  <aura:attribute name="small" type="Boolean" default="false" />
+  <aura:attribute name="isDisabled" type="Boolean" default="false" />
+  <aura:attribute name="value" type="Decimal" default="0" />
+    <aura:attribute name="oldvalue" type="Decimal" default="0" />
+  <aura:attribute name="min" type="Integer" default="0" />
+    <aura:attribute name="index" type="Integer" default="0" />
+  <aura:attribute name="Max" type="Integer" default="Infinity" />
+    <aura:attribute name="recordId" type="String" default="" />
+    <aura:attribute name="showInRed" type="Boolean" default="false" />
+    <aura:attribute name="isActive" type="Boolean" default="false" />
+    
+    <!--Register the component level event-->
+    <aura:registerEvent name="numberInputEvt" type="c:numberInputEvent"/>
+   
+
+    <div class="{! v.class + ' number-input' + (v.small ? ' is-small' : '')}" style="{! (v.showInRed ? 'border: solid 1px var(--lwc-colorTextError,rgb(194, 57, 52));' : 'border: none;')}">
+        <button disabled="{!v.isDisabled}" class="slds-button slds-button_icon" title="Reduce Case Qty" onclick="{!c.handleDecrement}"><!--style="height:24px;"-->
+            <lightning:icon iconName="utility:dash" size="xx-small" alternativeText="Reduce Case Qty" />
+        </button>
+        <span onkeypress="{!c.itemsChange}">
+            <lightning:input aura:id="input" disabled="{!v.isDisabled}" type="number" value="{!v.value}"
+                             step="1.0001" class="number-input__input" onfocus="{!c.onNumberFocus}" onblur="{!c.onNumberBlur}"/>
+        </span>
+        <button disabled="{!v.isDisabled}" class="slds-button slds-button_icon" title="Add Case Qty" onclick="{!c.handleIncrement}" ><!--style="height:24px;"-->
+            <lightning:icon iconName="utility:add" size="xx-small" alternativeText="Add Case Qty" />
+        </button>
+    </div>
+</aura:component>

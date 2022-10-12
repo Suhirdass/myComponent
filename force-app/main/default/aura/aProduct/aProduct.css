@@ -1,0 +1,66 @@
+.THIS .max300{
+    width: 300px;
+    height: 300px;
+}
+.THIS .max250{
+    width: 250px;
+    height: 250px;
+}
+.THIS .resetSize .slds-form-element__icon{
+  padding-top: 0 !important;
+}
+.THIS #overlay{
+  border:1px solid token(fontColor);
+  width:350px;
+  height:350px;
+  position:absolute;
+  background-repeat:no-repeat;
+  left:100%;
+}
+.THIS .slds-tabs_default__nav{
+    background-color: token(tableHeaderColor);
+}
+.THIS .slds-box__header {
+    background-color: token(tableHeaderColor);
+}
+.THIS .productTabs{
+    min-height:550px;
+    
+}
+.THIS .product-card {
+  display: flex;
+  margin-top: 12px;
+}
+.THIS .product-card__image {
+    margin-right: 1em;
+    width: 80px;
+    height: 80px;
+}
+.THIS .product-card__description {
+font-family:token(salesforceSans);
+}
+.THIS .details-separator{
+    width:100%;
+}
+.THIS .slds-box {
+    padding: 0 var(--lwc-spacingMedium) var(--lwc-spacingMedium);
+}
+            .THIS .print-export{
+	height: 40px;
+	width: 78px;
+	color: token(land);
+	font-family: token(salesforceSans);
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+    padding-top: 13px;
+    padding-right: 5px;
+	cursor:pointer;
+    background: token(tableHeaderColor);
+            position: absolute;
+    right: 290px;
+    
+}

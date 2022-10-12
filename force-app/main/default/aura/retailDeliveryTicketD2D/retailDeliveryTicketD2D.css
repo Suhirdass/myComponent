@@ -1,0 +1,27 @@
+.THIS .headerBackground{
+  background: token(background4);
+}
+.THIS button{
+    text-transform: token(txtTransformUpper);
+}
+.THIS .inline-block{
+    display:token(displayBlock) !important;
+}
+.THIS .excludeExcideTax .slds-form-element__icon{
+    padding-top: token(paddingTop1);
+}
+
+.THIS .checkBox{
+    display: token(displayBlock) !important;
+    float: token(floatRight) !important;
+    margin: token(margin10) !important;
+}
+.THIS .resetLabel.slds-form-element label{
+    display:token(displayNone);
+}
+.THIS .pull-right{
+    float: token(floatRight) !important;
+}
+.THIS .setWidthClass{
+    width: token(height250) !important;
+}

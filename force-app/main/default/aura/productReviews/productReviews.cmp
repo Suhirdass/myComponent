@@ -1,0 +1,65 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <ltng:require styles="{!join(',', $Resource.ratingPlugin + '/css/nanoscroller.css')}"
+                  scripts="{!join(',', $Resource.ratingPlugin + '/js/jquery.min.js', $Resource.ratingPlugin + '/js/jquery.nanoscroller.min.js')}"
+                  afterScriptsLoaded="{!c.onInit}" />
+    <!--aura:handler name="init" value="{!this}" action="{!c.onInit}" /-->
+
+    <aura:attribute name="product" type="Map" default="" />
+    <aura:attribute name="reviews" type="List" default="" />
+    <aura:attribute name="totalReviews" type="Integer" default="0" />
+    <aura:attribute name="viewAll" type="Boolean" default="false" />
+
+
+    <div class="slds-is-relative bs">
+        <div class="slds-box slds-box_small slds-m-top_small" style="padding: 0;">
+            <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+            <lightning:layout multipleRows="true" horizontalAlign="center">
+                <aura:if isTrue="{!and(!empty(v.product), !v.viewAll)}">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                        <lightning:layout multipleRows="true" horizontalAlign="center">
+                            <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="6">
+                                <a onclick="{!c.onProductDetails}" href="javascript:void(0);">{!v.product.name}</a>
+                                <div>{!v.product.producerName}</div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="6">
+                                <c:productRating product="{!v.product}" rating="{!v.product.rating}" />
+                                {!v.product.rating} out of 5 stars
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:layoutItem>
+                </aura:if>
+                <lightning:layoutItem flexibility="grow" size="12">
+                    <h3 class="slds-section-title_divider" style="background: #f4f3ee;font-weight: 700;">Customer Reviews</h3>
+                    <div class="nano" style="min-height: 300px;max-height: 500px;outline:none">
+                        <div class="nano-content" style="left:0;top:0;right:0;outline:none;bottom:0">
+                            <lightning:layout multipleRows="true" horizontalAlign="center">
+                                <lightning:layoutItem flexibility="grow" size="12">
+
+                                    <aura:iteration items="{!v.reviews}" var="review">
+                                        <lightning:layout multipleRows="true" class="slds-p-horizontal_x-small">
+                                            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-top_x-small">
+                                                <c:productRating product="{!v.product}" rating="{!review.rating}" />
+                                                By <span style="font-weight: 700;">{!review.createdBy}</span> on <span style="font-weight: 700;">{!review.createdDate}</span>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-bottom_x-small">
+                                                {!review.review}
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                        <hr style="margin: 0" />
+                                    </aura:iteration>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </div>
+                    </div>
+                </lightning:layoutItem>
+
+                <aura:if isTrue="{!and(v.viewAll, greaterthan(v.totalReviews, 1))}">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                        <a onclick="{!c.onViewAll}" href="javascript:void(0);">View All({!v.totalReviews}) Reviews</a>
+                    </lightning:layoutItem>
+                </aura:if>
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

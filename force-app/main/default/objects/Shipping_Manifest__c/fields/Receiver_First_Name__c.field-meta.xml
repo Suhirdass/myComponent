@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Receiver_First_Name__c</fullName>
+    <description>Used in COnga email template. DO NOT DELETE</description>
+    <externalId>false</externalId>
+    <formula>Receiver_Contact__r.FirstName</formula>
+    <label>Receiver First Name</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

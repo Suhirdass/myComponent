@@ -1,0 +1,18 @@
+.THIS{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .boxHeader{
+    padding-left: 12px;
+    font-size: 20px;
+    font-family:token(salesforceSans);
+    color:token(fontColor);
+}
+.THIS .saveBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .cancelBtn{
+    background-color :token(daze);
+    color:token(land);
+}

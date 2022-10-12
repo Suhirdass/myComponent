@@ -1,0 +1,307 @@
+<aura:component extends="c:utility" controller="RatesController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="loginUserId" type="string"/>
+    <aura:attribute name="ratesType" type="string"/>
+    <aura:attribute name="activeTab" type="string" default=""/>
+    <aura:attribute name="FRTList" type="List" default="[]" />
+    <aura:attribute name="SRTList" type="List" default="[]" />
+    <aura:attribute name="MOQsHeader" type="List" default="[]" />
+    <aura:attribute name="PriceData" type="List" default="[]" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <aura:if isTrue="{!v.ratesType == 'FRTRates'}">
+            <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem flexibility="grow" size="12" >
+                <span class="print-export" onclick="{!c.printDetails}">PRINT | EXPORT</span>
+                <lightning:tabset variant="scoped">
+                    <lightning:tab onactive="{! c.handleActive }" label="Receiving" id="Receiving">
+                        <aura:if isTrue="{!not(empty(v.FRTList))}">
+                            <aura:iteration items="{!v.FRTList}" var="frt" indexVar="key">
+                                <div class="tbl-header">
+                                    <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="1" colspan="2">{!frt.key}</th>
+                                                <th rowspan="1" colspan="{!v.MOQsHeader.length}">MOQ</th>
+                                            </tr>
+                                            <tr>
+                                                <th rowspan="1" colspan="1" >
+                                                    <span class="headerText">Class Type</span>
+                                                </th>
+                                                <th rowspan="1" colspan="1" >
+                                                    <span class="headerText">Weight (lbs)</span>
+                                                </th>
+                                                <aura:if isTrue="{!not(empty(v.MOQsHeader))}">
+                                                    <aura:iteration items="{!v.MOQsHeader}" var="moq">
+                                                        <th rowspan="1" colspan="1" id="{!moq}">
+                                                            <span class="headerText">{!moq}</span>
+                                                        </th>
+                                                    </aura:iteration>
+                                                </aura:if>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <aura:iteration items="{!frt.value}" var="frt2">
+                                                    <tr>
+                                                        <td >{!frt2.MembershipLevel}</td>
+                                                        <td><lightning:formattedNumber value="{!frt2.weight}" style="decimal" minimumFractionDigits="2"/></td>
+                                                        <aura:iteration items="{!frt2.bracketPriceList}" var="p">
+                                                            <td rowspan="1" colspan="1" >
+                                                                <span class="headerText">
+                                                                    <aura:if isTrue="{!equals(p,-1)}">
+                                                                        &nbsp;
+                                                                    	<aura:set attribute="else">
+                                                                        	<lightning:formattedNumber value="{!p}" style="currency" currencyCode="USD" minimumFractionDigits="2"/>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                    
+                                                                </span>
+                                                            </td>
+                                                        </aura:iteration>
+                                                    </tr>
+                                                </aura:iteration>
+                                        </tbody>
+                                    </table>
+                                </div><br/><br/>
+                            </aura:iteration>
+                        </aura:if>
+                    </lightning:tab>
+                    <lightning:tab onactive="{! c.handleActive }" label="QA Review" id="QAReview">
+                        <aura:if isTrue="{!not(empty(v.FRTList))}">
+                            <aura:iteration items="{!v.FRTList}" var="frt" indexVar="key">
+                                <div class="tbl-header">
+                                    <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="1" colspan="2">{!frt.key}</th>
+                                                <th rowspan="1" colspan="{!v.MOQsHeader.length}">MOQ</th>
+                                            </tr>
+                                            <tr>
+                                                <th rowspan="1" colspan="1" >
+                                                    <span class="headerText">Class Type</span>
+                                                </th>
+                                                <th rowspan="1" colspan="1" >
+                                                    <span class="headerText">Weight (lbs)</span>
+                                                </th>
+                                                <aura:if isTrue="{!not(empty(v.MOQsHeader))}">
+                                                    <aura:iteration items="{!v.MOQsHeader}" var="moq">
+                                                        <th rowspan="1" colspan="1" id="{!moq}">
+                                                            <span class="headerText">{!moq}</span>
+                                                        </th>
+                                                    </aura:iteration>
+                                                </aura:if>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <aura:iteration items="{!frt.value}" var="frt2">
+                                                    <tr>
+                                                        <td >{!frt2.MembershipLevel}</td>
+                                                        <td><lightning:formattedNumber value="{!frt2.weight}" style="decimal" minimumFractionDigits="2"/></td>
+                                                        <aura:iteration items="{!frt2.bracketPriceList}" var="p">
+                                                            <td rowspan="1" colspan="1">
+                                                                <span class="headerText">
+                                                                   <aura:if isTrue="{!equals(p,-1)}">
+                                                                        &nbsp;
+                                                                    	<aura:set attribute="else">
+                                                                        	<lightning:formattedNumber value="{!p}" style="currency" currencyCode="USD" minimumFractionDigits="2"/>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </span>
+                                                            </td>
+                                                        </aura:iteration>
+                                                    </tr>
+                                                </aura:iteration>
+                                        </tbody>
+                                    </table>
+                                </div><br/><br/>
+                            </aura:iteration>
+                        </aura:if>
+                    </lightning:tab>
+                    <lightning:tab onactive="{! c.handleActive }" label="Pick &#38; Pack" id="PickPack">
+                    	<aura:if isTrue="{!not(empty(v.FRTList))}">
+                            <aura:iteration items="{!v.FRTList}" var="frt" indexVar="key">
+                                <div class="tbl-header">
+                                    <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="1" colspan="2">{!frt.key}</th>
+                                                <th rowspan="1" colspan="{!v.MOQsHeader.length}">MOQ</th>
+                                            </tr>
+                                            <tr>
+                                                <th rowspan="1" colspan="1" >
+                                                    <span class="headerText">Class Type</span>
+                                                </th>
+                                                <th rowspan="1" colspan="1" >
+                                                    <span class="headerText">Weight (lbs)</span>
+                                                </th>
+                                                <aura:if isTrue="{!not(empty(v.MOQsHeader))}">
+                                                    <aura:iteration items="{!v.MOQsHeader}" var="moq">
+                                                        <th rowspan="1" colspan="1" id="{!moq}">
+                                                            <span class="headerText">{!moq}</span>
+                                                        </th>
+                                                    </aura:iteration>
+                                                </aura:if>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <aura:iteration items="{!frt.value}" var="frt2">
+                                                    <tr>
+                                                        <td >{!frt2.MembershipLevel}</td>
+                                                        <td><lightning:formattedNumber value="{!frt2.weight}" style="decimal" minimumFractionDigits="2"/></td>
+                                                        <aura:iteration items="{!frt2.bracketPriceList}" var="p">
+                                                            <td rowspan="1" colspan="1">
+                                                                <span class="headerText">
+                                                                    <aura:if isTrue="{!equals(p,-1)}">
+                                                                        &nbsp;
+                                                                    	<aura:set attribute="else">
+                                                                        	<lightning:formattedNumber value="{!p}" style="currency" currencyCode="USD" minimumFractionDigits="2"/>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </span>
+                                                            </td>
+                                                        </aura:iteration>
+                                                    </tr>
+                                                </aura:iteration>
+                                        </tbody>
+                                    </table>
+                                </div><br/><br/>
+                            </aura:iteration>
+                        </aura:if>
+                    </lightning:tab>
+                    <lightning:tab onactive="{! c.handleActive }" label="Others" id="Others">
+                    	<div class="tbl-header">
+                            <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                                <thead>
+                                    <tr>   
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Membership Level</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Site</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Fulfillment Services</span>                        
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Bracket Price</span>
+                                        </th>
+                                        <!--th rowspan="1" colspan="1" >
+                                            <span class="headerText">Rate Effective From</span>                        
+                                        </th-->
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Rate Effective To</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">MOQ</span>                        
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Weight (lbs)</span>                        
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:if isTrue="{!not(empty(v.FRTList))}">
+                                        <aura:iteration items="{!v.FRTList}" var="frt">
+                                            <tr style="border-top:none;">
+                                                <td>{!frt.Membership_Level__c}</td>
+                                                <td>{!frt.Site__r.Warehouse_Name__c}</td>
+                                                <td>{!frt.Fulfillment_Services__c}</td>
+                                                <td><lightning:formattedNumber style="currency" currencyCode="USD" value="{!frt.Bracket_Price__c}" /></td>
+                                                <!--td><lightning:formattedDateTime value="{!frt.Rate_Effective_From__c}" year="numeric" month="numeric" day="numeric"/></td-->
+                                                <td><lightning:formattedDateTime value="{!frt.Rate_Effective_To__c}" year="numeric" month="numeric" day="numeric"/></td>
+                                                <td>{!frt.MOQ__c}</td>
+                                                <td>{!frt.Weight_lbs__c}</td>
+                                            </tr>
+                                        </aura:iteration>
+                                        <aura:set attribute="else">
+                                            <tr>
+                                                <td colspan="10">
+                                                    <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large">No records found</p>
+                                                </td>
+                                            </tr>
+                                        </aura:set>
+                                    </aura:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </lightning:tab>
+                </lightning:tabset>
+            </lightning:layoutItem>
+        </lightning:layout>
+            <aura:set attribute="else">
+                <h2 class="bg__tan ticket-header slds-text-heading_small">
+                    Shipping Rates Tables
+                    <span class="print-export2" onclick="{!c.printDetails}">PRINT | EXPORT</span>
+                </h2>
+                <aura:if isTrue="{!not(empty(v.SRTList))}">
+                    <aura:iteration items="{!v.SRTList}" var="srt" indexVar="key">
+                        <div class="tbl-header">
+                            
+                            <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                                <thead>
+                                    <tr>   
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Site</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Mileage Bracket</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Mileage Bracket Price</span>                        
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Weight Bracket</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Weight Bracket Price</span>                        
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Fixed Weight Amount</span>
+                                        </th>
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Fixed Mileage Amount</span>                        
+                                        </th>
+                                        <!--th rowspan="1" colspan="1" >
+                                            <span class="headerText">Rate Effective From</span>                        
+                                        </th-->
+                                        <th rowspan="1" colspan="1" >
+                                            <span class="headerText">Rate Effective To</span>                        
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:if isTrue="{!srt.value.length > 0}">
+                                    <aura:iteration items="{!srt.value}" var="srt2">
+                                        <tr style="border-top:none;">
+                                            <td>{!srt2.Site__r.Warehouse_Name__c}</td>
+                                            <td>{!srt2.Mileage_Bracket__c}</td>
+                                            <td><lightning:formattedNumber style="currency" currencyCode="USD" value="{!srt2.Mileage_Bracket_Price__c}" minimumFractionDigits="3" /></td>
+                                            <td>{!srt2.Weight_Bracket__c}</td>
+                                            <td><lightning:formattedNumber style="currency" currencyCode="USD" value="{!srt2.Weight_Bracket_Price__c}" minimumFractionDigits="3" /></td>
+                                            <td><lightning:formattedNumber style="currency" currencyCode="USD" value="{!srt2.Fixed_Weight_Amount__c}" /></td>
+                                            <td><lightning:formattedNumber style="currency" currencyCode="USD" value="{!srt2.Fixed_Mileage_Amount__c}" /></td>
+                                            <!--td><lightning:formattedDateTime value="{!srt2.Rate_Effective_From__c}" year="numeric" month="numeric" day="numeric"/></td-->
+                                            <td><lightning:formattedDateTime value="{!srt2.Rate_Effective_To__c}" year="numeric" month="numeric" day="numeric"/></td>
+                                        </tr>
+                                    </aura:iteration>
+                                    <aura:set attribute="else">
+                                        <tr>
+                                            <td colspan="10">
+                                                <p class="slds-text-heading_small slds-text-align_center slds-p-vertical_large">No records found</p>
+                                            </td>
+                                        </tr>
+                                    </aura:set>
+                                    </aura:if>
+                                </tbody>
+                            </table>
+                        </div><br/><br/>
+                    </aura:iteration>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        
+    </div>
+</aura:component>

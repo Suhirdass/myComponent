@@ -1,0 +1,37 @@
+<aura:component controller="BOMWithLinesForTreeGridController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+	<aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="gridColumns" type="List" access="PRIVATE" />
+    <aura:attribute name="gridData" type="Object" access="PRIVATE" />
+    <aura:attribute name="gridExpandedRows" type="List" access="PRIVATE" default="[]"/>
+    <aura:attribute name="currentExpandedRows" type="String" />
+    
+    
+    <article class="slds-card " >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom44" title="BOM Lines" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle slds-m-top_xx-small" title="Record Title" style="margin-left: 1%;font-size: large;">BOM Lines</h1>
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <div class="slds-card__header">    
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container">
+                <lightning:treeGrid
+                                    aura:id="treeGrid"
+                                    columns="{! v.gridColumns }"
+                                    data="{! v.gridData }"
+                                    hideCheckboxColumn = "true"                
+                                    expandedRows="{! v.gridExpandedRows }"
+                                    keyField="name"
+                                    />
+            </div>
+        </div>
+    </article>
+</aura:component>

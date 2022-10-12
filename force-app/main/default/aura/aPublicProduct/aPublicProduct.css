@@ -1,0 +1,72 @@
+.THIS .max300{
+    width: 300px;
+    height: 300px;
+}
+.THIS .max250{
+    width: 250px;
+    height: 250px;
+}
+.THIS .resetSize .slds-form-element__icon{
+  padding-top: 0 !important;
+}
+.THIS #overlay{
+  border:1px solid black;
+  width:350px;
+  height:350px;
+  position:absolute;
+  background-repeat:no-repeat;
+  left:100%;
+}
+.THIS * {box-sizing: border-box;}
+
+.THIS .img-zoom-container {
+  position: relative;
+}
+
+.THIS .img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 40px;
+  height: 40px;
+}
+
+.THIS .img-zoom-result {
+  
+    border:1px solid black;
+  width:350px;
+  height:350px;
+    display:none;
+  position:absolute;
+  background-repeat:no-repeat;
+  left:100%;
+}
+.THIS .img-zoom-lens{
+    display:none;
+}
+
+.THIS .zoom {
+    display:inline-block;
+    position: relative;
+}
+
+/* magnifying glass icon */
+.THIS .zoom:after {
+    content:'';
+    display:block; 
+    width:33px; 
+    height:33px; 
+    position:absolute; 
+    top:0;
+    right:0;
+    background:url(icon.png);
+}
+.THIS .zoom img {
+    display: block;
+}
+.THIS .complianceButton{
+    width:250px!important;
+    float:right;
+    margin-top:5px;
+}
+.THIS .zoom img::selection { background-color: transparent; }

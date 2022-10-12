@@ -1,0 +1,52 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+  position: fixed;
+  z-index: 1001;
+  background: rgba(0,0,0,0.85);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: visibility 200ms linear, opacity 200ms ease;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.THIS.is-active {
+  transition: visibility 0ms linear, opacity 200ms ease;
+  visibility: visible;
+  opacity: 1;
+}
+
+.THIS .success-modal {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  padding: 30px;
+  background: token(tanLight);
+}
+
+.THIS h2 {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+    font-size: 20px;
+}
+
+.THIS p {
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+
+.THIS .yesBtn{
+    font-family:token(salesforceSans) !important;
+    color:token(daze);
+    background-color:token(land);
+}
+.THIS .noBtn{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}

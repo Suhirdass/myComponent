@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="59px" height="75px" viewBox="0 0 59 75" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>5CBF46D2-3BC6-4C1C-B467-B900B71B4DD0</title>
+    <defs>
+        <filter x="-1.1%" y="-13.3%" width="102.2%" height="126.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.260462194 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Filigreen-2.5-Source" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Marketplace-Brand" transform="translate(-474.000000, -266.000000)" stroke="#195458" stroke-width="1.225">
+            <g id="Group-2" filter="url(#filter-1)" transform="translate(256.000000, 264.000000)">
+                <g id="C--Flowers-Copy-2" transform="translate(198.000000, 0.000000)">
+                    <g id="black-icons-64px-08" transform="translate(29.400000, 12.250000)">
+                        <rect id="Rectangle" transform="translate(5.253558, 4.912617) rotate(-45.000000) translate(-5.253558, -4.912617) " x="0.237182628" y="3.83461747" width="10.03275" height="2.156" rx="1.078"></rect>
+                        <path d="M25.284,26.95 L25.284,25.19825 C25.280721,24.9654628 25.3709055,24.7410784 25.534372,24.5753095 C25.6978385,24.4095407 25.9209397,24.31625 26.15375,24.31625 L29.057,24.31625 C29.2898103,24.31625 29.5129115,24.4095407 29.676378,24.5753095 C29.8398445,24.7410784 29.930029,24.9654628 29.92675,25.19825 L29.92675,26.95" id="Path"></path>
+                        <rect id="Rectangle" x="23.94875" y="26.59475" width="7.31325" height="2.4255" rx="0.6615"></rect>
+                        <path d="M26.607,24.31625 L26.607,17.5665 C26.6137166,15.7899662 28.0522162,14.3514666 29.82875,14.34475 L33.92025,14.34475" id="Path"></path>
+                        <path d="M28.60375,24.31625 L28.60375,17.84825 C28.60375,16.62325 29.5715,16.3415 30.75975,16.3415 L33.92025,16.3415" id="Path"></path>
+                        <rect id="Rectangle" x="21.2905" y="42.25025" width="3.98125" height="2.65825"></rect>
+                        <rect id="Rectangle" x="16.6355" y="42.64225" width="4.655" height="1.6905"></rect>
+                        <rect id="Rectangle" x="21.2905" y="36.8235" width="3.98125" height="2.107"></rect>
+                        <line x1="25.284" y1="29.02025" x2="26.068" y2="34.643" id="Path"></line>
+                        <line x1="29.92675" y1="29.02025" x2="29.26525" y2="34.2755" id="Path"></line>
+                        <path d="M22.442,50.225 C21.805,50.225 21.2905,49.2695 21.2905,48.608 L21.2905,25.19825 C21.293779,24.9654628 21.2035945,24.7410784 21.040128,24.5753095 C20.8766615,24.4095407 20.6535603,24.31625 20.42075,24.31625 L7.55825,24.31625 C7.07113485,24.31625 6.67625,24.7111349 6.67625,25.19825 L6.67625,48.608 C6.67625,49.2695 6.16175,50.225 5.52475,50.225" id="Path"></path>
+                        <path d="M38.563,14.07525 L38.563,16.79475 C38.5630465,17.2771211 38.1755745,17.6700504 37.69325,17.67675 L34.79,17.67675 C34.3076755,17.6700504 33.9202035,17.2771211 33.92025,16.79475 L33.92025,13.2545 L38.563,14.07525 Z" id="Path" stroke-linejoin="round"></path>
+                        <path d="M4.00575,7.7175 C8.0646955,11.8786009 10.5764227,17.3041046 11.123,23.09125 C11.1467561,23.4058402 11.0389956,23.7161965 10.8253938,23.9483723 C10.611792,24.1805482 10.311476,24.3137534 9.996,24.31625" id="Path"></path>
+                        <path d="M18.63225,24.31625 C17.9139822,24.3342658 17.2992602,23.8043331 17.21125,23.09125 L17.21125,23.09125 C16.8478071,15.6148973 13.6346299,8.5616883 8.232,3.381" id="Path"></path>
+                        <rect id="Rectangle" x="25.284" y="34.2755" width="5.3165" height="13.29125" rx="1.911"></rect>
+                        <rect id="Rectangle" x="10.6575" y="41.503" width="5.978" height="3.98125" rx="1.911"></rect>
+                        <rect id="Rectangle" x="1.35975" y="50.225" width="24.58575" height="3.98125" rx="1.911"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

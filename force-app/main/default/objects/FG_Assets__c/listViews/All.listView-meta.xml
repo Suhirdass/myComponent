@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Date_Purchased__c</columns>
+    <columns>Assigned_To__c</columns>
+    <columns>Related_To__c</columns>
+    <columns>Asset_Type__c</columns>
+    <columns>Asset_Model__c</columns>
+    <columns>Serial_Service_Tag_Number__c</columns>
+    <columns>Monitor_Brand_Model__c</columns>
+    <columns>Monitor__c</columns>
+    <columns>Filigreen_Mobile__c</columns>
+    <columns>Cell_Details__c</columns>
+    <columns>Total_Monitor__c</columns>
+    <columns>Application_Access__c</columns>
+    <columns>Software_License__c</columns>
+    <columns>CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

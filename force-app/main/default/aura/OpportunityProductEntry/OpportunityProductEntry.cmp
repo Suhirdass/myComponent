@@ -1,0 +1,381 @@
+<aura:component extends="c:utility" controller="OpportunityProductEntryExtension" implements="force:appHostable,flexipage:availableForRecordHome,force:lightningQuickActionWithoutHeader,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="oppId" type="String" />
+    <aura:attribute name="shoppingCart" type="opportunityLineItem[]"/>
+    <aura:attribute name="AvailableProducts" type="priceBookEntry[]"/>
+    <aura:attribute name="forDeletion" type="priceBookEntry[]"/>
+    <aura:attribute name="searchStr" type="String"/>
+    <aura:attribute name="sortOrder" type="String" default=" ASC "/>
+    <aura:attribute name="sortField" type="String" default=" Product2.Name "/>
+    <aura:attribute name="pickListValues" type="String[]"/>
+    <aura:attribute name="oppRecord" type="Opportunity"/>
+    <aura:attribute name="theBook" type="Pricebook2"/>
+    <aura:attribute name="overLimit" type="Boolean" default="true"/>
+    <aura:attribute name="prodSelect" type="Boolean"/>
+    <aura:attribute name="pricebookList" type="list"/>
+    <aura:attribute name="pbook" type="string"/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="isToasterOpen" type="boolean" default="false"/>
+    <aura:attribute name="isErrorToast" type="boolean" default="false"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+
+    <aura:html tag="style">
+        .fixed_headers {
+        table-layout: fixed;
+        }     
+        .Capitalize {
+        text-transform: capitalize !important;
+        }
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        
+        }
+        
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 300px;
+        background-color: #01335c;
+        color: #fff;
+        text-align: center;
+        border-radius: 3px;
+        padding: 5px 0;
+        font-size: 12px;
+        
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -300px;
+        }
+        
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        }
+        .heightfix{
+        height: 60px;
+        }
+        .slds-text-heading_small {
+        white-space: pre-line;
+        }
+        
+    </aura:html>
+    
+    <!--toaster sample-->
+    <aura:if isTrue="{!v.isToasterOpen}">
+        <div class="demo-only" style="height:4rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_success" role="status">
+                    <span class="slds-assistive-text">success</span>
+                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small ">Price Book changed Sucessfully.</h2>
+                    </div>
+                    <div class="slds-notify__close">
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close">
+                            
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+    
+    <!-- model popup-->
+    <aura:if isTrue="{!v.isModalOpen}">
+        <!-- Modal/Popup Box starts here-->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box Header Starts here-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Pricebook</h2>
+                </header>
+                <!--Modal/Popup Box Body Starts here-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p style="color:red">* Select a Price Book to associate with this opportunity. You can add products only from the Price Book you associate with this opportunity. Changing the Price Book deletes all products from the opportunity.</p>
+                    <br/>
+                    <lightning:select aura:id="pricebooklist" value="{!v.pbook}" name="pricebooklist" label="PriceBook">
+                        <option value="">--None--</option>
+                        <aura:iteration items="{!v.pricebookList}" var="ind" indexVar="key" >
+                            <option text="{!ind.Name}" value="{!ind.Id}" selected="{!ind.Name == v.theBook.Name}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <!--Modal/Popup Box Footer Starts here-->
+                <footer class="slds-modal__footer">
+                    <lightning:button class="slds-button slds-button--neutral buttonSm" 
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{!c.savePBook}"/>
+                    <lightning:button class="slds-button slds-button--neutral buttonSm" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                    
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <article class="slds-card">
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-grid slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space" >
+                        <div class="slds-media__figure slds-icon forceEntityIcon">
+                            <span  class="uiImage">
+                                <lightning:icon iconName="standard:product" title="custom83" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="slds-media__body">
+                        <h1 >
+                            <div class="entityNameTitle slds-line-height_reset" >Manage Products</div>
+                            <div class="slds-page-header__title slds-m-right--small slds-align-middle fade-text">
+                                <span class="uiOutputText">{!v.oppRecord.Name}</span>
+                            </div>
+                        </h1>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        <b>PriceBook:&nbsp;</b> {!v.theBook.Name}
+                        <div style="cursor:pointer;display: inline-block;" onclick="{!c.openModel}" >
+                            &nbsp;&nbsp;<u>Change</u>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <br/>
+    
+    <article class="" style="background:white !important; border-radius: 5px !important;">
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Selected Products</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        <lightning:button class="Capitalize slds-button slds-button--neutral" label="Save" onclick="{!c.onSave}"/>
+                        <lightning:button class="Capitalize slds-button slds-button--neutral" label="Cancel" onclick="{!c.onCancel}"/>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_xxx-small">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small slds-border_right slds-border_left">
+                <thead>
+                    <tr>
+                        <th> Actions </th>
+                        <th> Product Name </th>
+                        <th> Available Qty</th>
+                        <th> Qty in Case(MOQ) </th>
+                        <th> <span style="color:red;">*</span>Order Qty(Cases) </th>
+                        <th> Total Order Qty </th>
+                        <th> <span style="color:red;">*</span>Sales Price </th>
+                        <th> <span style="color:red;">*</span>Product Title </th>
+                        <th>Is Sample </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.shoppingCart}" var="shp" indexVar="index">
+                        <tr style="height: 60px;"> 
+                            <td><div style="cursor:pointer;" onclick="{!c.removeFromShoppingCart}" data-id="{!shp.PricebookEntryId}">
+                                <u>Remove</u>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{!'/' + shp.PricebookEntry.Product2Id}" style="color:#0070D2;" target="_blank">{!shp.PricebookEntry.Product2.Name}</a>
+                            </td>
+                            <td><aura:if isTrue="{!not(empty(shp.PricebookEntry.Product2.Available_Qty__c))}">
+                                <lightning:formattedNumber currencyCode="USD" value="{!shp.PricebookEntry.Product2.Available_Qty__c}" />
+                                &nbsp;(<ui:outputNumber value="{!(((shp.PricebookEntry.Product2.Available_Qty__c/shp.MOQ_TF__c)*100)-mod(((shp.PricebookEntry.Product2.Available_Qty__c/shp.MOQ_TF__c)*100),1))/100}"/> Cases)
+                                <aura:set attribute="else">
+                                    0.00 
+                                </aura:set>
+                                </aura:if></td> 
+                            <td>{!shp.MOQ_TF__c}</td>
+                            <td><lightning:input style="width: 180px;" class="hideLabel" required="true" type="number" aura:id="inputQty" value="{!shp.Quantity}" min="1" /></td>
+                            <td>
+                                <aura:if isTrue="{!not(empty(shp.Quantity))}">
+                                    {!shp.MOQ_TF__c * shp.Quantity}
+                                    <aura:set attribute="else">
+                                        0
+                                    </aura:set>
+                                </aura:if> 
+                            </td>
+                            <td><lightning:input style="width: 180px;" formatter="currency" currencyCode="USD" type="number" step="0.01" name="{!'sp_'+ index}" aura:id="{!'sp_'+ index}" value="{!shp.UnitPrice}" onblur="{!c.checkVal}"/></td>
+                            <td>
+                                <lightning:select name="a_opt" aura:id="a_opt" required="true" value="{!shp.Product_Title__c}" >
+                                    <aura:iteration items="{!v.pickListValues}" var="proTitle">
+                                        <option value="{!proTitle}" selected="{!proTitle == shp.Product_Title__c}">{!proTitle}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td>
+                                <ui:outputCheckbox aura:id="checkbox" value="{!shp.Is_Sample__c}"/>
+                                <!--<ui:inputCheckbox aura:id="checkbox" label="" value="{!shp.Is_Sample__c}"/>-->
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+                
+            </table>
+            <br/> 
+            <aura:if isTrue="{!v.prodSelect}">
+                <div class="slds-is-relative slds-p-horizontal_small">
+                    <div style="padding:0;color:red;">
+                        <lightning:layout multipleRows="true" horizontalAlign="center">
+                            Please select a product
+                        </lightning:layout>
+                    </div>
+                </div>
+            </aura:if>
+            <br/>
+        </div>  
+        
+    </article>
+    
+    <br/>  
+    
+    
+    
+    <article style="background:white !important; border-radius: 5px !important;">
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Search for Products</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group" >
+                        <lightning:input type="search" variant="label-hidden" id="searchInput" value="{!v.searchStr}" aura:id="searchInput" class="searchBox" onchange="{!c.changeStr}"/>&nbsp; 
+                        <h2 title="Search" style="margin-top: 5px;font-size: 0.9rem;font-weight: bold;">Search</h2> &nbsp; 
+                        
+                        <div class="tooltip" style="margin-top: 7px;"><lightning:icon iconName="utility:info_alt" alternativeText="info" size="xx-small"
+                                                                                      />
+                            <span class="tooltiptext">* Search keyword will look for Product name, Producer name or Strain name</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        
+        <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_xxx-small"  style="height:250px;">  
+            
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-m-top_small slds-border_right slds-border_left">
+                <thead>
+                    <tr>
+                        <th> Actions </th>
+                        <th> Product Name </th>
+                        <th> Product Description</th>
+                        <th> Brand Name </th>
+                        <th> Product Family</th>
+                        <th> Strain </th>
+                        <th> Qty in Case (MOQ) </th>
+                        <th> Available Qty </th>
+                        <th> List Price </th>
+                        <th> Active </th>
+                        <th> Is Sample </th>
+                    </tr>
+                </thead>
+                <tbody >
+                    <aura:iteration  items="{!v.AvailableProducts}" var="a" indexVar="sNo1">
+                        <tr> 
+                            <td>
+                                <lightning:button tabindex="{!sNO1}" value="{!a.Id}" class="Capitalize deleteButtons" label="Select" onclick="{! c.addToCartShpg }"/>
+                            </td>
+                            <td class="slds-truncate" style="max-width:150px;">
+                                <span>
+                                    <a href="{!'/' + a.Product2.Id}" style="color:#0070D2;" target="_blank">{!a.Product2.Name}</a>
+                                </span>
+                            </td>
+                            <td class="slds-truncate" style="max-width:100px;">{!a.Product2.Description}</td> 
+                            <td class="slds-truncate" style="width:100px;">{!a.Product2.Brand_Name__c}</td>
+                            <td class="slds-truncate" style="width:100px;">{!a.Product2.Family}</td>
+                            <td class="slds-truncate" style="width:100px;">
+                                <span>
+                                    <a href="{!'/' + a.Product2.Strain__c}" style="color:black;" target="_blank">{!a.Product2.Strain__r.Name}</a>
+                                </span>
+                            </td>
+                            <td>{!a.Product2.MOQ__c}</td>
+                            <td><div class="slds-truncate" title="{!a.UnitPrice}">
+                                <aura:if isTrue="{!not(empty(a.Product2.Available_Qty__c))}">
+                                    <lightning:formattedNumber currencyCode="USD" value="{!a.Product2.Available_Qty__c}" />
+                                    &nbsp;(<ui:outputNumber value="{!(((a.Product2.Available_Qty__c/a.Product2.MOQ__c)*100)-mod(((a.Product2.Available_Qty__c/a.Product2.MOQ__c)*100),1))/100}" format="#,##0"/> Cases)
+                                    <aura:set attribute="else">
+                                        0.00
+                                    </aura:set>
+                                </aura:if>
+                                </div></td>
+                            
+                            
+                            <td><div class="slds-truncate" title="{!a.UnitPrice}">
+                                $<lightning:formattedNumber  currencyCode="USD" value="{!a.UnitPrice}" minimumFractionDigits="2"/>
+                                </div>
+                            </td>
+                            <td >
+                                <div class="slds-truncate" title="{!a.Product2.IsActive}">
+                                    <lightning:input type="checkbox" name="input3" checked="{!a.Product2.IsActive}" disabled="true"/>
+                                </div>
+                            </td>
+                            <td>
+                                <ui:outputCheckbox aura:id="checkbox" value="{!a.Product2.Is_Sample__c}"/>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <br/>
+            <aura:if isTrue="{!v.overLimit}">
+                <aura:set attribute="else">
+                    <div class="slds-is-relative slds-p-horizontal_small">
+                        <div style="padding:0;color:red;">
+                            <lightning:layout multipleRows="true" horizontalAlign="center">
+                                No products found
+                            </lightning:layout>
+                        </div>
+                    </div>
+                </aura:set>
+            </aura:if>
+            
+            <br/> 
+        </div>  
+        <aura:if isTrue="{!v.overLimit}">
+            <div class="slds-is-relative slds-p-horizontal_small">
+                <div style="padding:0;color:red;">
+                    <lightning:layout multipleRows="true" horizontalAlign="center">
+                        <br/>
+                        Your search returned over 100 results, use a more specific search string if you do not see the desired Product.
+                    </lightning:layout>
+                </div>
+            </div>
+        </aura:if>
+        <br/>
+    </article>
+    
+    <br/>
+    
+</aura:component>

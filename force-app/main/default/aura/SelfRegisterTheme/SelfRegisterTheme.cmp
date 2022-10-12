@@ -1,0 +1,18 @@
+<!-- Base theme component for the Portal -->
+<aura:component implements="forceCommunity:themeLayout" access="global" description="Self Register Theme">
+    <aura:attribute name="search" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="newHeader" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="footer" type="Aura.Component[]" required="false"/>
+    
+    <div class="slds-is-relative">
+        
+        <lightning:layout multipleRows="true">
+            
+            <lightning:layoutItem flexibility="grow" size="12" padding="horizontal-small" class="filigreenContents">
+                {!v.body}
+            </lightning:layoutItem>
+            
+        </lightning:layout>
+    </div>
+</aura:component>

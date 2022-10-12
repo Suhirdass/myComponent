@@ -1,0 +1,522 @@
+<apex:page controller="printServiceTicketController" showHeader="false"
+           sidebar="false" applyBodyTag="false" applyHtmlTag="false" renderAs="pdf">
+
+    <html>
+        <head>
+            <style type="text/css">
+                html,body,div,span,table,thead,tbody,tr,th,td{
+                font-family:'sans-serif';
+                font-size:13px;
+                }                
+                table
+                {
+                border-collapse: collapse;
+                border: none;
+                }
+                @page{
+                margin-top: 3cm;
+                size: A4 landscape;
+                font-size: 13px;
+                font-family:'sans-serif';
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 130px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                margin-top: 30px;
+                }
+                div.right {
+                float: right;
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                .sectionHeader {
+                width: 100%;
+                background: #e7e6e2;
+                font-size: 16pt;
+                padding: 5px;
+                margin: 20px 0px;
+                font-weight: bold;
+                }
+                table {
+                width: 100%;
+                text-align: left;
+                border-collapse: collapse;
+                -fs-table-paginate: paginate;
+                }
+                th,td{
+                padding:4px;
+                }
+                thead{
+                background: #e7e6e2;
+                display: table-header-group;
+                text-align: center;
+                }
+                tr.noBorder td {
+                border: 0;
+                }
+                th{
+                font-size:12px;
+                }
+                .labelCol {
+                white-space: nowrap;
+                width: 1%;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+                tfoot{display: table-footer-group;}
+                .ticket-header {
+                padding: 6px 72px 4px;
+                border-bottom: 2px solid token(grayAccent);
+                }
+                .totalText{
+                color: #080707;
+                font-family: "sans-serif";
+                font-size: 14px;
+                font-weight: bold;
+                letter-spacing: 0;
+                line-height: 21px;
+                text-align: right;
+                }
+                .totalTextLabel{
+                color: #080707;
+                font-family: "sans-serif";
+                font-size: 14px;
+                letter-spacing: 0;
+                line-height: 21px;
+                }
+                .rectangleRli {
+                box-sizing: border-box;
+                height: 50.5px;
+                width: 50.5px;
+                border: 0.5px solid #B9BEC5;
+                border-radius: 2.25px;
+                background-color: #FFFFFF;
+                }
+                .rectangle {
+                box-sizing: border-box;
+                height: 60.5px;
+                width: 60.5px;
+                border: 0.5px solid #B9BEC5;
+                border-radius: 2.25px;
+                background-color: #FFFFFF;
+                float: left;
+                margin-right: 4%;
+                }
+                .orderHeader{
+                background: #e7e6e2;
+                padding: 1%;
+                margin-bottom: 3%;
+                }
+                .orderH2{
+                font-size: 15px;
+                font-weight: bold;
+                background: #e7e6e2;
+                }
+                .slds-text-heading_small{
+                font-size: 15px;
+                padding-bottom: 8px;
+                padding-top: 7px;
+                }
+                .slds-text-heading_large{
+                font-weight: bold;
+                font-size: 20px;
+                }
+                .boldTd{
+                font-weight: bold;
+                }
+                .txtRightAlign{
+                text-align:right;
+                }
+                .slds-grid {
+                    display: flex;
+                }
+                .slds-show_inline-block, .slds-show--inline-block {
+                    display: inline-block;
+                }
+                .brandName {
+                    font-size: 14px;
+                }
+                .serviceTicketNumber {
+                    font-size: 22px;
+                    font-weight: 600;
+                    color: #393a3d;
+                }
+                .slds-col, [class*="slds-col_padded"], [class*="slds-col--padded"] {
+                    flex: 1 1 auto;
+                }
+                .slds-wrap {
+                    flex-wrap: wrap;
+                    align-items: flex-start;
+                }
+                .STHeader {
+                    font-size: 13px;
+                    font-weight: 600;
+                }
+                [class*="slds-size_"], [class*="slds-size--"] {
+                    flex: 0 0 auto;
+                }
+                .slds-size_1-of-4, .slds-size--1-of-4 {
+                    width: 25%;
+                }
+                .slds-size_9-of-12, .slds-size--9-of-12 {
+                    width: 75%;
+                }
+                .slds-p-left_large, .slds-p-left--large {
+                	padding-left: var(--lwc-spacingLarge,1.5rem);
+                }
+                .slds-p-left_medium, .slds-p-left--medium {
+                	padding-left: var(--lwc-spacingMedium,1rem);
+                }
+                .slds-p-left_small, .slds-p-left--small {
+                	padding-left: var(--lwc-spacingSmall,0.75rem);
+                }
+                .slds-m-bottom_small, .slds-m-bottom--small {
+                	margin-bottom: var(--lwc-spacingSmall,0.75rem);
+                }
+                .ticket-header {
+                	padding: 6px 72px 4px;
+                	border-bottom: 2px solid token(grayAccent);
+                }
+                .sl-ticket-header{
+                	border-bottom: 2px solid token(grayAccent);
+                }
+                .STHeader{
+                    font-size:13px;
+                    font-weight:600;
+                }
+                .ticket-body {
+                	padding: 40px 72px;
+                }
+                .serviceLinesCompleted{
+                    height: 18px;
+                /*color: #74787D;*/
+                    font-family: "sans-serif";
+                    font-size: 12px;
+                    font-weight: bold;
+                    letter-spacing: 0;
+                    line-height: 18px;
+                    text-align:left;
+                }
+                .serviceLineNumber{
+                    height: 32px;
+                /*color: #195458;*/
+                    font-family: "sans-serif";
+                    font-size: 14px;
+                    font-weight: bold;
+                    letter-spacing: 0;
+                    float: right;
+                }
+                .completedST{
+                    position: absolute;
+                    left: -50px;
+                    box-sizing: border-box;
+                    height: 40.5px;
+                    width: 40.5px;
+                    border: .5px solid rgba(151,151,151,0.5);
+                    background-color: #ffffff;
+                    border-radius: 50%;
+                    padding: 8px;
+                    top: -6px;
+                }
+                .completedST .slds-icon-text-default{
+                	fill :  #88CBC1;
+                }
+                .hasAttchment .slds-file-selector__button{
+                	padding: 0 4px 0 4px;
+                }
+                .bg__tan {
+                    background: #E7E6E2;
+                }
+                .bg__complete {
+                	background: #e6f4f2;
+                }
+                .slds-box {
+                    padding: 0;
+                    background-color: white;
+                }
+                .slds-box {
+                    box-shadow: rgba(0, 0, 0, 0.1) 0 2px 2px;
+                }
+                .height-full {
+                	height: 100%;
+                }
+                .slds-form-element__label {
+                    overflow-wrap: break-word;
+                    hyphens: auto;
+                    display: inline-block;
+                    color: var(--lwc-colorTextLabel,#696969);
+                    font-size: var(--lwc-formLabelFontSize,0.75rem);
+                    padding-right: var(--lwc-spacingXSmall,0.5rem);
+                    padding-top: var(--lwc-spacingXxSmall,0.25rem);
+                    margin-bottom: var(--lwc-spacingXxxSmall,0.125rem);
+                }
+            </style>
+        </head>
+        <script type="text/javascript">
+        document.title = 'Print {!serviceTicket.ticketNumber}'
+        </script>
+        <div class="header"  >
+            <table>
+                <tr>
+                    <td>
+                        <br/>
+                        <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;"/>
+                    </td>
+                    <td>
+                        <br/>
+                        <h1 class="stationName">Inbound Transfer Details</h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            <div class="footerAlign" id="footerId">
+                <apex:outputText value=" {!NOW()}"/>
+            </div> 
+        </div>
+        <div>
+            <div class="orderHeader">
+                <h2 class="orderH2">
+                    <b>Inbound Transfer Details</b>
+                </h2>
+            </div>
+            <table style="margin-top:3%">
+                <tr>
+                	<td style="width:75%">
+                        <p class="slds-text-heading_small slds-m-top_x-small">{!serviceTicket.brandName}</p>
+                        <p class="slds-text-heading_large text__semibold slds-m-top_xx-small" style="font-size: 22px;">
+                            {!serviceTicket.ticketNumber}
+                        </p>
+                    </td>
+                    <td style="text-align:right">
+                    	<div class="slds-text-heading_small  slds-m-bottom_xx-small" style="width:260px;">
+                            <span class="serviceLinesCompleted">Transfer Lines Completed </span>
+                            <span class="serviceLineNumber" style="width:50px;">{!totalCompleted} of {!serviceTicketLines.size}</span>
+                        </div>
+                        <p class="slds-text-heading_small"></p>
+                    </td>
+                </tr>
+            </table>
+            <table class="slds-m-top_large">
+                
+                <!-- Pick-UP -->
+                
+                <tr style="{!if(serviceTicket.transferMethod != 'Drop-off','display:table-row','display:none')}">
+                	<td class="STHeader" style="width:25%">Transfer Method </td>
+                    <td class="STHeader" style="width:25%"> Pick Up From</td>
+                    <td class="STHeader" style="width:25%"> Pick Up Address </td>
+                    <td class="STHeader" style="width:25%"> Transporter </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod != 'Drop-off','display:table-row','display:none')}">
+                	<td> {!serviceTicket.transferMethod} </td>
+                    <td> {!serviceTicket.pickupFromDBAName} </td>
+                    <td style="width:25%"> {!serviceTicket.licenseName} </td>
+                    <td> {!serviceTicket.transportLicenseName} </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod != 'Drop-off','display:table-row','display:none')}">
+                    <td class="STHeader" style="width:25%"> Destination Site </td>
+                    <td class="STHeader" style="width:25%"> Destination Address</td>
+                    <td class="STHeader" style="width:50%"> Special Instructions </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod != 'Drop-off','display:table-row','display:none')}">
+                	<td> {!serviceTicket.destinationSiteName} </td>
+                    <td> {!serviceTicket.destinationSiteAddress} </td>
+                    <td colspan="2"> {!serviceTicket.specialInstruction} </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod != 'Drop-off','display:table-row','display:none')}">
+                    <td class="STHeader" style="width:25%"> On-Site Contact </td>
+                    <td class="STHeader" style="width:35%"> WOVN to provide payment to supplier </td>
+                    <td class="STHeader" style="width:25%"> Requested Transfer Date </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod != 'Drop-off','display:table-row','display:none')}">
+                    <td > {!serviceTicket.brandContact} </td>
+                    <td >
+                        <apex:outputPanel layout="none" rendered="{!serviceTicket.passThroughPayment}">
+                             <img src="/img/checkbox_checked.gif"/>
+                         </apex:outputPanel>
+                         <apex:outputPanel layout="none" rendered="{!!serviceTicket.passThroughPayment}">
+                             <img src="/img/checkbox_unchecked.gif"/>
+                         </apex:outputPanel>
+                    </td>
+                    <td colspan="2">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!serviceTicket.requestDate}"/></apex:outputText>&nbsp;{!serviceTicket.requestTime}
+                    </td>
+                </tr>
+                
+                <!--  DROP OFF -->
+                
+                <tr style="{!if(serviceTicket.transferMethod == 'Drop-off','display:table-row','display:none')}">
+                	<td class="STHeader" style="width:25%">Transfer Method </td>
+                    <td class="STHeader" style="width:25%"> Destination Site </td>
+                    <td class="STHeader" style="width:25%"> Destination Address </td>
+                    <td class="STHeader" style="width:25%"> Transporter </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod == 'Drop-off','display:table-row','display:none')}">
+                	<td> {!serviceTicket.transferMethod} </td>
+                    <td> {!serviceTicket.destinationSiteName} </td>
+                    <td> {!serviceTicket.destinationSiteAddress} </td>
+                    <td> {!serviceTicket.transportLicenseName} </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod == 'Drop-off','display:table-row','display:none')}">
+                    <td class="STHeader" style="width:25%"> Originating Entity </td>
+                    <td class="STHeader" style="width:25%"> Originating Address</td>
+                    <td class="STHeader" style="width:50%"> Special Instructions </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod == 'Drop-off','display:table-row','display:none')}">
+                	<td> {!serviceTicket.pickupFromDBAName} </td>
+                    <td> {!serviceTicket.licenseName} </td>
+                    <td colspan="2"> {!serviceTicket.specialInstruction} </td>
+                </tr>
+                
+                <tr style="{!if(serviceTicket.transferMethod == 'Drop-off','display:table-row','display:none')}">
+                    <td class="STHeader" style="width:25%"> Brand Contact </td>
+                     <td class="STHeader" style="width:25%"> WOVN to provide payment to supplier </td>
+                    <td class="STHeader" style="width:25%"> Requested Transfer Date </td>
+                </tr>
+                <tr style="{!if(serviceTicket.transferMethod == 'Drop-off','display:table-row','display:none')}">
+                    <td > {!serviceTicket.brandContact} </td>
+                    <td >
+                        <apex:outputPanel layout="none" rendered="{!serviceTicket.passThroughPayment}">
+                             <img src="/img/checkbox_checked.gif"/>
+                         </apex:outputPanel>
+                         <apex:outputPanel layout="none" rendered="{!!serviceTicket.passThroughPayment}">
+                             <img src="/img/checkbox_unchecked.gif"/>
+                         </apex:outputPanel>
+                    </td>
+                    <td colspan="2"> <apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!serviceTicket.requestDate}"/></apex:outputText>&nbsp;{!serviceTicket.requestTime} </td>
+                </tr>
+                
+            </table>
+            <apex:repeat value="{!serviceTicketLines}" var="serviceTicketLine">
+            	<div class="slds-box height-full slds-is-relative" style="margin-top:12px;border:1px solid #ccc;box-shadow:rgba(0, 0, 0, 0.1) 0 2px 2px;position:relative">
+
+                    <!--div style="{!IF(serviceTicketLine.PWOStatus == 'Completed','position: absolute; left: -50px; box-sizing: border-box; height: 40.5px; width: 40.5px; border: .5px solid rgba(151,151,151,0.5); background-color: #ffffff; border-radius: 50%; padding: 8px; top: -6px;display:block','display:none')}">
+                    H
+                    </div-->
+                    <h2 class="{!IF(serviceTicketLine.PWOStatus == 'Completed','sl-ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium bg__complete','sl-ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium bg__tan')}" style="padding:4px;">
+                        <!--span class="STHeader" style="width:25%;display:inline-block">{!serviceTicketLine.Package_Type}</span-->
+                        <span class="STHeader" style="width:25%;display:inline-block">{!serviceTicketLine.productDescription}</span>
+                        <span class="STHeader" style="width:25%;display:inline-block">
+                            <apex:outputtext value="{0,number,###,###.##}">
+                                	<apex:param value="{!serviceTicketLine.totalCases}"/>
+                                
+                                </apex:outputtext> cases 
+                            (<apex:outputtext value="{0,number,###,###}">
+                                	<apex:param value="{!serviceTicketLine.Total_Units}"/>
+                                
+                                </apex:outputtext> units)
+                        </span>
+                        <span class="STHeader" style="width:25%;display:inline-block">&nbsp;</span>
+                        <span class="STHeader" style="width:23%;display:inline-block;text-align:right;">
+                            <apex:outputText rendered="{!serviceTicketLine.PWOStatus != NULL}">{!serviceTicketLine.PWOStatus}</apex:outputText>
+                            <apex:outputText rendered="{!serviceTicketLine.PWOStatus == NULL}">{!serviceTicketLine.status}</apex:outputText>
+                        </span>
+                    </h2>
+                    <table>
+                        <tr>
+                            <!--td class="STHeader" style="width:25%;">
+                                Service Type
+                                
+                            </td-->
+                            <td class="STHeader"  style="width:25%;">
+                                Product Name
+                                
+                            </td>
+                            <td class="STHeader" style="width:25%;">
+                                Product SKU
+                                
+                            </td>
+                            <td class="STHeader">
+                                Batch ID
+                            </td>
+                            <td class="STHeader">
+                                UID
+                            </td>
+                        </tr>
+                        <tr>
+                        	<!--td style="vertical-align:top;">{!serviceTicketLine.Package_Type}</td-->
+                            <td style="vertical-align:top;">{!serviceTicketLine.productDescription}</td>
+                            <td style="vertical-align:top;">{!serviceTicketLine.New_Packaged_ProductName}</td>
+                            <td style="vertical-align:top;">{!serviceTicketLine.Harvest_Batch_Code}</td>
+                            <td style="vertical-align:top;">{!serviceTicketLine.UIDName}</td>
+                        </tr>
+                        <tr>
+                        	<td class="STHeader">Total Qty</td>
+                            <td class="STHeader">Test Required</td>
+                            <td class="STHeader">Test Status</td>
+                            <td class="STHeader">COA Number</td>
+                        </tr>
+                        <tr>
+                        	<!--td style="vertical-align:top;">{!serviceTicketLine.Package_Type}</td-->
+                            <td style="vertical-align:top;">
+                                <apex:outputtext value="{0,number,###,###}">
+                                	<apex:param value="{!serviceTicketLine.Total_Units}"/>
+                                </apex:outputtext>
+                            </td>
+                            <td style="vertical-align:top;">{!serviceTicketLine.Test_Required}</td>
+                            <td style="vertical-align:top;">{!serviceTicketLine.testStatus}</td>
+                            <td style="vertical-align:top;">{!serviceTicketLine.COA_Number}</td>
+                        </tr>
+                        <tr>
+                            <!--td class="STHeader" style="{!IF(serviceTicketLine.Package_Type == 'Casing','display:table-cell','display:none')}">
+                                Units per Case (MOQ)
+                            </td-->
+                            
+                            <td class="STHeader"  style="width:25%;">
+                                Attached File Name
+                            </td>
+                            <td class="STHeader" colspan="3">
+                                Special Instructions
+                            </td>
+                        </tr>
+                        <tr>
+                        	<!--td class="slds-truncate" style="vertical-align:top;">{!serviceTicketLine.Total_Units}</td>
+                            <td style="{!IF(serviceTicketLine.Package_Type == 'Casing','vertical-align:top;display:table-cell','display:none')}">
+                            	{!serviceTicketLine.Qty_Per_Multi_Unit}
+                            </td-->
+                            <td style="vertical-align:top">{!serviceTicketLine.documentTitle}
+                            </td>
+                            <td colspan="3" class="slds-truncate" style="vertical-align:top;">{!serviceTicketLine.Spl_Packaging_Notes}</td>
+                            
+                        </tr>
+                    </table>
+                </div>
+            </apex:repeat>
+        </div>
+        </html>
+    </apex:page>

@@ -1,0 +1,118 @@
+<aura:component extends="c:utility" controller="ManageExternalProductCtrl" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	
+    <ltng:require scripts="{!$Resource.SweetAlert}" />
+    <aura:handler name="init" value="{!this}" action="{!c.initRecords}"/>
+    <aura:attribute name="productList" type="product2[]" description="store product records list"/>
+    <aura:attribute name="topHeight" type="String" default="100px;" />
+    <aura:attribute name="productPriceBook" type="Map" default="{}" />
+    <aura:attribute name="isOpen" type="Boolean" default="false" />
+    
+    <aura:registerEvent name="retailDeliveryTicketLineEvt" type="c:retailDeliveryTicketLineEvt" />
+    
+    <ltng:require scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <div class="slds-is-relative slds-p-horizontal_small">
+    	<div class="slds-box slds-box_small slds-m-top_small" style="padding: 0;">
+            <lightning:layout multipleRows="true" horizontalAlign="left">
+                <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                    <span class="productName">Manage External Products</span>
+                    <div class="slds-show_inline-block slds-float_right">
+                        <lightning:button class="theme workSansSemiBold uppserCase newProductButton" variant="brand" label="Save" onclick="{!c.onSave}"/>&nbsp;&nbsp;
+                        <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+                        <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onCancel}" label="Reset" />
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                    <!--Data Table-->     
+                    <div class="slds-table--header-fixed_container" aura:id="psContainer" style="{!'padding-top:0;width:100%;max-height: calc(100vh - ' + v.topHeight + ')'}">
+                        <div style="height:100%;">
+                            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                <thead>
+                                    <tr class="slds-text-title--caps">
+                                        <th scope="col" width="11%"><div class="slds-truncate" title="Product name">Product name</div></th> 
+                                        <th scope="col" width="17%"><div class="slds-truncate" title="Description">Product Description</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="Available Qty"><span style="color:red;">*</span> Available Qty</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="Qty in Case (MOQ)">Qty in Case (MOQ)</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="THC (%)">THC (%)</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="THC (MG/G)">THC (MG/G)</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="CBD (%)">CBD (%)</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="CBD (MG/G)">CBD (MG/G)</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="Terpene (%)">Terpene (%)</div></th>
+                                        <th scope="col" width="9%"><div class="slds-truncate" title="Terpene MG/G)">Terpene (MG/G)</div></th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!--### display all records of AccountList attribute one by one by aura:iteration ###-->
+                                    <aura:iteration items="{!v.productList}" var="pro" indexVar="sNo">
+                                        <tr>
+                                            <td width="11%">
+                                                <div style="cursor:pointer;" onclick="{!c.onProductDetails}" data-id="{!pro.Id}">
+                                                	{!pro.Name}
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Description -->
+                                            <td width="17%">
+                                                <lightning:input name="desc" value="{!pro.Product_Short_Description__c}" aura:id="desc" maxlength="30"/>
+                                            </td>
+                                            
+                                            <!-- Available Qty -->
+                                            <td width="9%">
+                                                <lightning:input type="number" aura:id="inputId" value="{!pro.Available_Inventory__c}" required="true" min="0" step="1" />
+                                            </td>
+                                            
+                                            <!-- Qty in Case (MOQ) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" min="0" step="0.01" aura:id="inputId" value="{!pro.MOQ__c}" />
+                                            </td>
+                                            
+                                            <!-- THC (%) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" min="0" step="0.01" aura:id="inputId" value="{!pro.THC_Amount__c}" />
+                                            </td>
+                                            
+                                            <!-- THC (MG/G) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" step="0.01" min="0" aura:id="thcMG" value="{!pro.THC_MG_G__c}" />
+                                            </td>
+                                            
+                                            <!-- CBD (%) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" min="0" step="0.01" aura:id="cbdAmt" value="{!pro.CDB_Amount__c}" />
+                                            </td>
+                                            
+                                            <!-- CBD (MG/G) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" min="0" step="0.01" aura:id="cbdMg" value="{!pro.CBD_MG_G__c}" />
+                                            </td>
+                                            
+                                            <!-- Terpene (%) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" min="0" step="0.01" aura:id="terPer" value="{!pro.Terpene_percent__c}" />
+                                            </td>
+                                            
+                                            <!-- Terpene MG/G) -->
+                                            <td width="9%">
+                                                <lightning:input type="number" min="0" step="0.01" aura:id="terMg" value="{!pro.Terpene_MG_G__c}" />
+                                            </td>
+                                            
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                    <div class="slds-show_inline-block slds-float_right" align="center">
+                        <lightning:button class="theme workSansSemiBold uppserCase newProductButton" variant="brand" label="Save" onclick="{!c.onSave}"/>&nbsp;&nbsp;
+                        <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+                        <lightning:button class="theme workSansSemiBold uppserCase" onclick="{!c.onCancel}" label="Reset" />
+                    </div>
+                </lightning:layoutItem>
+                
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

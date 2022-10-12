@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Publish_ServiceTicket_to_Slack</name>
+        <label>Publish ServiceTicket to Slack</label>
+        <locationX>308</locationX>
+        <locationY>288</locationY>
+        <actionName>PublishServicesTicketToSlack</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>stIds</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <interviewLabel>Publish ST to Slack {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Publish ST to Slacks</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Pending</stringValue>
+            </value>
+        </filters>
+        <object>Service_Ticket__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Public_ST_to_Slack</name>
+            <connector>
+                <targetReference>Publish_ServiceTicket_to_Slack</targetReference>
+            </connector>
+            <label>Public ST to Slack</label>
+            <offsetNumber>-1</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>Publish_ST_To_Slack_Date_Time__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

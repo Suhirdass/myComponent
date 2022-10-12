@@ -1,0 +1,67 @@
+<!-- sldsValidatorIgnore -->
+<template>
+
+    <div class="slds-box slds-theme_default">
+
+        <!-- WELCOME MESSAGE -->
+        <div class="slds-align_absolute-center">
+            <p class="slds-text-heading_large">
+             <template for:each={data} for:item="itr">
+                <b key={itr.Id}> {itr.School_Name__c} </b>
+            </template>
+            </p>
+        </div>
+
+        <div class="slds-align_absolute-center">
+            <p class="slds-text-heading_small slds-m-around_small slds-text-align_center">
+                <template for:each={data} for:item="itr">
+                    {itr.Description__c}
+               </template>
+            </p>
+        </div>
+
+<lightning-layout class="slds-align_absolute-center slds-text-align_center container" multiple-rows="true">
+    <lightning-layout-item size="12">
+        <!-- Instead of static value (08.15) , we can Getting Time & Greeting as property from JS File
+                This property should be declare with in {} -->
+        <div class="time">{time}</div>
+    </lightning-layout-item>
+
+    <lightning-layout-item size="12">
+        <div class="greeting">{greeting}</div>
+    </lightning-layout-item>
+
+    <lightning-layout-item size="12">
+        <div class="greeting">{currentDate}</div>
+    </lightning-layout-item>
+</lightning-layout>
+        <!--NAVIGATION BUTTONS -->
+        <lightning-layout class="slds-m-around_medium">
+
+            <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
+                <button onclick={navigateToManage} class="slds-button slds-button_success slds-size_full">
+                    <template for:each={data} for:item="itr">
+                    {itr.Management_Details__c}
+                </template>
+                </button>
+            </lightning-layout-item>
+ 
+            <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
+                <button onclick={navigateToStudent} class="slds-button slds-button_success slds-size_full">
+                    <template for:each={data} for:item="itr">
+                        {itr.Student_Details__c}
+                    </template>
+                </button>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
+                <button onclick={navigateToTeacher} class="slds-button slds-button_success slds-size_full">
+                    <template for:each={data} for:item="itr">
+                        {itr.Teacher_With_Student_Details__c}
+                    </template>
+                </button>
+            </lightning-layout-item>
+
+        </lightning-layout>
+    </div>
+</template>

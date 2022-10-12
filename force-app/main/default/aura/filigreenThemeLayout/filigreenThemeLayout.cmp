@@ -1,0 +1,52 @@
+<!-- Base theme component for the Portal -->
+<aura:component  controller="ProductsCtlr" implements="forceCommunity:themeLayout" access="global" description="FiligreenTheme">
+
+    <ltng:require styles="{! $Resource.popover }" />
+    <ltng:require styles="{! $Resource.toast }" />
+    <ltng:require styles="{! $Resource.select }" />
+
+    <aura:attribute name="search" type="Aura.Component[]" />
+    <aura:attribute name="navigation" type="Aura.Component[]" />
+    <aura:attribute name="action" type="Aura.Component[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+	<aura:handler event="c:updateCartTotalEvt" action="{!c.updateCartTotal}" />
+    <aura:attribute name="cartTotal" type="Integer" default="0" />
+    <aura:attribute name="isBrand" type="Boolean" default="true" />
+    <aura:attribute name="isLimited" type="Boolean" default="false" />
+    <aura:attribute name="baseUrl" type="String" default="" />
+    <lightning:layout multipleRows="true" class="container">
+        <lightning:layoutItem size="12" class="header">
+            <lightning:layout verticalAlign="center">
+                <lightning:layoutItem size="3" padding="horizontal-small" class="logo">
+                    <a href="/filigreenb2b/s" style="margin-top: 18px;position:relative">
+                        <!--img src="{!$Resource.BrigadeResources + '/assets/logo-combined.png'}" alt="Filigreen Logo" /-->
+                        <img class="WOVNLogo-img" src="{!$Resource.WOVNResources + '/assets/WOVN-Wordmark-Daze.png'}" alt="Filigreen Logo" />
+                        <!--<div class="triangle-topright"></div>
+                        <div class="square-topright"></div--> 
+                    </a>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow"  padding="horizontal-small" class="breadcrumbs">
+                    <c:customBreadCrumb/>
+                </lightning:layoutItem>
+                <lightning:layoutItem  size="3" padding="horizontal-medium" class="actions">
+                    <aura:if isTrue="{!not(v.isLimited)}">
+                        <c:searchInterface />
+                        
+                        <!-- @dev: cart count number is hardcoded -->
+                        <a href="" onclick="{!c.navigateToCart}" class="cart">Cart({!v.cartTotal})</a>
+                    </aura:if>
+                    <c:userOptions />
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:layoutItem>
+
+        <div class="navigation">
+            {!v.navigation}
+        </div>
+
+        <lightning:layoutItem size="12" class="body">
+            {!v.body}
+        </lightning:layoutItem>
+    </lightning:layout>
+
+</aura:component>

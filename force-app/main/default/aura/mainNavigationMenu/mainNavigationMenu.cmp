@@ -1,0 +1,102 @@
+<aura:component extends="forceCommunity:navigationMenuBase" implements="forceCommunity:availableForAllPageTypes"
+                controller="ProductsCtlr">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <!--aura:handler event="c:updateCartTotalEvt" action="{!c.updateCartTotal}" /-->
+    <aura:handler name="change" value="{!v.menuItems}" action="{!c.onMenuItemChange}" />
+    <aura:handler name="change" value="{!v.isCommunityPlusUser}" action="{!c.onMenuItemChange}" />
+    <aura:handler name="change" value="{!v.isBrand}" action="{!c.onMenuItemChange}" />
+    <aura:handler name="change" value="{!v.hideFAQ}" action="{!c.onMenuItemChange}" />
+    <aura:handler name="change" value="{!v.isDataLoaded}" action="{!c.onMenuItemChange}" />
+    <aura:attribute name="isCommunityPlusUser" type="Boolean" default="false" />
+    <aura:attribute name="hideFAQ" type="Boolean" default="false" />
+    <aura:attribute name="isBrand" type="Boolean" default="true" />
+    <aura:attribute name="isLimited" type="Boolean" default="true" />
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false" />
+    <aura:attribute name="cartTotal" type="Integer" default="0" />
+    <aura:attribute name="renderMenuItems" type="List" default="[]" />
+    <aura:attribute name="navigationConfig" type="Map" default="{}" />
+    <aura:attribute name="DiscardItem_Brand_Users" type="String" default="" />
+    <aura:attribute name="DiscardItem_CommPlus_And_Brand_Users" type="String" default="" />
+    <aura:attribute name="DiscardItem_CommPlus_Users" type="String" default="" />
+    <aura:attribute name="DiscardItem_Except_CommPlus_And_Brand_Users" type="String" default="" />
+    <aura:attribute name="DiscardItem_Limited_Access" type="String" default="" />
+    <aura:attribute name="AccountType" type="String" default="" />
+    <aura:handler name="change" value="{!v.renderMenuItems}" action="{!c.onRenderMenuItems}" />
+    <!-- temporary static data -->
+    <!--aura:handler name="init" value="{!this}" action="{!c.onMenuSetup}" /-->
+    <!--aura:attribute name="menuList" type="List" default="[]" /-->
+    <lightning:overlayLibrary aura:id="overlay" />
+    <div class="container">
+        <ul class="menu-list"  onclick="{!c.navigate}">
+            <aura:iteration items="{!v.renderMenuItems}" var="menuItem">
+                <aura:if isTrue="{!not(empty(menuItem.subMenu))}">
+                    <li data-id="{!menuItem.label}" class="{!menuItem.isOpened ? 'menu-list__item has-submenu is-active' : 'menu-list__item has-submenu'}">
+                        <span class="{!menuItem.active ? 'menu-list__link has-submenu is-active' : 'menu-list__link has-submenu'}"
+                              onclick="{!c.handleMenuClick}" >
+                            <span class="menu-list__icon"><img src="{!menuItem.icon}" alt="" /></span>
+                            <span class="menu-list__label">
+                                <aura:renderIf isTrue="{!equals(menuItem.label,'Retail Delivery Orders')}">
+                                    Orders
+                                    <aura:set attribute="else">
+                                        {!menuItem.label}
+                                    </aura:set>
+                                </aura:renderIf>
+                            </span>
+                            <span class="menu-list__expand"></span>
+                        </span>
+                        
+                        <ul class="submenu-list">
+                            <aura:iteration items="{!menuItem.subMenu}" var="subMenuItem">
+                                <li class="submenu-list__item">
+                                    <a class="submenu-list__link" data-bradcrumb="{!'Home > '+if(equals(menuItem.label,'Retail Delivery Orders'),'Orders',menuItem.label)+' > '+subMenuItem.label}" data-bradcrumb-ids="{!'0 > '+menuItem.id+' > '+subMenuItem.id}" data-menu-item-id="{!subMenuItem.id}">{!subMenuItem.label}</a>
+                                </li>
+                            </aura:iteration>
+                        </ul>
+                    </li>
+                    <aura:set attribute="else">
+                        <li class="menu-list__item">
+                            <a class="{!menuItem.active ? 'menu-list__link has-submenu is-active' : 'menu-list__link has-submenu'}"
+                               data-menu-item-id="{!menuItem.id}">
+                                <span class="menu-list__icon"><img src="{!menuItem.icon}" alt="" /></span>
+                                <span class="menu-list__label" data-bradcrumb="{!if(equals(menuItem.label,'Home') , '','Home > ')+menuItem.label}" data-bradcrumb-ids="{!if(equals(menuItem.label,'Home') , '','0 > ')+menuItem.id}" data-menu-item-id="{!menuItem.id}">{!menuItem.label}</span>
+                            </a>
+                        </li>
+                    </aura:set>
+                </aura:if>
+            </aura:iteration>
+            <!--Brigade team changes starts
+            <aura:iteration items="{!v.menuList}" var="menuItem">
+                <aura:if isTrue="{!not(empty(menuItem.subMenuItems))}">
+                    <li data-id="{!menuItem.label}" class="{!menuItem.isOpened ? 'menu-list__item has-submenu is-active' : 'menu-list__item has-submenu'}">
+                        <span class="{!menuItem.isActive ? 'menu-list__link has-submenu is-active' : 'menu-list__link has-submenu'}"
+                              onclick="{!c.handleMenuClick}" >
+                            <span class="menu-list__icon"><img src="{!menuItem.icon}" alt="" /></span>
+                            <span class="menu-list__label">{!menuItem.label}</span>
+                            <span class="menu-list__expand"></span>
+                        </span>
+                        
+                        <ul class="submenu-list">
+                            <aura:iteration items="{!menuItem.subMenuItems}" var="subMenuItem">
+                                <li class="submenu-list__item">
+                                    <a class="submenu-list__link" href="{!subMenuItem.href}">{!subMenuItem.label}</a>
+                                </li>
+                            </aura:iteration>
+                        </ul>
+                    </li>
+                    <aura:set attribute="else">
+                        <li class="menu-list__item">
+                            <a class="{!menuItem.isActive ? 'menu-list__link has-submenu is-active' : 'menu-list__link has-submenu'}"
+                               href="{!menuItem.href}">
+                                <span class="menu-list__icon"><img src="{!menuItem.icon}" alt="" /></span>
+                                <span class="menu-list__label">{!menuItem.label}</span>
+                            </a>
+                        </li>
+                    </aura:set>
+                </aura:if>
+            </aura:iteration>
+			Brigade changes ends-->
+        </ul>
+    </div>
+</aura:component>

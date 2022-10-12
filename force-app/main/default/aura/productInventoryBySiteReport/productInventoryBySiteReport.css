@@ -1,0 +1,89 @@
+.THIS {
+    font-family:token(salesforceSans);
+     color :token(fontColor);
+}
+.THIS .mainTbl {
+	display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.THIS .selectBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .eyeIcon{
+    fill: token(land);
+    filter: brightness(0.5) grayscale(1);
+}
+.THIS .text__blue{
+    color :token(wovnlink);
+}
+.THIS .amber{
+    color :token(fontColor);
+}
+.THIS .borderTd{
+    border:solid 1px gainsboro;
+    cursor:pointer;
+}
+.THIS .leftBorderTd{
+    border-bottom:solid 1px gainsboro;
+    border-left:solid 1px gainsboro;
+}
+.THIS table{
+    border-collapse: collapse;
+}
+.THIS td{
+    vertical-align: top;
+    text-align: left;
+    padding-left: 7px !important;
+}
+.THIS .dataDiv{
+    padding: 6px;
+}
+.THIS th{
+    background-color: #fafaf9;
+    color:#514f4d
+}
+.THIS .btn{
+    border-radius:4px;
+}
+.THIS .btnTbl{
+    width: 66%;
+    margin-left: 19%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  color: token(fontColor);
+  opacity: 1; /* Firefox */
+}
+.THIS .heightAuto {
+    height: auto !important;
+}
+.THIS .pageNumber{
+    margin:4px;
+    height: 32px!important;
+    width: 32px;
+}
+.THIS .slds-button_neutral[disabled], .THIS .slds-button_neutral:disabled{
+    color:#065e66;
+	border-color: #EEEEF0;
+	background-color:#EEEEF0;
+}
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    cursor: pointer;
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(50, 64, 42)));
+}
+.THIS .slds-select{
+	color :rgb(6, 94, 102);
+	font-size:14px;
+}
+.THIS .select__hidden-label label {
+  display: none;
+}
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(50, 64, 42)));
+}
+.THIS .slds-icon-text-error{
+	fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));                            
+}

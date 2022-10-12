@@ -1,0 +1,144 @@
+<aura:component extends="c:utility"
+	controller="ProductsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+	access="global">
+    <aura:attribute name="salesOrders" type="List" default="[]" />
+    <aura:attribute name="brandId" type="String" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchBrandOrders}"/>
+    <lightning:spinner
+			variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+    <table class="slds-table" style="border: solid 1px gainsboro;">
+        <thead>
+            <tr>
+                <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortOrder}" data-field="Brand_Quote__r.Opportunity_Name__r.Order__r.Name">
+                    Order Number
+                    <aura:if isTrue="{!v.filters.orderByField=='Brand_Quote__r.Opportunity_Name__r.Order__r.Name'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortOrder}" data-field="SO_Date__c">
+                    Order Date
+                    <aura:if isTrue="{!v.filters.orderByField=='SO_Date__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortOrder}" data-field="SO_Status__c">
+                    Status
+                    <aura:if isTrue="{!v.filters.orderByField=='SO_Status__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <!--<th class="sortable" onclick="{!c.sortOrder}" data-field="Brand_Quote__r.Name">
+                    Brand Quote
+                    <aura:if isTrue="{!v.filters.orderByField=='Brand_Quote__r.Name'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>-->
+                <th style="background-color:#d1cdb0;">
+                    METRC Manifest
+                </th>
+                <th style="background-color:#d1cdb0;">
+                    Invoice
+                </th> 
+                <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.sortOrder}" data-field="Total_Price__c">
+                    Total Product Price
+                    <aura:if isTrue="{!v.filters.orderByField=='Total_Price__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>                
+                <!--<th class="sortable" onclick="{!c.sortOrder}" data-field="Name">
+                    Sales Order
+                    <aura:if isTrue="{!v.filters.orderByField=='Name'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th> -->               
+            </tr>
+        </thead>
+        <tbody>
+            <aura:if isTrue="{!v.salesOrders.length > 0}">
+                <aura:iteration items="{!v.salesOrders}" var="order" indexVar="index">
+                    <tr>
+                        <td>
+                            <div data-id="{!order.orderId}" style="color:#518397;" class="clickable text__blue" onclick="{!c.onViewTicket}">{!order.orderNumber}</div>
+                        </td>
+                        <td>
+                            <lightning:formattedDateTime value="{!order.sODate}" year="numeric" month="numeric" day="numeric"/>
+                        </td>
+                        <td>{!order.sOStatus}</td>
+                        <td>{!order.MetrcManifest}</td>
+                        <td><a data-id="{!order.invoiceId}" onclick="{!c.recordDetail}" style="color:#518397;">{!order.invoiceName}</a></td>
+                        <!--<td>
+                            <div onclick="{!c.gotoDetails}" class="clickable text__blue" id="{!order.brandQuote}">{!order.BQname}</div>
+                        </td>-->
+                        <td>
+                            <lightning:formattedNumber value="{!order.totatPrice}" style="currency" currencyCode="USD"/>
+                        </td>
+                        <!--<td>
+                            <div id="{!order.SOId}" class="clickable text__blue" onclick="{!c.gotoDetails}">{!order.name}</div>
+                        </td>-->
+                    </tr>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    <tr>
+                    	<td colspan="6">
+                        	<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700;font-family:'Alliance Neue';color:#42472a;">
+								No Orders Found.
+							</h3>
+                        </td>
+                    </tr>
+                </aura:set>
+            </aura:if>
+        </tbody>
+    </table>
+    <c:paginator aura:id="orderpaginator" perPage="{!v.perPage}" />
+</aura:component>

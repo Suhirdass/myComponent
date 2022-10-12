@@ -1,0 +1,3 @@
+<design:component>
+	<design:attribute name="isRecent" default="true" label="Is Recent Dashbaord" description="Show Recent Dashboards" />
+</design:component>

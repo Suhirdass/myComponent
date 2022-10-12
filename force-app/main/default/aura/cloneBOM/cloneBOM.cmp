@@ -1,0 +1,232 @@
+<aura:component extends="c:utility" controller="cloneBOMController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="bqID" type="String" />
+    <aura:attribute name="setBom" type="Bill_of_Materials__c"/> 
+    <aura:attribute name="setBOMLines" type="cloneBOMController.BOMLineWrapper[]" />
+	<aura:attribute name="hasBOMLines" type="Boolean" default="true"/>
+	<aura:attribute name="master" type="Boolean" default="false"/>    
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        	min-width: 90%;
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .back {
+        	background-color: white;
+        	height: 100%;
+        }
+        .backTwo {
+        	background-color: white;
+        	max-height: 2000%;
+        }
+        .dataTables_filter{
+        	display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        .SOtable{
+        border-collapse: collapse;
+  		width: 100%;
+        height: 100%;
+        }
+        .SOtable td, .SOtable th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+		.SOtable tr:hover {background-color: #F5F5F5;}
+        .SOtable th {
+          background-color: #F5F5F5;
+         border: 1px solid #D9D7D7;
+        }
+        .textCap{
+        text-transform: capitalize !important; 
+        }
+         .title-align {
+    	padding-left: 10px;
+        padding-top: 5px;
+        }
+         .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+       .layout-left{
+        text-align: right; 
+        margin-left:-5%;
+        }
+        .layout-left-auto{
+        text-align: right; 
+        }
+        .layout-right{
+        text-align: left;
+        padding-left: 2%;
+        }
+        .layout-right-auto{
+        text-align: left;
+        padding-left: 2%; 
+        width: auto;
+        }
+    </aura:html>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+<article class="slds-card" >
+   <!-- <article class="slds-card back" >
+    <div class="backTwo"> -->
+    <div class="slds-page-header heightfix" role="banner">
+      <div class="slds-grid">
+        <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media">
+            <lightning:icon iconName="custom:custom93" title="custom93" />
+            <div class="slds-media__body">
+              <div class="slds-grid">
+               <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Bill of Materials</h1> 
+                </div>
+            </div>	
+          </div>
+        </div>
+           <div class="slds-col slds-no-flex slds-align-bottom">
+          <div class="slds-button-group" role="group">
+               <lightning:button class="slds-button slds-button--neutral textCap" label="Clone BOM" onclick="{!c.saveClone}"/>
+               <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel" onclick="{!c.onCancel}"/>   
+          </div>
+        </div>
+      </div>
+    </div>
+    <br/>
+    
+        <div class="slds-is-relative slds-p-horizontal_small">
+           <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+               
+               <div class="slds-col">
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Bill of Material</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.setBom.Id}" style="color:#0070D2;" ><u>{!v.setBom.Name}</u></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Product</b></div>
+                            <div class="slds-size_1-of-2 slds-truncate" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.setBom.Product__c}" style="color:#0070D2;" ><u>{!v.setBom.Product__r.Name}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Phase</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setBom.Phase__c}</div>	
+                    </div>
+               </div>
+               
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Status</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setBom.Status__c}</div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Revision</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setBom.Revision__c}</div> 
+                   </div>
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>BOM Levels</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setBom.BOM_Levels__c}</div> 
+                   </div>
+               </div>
+             
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>BOM Type</b></div>
+                            <div class="slds-size_2-of-3" style="text-align: left;">{!v.setBom.BOM_Type__c}</div>
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>BOM Routing</b></div>
+                        <div class="slds-size_2-of-3" style="text-align: left;"><a href="{!'/' + v.setBom.BOM_Routing__c}" style="color:#0070D2;"><u>{!v.setBom.BOM_Routing__r.Name}</u></a></div>
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Total BOM Cost</b></div>
+                       <div class="slds-size_2-of-3" style="text-align: left;"><ui:outputCurrency value="{!v.setBom.Total_BOM_Cost__c}"/></div>
+                    </div>
+              </div>
+            </div>   
+            </div> 
+                <br/>
+       
+</article>
+        <br/>
+<article class="slds-card">
+              <div class="slds-page-header heightfix" role="banner">
+                  <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                      <div class="slds-media">
+                         <lightning:icon iconName="standard:product" title="product" /> 
+                        <div class="slds-media__body">
+                          <div class="slds-grid">
+                           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Bill of Materials Line Items</h1> 
+                            </div>
+                        </div>	
+                      </div>
+                    </div>
+                  </div>
+            </div> 
+    		<br/>
+                <div class="slds-is-relative slds-p-horizontal_small">
+                    <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small" style="max-height: 100% !important;">
+                        <table class="SOtable back">
+                            <thead>
+                                <tr class="slds-text-title">
+                                    <th scope="col"> <div title="select"><lightning:input type="checkbox" name="inputMaster" checked="{!v.master}" aura:id="selectAll" value="{!v.master}" onchange="{!c.selectAllCheckboxes}"/></div> </th>
+                                    <th scope="col"> <div title="Level">Level</div> </th>
+                                    <th scope="col"> <div title="BOM Line">BOM Line</div> </th>
+                                    <th scope="col" style="width:15%;"> <div title="Product">Product</div> </th>
+                                    <th scope="col"> <div title="Description">Description</div> </th>
+                                    <th scope="col" style="width:7%;"> <div title="Product type">Product type</div> </th>
+                                    <th scope="col" style="width:7%;"> <div title="Sequence" >Sequence</div></th>
+                                    <th scope="col" style="width:7%;"> <div title="Qty Per">Qty Per</div> </th> 
+                                    <th scope="col" style="width:7%;"> <div title="UOM">UOM</div></th>
+                                    <th scope="col" style="width:7%;"> <div title="Unit Cost" >Unit Cost</div> </th>
+                                    <th scope="col"> <div title="Ext Cost">Ext Cost</div> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:If isTrue="{!v.hasBOMLines}">
+                               <aura:iteration items="{!v.setBOMLines}" var="boml" > 
+                                    <tr >
+                                        <td><div></div>
+                                            <lightning:input type="checkbox" aura:id="checkContact" value="{!boml.isSelected}" checked="{!boml.isSelected}"/>
+                                        </td>
+                                        <td style="width:7%;"><div>{!boml.billofMaterialsLineBOM.Level__c}</div></td>
+                                        <td><div><a href="{!'/' + boml.billofMaterialsLineBOM.Id}" style="color:#0070D2;" ><u>{!boml.billofMaterialsLineBOM.Name}</u></a></div></td>
+                                        <td style="width:15%;"><div><a href="{!'/' + boml.billofMaterialsLineBOM.Product__c}" style="color:#0070D2;" ><u>{!boml.billofMaterialsLineBOM.Product__r.Name}</u></a></div></td>
+                                        <td style="width:25%;"><div>{!boml.billofMaterialsLineBOM.Product_Description__c}</div></td> 
+                                        <td style="width:7%;"><div>{!boml.billofMaterialsLineBOM.Product_Type__c}</div></td>
+                                        <td><div>{!boml.billofMaterialsLineBOM.Sequence__c}</div></td>
+                                        <td style="width:7%;"><div>{!boml.billofMaterialsLineBOM.Qty_Per__c}</div></td>
+                                        <td style="width:7%;"><div>{!boml.billofMaterialsLineBOM.UOM__c}</div></td>
+                                        <td style="width:7%;"><div><ui:outputCurrency value="{!boml.billofMaterialsLineBOM.Unit_Cost__c}"/></div></td>
+                                        <td><div><ui:outputCurrency value="{!boml.billofMaterialsLineBOM.Ext_Cost__c}"/></div></td>
+                                    </tr>
+                                </aura:iteration>
+                               <aura:set attribute="else">
+                                <tr><td colspan='11'><div style="color:red; text-align: center;">No Records Found!</div></td></tr> 
+                                </aura:set>
+                         </aura:If>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <br/>
+        
+     </article>
+     <br/>
+</aura:component>

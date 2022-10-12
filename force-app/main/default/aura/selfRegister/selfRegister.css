@@ -1,0 +1,65 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+}
+.THIS{
+    background:#fff;
+}
+.THIS.scrollerSize {
+    height: 100%;
+    width: 100%;
+    border-radius: 1px;
+}
+.THIS .inverseTextColor{
+    color:token(wovnlink);
+}
+.THIS .innerDivWrapper {
+    min-height: 101%;
+    padding-bottom: 20px;
+}
+.THIS .filigreenLogo {
+    width: 240px;
+    max-height: 60px;
+    min-height: 60px;
+    background-position: center center;
+    margin: 10px 0px;
+}
+.THIS .FGLogoURLExternal{
+    background: url('/filigreenb2b/resource/WOVNResources/assets/WOVN-Wordmark-Daze.png') center center / contain no-repeat;
+}
+.THIS .FGLogoURLInternal{
+    background: url('/resource/WOVNResources/assets/WOVN-Wordmark-Daze.png') center center / contain no-repeat;
+}
+.THIS .slds-form-element__label{
+    color: rgb(51, 51, 51)!important;
+    font-weight:700!important;
+    display: inline!important;
+}
+.THIS .sendMeCopy .slds-form-element__label{
+    font-weight:normal!important;
+}
+.THIS .customMargin{
+    margin-top : 15px;
+    margin-bottom : 13px;
+}
+.THIS  .slds-file-selector__button {
+    color:token(wovnlink);
+}
+.THIS .signUpButton{
+    background-color: token(land);/*rgb(6, 94, 102);*/
+    border-radius: 2px;
+    border: 1px solid transparent;
+    color: white;
+    padding: 10px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    text-transform:none!important;
+    width:200px;
+    line-height: 1.42857143;
+}
+.THIS .signUpButton:hover {
+    background-color: #033236;
+}

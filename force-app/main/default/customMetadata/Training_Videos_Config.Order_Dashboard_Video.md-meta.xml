@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Order Dashboard Video</label>
+    <protected>false</protected>
+    <values>
+        <field>Menu_Name__c</field>
+        <value xsi:type="xsd:string">Orders</value>
+    </values>
+    <values>
+        <field>Menu_Sort_Order__c</field>
+        <value xsi:type="xsd:double">4.0</value>
+    </values>
+    <values>
+        <field>Sort_Order__c</field>
+        <value xsi:type="xsd:double">5.0</value>
+    </values>
+    <values>
+        <field>Sub_Menu_Name__c</field>
+        <value xsi:type="xsd:string">Order Dashboard</value>
+    </values>
+    <values>
+        <field>URL_Label__c</field>
+        <value xsi:type="xsd:string">Order Dashboard</value>
+    </values>
+    <values>
+        <field>Url__c</field>
+        <value xsi:type="xsd:string">https://share.getcloudapp.com/v1u0RzWy</value>
+    </values>
+</CustomMetadata>

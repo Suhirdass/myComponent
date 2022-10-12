@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X4_My_Quotes</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>BQ_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Ownership__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Supplier_DBA__c</columns>
+    <columns>Requested_Ship_Date__c</columns>
+    <columns>Receiver_Name__c</columns>
+    <columns>Payment_Terms__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Product_Price__c</columns>
+    <columns>Total_Excise_Tax_Amount__c</columns>
+    <columns>Total_Quoted_Price__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>BQ_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Expired,Rejected</value>
+    </filters>
+    <label>4. My Quotes</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

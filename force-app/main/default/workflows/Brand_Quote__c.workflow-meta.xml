@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Update_BQ_Planned_Ship_Date</fullName>
+        <field>Planned_Ship_Date__c</field>
+        <formula>If ( 
+VALUE( MID( TEXT( Receiver_Acceptance_Date__c), 12, 2) )-8 
+&lt;= 9 &amp;&amp; 
+VALUE( MID( TEXT( Receiver_Acceptance_Date__c ), 12, 2 ) )-8 &lt; 12 &amp;&amp; 
+VALUE( MID( TEXT( Receiver_Acceptance_Date__c ), 12, 2 ) )-8 &gt;0 
+, 
+DATEVALUE(Receiver_Acceptance_Date__c) + 1, 
+DATEVALUE(Receiver_Acceptance_Date__c) + 2)</formula>
+        <name>Update BQ Planned Ship Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_BQ_Planned_Ship_Date_Approved</fullName>
+        <field>Planned_Ship_Date__c</field>
+        <formula>If ( 
+VALUE( MID( TEXT( NOW()), 12, 2) )-8 
+&lt;= 9 &amp;&amp; 
+VALUE( MID( TEXT( NOW() ), 12, 2 ) )-8 &lt; 12 &amp;&amp; 
+VALUE( MID( TEXT( Now() ), 12, 2 ) )-8 &gt;0 
+, 
+DATEVALUE(NOW()) + 1, 
+DATEVALUE(NOW()) + 2)</formula>
+        <name>Update BQ Planned Ship Date - Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_BQ_Status</fullName>
+        <field>BQ_Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Update BQ Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Receiver_Acceptance_Date</fullName>
+        <field>Receiver_Acceptance_Date__c</field>
+        <formula>NOW()</formula>
+        <name>Update Receiver Acceptance Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Sell_Quote_Collection_Status</fullName>
+        <field>Collection_Status__c</field>
+        <literalValue>Paid in Full</literalValue>
+        <name>Update Sell Quote Collection Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Sell_Quote_Last_Payment_Date</fullName>
+        <field>Last_Payment_Date__c</field>
+        <formula>Ship_Confirmation_Date__c</formula>
+        <name>Update Sell Quote Last Payment Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+</Workflow>

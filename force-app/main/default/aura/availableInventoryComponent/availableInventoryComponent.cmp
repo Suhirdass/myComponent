@@ -1,0 +1,42 @@
+<aura:component >
+    
+    <aura:attribute name="label" type="String" default=""/>
+    <aura:attribute name="labelClass" type="String" default=""/>
+    <aura:attribute name="required" type="Boolean" default="false"/>
+    <aura:attribute name="helpText" type="String" default=""/>
+    <aura:attribute name="isCurrencyFld" type="Boolean" default="false"/>
+    <aura:attribute name="iconName" type="String" default="utility:info"/>
+    <aura:attribute name="iconSize" type="String" default="xx-small"/>
+    <aura:attribute name="isRightAlign" type="Boolean" default="false"/>
+    <aura:if isTrue="{!v.required}">
+        <abbr class="slds-required" title="required">*</abbr>
+    </aura:if>
+		<aura:if isTrue="{!v.isCurrencyFld}">
+            <span style="margin-right: 3px;">
+            	<ui:outputCurrency class="{!v.labelClass}" value="{!v.label}"/>
+            </span>
+            <aura:set attribute="else">
+        		<label class="{!'slds-form-element__label '+v.labelClass}" for="form-element-help-01">{!v.label}&nbsp;</label>
+            </aura:set>
+        </aura:if>
+        <div class="slds-form-element slds-show_inline-block slds-is-relative">
+            <div class="slds-form-element__icon slds-align-middle" onmouseover="{!c.display}" onmouseout="{!c.displayOut}" style="font-size:10px;">
+                <button class="slds-button slds-button slds-button--icon" aria-describedby="help" title="Help" >
+                    <lightning:icon class="{! equals(v.iconName, 'utility:preview') ? 'some-indicator' : ''}" iconName="{!v.iconName}" size="{!v.iconSize}" alternativeText="Help"/>
+                    <span class="slds-assistive-text">Help</span>
+                </button>
+            </div>
+            <aura:if isTrue="{!v.isRightAlign}">
+                <div class="slds-popover slds-popover--tooltip slds-nubbin--right-top toggleme" role="tooltip" id="help" style="position:absolute;top:-15px;right:25px;min-width:max-content;" aura:id="tooltip">
+                    <div class="slds-popover__body"><aura:unescapedHtml value="{!v.helpText}"/></div>
+                </div>
+            	<aura:set attribute="else">
+                    <div class="slds-popover slds-popover--tooltip slds-nubbin--left-top toggleme" role="tooltip" id="help" style="position:absolute;top:-15px;left:20px;min-width:max-content;" aura:id="tooltip">
+                        <div class="slds-popover__body"><aura:unescapedHtml value="{!v.helpText}"/></div>
+                    </div>
+                </aura:set>
+            </aura:if>
+        </div>
+        
+        {!v.body}
+</aura:component>

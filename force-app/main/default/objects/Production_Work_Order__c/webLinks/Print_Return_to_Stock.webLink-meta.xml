@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Print_Return_to_Stock</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>Print Return to Stock</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>/apex/APXTConga4__Conga_Composer
+?serverUrl={!API.Partner_Server_URL_370}
+&amp;id={!Production_Work_Order__c.Id}
+&amp;OFN=Packaging+RTS+{!Production_Work_Order__c.Name}+for+{!Production_Work_Order__c.Ownership__c}
+&amp;DS4=0
+&amp;LG3=1
+&amp;LG4=1
+&amp;PS0=0
+&amp;DefaultPDF=1
+&amp;QueryId=[pwo]a056A00000LrjuT?pv0={!Production_Work_Order__c.Id}
+&amp;TemplateId=a0F6A000004X4r8
+&amp;TemplateGroup=PrintPackagingRTS</url>
+</WebLink>

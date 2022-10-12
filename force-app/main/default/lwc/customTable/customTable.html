@@ -1,0 +1,53 @@
+<template>
+    <lightning-card title='Custom Table' icon-name="custom:custom11">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead>
+                <tr class="slds-line-height_reset">
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Account Name">Account Name</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Parent Account">Parent Account</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Type">Industry</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Rating">Rating</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Phone">Phone</div>
+                  </th>
+                  <th class="" scope="col">
+                    <div class="slds-truncate" title="Ownership">Ownership</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={records} for:item ='record'>
+                <tr class="" key = {record.Id}>
+                        <td data-label="Account Name">
+                            <div class="slds-cell-wrap"><a href="javascript:void(0);">{record.Name}</a></div>
+                        </td>
+                        <td data-label="Parent Account">
+                            <div class="slds-cell-wrap"><a href="javascript:void(0);">{record.ParentId}</a></div>
+                        </td>
+                        <td data-label="Industry">
+                            <div class="slds-cell-wrap">{record.Industry}</div>
+                        </td>
+                        <td data-label="Rating">
+                            <div class="slds-cell-wrap">{record.Rating}</div>
+                        </td>
+                        <td data-label="Phone">
+                            <div class="slds-cell-wrap">{record.Phone}</div>
+                        </td>
+                        <td data-label="Ownership Name">
+                            <div class="slds-cell-wrap">{record.Ownership}</div>
+                        </td>
+                </tr>
+                </template>
+            </tbody>
+        </table>
+    </lightning-card>
+
+</template>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Paid_in_Full_WO_SB</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>PO_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Brand_Quote__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Sample_Order__c</columns>
+    <columns>Sold_to_Party_Legal_Name__c</columns>
+    <columns>Ship_Confirmation_Date__c</columns>
+    <columns>Payment_Terms__c</columns>
+    <columns>Retailer_Collection_Status__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Cost__c</columns>
+    <columns>Next_Payable_Date__c</columns>
+    <columns>Supplier_Payment_Settled_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Bill_Created__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Purchase_Order__c.Invoice_Only</value>
+    </filters>
+    <filters>
+        <field>Retailer_Collection_Status__c</field>
+        <operation>contains</operation>
+        <value>Paid in Full</value>
+    </filters>
+    <filters>
+        <field>PO_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Rejected</value>
+    </filters>
+    <filters>
+        <field>Create_Supplier_Bill__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>Paid in Full WO SB</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

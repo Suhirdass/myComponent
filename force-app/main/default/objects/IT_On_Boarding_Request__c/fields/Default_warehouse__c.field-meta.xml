@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Default_warehouse__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Default warehouse in site user object</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Default warehouse in site user object</inlineHelpText>
+    <label>Default warehouse ?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,18 @@
+<apex:page showHeader="false" sidebar="false" >
+    <apex:includeLightning />
+    
+    <div id="lightning" />
+    <script>
+        function init(){
+            $Lightning.use("c:ShowWebsiteApp", function() { 
+                $Lightning.createComponent(
+                    					   "c:ShowWebsite",
+                                           { url : "https://filigreen.com/"},
+                                           "lightning",
+                                           function(cmp) {}
+                						   );
+            });
+        }
+        init();
+    </script>
+</apex:page>

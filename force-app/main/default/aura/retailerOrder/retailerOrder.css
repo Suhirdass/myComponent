@@ -1,0 +1,144 @@
+.THIS {
+    font-family:token(salesforceSans) !important;
+    color :token(fontColor);
+}
+.THIS .height50{
+    height: 50px;
+}
+.THIS .fullWidth{
+    width: 100%;
+}
+.THIS .setCheckbox input{
+    float: left;
+    margin-right: .25rem;
+}
+
+.THIS .selected{
+    border: 1px solid #43654b;
+}
+.THIS .orderHeaderLastColumn{
+    padding-right:1.5rem;
+}
+.THIS .disableColor{
+    background-color: #B0B1B2;
+    color: #25282A;
+}
+.THIS .disableColorView{
+    background-color: rgb(211,211,211);
+    opacity: 0.2;
+    color: #25282A;
+}
+
+.THIS .buttonContent{
+    min-width: max-content;
+}
+
+
+.THIS .ps{
+  height: 500px;
+}
+.THIS .jumptotop{
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}
+.THIS .complianceButton{
+    width:160px!important;
+    float:right;
+    margin-top:5px;
+}
+.THIS .headerBackground{
+  background: #e5e5e5;
+}
+.THIS .headingTbl td {
+    padding: 1%;
+    background-color: #FAFAF9;
+}
+.THIS .ticket-header {
+    background: token(tableHeaderColor);
+    font-family:token(salesforceSans);
+    padding: 6px 72px 4px;
+    border-bottom: 2px solid token(grayAccent);
+}
+
+.THIS .ticket-body {
+  padding: 0px 72px;
+}
+
+.THIS .slds-icon-text-default{
+    /*fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));*/
+    fill:token(land);
+}      
+
+.THIS .slds-icon-text-error {
+    fill: gray;
+}            
+
+.THIS #searchRec::-webkit-input-placeholder {
+  color: token(fontColor);
+  opacity: 1; /* Firefox */
+}
+
+.THIS .totalText{
+    font-size: 13px;
+    letter-spacing: 0;
+    line-height: 21px;
+    text-align: right;
+}
+
+.THIS .totalTextLabel{
+    font-size: 13px;
+    letter-spacing: 0;
+    line-height: 21px;
+}
+
+.THIS .sortable{
+    cursor:pointer;
+}
+
+.THIS .rectangleRli {
+  box-sizing: border-box;
+  height: 50.5px;
+  width: 50.5px;
+  border: 0.5px solid #B9BEC5;
+  border-radius: 2.25px;
+  background-color: #FFFFFF;
+}
+          
+.THIS .rectangle {
+  box-sizing: border-box;
+  height: 60.5px;
+  width: 60.5px;
+  border: 0.5px solid #B9BEC5;
+  border-radius: 2.25px;
+  background-color: #FFFFFF;
+}
+
+.THIS .print-export{
+	height: 13px;
+	width: 78px;
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+    padding-top: 3px;
+	cursor:pointer;
+}
+.THIS .viewCompliance{
+    background-image:url(/filigreenb2b/resource/Marketplace/active/file.svg);
+    height: 24px;
+    width: 22px;
+    background-color: #fff;
+}
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}
+.THIS .submitButtonGreen{
+	background-color:token(land);
+	color:token(daze);
+    border: 0.5px solid #dcdac6;
+}

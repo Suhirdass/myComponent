@@ -1,0 +1,258 @@
+<aura:component extends="c:utility" controller="ServiceTicketsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+
+    <ltng:require scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:attribute name="selectedExportFormat" type="String" default="" />
+    <aura:attribute name="selectedStatus" type="String" default="All" />
+    <aura:attribute name="searchString" type="String" default="" />
+    <aura:attribute name="serviceTickets" type="List" default="[]" />
+    <aura:attribute name="disableExport" type="Boolean" default="true" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchTickets}" />
+    <aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+  <div class="slds-is-relative slds-p-around_small">
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    <lightning:layout multipleRows="true">
+        <div class="flex slds-size_full">
+            <div class="slds-m-right_xx-large">
+                <lightning:buttonGroup>
+                    <lightning:button class="{!if(equals(v.selectedStatus,'All'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'All'),'brand','neutral')}" label="All" onclick="{!c.changeServiceTickets}"/>
+                    <lightning:button class="{!if(equals(v.selectedStatus,'Draft'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Draft'),'brand','neutral')}" label="Draft" onclick="{!c.changeServiceTickets}"/>
+                    <lightning:button class="{!if(equals(v.selectedStatus,'Pending'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Pending'),'brand','neutral')}" label="Pending" onclick="{!c.changeServiceTickets}"/>
+                    <lightning:button class="{!if(equals(v.selectedStatus,'Accepted'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Accepted'),'brand','neutral')}" label="Accepted" onclick="{!c.changeServiceTickets}"/>
+                    <lightning:button class="{!if(equals(v.selectedStatus,'Completed'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Completed'),'brand','neutral')}" label="Completed" onclick="{!c.changeServiceTickets}"/>
+                    <lightning:button class="{!if(equals(v.selectedStatus,'Cancelled'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Cancelled'),'brand','neutral')}" label="Cancelled" onclick="{!c.changeServiceTickets}"/>
+                </lightning:buttonGroup>
+            </div>
+            
+            <div class="flex m-left_auto">
+                <div class="slds-m-right_medium">
+                    <!--form onkeydown="{!c.validateKeys}" onkeyup="{!c.onSearchTickets}">
+                        <lightning:input type="search" aura:id="ticketSearch" value="" placeholder="Search" variant="label-hidden" />
+                    </form-->
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                        <input type="text" style="color:#42472a;font-size:14px;" aura:id="ticketSearch" id="ticketSearch" oninput="{!c.onSearchTickets}" placeholder="Search" variant="label-hidden" class="slds-input searchAndExport" value="{!v.searchString}"/>
+                    </div>
+                </div>
+                <div class="slds-m-right_medium select__hidden-label">
+                    <!-- @dev - export csv or pdf -->
+                    <lightning:select aura:id="exportSelect" class="searchAndExport"  value="{!v.selectedExportFormat}" label="" variant="label-hidden" onchange="{!c.onPrintSelect}" disabled="{!v.disableExport}">
+                        <option value="" style="color:#42472a;font-size:14px;">Export</option>
+						<option value="csv" style="color:#42472a;font-size:14px;" >CSV</option>
+						<option value="pdf" style="color:#42472a;font-size:14px;">PDF</option>
+                    </lightning:select>
+                </div>
+                <lightning:button class="theme selectBtn" variant="brand" label="New" onclick="{!c.onNewServiceTicket}" />
+            </div>
+        </div>
+      <!--lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small">
+        <h3 class="slds-section-title_divider" style="font-weight: 700;display: inline-block;">Service Tickets</h3>
+        <lightning:button class="theme workSansSemiBold uppserCase width225" variant="brand" label="New Service Ticket" onclick="{!c.onNewServiceTicket}" />
+      </lightning:layoutItem-->
+
+      <div class="ps slds-is-relative" id="psContainer" aura:id="psContainer" style="width:100%;margin-top:10px;min-height: 550px">
+        <aura:if isTrue="{!v.records.length > 0}">
+            <div class="table-container slds-m-top_small">
+                <table class="slds-table slds-table_cell-buffer">
+                    <thead>
+                        <tr>
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Name" style="background-color:#d1cdb0;">
+                                Transfer Number
+                                <aura:if isTrue="{!v.filters.orderByField=='Name'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Status__c" style="background-color:#d1cdb0;">
+                                Status
+                                <aura:if isTrue="{!v.filters.orderByField=='Status__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Transfer_Method__c" style="background-color:#d1cdb0;">
+                                Transfer Method
+                                <aura:if isTrue="{!v.filters.orderByField=='Transfer_Method__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="CreatedDate" style="background-color:#d1cdb0;">
+                                Date Created
+                                <aura:if isTrue="{!v.filters.orderByField=='CreatedDate'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Request_Date_Time__c" style="background-color:#d1cdb0;">
+                                Transfer Date
+                                <aura:if isTrue="{!v.filters.orderByField=='Request_Date_Time__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Brand_Contact__r.Name" style="background-color:#d1cdb0;">
+                                Brand Contact
+                                <aura:if isTrue="{!v.filters.orderByField=='Brand_Contact__r.Name'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <!--th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Brand_Name__r.Name">
+                                Brand Name
+                                <aura:if isTrue="{!v.filters.orderByField=='Brand_Name__r.Name'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Transfer_Method__c">
+                                Transfer Method
+                                <aura:if isTrue="{!v.filters.orderByField=='Transfer_Method__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th>Licensed Premise</th-->
+                            <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Total_Service_Lines__c" style="background-color:#d1cdb0;">
+                                Services
+                                <aura:if isTrue="{!v.filters.orderByField=='Total_Service_Lines__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            &#8593;
+                                            <aura:set attribute="else">
+                                                &#8595;
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th style="background-color:#d1cdb0;">Progress</th>
+                            <th width="120" class="slds-text-align_right" style="background-color:#d1cdb0;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.records}" var="st" indexVar="index">
+                            <tr>
+                                
+                                <td>
+                                    <div class="ticketNumber slds-truncate" data-id="{!st.id}" data-ticketnumber="{!st.ticketNumber}" onclick="{!c.onViewTicket}" style="color:#518397">{!st.ticketNumber}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{!st.status}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{!st.transferMethod}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{!st.createdDate}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">
+                                        <ui:outputDate format="MM/dd/yyyy" value="{!st.requestDate}"/><!--&nbsp;{!st.requestTime}-->
+                                    </div>
+                                </td>
+                                <td style="min-width:130px;max-width:130px">
+                                    <div class="slds-truncate">{!st.brandContact}</div>
+                                </td>
+                                <!--td>
+                                    <div class="slds-truncate">{!st.brandName}</div>
+                                </td>
+                                
+                                <td>
+                                    <div class="slds-truncate">{!st.transferMethod}</div>
+                                </td>
+                                <td style="max-width:200px">
+                                    <div class="slds-truncate">{!st.licensePremiseAddress}</div>
+                                </td-->
+                                <td>
+                                    <div class="slds-truncate">{!st.totalServiceLines}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{!st.totalCompletedServiceLines}</div>
+                                </td>
+                                
+                                <td class="slds-text-align_right">
+                                    <lightning:buttonIcon
+                                                          iconClass="eyeIcon"
+												value="{!st.id}"
+												iconName="utility:edit"
+												size="large"
+												onclick="{!c.onEdit}"
+												alternativeText="{!st.ticketNumber}"
+												disabled="{!and(!equals(st.status, 'Pending'),!equals(st.status, 'Draft'))}"
+											/>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+          <aura:set attribute="else">
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small slds-m-top_small">
+              <h3 class="slds-section-title_divider slds-text-align_center" style="font-weight: 700;font-family:'Alliance Neue'">No Inbound Transfers.</h3>
+            </lightning:layoutItem>
+          </aura:set>
+        </aura:if>
+      </div>
+      <aura:if isTrue="{!v.showScrollToTop}">
+        <lightning:icon class="jumptotop" iconName="utility:jump_to_top" onclick="{!c.scrollToTop}" />
+      </aura:if>
+    </lightning:layout>
+      <c:paginator aura:id="paginator" perPage="{!v.perPage}"/>
+  </div>
+</aura:component>

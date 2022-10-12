@@ -1,0 +1,69 @@
+.THIS .width60{
+    display: inline-block;
+    width: 40px;
+}
+.THIS .inputPadding input {
+    text-align: center;
+    text-transform: uppercase;
+}
+.THIS .selectedBtnCss{
+    background-color :token(land);
+    color:token(daze);
+    border:none;
+}
+.THIS .adjustPadding{
+    padding: .25rem;
+    font-size: 14px;
+    line-height: 1.2rem;
+}
+.THIS .sampleProduct .slds-form-element__label{
+    font-size:13px;
+    color:#333;
+}
+.THIS .outOfStock{
+    font-weight: bold;
+    /*background-color:token(daze);*/
+}
+.THIS .update{
+    cursor:pointer;
+}
+.THIS .update.slds-icon-action-approval{
+    background-color: #065e66;
+    padding: 0.3rem;
+}
+.THIS .detailButton{
+    width:250px!important;
+    float:right;
+}
+.THIS .complianceButton{
+    width:250px!important;
+    float:right;
+    margin-top:5px;
+}
+
+.THIS .add-to-card__container {
+    /* display: flex; */
+}
+
+.THIS.passiveVariant {
+    --sds-c-button-line-height: 24px;
+}
+
+.THIS.passiveVariant .slds-button {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+.THIS .ipadButton{
+	line-height: 2.4em; 
+    
+}
+.THIS .reqSampleBtn{
+        color:token(fontColor);
+    }
+.THIS .ipadButton2{
+     background-color: token(land);
+     color :token(daze);
+    }
+.THIS .slds-grow{
+        background-color: white;
+    }

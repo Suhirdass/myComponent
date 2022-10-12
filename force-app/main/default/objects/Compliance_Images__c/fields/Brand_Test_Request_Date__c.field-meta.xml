@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Brand_Test_Request_Date__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Date in which Brand has requested to to initiate Lab Sampling</inlineHelpText>
+    <label>Brand Test Request Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

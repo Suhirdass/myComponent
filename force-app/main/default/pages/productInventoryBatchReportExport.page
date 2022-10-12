@@ -1,0 +1,131 @@
+<apex:page controller="ProductInventoryByBatchController" contentType="application/vnd.ms-excel#{!reportName}.xls" cache="true" standardStylesheets="false">
+    <table style="width: 100%;border: solid 1px gainsboro;white-space: nowrap;">
+        <tr>
+            <td></td>
+            <td colspan="10"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="font-size: 23px;" colspan="10">Product Inventory by Batch ID</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="10" style="font-size: 15px;">{!generatedTime} {!generatedBy}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="10"></td>
+        </tr>
+    </table>   
+    <table style="width: 100%;white-space: nowrap;">
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <!--<tr>
+            <td></td>
+            <td style="font-size: 15px;font-weight: bold;">Filtered By</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="font-size: 15px;">Show: All inventory positions</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="font-size: 15px;">Inventory Location not equal to Delivered,Test Sampled,Packaged,Quarantine,Transferred,CannaWaste</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="font-size: 15px;">Is Brand Product equals True</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>-->
+    </table>
+    <table style="width: 100%;white-space: nowrap;" cellspacing ="0" cellpadding="0">
+        <thead>
+            <tr>
+                <th></th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;padding: 0px;">Brand Name</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;padding: 0px;">Product Name: Product Name</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;padding: 0px;">SKU</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Site</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Batch ID</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Total Inventory</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Total in Receiving</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Order Qty</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Total OnHold</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Total Allocated</th>                
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Qty On Hand</th>
+                <th style="background-color: #f3f2f2;border: solid 1px gainsboro;font-size: 15px;">Available to Sell</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:outputPanel layout="none" rendered="{!productinventoryList.size>0}">
+                <apex:repeat value="{!productinventoryList}" var="productInventory">
+                    <tr>  
+                        <apex:outputPanel layout="none" rendered="{!productInventory.productId != ''}">
+                            <td rowspan="{!productInventory.rowSpan}"></td>
+                            <td rowspan="{!productInventory.rowSpan}" style="vertical-align: middle;border: solid 1px gainsboro;font-size: 15px;"> 
+                                {!productInventory.brandName}
+                            </td>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none" rendered="{!productInventory.productId != ''}">
+                            <td rowspan="{!productInventory.rowSpan}" style="vertical-align: middle;border: solid 1px gainsboro;font-size: 15px;"> 
+                                {!productInventory.productName}
+                            </td>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none" rendered="{!productInventory.productId != ''}">
+                            <td rowspan="{!productInventory.rowSpan}" style="vertical-align: middle;border: solid 1px gainsboro;font-size: 15px;"> 
+                                {!productInventory.SKU}
+                            </td>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="none" rendered="{!productInventory.siteId != ''}">
+                            <td rowspan="{!productInventory.siteRowSpan}" style="vertical-align: middle;border: solid 1px gainsboro;font-size: 15px;"> 
+                                {!productInventory.siteName}
+                            </td>
+                        </apex:outputPanel>
+                        <td style="border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.batchName}
+                        </td>
+                        <td style="text-align: right;border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.largestTotalInventory}
+                        </td>
+                        <td style="text-align: right;border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.totalReceivingIP}
+                        </td>
+                        <apex:outputPanel layout="none" rendered="{!productInventory.siteId != ''}">
+                            <td rowspan="{!productInventory.siteRowSpan}" style="vertical-align: middle;border: solid 1px gainsboro;font-size: 15px;"> 
+                                {!productInventory.largestTotalOrdQty}
+                            </td>
+                        </apex:outputPanel>
+                        <td style="text-align: right;border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.largestInvnetoryHoldQty}
+                        </td>
+                        <td style="text-align: right;border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.largestAllocatedInventory}
+                        </td>
+                        <td style="text-align: right;border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.sumQtyHand}
+                        </td>
+                        <td style="text-align: right;border: solid 1px gainsboro;font-size: 15px;">
+                            {!productInventory.largestAvailableToSell}
+                        </td>
+                        <td></td>
+                    </tr>
+                </apex:repeat>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!productinventoryList.size == 0}">
+                <tr>
+                    <td></td>
+                    <td colspan="9" style="font-size: 15px;padding: 15px;padding-left: 50px;">
+                        No data available in table
+                    </td>
+                    <td></td>
+                </tr>
+            </apex:outputPanel>
+        </tbody>
+    </table>  
+</apex:page>

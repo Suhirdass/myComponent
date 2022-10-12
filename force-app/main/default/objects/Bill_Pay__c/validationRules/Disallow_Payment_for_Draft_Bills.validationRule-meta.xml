@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disallow_Payment_for_Draft_Bills</fullName>
+    <active>true</active>
+    <description>Disallow Bill Pays for Supplier Bill in Draft</description>
+    <errorConditionFormula>ISPICKVAL(Supplier_Bill__r.Status__c, &apos;Draft&apos;)</errorConditionFormula>
+    <errorDisplayField>Supplier_Bill__c</errorDisplayField>
+    <errorMessage>Payment Not Authorized for Supplier Bills in Draft</errorMessage>
+</ValidationRule>

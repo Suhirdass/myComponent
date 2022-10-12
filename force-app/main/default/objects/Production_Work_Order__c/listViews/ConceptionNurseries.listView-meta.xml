@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConceptionNurseries</fullName>
+    <columns>Packaging_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Released_Date__c</columns>
+    <columns>New_Packaged_Product__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Ownership__c</field>
+        <operation>contains</operation>
+        <value>Conception</value>
+    </filters>
+    <filters>
+        <field>Packaging_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled</value>
+    </filters>
+    <label>ConceptionNurseries</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

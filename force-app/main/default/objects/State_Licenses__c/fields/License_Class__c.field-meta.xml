@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>License_Class__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>License Classification:
+Adult Use = A-License
+Medicinal Use = M-License</inlineHelpText>
+    <label>License Class</label>
+    <required>true</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>A-License</fullName>
+                <default>false</default>
+                <label>A-License</label>
+            </value>
+            <value>
+                <fullName>M-License</fullName>
+                <default>false</default>
+                <label>M-License</label>
+            </value>
+            <value>
+                <fullName>AM-License</fullName>
+                <default>false</default>
+                <label>AM-License</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

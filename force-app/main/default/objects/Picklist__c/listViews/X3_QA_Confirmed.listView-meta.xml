@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X3_QA_Confirmed</fullName>
+    <columns>Site__c</columns>
+    <columns>Driver__c</columns>
+    <columns>NAME</columns>
+    <columns>Sales_Order__c</columns>
+    <columns>Opportunity__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Planned_Ship_Date__c</columns>
+    <columns>Receiver_DBA__c</columns>
+    <columns>Picklist_Lines__c</columns>
+    <columns>Pick_Confirm_Date__c</columns>
+    <columns>QA_Hold__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>QA_Status__c</field>
+        <operation>equals</operation>
+        <value>Complete</value>
+    </filters>
+    <filters>
+        <field>Ship_Confirmation_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Status__c</field>
+        <operation>notEqual</operation>
+        <value>Rejected,Cancelled</value>
+    </filters>
+    <label>3. QA Confirmed</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+        <group>Filigreen</group>
+    </sharedTo>
+</ListView>

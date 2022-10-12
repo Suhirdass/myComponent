@@ -1,0 +1,17 @@
+.THIS .heightAuto {
+    height: auto !important;
+}
+.THIS .pageNumber{
+    margin:4px;
+    height: 32px!important;
+    width: 32px;
+    color:token(fontColor);
+}
+.THIS .selectedAmber{
+    background-color: token(land);
+    color:token(daze);
+}
+.THIS .nonSelectedAmber{
+    color:token(fontColor);
+    
+}

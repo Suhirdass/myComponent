@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Order_submitted_Date__c</fullName>
+    <description>Date order submitted for approval</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Date order submitted for approval</inlineHelpText>
+    <label>Order Submitted Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

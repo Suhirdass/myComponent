@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="">
+    <aura:attribute name="selectedTime" type="String" default=""/>
+    <aura:attribute name="fieldName" type="String" default=""/>
+</aura:event>

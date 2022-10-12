@@ -1,0 +1,264 @@
+<apex:page docType="html-5.0" controller="SelfRegisterCtlr" showHeader="false" sidebar="false" lightningStylesheets="true" id="pageId">
+    <apex:slds />
+    <style>
+        body {
+        font-family: Lato;
+        font-size: .8125rem;
+        }
+        #mainArea{
+        width:30%;
+        //font-size:13px;
+        }
+        
+        #boxArea{
+        padding: 30px;
+        border-left: 1px solid gainsboro;
+        border-right: 1px solid gainsboro;
+        border-bottom: 1px solid gainsboro;
+        border-top: 1px solid gainsboro;
+        }
+        .css-1hfs6hz{
+        margin-top : 8px;
+        margin-bottom : 8px;
+        }
+        .customMargin{
+        margin-top : 15px;
+        margin-bottom : 13px;
+        }
+        .css-1symnd1 {
+        font-weight: bold;
+        font-size: 13px;
+        }
+        
+        .css-1blejkz {
+        width: 100% !important;
+        padding: 8px !important;
+        margin-left: 1px !important;
+        border: 1px solid #D8DDE6 !important;
+        font-family: SFS, Arial, sans-serif;
+        font-size: .8125rem;
+        box-sizing: border-box;
+        border-radius: 4px;
+        }
+        .inverseTextColor{
+        color: rgb(4,132,75) !important;
+        }
+        body .btn {
+        background : none;
+        }
+        #mainArea{
+        width: 40%;
+        }
+        .css-w8m29s {
+        width: 240px;
+        max-height: 60px;
+        min-height: 60px;
+        background: url({!$Resource.filigreenLogoHeader}) center center / contain no-repeat;
+        background-position: center center;
+        margin: 10px 0px;
+        }
+    </style>
+    <div style="display:flex;">
+        <div style="width:30%"></div>
+        <div id="mainArea"> 
+            <apex:outputPanel rendered="{!IF(!flag,true,false)}">
+                <div id="imageArea" style="text-align: -webkit-center;">
+                    <div role="img" class="css-w8m29s e4hgq9j1"></div>                
+                </div>
+                <div id="boxArea">
+                    
+                    <div> 
+                        <b >Self Registration Form for B2B</b>
+                    </div>
+                    <div>
+                        We're so excited you're ready to join us on the Filigreen Marketplace! To start, please tell us a little about yourself.
+                    </div>
+                    
+                    <apex:form id="formId">
+                        <div class="slds-grid slds-gutters">
+                            <div class="css-1hfs6hz e1kvibof0 slds-col">
+                                <label class="css-1symnd1 e1fx53an0">First Name<span class="css-skcghl e1fx53an1">*</span> </label>
+                                <!--input name="ZjPJLgK" maxlength="4000" class="css-1blejkz e1tcuc7s0" value="" style="border-color: rgb(204, 204, 204);" /-->
+                                <apex:input id="firstName" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);" type="text" value="{!firstName}"  />
+                                <div class="slds-form-element__help" style="color:#c23934;display:none;" id="firstNameErr">
+                                    This field is required
+                                </div>
+                            </div>
+                            
+                            <div class="css-1hfs6hz e1kvibof0 slds-col">
+                                <label class="css-1symnd1 e1fx53an0">Last Name<span class="css-skcghl e1fx53an1">*</span> </label>
+                                <apex:input id="lastName" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);" type="text"  value="{!lastName}" />
+                            	<div class="slds-form-element__help" style="color:#c23934;display:none;" id="lastNameErr">
+                                    This field is required
+                                </div>
+                            </div>    
+                        </div>
+                        
+                        <div class="slds-grid slds-gutters">
+                            <div class="css-1hfs6hz e1kvibof0 slds-col slds-size_6-of-12">
+                                <label class="css-1symnd1 e1fx53an0">Company Name <apex:outputText value=" &"/> DBA<span class="css-skcghl e1fx53an1">*</span> </label>
+                                <apex:input id="companyName" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);" type="text"  value="{!companyName}" />
+                            	<div class="slds-form-element__help" style="color:#c23934;display:none;" id="companyNameErr">
+                                    This field is required
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="css-1hfs6hz e1kvibof0 slds-col slds-size_6-of-12">
+                                <label class="css-1symnd1 e1fx53an0">Phone Number<span class="css-skcghl e1fx53an1">*</span> </label>
+                                
+                                <apex:input id="phone" type="tel" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);"  value="{!phone}" />
+                                <div class="slds-form-element__help" style="color:#c23934;display:none;" id="phoneErr">
+                                    This field is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="css-1hfs6hz e1kvibof0 ">
+                            <label class="css-1symnd1 e1fx53an0">Email<span class="css-skcghl e1fx53an1">*</span> </label>
+                            <p class="css-1txr6kf ey9ji6a0">This email will become your login and is where you'll receive login credentials.</p>
+                            <apex:input id="email" type="email" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);"   value="{!email}" />
+                            <div class="slds-form-element__help" style="color:#c23934;display:none;" id="emailErr">
+                                This field is required
+                            </div>
+                        </div>
+                        <div class="customMargin">
+                            <label class="css-1symnd1 e1fx53an0 ">Title<span class="css-skcghl e1fx53an1">*</span> </label>
+                            <p class="css-1txr6kf ey9ji6a0">What's your role at the company?</p>
+                            <apex:input id="title" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);" type="text"  value="{!title}"/>
+                            <div class="slds-form-element__help" style="color:#c23934;display:none;" id="titleErr">
+                                This field is required
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="customMargin">
+                            <label class="css-1symnd1 e1fx53an0">State License Number<span class="css-skcghl e1fx53an1">*</span> </label>
+                            <p class="css-1txr6kf ey9ji6a0">Please enter your cannabis state license number issued by the BCC, CDFA, or CDPH. Don't worry about supplying all the licenses you have. We only need one to get you set-up.</p>
+                            <apex:input id="license" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);" type="text"  value="{!licenseNumber}"/>
+                            <div class="slds-form-element__help" style="color:#c23934;display:none;" id="licenseErr">
+                                This field is required
+                            </div>
+                        </div>
+                        
+                        <div class="customMargin">
+                            <label class="css-1symnd1 e1fx53an0">State License Upload</label>
+                            <p class="css-1txr6kf ey9ji6a0">Please provide us a copy of your state license.</p>
+                            
+                            <apex:inputFile value="{!fileData.body}" filename="{!fileData.name}"></apex:inputFile>
+                        </div>  
+                        <br/>
+                        <apex:inputCheckbox id="MyCheckbox" value="{!response}" onClick="toggleCopyEmail()" />
+                        <apex:outputLabel value="Send me a copy of my responses" for="MyCheckbox"/>
+                        <br/>
+                        <!--div class="css-1hfs6hz e1kvibof0" style="display: none;margin-top: 0;margin-bottom: 18px;" id="copyEmail">
+                            <label class="css-1symnd1 e1fx53an0">Response Email</label>
+                            
+                            <apex:input type="email" styleClass="css-1blejkz" style="border-color: rgb(204, 204, 204);"   value="{!copyEmail}"/>
+                        </div-->
+                        <br/>
+                        <div style="text-align:center">
+                            <apex:actionFunction name="saveRegistrationDetails" action="{!saveRegistrationDetails}" />
+                            <apex:commandButton reRender="none"
+                                                value="Sign Up" 
+                                                style="background-color: rgb(6, 94, 102);border-radius: 2px;border: 1px solid transparent;color: white;padding: 10px 12px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;width:33%;"
+                                                onclick="return validateUserDetails();" />    
+                        </div>
+                        <div style="text-align:center;margin-top: 6px;">
+                            <span >
+                                <a class="inverseTextColor" href="filigreenb2b/s/login" data-aura-rendered-by="242:0">Already have account? Login</a>
+                            </span>
+                        </div>
+                        <!--a href="filigreenb2b/s/login" target="_blank"> Login </a-->
+                    </apex:form>
+                </div>
+            </apex:outputPanel>  
+        </div>
+        <div style="width:30%"></div>
+    </div>
+    <script>
+    var formInputs = [
+        {
+            id:'pageId:formId:firstName',
+            errorId:'firstNameErr',
+            size: 2
+        },
+        {
+            id:'pageId:formId:lastName',
+            errorId:'lastNameErr',
+            size: 2
+        },
+        {
+            id:'pageId:formId:companyName',
+            errorId:'companyNameErr',
+            size: 2
+        },
+        {
+            id:'pageId:formId:phone',
+            errorId:'phoneErr',
+            type: 'phone'
+        },
+        {
+            id:'pageId:formId:email',
+            errorId:'emailErr',
+            type: 'email'
+        },
+        {
+            id:'pageId:formId:title',
+            errorId:'titleErr'
+        },
+        {
+            id:'pageId:formId:license',
+            errorId:'licenseErr'
+        },
+    ];
+    function validateUserDetails(){
+        for(var i=0;i<formInputs.length;i++){
+        	var value = document.getElementById(formInputs[i].id).value;
+            if(value == undefined || value == ''){
+                document.getElementById(formInputs[i].errorId).innerHTML = 'This field is required';
+                document.getElementById(formInputs[i].errorId).style.display = 'block';
+                return false;
+            }else if(formInputs[i].size != undefined && value.length < formInputs[i].size){
+                document.getElementById(formInputs[i].errorId).innerHTML = 'Invalid input! Atleast '+ formInputs[i].size +' characters required';
+                document.getElementById(formInputs[i].errorId).style.display = 'block';
+                return false;
+            }else if(formInputs[i].type != undefined && formInputs[i].type == 'email'){
+                if(!validateEmail(value)){
+                    document.getElementById(formInputs[i].errorId).innerHTML = 'Invalid email address';
+                    document.getElementById(formInputs[i].errorId).style.display = 'block';
+                    return false;
+                }
+            }else if(formInputs[i].type != undefined && formInputs[i].type == 'phone'){
+                if(!telephoneCheck(value)){
+                    document.getElementById(formInputs[i].errorId).innerHTML = 'Invalid phone number';
+                    document.getElementById(formInputs[i].errorId).style.display = 'block';
+                    return false;
+                }
+            }
+		    document.getElementById(formInputs[i].errorId).style.display = 'none';
+        }
+        return saveRegistrationDetails();
+    }
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+    
+    function telephoneCheck(str) {
+        var a = /^(1\s|1|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/.test(str);
+        return a;
+        //alert(a);
+    }
+    /*var flag = true;
+    function toggleCopyEmail() {
+        if(flag){
+            flag = false;
+            document.getElementById('copyEmail').style.display = 'flex';
+        }else{
+            flag = true;
+            document.getElementById('copyEmail').style.display = 'none';
+        }
+    }*/
+    </script>
+</apex:page>

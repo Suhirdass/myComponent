@@ -1,0 +1,291 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card>
+
+        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate portal">
+            Government High School - Student Portal</h1>
+
+    </lightning-card>
+    <br>
+
+    <lightning-card>
+        <div class="slds-align_absolute-center">
+            <!--Select Class for Student-->
+            <lightning-button label="Select Class" onclick={studentLogin} variant="brand"></lightning-button>
+            <br>
+            <lightning-combobox name="Class" class="slds-p-bottom_medium slds-p-left_x-large" value={valueClass}
+                placeholder="Select Class" options={optionsClass} onchange={handleKeyChange}
+                if:true={areStudentsVisible} style="color:grey;width:150px">
+            </lightning-combobox>
+            <br>
+        </div>
+    </lightning-card>
+    <br>
+
+    <!--Display list of Students respective to the class-->
+    <lightning-card title="Students List" if:true={areStudentsVisibleScreen}>
+        <div class="slds-m-vertical_medium">
+            <template if:true={areReportCardAvailable}>
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                    aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <!-- modal header start -->
+                        <div class="slds-modal__header">
+                            <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate"> Report Card </h1>
+                        </div>
+                        <!-- modal body start -->
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <table
+                                class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered "
+                                aria-labelledby="element-with-table-label other-element-with-table-label">
+                                <thead class="text-align: center">
+                                    <tr class="slds-line-height_reset">
+                                        <th class="" scope="col"> Name </th>
+                                        <th class="" scope="col"> Class </th>
+                                        <th class="" scope="col"> Date of Issue </th>
+                                    </tr>
+                                </thead>
+
+                                <!-- <tbody> 
+                                        <template for:each={reportCard} for:item="iterate" >
+                                         <tr class="slds-hint-parent" key={iterate.Id}>
+                                             <td>{iterate.Tamil__c}</td>
+                                             <td>{iterate.English__c}</td>
+                                             <td>{iterate.Mathematics__c}</td>
+                                             <td>{iterate.Science__c}</td>
+                                             <td>{iterate.Social_Science__c}</td>
+                                             <td>{iterate.Total_Marks__c}</td>
+                                             <td>{iterate.Grade__c}</td>
+                                         </tr>
+                                        </template>
+                                     </tbody> -->
+
+                                <tbody>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <tr class="slds-hint-parent" key={itr.Id}>
+                                            <td>
+                                                <div class="slds-truncate" data-id={itr.Id}>{itr.Name}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate" data-id={itr.Id}>{itr.Class__r.Name}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate" data-id={itr.Id}>{itr.Date_of_Issue__c}</div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered "
+                            aria-labelledby="element-with-table-label other-element-with-table-label">
+                            <thead class="text-align: center">
+                                <tr class="slds-line-height_reset">
+                                    <th class="slds-line-height_reset" scope="col"> Serial No</th>
+                                    <th class="slds-line-height_reset" scope="col"> Subject</th>
+                                    <th class="slds-line-height_reset" scope="col"> Marks</th>
+                                    <th class="slds-line-height_reset" scope="col"> Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="" scope="col"> 1 </td>
+                                    <td class="" scope="col"> Tamil </td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Tamil__c}</td>
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Status1__c}
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr key={itr.Id}>
+                                    <td class="slds-line-height_reset" scope="col"> 2 </td>
+                                    <td class="slds-line-height_reset" scope="col"> English </td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.English__c}
+                                        </td>
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Status2__c}
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr key={itr.Id}>
+                                    <td class="slds-line-height_reset" scope="col"> 3 </td>
+                                    <td class="slds-line-height_reset" scope="col"> Mathematics </td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Mathematics__c}
+                                        </td>
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Status3__c}
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr key={itr.Id}>
+                                    <td class="slds-line-height_reset" scope="col"> 4 </td>
+                                    <td class="slds-line-height_reset" scope="col"> Science </td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Science__c}
+                                        </td>
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Status4__c}
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr key={itr.Id}>
+                                    <td class="slds-line-height_reset" scope="col"> 5 </td>
+                                    <td class="slds-line-height_reset" scope="col"> Social Science </td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Social_Science__c}</td>
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Status5__c}
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr key={itr.Id}>
+                                    <td colspan="1"><span class="span_txt"><b>Grade</b></span></td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Grade__c}</td>
+                                    </template>
+                                    <td colspan="1"><span class="span_txt"><b>Total Marks</b></span></td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Total_Marks__c}
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr style="text-align:center;" key={itr.Id}>
+                                    <td colspan="1"><span class="span_txt"><b>Date Of Birth</b></span></td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>
+                                            {itr.Date_of_Birth__c}</td>
+                                    </template>
+                                    <td colspan="1"><span class="span_txt"><b>Roll Number</b></span></td>
+                                    <template for:each={reportCard} for:item="itr">
+                                        <td class="slds-line-height_reset" scope="col" key={itr.Id}>{itr.Name}</td>
+                                    </template>
+                                </tr>
+                                <tr key={itr.Id}>
+                                    <td colspan="2"><span class="span_txt"><b>Year of Passing</b></span><br>2021-2022
+                                    </td>
+                                    <td colspan="2"><span class="span_txt"><b>Medium of
+                                                Institution</b></span><br>English</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                      <div>
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button--destructive"
+                                onclick={customHideModalPopup}>OK</button>
+                        </footer>
+                     </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open">
+                </div>
+            </template>
+
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                aria-label="Example default base table of Opportunities">
+
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Roll No</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Student Name</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Contact No</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">English</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Tamil</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Mathematics</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Science</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Social Science</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Total Marks</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Class Teacher</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Class</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Grade</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Academic Detail</div>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <template for:each={contacts} for:item="iterate">
+                        <tr class="slds-hint-parent" key={iterate.Id}>
+
+                            <td>
+                                <div class="slds-truncate">{iterate.Name}</div>
+                            </td>
+                            <!--td><div class="slds-truncate">{iterate.Student_Name__c}</div></td-->
+                            <td><a>
+                                    <div onclick={navigateToStudent} data-id={iterate.Id} class="slds-truncate">
+                                        {iterate.Student_Name__c}</div>
+                                </a></td>
+
+                            <td>
+                                <lightning-input placeholder="areacode-phone" type="tel" name="phone3"
+                                    value={iterate.Contact_Number__c} maxlength="10" onchange={contactChange}
+                                    data-id={iterate.Id}>
+                                </lightning-input>
+                            </td>
+
+                            <!--td><div class="slds-truncate">{iterate.Contact_No__c}</div></td-->
+                            <td>
+                                <div class="slds-truncate">{iterate.English__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Tamil__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Mathematics__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Science__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Social_Science__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Total_Marks__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Teacher__r.Teacher_Name__c}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Class__r.Name}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{iterate.Grade__c}</div>
+                            </td>
+                            <td>
+                                <lightning-button class="slds-align_absolute-right slds-var-m-around_small"
+                                    label="Acadamics Marks" onclick={handleAcademics} data-id={iterate.Id}
+                                    variant="brand">
+                                </lightning-button>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,200 @@
+<aura:component extends="c:utility" controller="ProductInventoryBySiteController" implements="force:appHostable,force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">      
+    <aura:html tag="style">
+        .slds-modal__container { 
+            max-width: 70rem !important;
+        } 
+	</aura:html>
+	<aura:attribute name="productId" type="String"/>
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="availableInventoryList" type="List"/>
+    <aura:attribute name="ids" type="List" default="[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler
+		name="paginatorChangeEvt"
+		event="c:paginatorChangeEvt"
+		action="{!c.fetchAvailableInventory}"/>
+    <div class="slds-is-relative slds-p-horizontal_small slds-text-align_center">
+		<lightning:spinner
+            variant="brand"
+            alternativeText="{!v.processingMessage}"
+            class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+        <lightning:layout multipleRows="true">
+            <div class="flex slds-size_full">
+                <div class="slds-m-right_x-large">
+                    <h2 class="slds-text-heading_medium slds-p-top_small slds-p-bottom_small" style="margin-top: -15px;margin-bottom: 20px;">
+                        Product Inventory
+                    </h2>
+                </div>
+            </div>
+            <div
+				class="ps slds-is-relative slds-text-align_center"
+				id="psContainer"
+				aura:id="psContainer" style="width:64rem;">
+                <aura:if isTrue="{!v.availableInventoryList.length > 0}">
+                    <div class="table-container slds-m-top_small">
+                        <table class="slds-table slds-table_cell-buffer">
+							<thead>
+								<tr>
+									<th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Hold__c">
+										On Hold
+										<aura:if isTrue="{!v.filters.orderByField=='Hold__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Site__r.Name">
+										Site
+										<aura:if isTrue="{!v.filters.orderByField=='Site__r.Name'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Inventory_Location__r.Name">
+										Inventory Location
+										<aura:if isTrue="{!v.filters.orderByField=='Inventory_Location__r.Name'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Ownership__r.Name">
+										Ownership
+										<aura:if isTrue="{!v.filters.orderByField=='Ownership__r.Name'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Qty_On_Hand__c">
+										Qty Available
+										<aura:if isTrue="{!v.filters.orderByField=='Qty_On_Hand__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Qty_Allocated__c">
+										Qty Allocated
+										<aura:if isTrue="{!v.filters.orderByField=='Qty_Allocated__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Date_Received__c">
+										Date Received
+										<aura:if isTrue="{!v.filters.orderByField=='Date_Received__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Harvest_Batch_Code__r.Name">
+										Batch ID
+										<aura:if isTrue="{!v.filters.orderByField=='Harvest_Batch_Code__r.Name'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                    <th class="sortable" onclick="{!c.onSortInventory}" data-sortfield="Lab_Test_Status__c">
+										Test Status
+										<aura:if isTrue="{!v.filters.orderByField=='Lab_Test_Status__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+									</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								<aura:iteration items="{!v.availableInventoryList}" var="invPos" indexVar="index">
+									<tr>
+                                        <td>
+                                            <aura:renderIf isTrue="{!invPos.Hold__c}">
+                                                Yes
+                                                <aura:set attribute="else"> No </aura:set>
+                                            </aura:renderIf>
+                                        </td>
+                                        <td>{!invPos.Site__r.Name}</td>
+                                        <td>{!invPos.Inventory_Location__r.Name}</td>
+                                        <td>{!invPos.Ownership__r.Name}</td>
+                                        <td>{!invPos.Qty_On_Hand__c}</td>
+                                        <td>{!invPos.Qty_Allocated__c}</td>
+                                        <td>
+                                            <lightning:formattedDateTime value="{!invPos.Date_Received__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 				minute="2-digit" hour12="true" timeZone="{! $Locale.timezone }"/>
+                                        </td>
+                                        <td>{!invPos.Harvest_Batch_Code__r.Name}</td>
+                                        <td>{!invPos.Lab_Test_Status__c}</td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                    <aura:set attribute="else">
+						<lightning:layoutItem
+							flexibility="grow"
+							size="12"
+							class="slds-p-horizontal_small slds-m-top_small">
+							<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700">
+								No RECORDS FOUND.
+							</h3>
+						</lightning:layoutItem>
+					</aura:set>
+                </aura:if>
+                <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+            </div>
+        </lightning:layout>        
+    </div>
+</aura:component>

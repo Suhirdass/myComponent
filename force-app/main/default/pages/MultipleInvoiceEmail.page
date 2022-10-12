@@ -1,0 +1,119 @@
+<apex:page controller="MultipleInvoiceEmailController" id="pg">
+    <style> 
+        body{
+            padding:16px;
+            background-color: rgba(176, 196, 223, 1.0)!important;
+        }        
+        /* These are the gradients and image used in the Salesforce theme */
+        body:before {
+            background-image: url(/_slds/images/themes/lightning_blue/lightning_blue_background.png),linear-gradient(to top, rgba(255, 255, 255, 0.0) 0, rgba(160, 180, 206, 1.0))!important;
+        }
+        body:after {
+            background-image: linear-gradient(to bottom, rgba(176, 196, 223, 0.0) 60%, rgba(176, 196, 223, 1.0))!important;
+        }
+        .slds-template_iframe{
+            background-color:transparent!important;
+        }
+        .slds-card{
+            background:transparent!important;
+        }
+        .slds-media__figure {
+            flex-shrink: 0;
+            margin-right: var(--lwc-spacingSmall,0.75rem);
+        }
+    </style>
+    <script>
+        function returnToInvoiceSearch(){
+            window.open('/lightning/n/Email_Invoice','_self');
+        }
+    </script>
+    <c:waitingComponent />
+    <apex:slds />
+    <apex:form id="frm">
+        <apex:inputHidden id="selectedTemplate" value="{!selectedTemplatedId}"/>
+        <apex:inputHidden id="selectedEmailTemplate" value="{!selectedEmailTemplatedId}"/>
+        <apex:pageMessages id="messages"></apex:pageMessages>
+        <apex:outputPanel id="detailsPanel"> 
+            <div class="slds-is-relative">
+                <article class="slds-card " style="background-color:#fff!important">
+                    <div class="slds-page-header heightfix" role="banner">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_4-of-4 slds-has-flexi-truncate">
+                                <div class="slds-media">                                    
+                                    <div>
+                                        <span class="slds-icon_container slds-icon-standard-document" style="cursor:pointer;margin-right: var(--lwc-spacingSmall,0.75rem);">
+                                            <svg aria-hidden="true" class="slds-icon slds-icon-text-default">
+                                                <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                     xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#document">
+                                                </use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_4-of-7" style="margin:0 auto;padding-top: 7px;"> 
+                                                <h1  title="Record Title"  style="font-size:18px;font-weight:bold">
+                                                    <div class="entityNameTitle slds-line-height_reset">Email Invoice</div>
+                                                </h1>
+                                            </div>
+                                            <div class="slds-col slds-size_3-of-7" style="margin:0 auto;text-align: right;">
+                                                <apex:commandButton styleClass="slds-button slds-button_neutral slds-m-left_small" action="{!redirectToSendEmail}" value="Email"/>
+                                                <apex:commandButton styleClass="slds-button slds-button_neutral slds-m-left_small" onclick="returnToInvoiceSearch();return false;" value="Return"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <article class="slds-card " style="background-color:white!important">
+                    <div class="slds-page-header heightfix" role="banner" style="background-color:white;">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_12-of-12" style="margin:0 auto">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_5-of-12">
+                                        <div class="slds-p-around_medium" style="min-height:300px;"><!--class="slds-box slds-box_small" style="min-height:300px;border-right: none; border-top-right-radius: 0; border-bottom-right-radius: 0;"-->
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_2-of-4">
+                                                    <div>
+                                                        <h1 style="font-size:18px;font-weight:bold">
+                                                            Select Template
+                                                        </h1>
+                                                    </div>
+                                                    <apex:selectRadio id="templates" value="{!selectedTemplatedId}" layout="pageDirection" onchange="updateSelectedTemplate(this.value);return false;" >
+                                                        <apex:selectOptions value="{!templateOptions}"/>
+                                                    </apex:selectRadio>
+                                                </div>
+                                                <div class="slds-col slds-size_2-of-4">
+                                                    <div>
+                                                        <h1 style="font-size:18px;font-weight:bold">
+                                                            Select Email Template
+                                                        </h1>
+                                                    </div>
+                                                    <apex:selectRadio id="emailtemplates" value="{!selectedEmailTemplatedId}" layout="pageDirection" onchange="updateSelectedEmailTemplate(this.value);return false;" >
+                                                        <apex:selectOptions value="{!emailTemplateOptions}"/>
+                                                    </apex:selectRadio>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_7-of-12">
+                                        <div class="slds-p-around_medium" style="min-height:300px;"><!--class="slds-box slds-box_small" style="min-height:300px;border-top-left-radius: 0; border-bottom-left-radius: 0;"-->
+                                            <div  class="slds-m-around_small">
+                                                <apex:inputCheckbox value="{!saveAtt}" id="saveAtt"/>&nbsp;Save a copy in Files.
+                                            </div>
+                                            <div  class="slds-m-around_small">
+                                                <apex:inputCheckbox value="{!logActivity}" id="activity" />&nbsp;Log in Activity
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </apex:outputPanel>
+    </apex:form>        
+</apex:page>

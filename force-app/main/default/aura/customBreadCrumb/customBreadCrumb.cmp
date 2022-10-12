@@ -1,0 +1,12 @@
+<aura:component extends="forceCommunity:navigationMenuBase">
+	<aura:attribute name="breadcrumboptions" type="List" default="[]" description="used to store bread crumb"/>
+    <aura:handler event="c:changeBreadcrumbEvent" action="{!c.onChangeBreadCrumb}" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:if isTrue="{!!empty(v.breadcrumboptions)}">
+        <lightning:breadcrumbs>
+            <aura:iteration items="{!v.breadcrumboptions}" var="crumb" indexVar="ind">
+                <lightning:breadcrumb label="{!crumb.label}" data-menu-item-id="{!crumb.name}" name="{!crumb.name}" onclick="{!c.onBreadCrumbClick}"/>
+            </aura:iteration>
+        </lightning:breadcrumbs>
+    </aura:if>
+</aura:component>

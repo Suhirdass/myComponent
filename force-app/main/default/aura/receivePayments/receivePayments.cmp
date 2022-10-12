@@ -1,0 +1,180 @@
+<aura:component extends="c:utility" implements="flexipage:availableForAllPageTypes" access="global" controller="ReceivePaymentsCtlr">
+    <ltng:require scripts="{!join(',', $Resource.papaParse)}" afterScriptsLoaded="{!c.onInit}" />
+    <aura:attribute name="Errormessage" type="List" />
+    <aura:attribute name="Errormessageinv" type="List" />
+    <aura:attribute name="allData" type="List" />
+    <aura:attribute name="datatableConfig" type="Map" default="{}" />
+    <aura:attribute name="payments" type="List" default="[]" />	
+    <aura:attribute name="alldatas" type="List" default="[]" />	
+    <aura:attribute name="alldatasremainingPayments1" type="List" default="[]" />	
+    <aura:attribute name="selectedPayments" type="List" default="[]" />
+    <aura:attribute name="isSupplierBills" type="Boolean" default="false" />
+    <aura:attribute name="paymentTypes" type="List" default="[{'label': 'Suppliers Bills', 'value': 'purchaseOrders'},{'label': 'Invoices', 'value': 'invoices'}]" />
+    <aura:attribute name="paymentType" type="String" default="" />
+    <aura:attribute name="selectPayments" type="List" default="[]" />
+    <aura:attribute name="sucessmessage" type="List" />
+    <aura:attribute name="sucessmessagepayments" type="List" />
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="199"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="isButtonActive" type="Boolean" default="false" />
+    
+    <aura:html tag="style">
+        .slds-file-selector__button {
+        /* background-color: #065e66; */
+        /* color: #fff;
+        padding: 7px;
+        }
+        
+        buttonSm {
+        text-transform: capitalize !important;
+        }
+        selected {
+        background-color: gray !important;
+        }
+        
+    </aura:html>
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <aura:if isTrue="{!equals(v.paymentType,'purchaseOrders')}">
+            
+            <aura:if isTrue="{!!empty(v.Errormessage)}">
+                
+                <div class="errorMsg"  style="background: #c62c2c;color: white;text-align:Left;">
+                    
+                    <aura:iteration items="{!v.Errormessage}" var="type">
+                        <!-- Everything in between these iteration tags is created for each list element. -->
+                        <p style="margin-left:432px;">{!type}</p>
+                    </aura:iteration>
+                </div>
+            </aura:if>	
+        </aura:if>
+        <aura:if isTrue="{!!empty(v.payments)}">
+            
+            <aura:if isTrue="{!equals(v.paymentType,'invoices')}">
+                
+                <aura:if isTrue="{!!empty(v.Errormessageinv)}">
+                    
+                    <div class="errorMsg"  style="background: #c62c2c;color: white;text-align: Left;">
+                        
+                        <aura:iteration items="{!v.Errormessageinv}" var="types">
+                            <!-- Everything in between these iteration tags is created for each list element. -->
+                            <p style="margin-left:432px;">{!types}</p>
+                        </aura:iteration>
+                    </div>
+                </aura:if>	
+            </aura:if>
+        </aura:if>
+        <div class="slds-box slds-p-around_none slds-m-top_small">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="4" class="slds-p-around_x-small">
+                    <lightning:radioGroup label="Select Payment Type" options="{!v.paymentTypes}" value="{!v.paymentType}"  type="button" required="true" onchange="{!c.onPaymentTypeChange}" />
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" class="slds-p-around_x-small">
+                    <!--<div class="slds-p-around_x-small slds-size_8-of-12"></div>
+                    <div class="slds-p-around_x-small slds-size_8-of-12"></div>-->
+                    
+                 <!--   <aura:if isTrue="{!!empty(v.payments)}">-->
+                        <label style="color:red; font-weight:bold;">* To create maximum 200 records allowed at a time.</label>
+                        <div class="slds-p-around_x-small slds-size_8-of-12">
+                            <aura:if isTrue="{!equals(v.paymentType,'purchaseOrders')}">
+                            <aura:if isTrue="{!!empty(v.sucessmessage)}">
+                                <aura:iteration items="{!v.sucessmessage}" var="sucess">
+                                    <!-- Everything in between these iteration tags is created for each list element. -->
+                                    <label style="color:green; font-weight:bold;">
+                                        <p>{!sucess}</p>
+                                    </label>
+                                </aura:iteration>
+                            </aura:if>
+                            </aura:if>
+                              <aura:if isTrue="{!equals(v.paymentType,'invoices')}">
+                             <aura:if isTrue="{!!empty(v.sucessmessagepayments)}">
+                                <aura:iteration items="{!v.sucessmessagepayments}" var="sucesspay">
+                                    <!-- Everything in between these iteration tags is created for each list element. -->
+                                    <label style="color:green; font-weight:bold;">
+                                        <p>{!sucesspay}</p>
+                                    </label>
+                                </aura:iteration>
+                            </aura:if>
+                            </aura:if>
+                        </div>
+                  <!--  </aura:if>-->
+                </lightning:layoutItem>
+                
+                
+                <aura:if isTrue="{!!empty(v.paymentType)}">	
+                    <lightning:layoutItem size="12" smallDeviceSize="6" class="slds-p-around_x-small">
+                        <lightning:input type="file" accept=".csv" onchange="{!c.onFileChange}" />
+                    </lightning:layoutItem>
+                </aura:if> 
+                
+                
+                
+                <aura:if isTrue="{!!empty(v.payments)}">
+                    <lightning:layoutItem size="12" smallDeviceSize="6" class="slds-p-around_x-small">
+                        <div class="slds-form-element slds-float_right">
+                            <label class="slds-form-element__label">&nbsp;</label>
+                            
+                            <div class="slds-form-element__control">
+                                <aura:if isTrue="{!equals(v.paymentType,'invoices')}">
+                                    <lightning:button class="buttonSm" variant="brand" disabled="{!empty (v.selectedPayments)}" label="Create Selected Payments" onclick="{!c.onCreatePayments}" />
+                                    <aura:set attribute="else">
+                                        <lightning:button  class="buttonSm" variant="brand" disabled="{!empty (v.selectedPayments)}" label="Create Selected Suppiler Bill" onclick="{!c.onCreatePayments}" />
+                                        
+                                    </aura:set>
+                                    
+                                </aura:if>
+                            </div> 
+                        </div>
+                        
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="12">
+                        
+                        <lightning:datatable columns="{!v.datatableConfig.columns}" data="{!v.payments}" keyField="paymentIndex" onrowselection="{!c.setSelectedPayments}" showRowNumberColumn="{!v.datatableConfig.showRowNumberColumn}" suppressBottomBar ="true"  oncellchange ="{!c.onValuesUpdate}" />                
+                    </lightning:layoutItem>
+                    <lightning:layout multipleRows="true" horizontalAlign="center">
+                        <lightning:layoutItem padding="around-small" flexibility="auto">
+                            <div class="slds-p-around_small slds-col" style="position: absolute;right: 0;margin-top: -15px;">
+                                <lightning:button  class="buttonSm" label="First" iconName="utility:left" iconPosition="left"
+                                                  onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                                <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                                  onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                                <span class="slds-p-horizontal_x-small" style="margin-right: -8px;">
+                                    <lightning:button onclick="{!c.selectedPagination}" name="1" 
+                                                      class="{! (v.currentPageNumber == 1) ? 'selected selectedPage' : ''}" label="1"  disabled= "{!v.isButtonActive}" />
+                                </span>
+                                
+                                <aura:iteration items="{!v.pageList}" var="item">
+                                    <span class="slds-p-horizontal_x-small">
+                                        <lightning:button onclick="{!c.selectedPagination}" name="{!item}"
+                                                          class="{! (v.currentPageNumber == item) ? 'selected selectedPage' : ''}" disabled= "{!v.isButtonActive}"   label="{!item}"  />
+                                    </span>
+                                </aura:iteration>
+                                
+                                <span class="slds-p-horizontal_x-small">
+                                    
+                                    <lightning:button onclick="{!c.selectedPagination}" name="{!v.totalPages}"
+                                                      class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}" label="{!v.totalPages}" />
+                                </span>
+                                <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                                  disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                                <lightning:button class="buttonSm" label="Last" iconName="utility:right" iconPosition="right" 
+                                                  disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/>
+                            </div>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="around-small" size="12">
+                            
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </aura:if>
+                
+            </lightning:layout>
+            
+            
+        </div>
+    </div>
+   
+</aura:component>

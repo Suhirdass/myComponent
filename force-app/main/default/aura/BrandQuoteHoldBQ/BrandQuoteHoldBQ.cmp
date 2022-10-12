@@ -1,0 +1,52 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="BrandQuoteHoldBQ">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="notDraft" type="boolean" default="false" />
+    <aura:attribute name="recordName" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+      <aura:html tag="style">
+        
+             .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+
+    </aura:html> 
+    <!--<div class="slds-modal__header">
+         <h2 class="slds-text-heading_medium slds-hyphenate">Hold Brand Quote. Are you sure ?</h2>
+    </div>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+        <lightning:button class="slds-button_neutral" onclick="{!c.cancelSO}" label="Yes" />
+        <lightning:button class="slds-button_neutral" onclick="{!c.cancel}" label="No" />
+    </div>-->
+	
+	
+	
+   
+    
+      <header class="slds-modal__header" style="width: 600px !important;">
+        
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+      </header>
+    
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+        <aura:if isTrue="{!!v.notDraft}">
+            <p>Hold Brand Quote. Are you sure?</p>
+            <aura:set attribute="else">
+                <p>Error - Cannot "Hold" this Brand Quote. Brand Quote is either Submitted/Approved/Cancelled</p>
+            </aura:set>
+        </aura:if>
+      </div>
+      <footer class="slds-modal__footer"  style="width: 600px !important;">
+          
+        <aura:if isTrue="{!!v.notDraft}">  
+            <lightning:button class="slds-button_brand" onclick="{!c.holdBrandQuote}" label="Yes" />
+          </aura:if>
+        	<lightning:button class="slds-button_neutral" onclick="{!c.cancel}" label="{!!v.notDraft ? 'No' : 'Ok'}" />
+      </footer>
+	
+  
+
+    
+    
+</aura:component>

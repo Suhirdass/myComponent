@@ -1,0 +1,18 @@
+<aura:component extends="forceCommunity:navigationMenuBase" implements="forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="renderMenuItems" type="List" default="[{id:'https://www.filigreen.com/',label:'Home'},{id:'/filigreenb2b/s/filigreenproducts',label:'Shop'},{id:'/filigreenb2b/s/filigreenbrands',label:'Brands'}]" />
+    <div class="slds-is-relative" style="white-space:nowrap">
+        <div class="slds-show_inline-block" id="navContainer" style="{!if(!v.isBrand,'width: 90%','width:90%')}">
+            <ul aura:id="main">
+                <aura:iteration items="{!v.renderMenuItems}" var="menuItem">
+                    <aura:renderIf isTrue="{!not(equals(menuItem.label,'Home'))}">
+                        <li>
+                            <a href="{!menuItem.id}">
+                                {!menuItem.label}
+                            </a>
+                        </li>
+                    </aura:renderIf>
+                </aura:iteration>
+            </ul>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,166 @@
+.THIS {
+    font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+.THIS .uilabel {
+    display: none;
+}
+.THIS .slds-box {
+	padding: 0;
+	background-color: white;
+}
+.THIS .text__blue{
+    color: token(wovnlink);
+}
+.THIS .sortIcon{
+    color: #065e66;
+    font-size: 9px;
+    padding-left: 4px;
+    filter: brightness(0.5) grayscale(1);
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  /*color: rgb(6, 94, 102);*/
+    color:token(fontColor);
+  opacity: 1; /* Firefox */
+}
+.THIS .selectBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .nonSelectBtn{
+    
+    color:token(land);
+}
+.THIS .slds-box__header {
+	background: token(tan);
+	border-bottom: 2px solid token(grayAccent);
+    font-family:token(salesforceSans);
+}
+.THIS .ticket-header{
+    background: token(tableHeaderColor);
+    font-family:token(salesforceSans);
+}
+.THIS .cart-upsell {
+	padding: 0.75rem 1rem;
+	border-radius: 4px;
+	font-size: 12px;
+    background-color:token(tableHeaderColor);
+}
+
+.THIS .cart-upsell--empty {
+	
+	text-align: center;
+    background:token(tableHeaderColor);/* #eaeaea*/
+}
+
+.THIS .errorBorder{
+    border: solid 1px var(--lwc-colorTextError,rgb(194, 57, 52));
+}
+
+.THIS .cart-upsell--active {
+	background: #dff1ee;
+}
+
+.THIS .slds-form-element__icon {
+	padding-top: 0;
+}
+
+.THIS .cart-icon svg {
+	width: 18px;
+	fill: currentColor;
+}
+
+.THIS .active-order-tooltip {
+	position: absolute;
+	bottom: calc(100% + 16px);
+	left: 50%;
+	line-height: 1.25em;
+	width: 120px;
+	transform: translateX(-50%);
+	display: none;
+}
+
+.THIS .active-order-btn:hover .active-order-tooltip {
+	display: block;
+}
+
+.THIS .exclude-excise-checkbox .slds-form-element__label {
+	font-weight: normal;
+	font-size: 12px;
+	color: token(grayMid);
+}
+
+.THIS .cancelButton{
+    color: #FAFAF7;
+    background-color: token(land);
+    font-family: token(salesforceSans);
+    font-size: 12px;
+}
+
+.THIS .saveDraft{
+    color: token(daze);
+    font-family: token(salesforceSans);
+    font-size: 12px;
+    text-align: center;
+    background-color: token(land);
+}
+
+.THIS .submitOrder{
+    color: #25282A;
+    font-family: token(salesforceSans);
+    font-size: 12px;
+    text-align: center;
+    background-color: #B0B1B2;
+}
+/*.THIS .submitBtn{
+    background-color :token(land);
+    color:token(daze);
+    border:none;
+}*/
+.THIS .submitOrderEnable{
+    color: token(daze);
+    font-family: token(salesforceSans);
+    font-size: 12px;
+    text-align: center;
+    border-color: token(daze);
+    background-color: token(land);           
+}
+
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));
+}
+
+.THIS .order-table td,
+.THIS .order-table th,
+.THIS .order-table p {
+	font-size: 11px;
+}
+                    .THIS .slds-checkbox .slds-checkbox__label .slds-form-element__label {
+    display: inline;
+    vertical-align: middle;
+    font-size: 12px;
+                    }
+.THIS .slds-popover_tooltip, 
+.THIS .slds-popover--tooltip {
+    background: #32402A; /* background color */
+    color: #dcdac6; /* text color */
+}
+                    
+                    
+.THIS .hasError  {
+	top:27%;
+}
+.THIS .hasError >.input-group{
+    border-color:rgb(194, 57, 52);
+    border-width: 1.5px;
+}
+.THIS .error-message{
+    color: rgb(194, 57, 52);
+    display:none;
+}
+.THIS .hasError >.error-message{
+    font-size: 13px;
+    margin-top: 0.125rem;
+    display: block;
+    
+}

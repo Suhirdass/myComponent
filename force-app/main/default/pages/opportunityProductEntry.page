@@ -1,0 +1,260 @@
+<apex:page standardController="Opportunity" extensions="OpportunityProductEntryExtension" action="{!priceBookCheck}" >
+
+    <apex:sectionHeader Title="Manage {!$ObjectType.Product2.LabelPlural}" subtitle="{!opportunity.Name}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script src="{!$Resource.jqueryfixheadertable}"></script>
+     
+<!--    <apex:messages style="color:red"/> -->
+     
+    
+    <style>
+        .search{
+            font-size:14pt;
+            margin-right: 20px;    
+        }
+        .fyi{
+            color:red;
+            font-style:italic;
+        }
+        .label{
+            margin-right:10px;
+            font-weight:bold;
+        }
+        .scroll{
+            height:370px;
+            overflow:auto;
+        }
+        .align
+        {
+        text-align:center;
+        }
+        table.head {
+        	width:100%;
+        }
+    </style>
+    
+    <script type='text/javascript'>
+    
+        // This script assists the search bar functionality
+        // It will execute a search only after the user has stopped typing for more than 1 second
+        // To raise the time between when the user stops typing and the search, edit the following variable:
+        
+        var waitTime = 1;
+        
+    
+        var countDown = waitTime+1;
+        var started = false;
+        
+        function resetTimer(){
+        
+            countDown=waitTime+1;
+            
+            if(started==false){
+                started=true;
+                runCountDown();
+            }
+        }
+        
+        function runCountDown(){
+        
+            countDown--;
+            
+            if(countDown<=0){
+                fetchResults();
+                started=false;
+            }
+            else{
+                window.setTimeout(runCountDown,1000);
+            }
+        }
+    
+    </script>
+   
+  
+    <apex:form >
+    
+        <apex:outputPanel id="scriptPanel">
+            <script>
+            $(document).ready(function() {
+                $('.fixme').fixheadertable({
+                    height  : 200
+                });
+            });
+            </script>
+            
+            <apex:actionstatus id="actStatusId">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #DCD6D6;
+                                                                         height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Loading...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="mainBody">
+         <div class="mainTitle">
+            <apex:outputLabel styleClass="label" >PriceBook: </apex:outputLabel>
+            <apex:outputText value="{!theBook.Name}" />&nbsp;
+            <apex:commandLink action="{!changePricebook}" value="Change" immediate="true"/></div>
+            <br/>
+            <!-- not everyone is using multi-currency, so this section may or may not show -->
+            <apex:outputPanel rendered="{!multipleCurrencies}">
+                <apex:outputLabel styleClass="label">Currency: </apex:outputLabel>
+                <apex:outputText value="{!chosenCurrency}"/>
+                <br/>
+            </apex:outputPanel>
+            <br/>
+            
+<!-- this is the upper table... a.k.a. the "Shopping Cart"-->
+
+            <!-- notice we use a lot of $ObjectType merge fields... I did that because if you have changed the labels of fields or objects it will reflect your own lingo -->
+            <apex:pageBlock title="Selected {!$ObjectType.Product2.LabelPlural}" id="selected">
+                <apex:pageMessages id="showmsg"></apex:pageMessages>
+                       
+                <div >
+                    <apex:pageblockTable value="{!shoppingCart}" var="s">
+                        
+                        <apex:column >
+                            <apex:commandLink value="Remove" action="{!removeFromShoppingCart}" reRender="selected,searchResults" immediate="true">
+                                <!-- this param is how we send an argument to the controller, so it knows which row we clicked 'remove' on -->
+                                <apex:param value="{!s.PriceBookEntryId}" assignTo="{!toUnselect}" name="toUnselect"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        
+                        <!--                    <apex:column headerValue="{!$ObjectType.Product2.LabelPlural}" value="{!s.PriceBookEntry.Product2.Name}"/> -->
+                        
+                        <apex:column headerValue="{!$ObjectType.Product2.Fields.Name.Label}">
+                            <apex:outputlink value="/{!s.PriceBookEntry.Product2Id}">{!s.PriceBookEntry.Product2.Name}</apex:outputlink>
+                        </apex:column>
+                        
+                        <!--apex:column headerValue="{!$ObjectType.Product2.Fields.Available_Inventory__c.Label}">
+<apex:outputText value="{!IF(OR(ISNULL(s.Available_Inventory__c) ,ISBLANK(s.Available_Inventory__c)), 0.00, s.Available_Inventory__c)}" />
+</apex:column-->
+                        <apex:column headerValue="Available Qty">
+                            <apex:outputText value="{!IF(OR(ISNULL(s.Product2.Available_Qty__c) ,ISBLANK(s.Product2.Available_Qty__c)), 0.00, s.Product2.Available_Qty__c )}" />
+                            <apex:outputText rendered="{!!OR(ISNULL(s.Product2.Available_Qty__c) ,ISBLANK(s.Product2.Available_Qty__c))}">&nbsp;({!FLOOR((s.Product2.Available_Qty__c/s.MOQ_TF__c))} Cases)</apex:outputText>
+                        </apex:column>
+                        
+                        <apex:column headerValue="Qty in Case(MOQ)">
+                            <apex:outputField value="{!s.MOQ_TF__c}" />
+                        </apex:column>                    
+                        <apex:column headerValue="Order Qty(Cases)">
+                            <apex:inputField value="{!s.Quantity}" style="width:70px" required="true">
+                                <apex:actionSupport event="onchange" action="{!getTotalQty}" rerender="selected">
+                                </apex:actionSupport> 
+                            </apex:inputField>
+                        </apex:column>
+                        <apex:column headerValue="Total Order Qty">
+                            <apex:outputText value="{!s.MOQ_TF__c * s.Quantity}" />
+                        </apex:column>  
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.UnitPrice.Label}">
+                            <apex:inputField value="{!s.UnitPrice}" style="width:70px" required="true" onkeyup="refreshTotals();"/>
+                        </apex:column>                    
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Product_Title__c.Label}">
+                            <apex:inputField value="{!s.Product_Title__c}" required="true"/>
+                        </apex:column>
+                    </apex:pageblockTable>
+                </div>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!onSave}" value="Save"/>
+                    <apex:commandButton action="{!onCancel}" value="Cancel" immediate="true"/>
+                </apex:pageBlockButtons>
+            
+            </apex:pageBlock>
+    
+<!-- this is the lower table: search bar and search results -->
+    
+            <apex:pageBlock id="contacts_list">
+                <apex:outputPanel >
+                    <h2 class="mainTitle" style="color: #000;font-size: 1.1em;">
+                    	Search for {!$ObjectType.Product2.LabelPlural}: &nbsp;&nbsp;   
+                    </h2>
+                </apex:outputPanel>
+                
+                <apex:actionRegion renderRegionOnly="false" immediate="true">
+                    <apex:actionFunction name="fetchResults" action="{!updateAvailableList}" reRender="scriptPanel,searchResults" status="searchStatus"/>
+                    
+                    <!-- here we invoke the scripting to get out fancy 'no button' search bar to work -->
+                    <apex:inputText value="{!searchString}" onkeydown="if(event.keyCode==13){this.blur();}else{resetTimer();}" style="width:300px"/>
+                    &nbsp;&nbsp;
+                    <i>
+                        <!-- actionStatus component makes it easy to let the user know when a search is underway -->
+                        <apex:actionStatus id="searchStatus" startText="searching..." stopText=" "/>
+                    </i>
+                    
+                </apex:actionRegion>
+                
+                <br/>
+                <br/>
+                
+                <apex:outputPanel id="searchResults">
+                    <div style="overflow: scroll;max-height:250px;">
+                        <apex:pageBlockTable value="{!AvailableProducts}" var="a" styleclass="fixme">
+                            <apex:column >
+                                <!-- command button in a column... neato -->
+                                <apex:commandButton value="Select" action="{!addToShoppingCart}" reRender="scriptPanel,selected,searchResults" immediate="true">
+                                    <!-- again we use apex:param to be able to tell the controller which row we are working with -->
+                                    <apex:param value="{!a.Id}" assignTo="{!toSelect}" name="toSelect"/>
+                                </apex:commandButton>
+                            </apex:column>
+                            
+                            <!--<apex:column headerValue="{!$ObjectType.Product2.Fields.Name.Label}">
+                                <apex:outputlink value="/{!a.Product2.Id}">{!a.Product2.Name}</apex:outputlink>
+                            </apex:column>-->
+                            <apex:column >
+                                <apex:outputlink value="/{!a.Product2.Id}">{!a.Product2.Name}</apex:outputlink>
+                                <apex:facet name="header">
+                                    <apex:commandLink action="{!sortByProName}" reRender="contacts_list,scriptPanel" status="actStatusId">Product Name
+                                    </apex:commandLink>
+                                </apex:facet>
+                            </apex:column>
+                            
+                            
+                            <apex:column headerValue="{!$ObjectType.Product2.Fields.Description.Label}" value="{!a.Product2.Description}"/>
+                            <apex:column headerValue="{!$ObjectType.Product2.Fields.Brand_Name__c.Label}" value="{!a.Product2.Brand_Name__c}"/>
+                            
+                            <apex:column value="{!a.Product2.Family}">
+                                <apex:facet name="header">
+                                    <apex:commandLink action="{!sortByProFamily }" reRender="contacts_list,scriptPanel" status="actStatusId">Product Family </apex:commandLink>
+                                </apex:facet>
+                            </apex:column>
+                            <!--<apex:column headerValue="{!$ObjectType.Product2.Fields.Family.Label}" value="{!a.Product2.Family}"/>
+                            <apex:column headerValue="{!$ObjectType.Product2.Fields.Strain__c.Label}" value="{!a.Product2.Strain__c}"/>-->
+                            <apex:column value="{!a.Product2.Strain__c}">
+                                <apex:facet name="header">
+                                    <apex:commandLink action="{!sortByProStrain}" reRender="contacts_list,scriptPanel" status="actStatusId">Strain</apex:commandLink>
+                                </apex:facet>
+                            </apex:column>
+                            <apex:column headerValue="Qty in Case (MOQ)" value="{!a.Product2.MOQ__c}"/>
+                            <apex:column headerValue="Available Qty">
+                                <apex:outputText value="{!IF(OR(ISNULL(a.Product2.Available_Qty__c) ,ISBLANK(a.Product2.Available_Qty__c)), 0.00, a.Product2.Available_Qty__c)}" />
+                                <apex:outputText rendered="{!!OR(ISNULL(a.Product2.Available_Qty__c) ,ISBLANK(a.Product2.Available_Qty__c))}">&nbsp;({!FLOOR((a.Product2.Available_Qty__c/a.Product2.MOQ__c))} Cases)</apex:outputText>
+                            </apex:column>
+                            
+                            <!--<apex:column headerValue="{!$ObjectType.Product2.Fields.Available_Qty__c.Label}" value="{!a.Product2.Available_Qty__c}"/>-->
+                            <apex:column headerValue="{!$ObjectType.PricebookEntry.Fields.UnitPrice.Label}" value="{!a.UnitPrice}"/>
+                            <apex:column headerValue="{!$ObjectType.PricebookEntry.Fields.IsActive.Label}" value="{!a.IsActive}"/>
+                            <!--<apex:column headerValue="{!$ObjectType.Product2.Fields.Producer_Name__c.Label}" value="{!a.Product2.Producer_Name__c}"/>-->
+                        </apex:pageBlockTable>
+                    </div>
+                    
+                    <!-- We put up a warning if results exceed 100 rows -->
+                    <apex:outputPanel styleClass="fyi" rendered="{!overLimit}">
+                        <br/>
+                        Your search returned over 100 results, use a more specific search string if you do not see the desired {!$ObjectType.Product2.Label}.
+                        <br/>
+                    </apex:outputPanel>
+                    
+                </apex:outputPanel>
+                
+            </apex:pageBlock>
+            
+        </apex:outputPanel>
+
+    </apex:form>
+
+</apex:page>

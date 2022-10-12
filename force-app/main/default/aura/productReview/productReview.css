@@ -1,0 +1,5 @@
+.THIS.fix-close-button .modal-container .modal-header button{
+    top: .25rem;
+    right: .25rem;
+    color: #000;
+}

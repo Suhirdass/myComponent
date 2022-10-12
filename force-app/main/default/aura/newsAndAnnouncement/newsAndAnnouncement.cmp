@@ -1,0 +1,27 @@
+<aura:component extends="c:utility" controller="HomeController">
+    <aura:html tag="style">
+        .slds-modal__content { 
+            padding:0px !important;
+        	width:70% !important;
+        	margin-left:18% !important;
+        	margin-top:2% !important;
+        	max-height:475px !important;
+        } 
+	</aura:html>
+    <aura:attribute name="newsAndAnnouncement" type="List" default=""/>
+    <aside id="success-modal">
+        <lightning:icon iconName="utility:close" alternativeText="close" title="close" size="x-small" style="float: right;padding: 1%;cursor:pointer;" onclick="{!c.closePopup}"/>
+
+		<div class="success-modal">
+            <aura:iteration items="{!v.newsAndAnnouncement}" var="news">
+                <!--aura:unescapedHtml value="{!news.News_Details__c}" /-->
+                <lightning:formattedRichText value="{!news.News_Details__c}"/>
+            </aura:iteration>
+        </div>
+        <div class="slds-p-top_x-small slds-p-left_medium" style="display:flex;font-family:Alliance Neue">
+            <ui:inputCheckbox aura:id="checkbox"/> &nbsp;&nbsp;           
+            Do not show me this message again
+        </div>
+        <br/>
+    </aside>
+</aura:component>

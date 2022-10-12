@@ -1,0 +1,156 @@
+.THIS{
+    /*font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+    font-size: 13px;
+    letter-spacing: 0px;
+    line-height: 1.6em;
+    font-family: token(salesforceSans)!important;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: .6px;
+    line-height: 1.8em;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: auto;
+    margin: auto;
+    padding: 10px 32px;
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
+	color:#333333;
+    background-color:token(white);
+}
+.THIS ul{
+    list-style-type: disc;
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+.THIS ol{
+    list-style-type: decimal;
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+.THIS #faqSearch::-webkit-input-placeholder {
+  color: rgb(6, 94, 102);
+  opacity: 1; /* Firefox */
+}
+.THIS .FAQHeader{
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+}
+.THIS .FAQHeaderTablet{
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+}
+.THIS .noData{
+    margin: 0 auto;
+    height: 100%;
+    padding-top: 10%;
+    width:100%;
+    text-align: center;
+}
+.THIS .sqs-block {
+    position: relative;
+    height: auto;
+    padding-top: 17px;
+    padding-bottom: 17px;
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgba(128,128,128,0);
+    -webkit-transition: box-shadow .2s ease-in-out;
+    -moz-transition: box-shadow .2s ease-in-out;
+    -ms-transition: box-shadow .2s ease-in-out;
+    -o-transition: box-shadow .2s ease-in-out;
+    transition: box-shadow .2s ease-in-out;
+}
+.THIS .sqs-block {
+    padding-left: 17px;
+    padding-right: 17px;
+}
+.THIS .sqs-block-html {
+    clear: none;
+}
+.THIS .sqs-block-html .sqs-block-content {
+    outline: none;
+}
+.THIS .sqs-block-html .sqs-block-content>*:last-child {
+    margin-bottom: 0;
+}
+.THIS .sqs-block-html .sqs-block-content>*:first-child {
+    margin-top: 0;
+}
+.THIS h1, .THIS h2, .THIS h3, .THIS .entry-title {
+    margin: 1em 0 .5em;
+    text-rendering: optimizeLegibility;
+}
+.THIS h1, .THIS .entry-title {
+    color: token(greenPrimary);
+    /*font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+    font-weight: 400;
+    letter-spacing: 0px;
+    text-transform: none;
+    /*font-family: proxima-nova;*/
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 2.5px;
+    line-height: 1.2em;
+}
+.THIS h3 {
+    /*font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+    font-weight: 400;
+    letter-spacing: 0px;
+    text-transform: none;
+    /*font-family: proxima-nova;*/
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 2px;
+    line-height: 1.2em;
+}
+.THIS .sqs-block-markdown {
+    clear: none;
+}
+.THIS .sqs-block-markdown .sqs-block-content {
+    position: relative;
+}
+.THIS .sqs-block-markdown .sqs-block-content *:first-child {
+    margin-top: 0;
+}
+.THIS h1:first-child, .THIS h2:first-child, .THIS h3:first-child, .THIS .entry-title:first-child {
+    margin-top: 0;
+}
+.THIS h3 {
+    color: rgba(26,26,26,.9);
+}
+.THIS a{
+    color:token(linkblue);
+}
+.THIS p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.THIS .FAQCategory{
+    background-color: #f6f7f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 150px;
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+    cursor:pointer;
+}
+.THIS .searchForipad{
+    margin-left:55%;
+}

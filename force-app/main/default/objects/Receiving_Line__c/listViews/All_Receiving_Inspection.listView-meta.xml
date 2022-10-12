@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Receiving_Inspection</fullName>
+    <columns>NAME</columns>
+    <columns>Site__c</columns>
+    <columns>UID__c</columns>
+    <columns>Unit_Cost__c</columns>
+    <columns>Inventory_Location__c</columns>
+    <columns>Producer_Name__c</columns>
+    <columns>Qty_to_Receive__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Inventory_Location__c</field>
+        <operation>equals</operation>
+        <value>Receiving Inspection</value>
+    </filters>
+    <label>All - Receiving Inspection</label>
+</ListView>

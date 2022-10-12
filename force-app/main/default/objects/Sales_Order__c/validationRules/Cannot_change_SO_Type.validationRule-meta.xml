@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_change_SO_Type</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISCHANGED(SO_Type__c) &amp;&amp; TEXT(SO_Status__c) &lt;&gt; &apos;Draft&apos;</errorConditionFormula>
+    <errorMessage>Cannot change SO type now. Please Allocate/Reverse allocate SO to ( Draft ) Status and try again.</errorMessage>
+</ValidationRule>

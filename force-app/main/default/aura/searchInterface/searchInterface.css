@@ -1,0 +1,84 @@
+.THIS.header-search {
+    position: relative;
+}
+
+.THIS .header-search-toggle {
+    display: flex;
+    background-image: url(/filigreenb2b/resource/BrigadeResources/assets/search.svg);
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border: 2px solid token(daze);
+    border-radius: 20px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    color:token(daze);
+    filter: grayscale(1);
+    /*align-items: center;
+    font-size: 14px;*/
+}
+
+.THIS .header-search-toggle:focus,
+.THIS .header-search-toggle:hover {
+    border-color: white;
+}
+
+/* expanded state */
+.THIS .search-expand {
+    display: none;
+    width: 280px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.THIS .header-search-input {
+    width: 280px;
+    margin-top: 5px;
+}
+
+.THIS .header-search-input input {
+    line-height: 38px;
+    border-radius: 20px;
+    border: 2px solid token(daze);
+    background-color: transparent;
+    padding: 0 3.4em 0 1.5em;
+    color: white;
+}
+
+.THIS .header-search-input input::placeholder {
+    color: white;
+}
+
+.THIS .header-search-input input:focus {
+    border-color: white;
+}
+
+.THIS .header-search-input .slds-input__icon,
+.THIS .header-search-input .button_icon {
+    color: white;
+    fill: white;
+}
+
+.THIS .header-search-submit {
+    color: white;
+    padding: 0 1.5em 0 5px;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    bottom: 0;
+}
+
+.THIS .header-search-submit .slds-button__icon {
+    margin-right: 0
+}
+
+/* state */
+.THIS.header-search.is-expanded .search-expand  {
+    display: flex;
+}
+
+.THIS.header-search.is-expanded .header-search-toggle {
+    display: none;
+}

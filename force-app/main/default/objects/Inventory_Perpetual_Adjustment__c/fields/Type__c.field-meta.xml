@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Allocate Supplier Items</fullName>
+                <default>false</default>
+                <label>Allocate Supplier Items</label>
+            </value>
+            <value>
+                <fullName>Cycle Count Variance</fullName>
+                <default>false</default>
+                <label>Cycle Count Variance</label>
+            </value>
+            <value>
+                <fullName>Inspection</fullName>
+                <default>false</default>
+                <label>Inspection</label>
+            </value>
+            <value>
+                <fullName>Inspection - Damaged</fullName>
+                <default>false</default>
+                <label>Inspection - Damaged</label>
+            </value>
+            <value>
+                <fullName>Incoming Inspection Reject</fullName>
+                <default>false</default>
+                <label>Incoming Inspection Reject</label>
+            </value>
+            <value>
+                <fullName>Issue Customer Items Pick-list</fullName>
+                <default>false</default>
+                <label>Issue Customer Items Pick-list</label>
+            </value>
+            <value>
+                <fullName>Issue Supplier Items Pick-list</fullName>
+                <default>false</default>
+                <label>Issue Supplier Items Pick-list</label>
+            </value>
+            <value>
+                <fullName>Item Transfer Inbound</fullName>
+                <default>false</default>
+                <label>Item Transfer Inbound</label>
+            </value>
+            <value>
+                <fullName>Item Transfer Outbound</fullName>
+                <default>false</default>
+                <label>Item Transfer Outbound</label>
+            </value>
+            <value>
+                <fullName>Miscellaneous Issue</fullName>
+                <default>false</default>
+                <label>Miscellaneous Issue</label>
+            </value>
+            <value>
+                <fullName>Miscellaneous Receipt</fullName>
+                <default>false</default>
+                <label>Miscellaneous Receipt</label>
+            </value>
+            <value>
+                <fullName>Receive Customer Returned Material</fullName>
+                <default>false</default>
+                <label>Receive Customer Returned Material</label>
+            </value>
+            <value>
+                <fullName>Reverse Allocate Supplier Items</fullName>
+                <default>false</default>
+                <label>Reverse Allocate Supplier Items</label>
+            </value>
+            <value>
+                <fullName>Reverse Customer Allocation</fullName>
+                <default>false</default>
+                <label>Reverse Customer Allocation</label>
+            </value>
+            <value>
+                <fullName>Reverse Cycle Count</fullName>
+                <default>false</default>
+                <label>Reverse Cycle Count</label>
+            </value>
+            <value>
+                <fullName>Reverse Issue Customer Items Pick-list</fullName>
+                <default>false</default>
+                <label>Reverse Issue Customer Items Pick-list</label>
+            </value>
+            <value>
+                <fullName>Reverse Issue Supplier Items Pick-List</fullName>
+                <default>false</default>
+                <label>Reverse Issue Supplier Items Pick-List</label>
+            </value>
+            <value>
+                <fullName>Reverse Item Transfer Inbound</fullName>
+                <default>false</default>
+                <label>Reverse Item Transfer Inbound</label>
+            </value>
+            <value>
+                <fullName>Reverse Item Transfer Outbound</fullName>
+                <default>false</default>
+                <label>Reverse Item Transfer Outbound</label>
+            </value>
+            <value>
+                <fullName>Reverse Miscellaneous Issue</fullName>
+                <default>false</default>
+                <label>Reverse Miscellaneous Issue</label>
+            </value>
+            <value>
+                <fullName>Reverse Receive Customer Returned Material</fullName>
+                <default>false</default>
+                <label>Reverse Receive Customer Returned Material</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

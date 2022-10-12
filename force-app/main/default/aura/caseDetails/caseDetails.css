@@ -1,0 +1,73 @@
+.THIS{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .headerBackground{
+    background: #e5e5e5;
+}
+.THIS button{
+    /*text-transform: uppercase;*/
+    font-size:13px;
+}
+.THIS .hoverCss:hover{
+    background-color:lightgray;
+}
+.THIS .ticket-header{
+    font-family:token(salesforceSans) !important;
+    background-color:token(tableHeaderColor);
+    color:token(fontColor);
+}
+.THIS .selectedSlot{
+    background-color:#065e66!important;
+    border-color:#065e66!important;
+    color:#fff
+}
+.THIS .slds-box {
+	padding: 0;
+	background-color: white;
+}
+
+.THIS .slds-box__header {
+	background: token(tan);
+	border-bottom: 2px solid token(grayAccent);
+}
+.THIS .ticketNumber{
+    height: 32px;
+    color: #393A3D;
+    font-family: token(salesforceSans);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 32px;
+}
+.THIS .specialInstructions textarea{
+    height:32px;
+    padding-top:5px;
+}
+.THIS .slds-form-element__label{
+    font-family:token(salesforceSans) !important;
+    color:token(fontColor);
+}
+.THIS .hasAttchment .slds-file-selector__button{
+    padding: 0 4px 0 4px;
+    white-space: nowrap;
+}
+.THIS .attachmentFile{
+    color:token(linkblue);
+}
+.THIS .submitButtonGreen{
+    font-family:token(salesforceSans) !important;
+    font-size:12px;
+	background-color:token(land);
+	color:token(daze);
+    border: 0.5px solid #dcdac6;
+}
+.THIS .cancelButton{
+    font-family:token(salesforceSans) !important;
+    font-size:12px;
+	background-color:token(land);
+	color:token(daze);
+    border: 0.5px solid #dcdac6;
+}
+.THIS .height-full {
+ }

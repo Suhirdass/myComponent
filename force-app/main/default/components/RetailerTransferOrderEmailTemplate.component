@@ -1,0 +1,57 @@
+<apex:component controller="RetailerOrderEmailTemplateController" access="global">
+    <apex:attribute name="recordId" description="" type="String"  assignTo="{!orderId}"></apex:attribute>
+    <style>
+        th,td,tr,table{
+            border:1px solid #000
+        }
+    </style>
+    <table cellspacing="0" style="border:1px solid #000">
+            <tr style="border:1px solid #000">
+                <th style="border:1px solid #000">
+                    Brand
+                </th>
+                <th style="border:1px solid #000">
+                    Product Name
+                </th>
+                <th style="border:1px solid #000">
+                    Product Description
+                </th>
+                <th style="border:1px solid #000">
+                    Total Qty
+                </th>
+                <th style="border:1px solid #000">
+                    Unit Price
+                </th>                
+                <th style="border:1px solid #000">
+                    Product Price
+                </th>
+            </tr> 
+            <apex:repeat var="oli" value="{!OrderLineItems}">
+                <tr style="border:1px solid #000">
+                    <td style="border:1px solid #000;font-size: 11px;">
+                        {!oli.Product__r.Brand_Name__c}
+                    </td>
+                    <td style="border:1px solid #000;font-size: 11px;">
+                        {!oli.Product__r.Product_Short_Description__c}
+                    </td>
+                    <td style="border:1px solid #000;font-size: 11px;">
+                        {!oli.Product__r.Description}
+                    </td>
+                    <td style="border: 1px solid #000; text-align: center;font-size: 11px;">
+                        <apex:outputText value="{!FLOOR(oli.Line_Total_Qty__c)}"/>
+                    </td>
+                    <td style="border: 1px solid #000; text-align: left;font-size: 11px;">
+                         <apex:outputText value="{0,number,$#,###,##0.00}">
+                            <apex:param value="{!oli.UnitPrice__c}" />
+                          </apex:outputText>
+                    </td>                    
+                    <td style="border: 1px solid #000; text-align: left;font-size: 11px;">
+                        <apex:outputText value="{0,number,$#,###,##0.00}">
+                            <apex:param value="{!oli.Line_Total_Cost__c}" />
+                          </apex:outputText>
+                    </td>   
+                </tr>
+            </apex:repeat>
+   
+        </table>
+</apex:component>

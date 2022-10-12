@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Sales_Order</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>NAME</columns>
+    <columns>Planned_Ship_Date__c</columns>
+    <columns>Priority__c</columns>
+    <columns>Window_Start__c</columns>
+    <columns>Window_End__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Supplier_DBA__c</columns>
+    <columns>Receiver_DBA__c</columns>
+    <columns>Total_Price__c</columns>
+    <columns>Receiver_Zone__c</columns>
+    <columns>Delivery_City__c</columns>
+    <columns>Driver__c</columns>
+    <columns>Vehicle__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>SO_Status__c</field>
+        <operation>equals</operation>
+        <value>Draft,Approved</value>
+    </filters>
+    <label>My Sales Order</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

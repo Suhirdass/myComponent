@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <allowRecall>true</allowRecall>
+    <allowedSubmitters>
+        <type>owner</type>
+    </allowedSubmitters>
+    <allowedSubmitters>
+        <submitter>jj@wearewovn.com</submitter>
+        <type>user</type>
+    </allowedSubmitters>
+    <approvalPageFields>
+        <field>ExpenseStatus__c</field>
+        <field>Name</field>
+        <field>ExpenseName__c</field>
+        <field>Project__c</field>
+        <field>Owner</field>
+        <field>TotalExpenseLines__c</field>
+        <field>TotalExpenseAmount__c</field>
+        <field>LastModifiedBy</field>
+    </approvalPageFields>
+    <approvalStep>
+        <allowDelegate>true</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>jj@wearewovn.com</name>
+                <type>user</type>
+            </approver>
+            <approver>
+                <name>nancy@wearewovn.com</name>
+                <type>user</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <entryCriteria>
+            <booleanFilter>(1 OR 2 OR 5) AND (3 AND 4)</booleanFilter>
+            <criteriaItems>
+                <field>Expense_Number__c.CreatedBy</field>
+                <operation>equals</operation>
+                <value>Khanh Ngo</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Expense_Number__c.CreatedBy</field>
+                <operation>equals</operation>
+                <value>Max Rudsten</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Expense_Number__c.TotalExpenseLines__c</field>
+                <operation>greaterThan</operation>
+                <value>0</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Expense_Number__c.TotalExpenseAmount__c</field>
+                <operation>greaterThan</operation>
+                <value>0</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Expense_Number__c.CreatedBy</field>
+                <operation>equals</operation>
+                <value>JJ Hanley</value>
+            </criteriaItems>
+        </entryCriteria>
+        <ifCriteriaNotMet>RejectRecord</ifCriteriaNotMet>
+        <label>Approval Criteria1</label>
+        <name>ApprovalCriteria1</name>
+    </approvalStep>
+    <description>Approval Process for Expense Management - C Level</description>
+    <emailTemplate>Expense_Report_Templates/Expense_Report_Submitted</emailTemplate>
+    <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
+    <entryCriteria>
+        <booleanFilter>1 OR 2 or 5 AND 3 AND 4</booleanFilter>
+        <criteriaItems>
+            <field>Expense_Number__c.CreatedBy</field>
+            <operation>equals</operation>
+            <value>Max Rudsten</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Expense_Number__c.CreatedBy</field>
+            <operation>equals</operation>
+            <value>Khanh Ngo</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Expense_Number__c.TotalExpenseLines__c</field>
+            <operation>greaterThan</operation>
+            <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Expense_Number__c.TotalExpenseAmount__c</field>
+            <operation>greaterThan</operation>
+            <value>0</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Expense_Number__c.CreatedBy</field>
+            <operation>equals</operation>
+            <value>JJ Hanley</value>
+        </criteriaItems>
+    </entryCriteria>
+    <finalApprovalActions>
+        <action>
+            <name>Expense_Report_APPROVED</name>
+            <type>Alert</type>
+        </action>
+        <action>
+            <name>Update_Record_Type</name>
+            <type>FieldUpdate</type>
+        </action>
+        <action>
+            <name>Updated_Status</name>
+            <type>FieldUpdate</type>
+        </action>
+    </finalApprovalActions>
+    <finalApprovalRecordLock>true</finalApprovalRecordLock>
+    <finalRejectionActions>
+        <action>
+            <name>Expense_Report_REJECTED</name>
+            <type>Alert</type>
+        </action>
+        <action>
+            <name>Reject_Update_Status</name>
+            <type>FieldUpdate</type>
+        </action>
+    </finalRejectionActions>
+    <finalRejectionRecordLock>false</finalRejectionRecordLock>
+    <initialSubmissionActions>
+        <action>
+            <name>Expense_Status_Submitted</name>
+            <type>FieldUpdate</type>
+        </action>
+    </initialSubmissionActions>
+    <label>Approval Process for Expenses C Level</label>
+    <nextAutomatedApprover>
+        <useApproverFieldOfRecordOwner>false</useApproverFieldOfRecordOwner>
+        <userHierarchyField>Manager</userHierarchyField>
+    </nextAutomatedApprover>
+    <processOrder>2</processOrder>
+    <recallActions>
+        <action>
+            <name>ExpenseStatusRecalled</name>
+            <type>FieldUpdate</type>
+        </action>
+    </recallActions>
+    <recordEditability>AdminOrCurrentApprover</recordEditability>
+    <showApprovalHistory>true</showApprovalHistory>
+</ApprovalProcess>

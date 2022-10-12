@@ -1,0 +1,116 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    
+    <aura:attribute name="brand" type="Map" default="" />
+    <aura:attribute name="isPublic" type="Boolean" default="true" />
+    <aura:attribute name="mapMarkers" type="Object"/>
+    <aura:attribute name="stateLicenses" type="List" default="" />
+    <aura:attribute name="salesOrders" type="List" default="" />
+    <aura:attribute name="brandContacts" type="List" default="" />
+    
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <aura:if isTrue="{!!empty(v.brand)}">
+            <lightning:layout horizontalAlign="center" multipleRows="true">
+                <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="8" class="slds-p-horizontal_small barndDeviceSize ">
+                    <div class="slds-box slds-box_small " style="border-radius: 0;overflow-x: auto;overflow-y: hidden;">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" class="slds-is-relative">
+                                <div class="slds-card__body">
+                                    <ul class="slds-has-inline-block-links">
+                                        <li class="productName">{!v.brand.DBA}</li>
+                                    </ul>
+                                    <table class="slds-table adjustPadding">
+                                        <tr>
+                                            <th class="workSans uppercase">
+                                                Brand Name:</th>
+                                            <td>{!v.brand.brandName}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="workSans uppercase">
+                                                Phone:</th>
+                                            <td>{!v.brand.Phone}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="workSans uppercase">
+                                                Fax:</th>
+                                            <td>{!v.brand.Fax}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="workSans uppercase">
+                                                Website:</th>
+                                            <td>
+                                                <ui:outputURL value="{!v.brand.Website}" label="{!v.brand.Website}" target="_blank"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="workSans uppercase">
+                                                About Us:</th>
+                                            <td>
+                                                <div style="white-space:normal">
+                                                    <aura:unescapedHtml value="{!v.brand.aboutus}" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                    
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" class="slds-text-align_right" size="12" smallDeviceSize="6">
+                                <div class="max250" style="float:right">
+                                    <img src="{!v.brand.imageUrl}" alt="{!v.brand.DBA}" class="responsive" style="max-width:100%;max-height:100%"/>
+                                </div>
+                                <div class="slds-show_inline-block" style="width:100%">
+                                    <lightning:button class="addToCardButton" variant="brand" label="View My Products" onclick="{!c.showBrandProducts}" />
+                                    <a href="{!v.brand.Twitter}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/twitter.png'}"/> </a>
+                                    <a href="{!v.brand.Facebook}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/facebook.png'}"/> </a>
+                                    <a href="{!v.brand.LinkedIn}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/linkedin.png'}"/> </a>
+                                    <a href="{!v.brand.Instagram}" target="_blank" style="margin: 3px;"> <img src="{!$Resource.SocialAccounts + '/instagram.png'}"/> </a>
+                                </div>
+                                
+                            </lightning:layoutItem>
+                            <!--lightning:layoutItem flexibility="grow" class="slds-text-align_center" size="12" smallDeviceSize="12">
+                                <table>
+                                    <tr>
+                                        
+                                        <td>
+                                            <div class="address">
+                                                <lightning:map mapMarkers="{! v.mapMarkers }" zoomLevel="16" class="address"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </lightning:layoutItem-->
+                            <!--lightning:layoutItem flexibility="grow" class="slds-text-align_center" size="12" smallDeviceSize="12">
+                                <table class="slds-table adjustPadding" style="margin-top:10px">
+                                	<tr>
+                                            <th class="workSans uppercase" style="vertical-align: top;">
+                                                About Us:</th>
+                                            <td>
+                                                <div style="white-space:normal">
+                                                    <aura:unescapedHtml value="{!v.brand.aboutus}" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                </table>
+                            </lightning:layoutItem-->
+                        </lightning:layout> 
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12">
+                    <br/>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="12" class="slds-p-horizontal_small barndDeviceSize ">
+                    <c:recentBrands isPublic="true"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+    </div>
+</aura:component>

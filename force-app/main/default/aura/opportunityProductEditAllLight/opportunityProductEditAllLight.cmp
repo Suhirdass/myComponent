@@ -1,0 +1,101 @@
+<aura:component extends="c:utility" controller="OpportunityProductEditAllExtension" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="oppId" type="String" />
+    <aura:attribute name="shoppingCart" type="opportunityLineItem[]"/>
+    <aura:attribute name="topHeight" type="String" default="100px;" />
+    <aura:attribute name="pickListValues" type="String[]"/>
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    
+    <aura:html tag="style">
+        #auraErrorMessage{
+        display : none;
+        }
+        .fixed_headers {
+        table-layout: fixed;
+        }     
+        .Capitalize {
+        text-transform: capitalize !important;
+        }
+        .title-align {
+        padding-left: 10px !important;
+        padding-top: 5px !important;
+        }
+    </aura:html>
+    
+    <article class="slds-card " style="margin-top:0 !important;">
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom83" title="custom83" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Selected Products</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        <lightning:button class="slds-button slds-button--neutral Capitalize" label="Save" onclick="{!c.onSave}"/>     
+                        <lightning:button class="slds-button slds-button--neutral Capitalize" label="Cancel" onclick="{!c.onCancel}"/> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small slds-border_right slds-border_left">
+                <thead>
+                    <tr class="slds-text-title--caps">
+                        <th scope="col" style="width: 10%;"><div title="Product Name">Product Name</div></th>
+                        <th scope="col" style="width: 10%;"><div title="Available Qty">Available Qty</div></th>
+                        <th scope="col" style="width: 10%;"><div title="MOQ">MOQ</div></th>
+                        <th scope="col" style="width: 10%;"><div title="Quantity"><span style="color:red;">*</span>Quantity</div></th>
+                        <th scope="col" style="width: 10%;text-align: center;"><div title="Total Qty">Total Qty</div></th>
+                        <th scope="col" style="width: 10%;"><div title="Sales Price"><span style="color:red;">*</span>Sales Price</div></th>
+                        <th scope="col" style="width: 10%;"><div title="Product Title"><span style="color:red;">*</span>Product Title</div></th>
+                        <th scope="col" style="width: 10%;"><div title="Is Sample">Is Sample</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.shoppingCart}" var="shp" indexVar="sNo">
+                        <tr style="height: 60px;">
+                            <td style="width: 10%;">
+                                <span>
+                                    <a href="{!'/' + shp.PricebookEntry.Product2Id}" style="color:#0070D2;" target="_blank">{!shp.PricebookEntry.Product2.Name}</a>
+                                </span>
+                            </td>
+                            <td style="width: 10%;">{!shp.Product2.Available_Qty__c}
+                                &nbsp;(<ui:outputNumber value="{!(((shp.Product2.Available_Qty__c/shp.MOQ__c)*100)-mod(((shp.Product2.Available_Qty__c/shp.MOQ__c)*100),1))/100}"/> Cases)
+                            </td>
+                            <td style="width: 10%;">{!shp.MOQ__c}</td>
+                            <td style="width: 10%;"><lightning:input required="true" type="number" aura:id="inputQty" value="{!shp.Quantity}" min="1"/></td>
+                            <td style="width: 10%;text-align: center;">
+                                <aura:renderIf isTrue="{!shp.MOQ__c * shp.Quantity >= 0}">
+                                    {!shp.MOQ__c * shp.Quantity}
+                                    <aura:set attribute="else"> 0 </aura:set>
+                                </aura:renderIf>
+                            </td>
+                            <td style="width: 10%;">
+                                <lightning:input formatter="currency" currencyCode="USD" type="number" aura:id="inputPrice" value="{!shp.UnitPrice}" min="0" step="0.01" onblur="{!c.checkVal}"/></td>
+                            <td style="width: 10%;">
+                                <lightning:select name="a_opt" aura:id="a_opt" required="true" value="{!shp.Product_Title__c}" >
+                                    <aura:iteration items="{!v.pickListValues}" var="proTitle">
+                                        <option value="{!proTitle}" selected="{!proTitle == shp.Product_Title__c}">{!proTitle}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td style="width: 10%;">
+                            	<ui:outputCheckbox aura:id="checkbox" value="{!shp.Is_Sample__c}"/>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>  
+        <br/>
+    </article>
+    <br/>
+    
+</aura:component>

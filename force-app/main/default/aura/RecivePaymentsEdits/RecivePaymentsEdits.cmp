@@ -1,0 +1,636 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="ReceivePaymentEditOverrideController">
+	
+            <aura:attribute name="validyear" type="Map" />
+
+    <aura:attribute name="recordId" type="String"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="receivePaymentObj" type="Receive_Payment__c"/>
+    <aura:attribute name="associatedBank" type="Bank_Register__c"/>
+    <aura:attribute name="paymentForms" type="Map" />
+    <aura:attribute name="bankNames" type="Map" />
+    <aura:attribute name="validMonths" type="Map" />
+    <aura:attribute name="accName" type="String" />
+    <aura:attribute name="recordTypeId" type="String" />
+    <aura:attribute name="invoiceId" type="String" />
+    <aura:attribute name="billId" type="String" />
+    <aura:attribute name="bankDetails" type="Object" />
+    <aura:attribute name="selectedBankRegisterId" type="String" />
+    <aura:attribute name="selectedInvoice" type="Object" default="" description="selected Invoice"/>
+    <aura:attribute name="selectedBill" type="Object" default="" description="selected Bill"/>
+     <aura:attribute name="validation" type="Boolean"/>
+    <aura:attribute name="nameError" type="String"/> 
+        <aura:attribute name="CreditError" type="String"/> 
+    <aura:attribute name="Montherror" type="String"/> 
+    <aura:attribute name="yearerror" type="String"/> 
+    <aura:attribute name="CodeError" type="String"/> 
+    <aura:attribute name="loaded" type="Boolean" default="false"/>
+    <aura:html tag="style">
+ 
+  .slds-m-right--xx-small {
+   				 margin-left: 9px;
+        }
+             .slds-button__icon {
+    margin-top: -8px;
+            color: rgba(0, 0, 0, 0.29);
+
+}
+            .cRecivePaymentsEdits .header-column {
+    padding: 12px 2rem;
+}
+        .slds-text-heading--label
+        {
+        margin-left: 10px;
+        }
+            .slds-m-right--small {
+    margin-left: 9px;
+}
+            .cReceivePaymentEditOverride .header-column {
+    padding: 9px 2rem;
+}
+   .slds-card
+ 		{
+		margin-top: 9px;
+		margin-left: 17px;
+		margin-right: 17px;
+		margin-bottom: 14px;
+		}
+       .slds-grid_align-end
+        {
+    		justify-content: right;
+		}  
+             .slds-icon-custom-custom87, .slds-icon-custom-87 {
+    margin-bottom: 10px;
+        }
+     .slds-gutters .slds-col {
+   
+    margin-left: -276px;
+}
+            .slds-icon-custom-custom87, .slds-icon-custom-87 {
+    margin-top: 12px;
+}
+  buttonSm {
+         text-transform: capitalize !important;
+         }     
+      
+    </aura:html>
+    
+    
+    
+    
+    
+    <article class="slds-card " >
+       <div class="slds-page-header heightfix" role="banner" style="padding: 10px;">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media ">
+        <lightning:icon iconName="custom:custom87" title="custom87" class="iconsalign" />
+        <div class="slds-media__body">
+         
+          <div class="slds-grid" style=" height: 47px;">
+   
+  <div class="slds-page-header" style="padding: 0px;">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <p  class="slds-page-header__title slds-m-right--small slds-truncate ">
+                                    <aura:If isTrue="{!v.receivePaymentObj.Invoice__c != null}">
+                                       <!-- <aura:set attribute="else">
+                                            Bill Pay Edit
+                                        </aura:set>-->
+                                    </aura:If>
+                                </p>
+                            </div>
+                        </div>
+                        <h1 class="slds-page-header__title slds-m-right--small slds-truncate ">
+                            <span class="slds-page-header__title slds-truncate">
+                           <aura:If isTrue="{!v.receivePaymentObj.Id == null}">
+                                    <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">  New Receive Payment</h1>
+                                                                    
+                                </aura:If>
+                                     <h1 class="slds-page-header__title slds-m-right--small slds-truncate ">
+                                 <span class="slds-page-header__title slds-truncate">
+  <aura:If isTrue="{!v.receivePaymentObj.Id != null}">
+                              <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title"> Receive Payment Edit</h1>
+                                    
+                                    <aura:set attribute="else">
+                                        <aura:If isTrue="{!v.receivePaymentObj.Invoice__c != null}">
+                                           
+                                        </aura:If>
+                                    </aura:set>
+                                </aura:If>    
+                               </span>
+                                </h1>
+
+                              
+                            </span>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>           
+          </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+           
+                        <div class="slds-show_inline-block slds-float_right">
+                            <lightning:button class="slds-button slds-button--neutral buttonSm" aura:id="Save"   label="Save" onclick="{!c.doSaveAction}"/>
+                             <lightning:button class="slds-button slds-button--neutral buttonSm" aura:id="SaneNew"   label="Save &amp; New" onclick="{!c.doSaveAction}"/>
+
+                            <lightning:button label="{!$Label.c.Cancel}" onclick="{!c.onCancel}" class="buttonSm"/> 
+                        </div>
+              
+      </div>
+    </div>
+           </div>
+   
+  </div>
+       
+    <div class="slds-card__header ">
+        <div class="c-container">
+         <lightning:layout class="paddings" >
+            <lightning:layoutItem >
+             
+             <div class="paddings" style="margin-left:48px;width:211px;">
+             
+             <span>
+                 <aura:if isTrue="{!and(v.receivePaymentObj.Id != null, v.receivePaymentObj.Bill_Pay__c == null)}">
+                                <p class="field-title" title="Invoice">Invoice</p>
+                                                     <p>
+
+                                    <a href="{!'/' + v.receivePaymentObj.Invoice__c}" ><u>{!v.receivePaymentObj.Invoice__r.Name}</u></a>
+                     </p>
+                    <br/><br/>
+                </aura:if>
+                 
+                 
+  
+                 <!--<aura:if isTrue="{!and(v.receivePaymentObj.Id != null, v.receivePaymentObj.Bill_Pay__c == null)}">
+                                <p class="field-title" title="Invoice">Invoice</p>
+                                <p>
+                                    <a href="{!'/' + v.receivePaymentObj.Invoice__c}" ><u>{!v.receivePaymentObj.Invoice__r.Name}</u></a>
+                                </p>
+                           </aura:if>
+                        		<div class="header-columns1 paddings"  style="width:231px;margin-bottom: 0px; margin-left:-13px;" aura:id="outerDivID" >
+                           			<aura:if isTrue="{!and(v.receivePaymentObj.Id == null, v.receivePaymentObj.Invoice__r.Name == null)}"  >
+                                <p class="field-title" title="Invoice">Invoice</p>
+                                <p>
+                                    <c:lightningLookup objectName="Invoice__c" fieldName="Name" label="" value="{!v.receivePaymentObj.Invoice__c}" isRequired="false" selectedRecord="{!v.selectedInvoice}"  hideLabel="true"  allowCreate="true"/>
+                                </p>                   
+                        
+                            </aura:if>
+                                    
+                              </div>-->
+                 
+                 
+                 
+                             </span>
+                 
+                   <aura:if isTrue="{!and(v.receivePaymentObj.Id == null, v.receivePaymentObj.Bill_Pay__c == null)}">
+                                               		<div class="header-columns1 paddings"  style="width:231px;margin-bottom: 0px; margin-left:-13px;" aura:id="outerDivID" >
+                                <p class="field-title" title="Invoice">Invoice</p>
+<p>
+                    	<c:lightningLookup objectName="Invoice__c" fieldName="Name" label="" value="{!v.receivePaymentObj.Invoice__c}" isRequired="false" selectedRecord="{!v.selectedInvoice}"  hideLabel="true"  allowCreate="true"/>
+                    </p>
+                                                        
+        </div>
+                </aura:if>
+                 </div>
+             </lightning:layoutItem>
+                		           
+
+                             
+             
+            <lightning:layoutItem class="paddings">
+               <div class="header-column paddings" style="width: 300px;margin-left:60px;margin-top: -8px;">
+   					                    <p class="field-title" title="Payment Recevied Date">Transaction Date
+          <lightning:helptext iconName="utility:info" content="Date in which payment was received. Default value is today. "/>
+
+                   
+                   </p>
+                                      	<p>                    
+                    						<lightning:input type="date" style="margin-top: 0px;" required ="true" name="inputDate" value="{!v.receivePaymentObj.Payment_Received_Date__c}" />
+                        				</p>
+                                    </div>
+            </lightning:layoutItem>
+              
+
+             
+             
+             <lightning:layoutItem >
+               	<div class="header-column paddings" style="margin-left:19px;width: 300px;margin-top: -8px;">
+			                   <p class="field-title" title="Payment Amount">Payment Amount</p>
+                               <p>                    
+                    			<lightning:input type="number"  value="{!v.receivePaymentObj.Payment_Amount__c}" formatter="currency" step="0.01"/>
+                        		</p>
+                			</div>
+            </lightning:layoutItem>
+              <lightning:layoutItem class="paddings">
+               <div class="header-column paddings" style="margin-left:38px;width:300px;margin-top:-8px;">
+          <aura:if isTrue="{!and(v.receivePaymentObj.Payment_Form__c != 'Cash' , v.receivePaymentObj.Payment_Form__c != 'Clearing Account') }">
+
+                            <p>                    
+                                <p class="field-title" title="Reference">Bank Name</p>
+                                    <lightning:select name="mySelectBank" value="{!v.receivePaymentObj.Bank_Name__c}" aura:id="bankvalidate" required ="true" >
+                            <aura:iteration items="{!v.bankNames}" var="ind" indexVar="key">
+                                <option text="{!ind.value}" value="{!ind.key}" selected="{!ind.key == v.receivePaymentObj.Bank_Name__c}" />
+                            </aura:iteration>
+                        </lightning:select>
+                                      </p>
+                                                              </aura:if>  
+	                	</div>
+            </lightning:layoutItem>
+
+             
+             
+                         </lightning:layout>     
+
+                      <lightning:layout class="paddings" >
+                           <lightning:layoutItem >
+                <div class="header-column" style="margin-left:11px;width:300px">
+     
+                    		<p class="field-title" title="Reference">Payment Form</p>
+                            <p>                    
+                                <lightning:select name="mySelect" value="{!v.receivePaymentObj.Payment_Form__c}"  aura:id="Payvalidate" >
+                        <aura:iteration items="{!v.paymentForms}" var="ind" indexVar="key">
+                            <option text="{!ind.value}" value="{!ind.key}" selected="{!ind.key == v.receivePaymentObj.Payment_Form__c}" />
+                        </aura:iteration>
+                    </lightning:select>                            </p>
+	                	</div>
+            </lightning:layoutItem>
+           
+                
+                           <lightning:layoutItem class="paddings">
+                <div class="header-column paddings" style="width: 300px;margin-left:5px">
+                    				<p class="field-title" title="Field 1">Payment Memo
+             <lightning:helptext iconName="utility:info" content="Enter details about payment if any"/>
+
+                    </p>
+                    				<p>                    
+                    					<lightning:textarea name="input1" value="{!v.receivePaymentObj.Payment_Memo__c}"/>
+                    				</p>
+	            				</div>
+            </lightning:layoutItem>
+                           <lightning:layoutItem class="paddings">
+                		<div class="header-column paddings" style="margin-left:24px;width:300px;">
+                    		<p class="field-title" title="Reference">Reference
+            <lightning:helptext iconName="utility:info" content="Reference to payment such as check number, confirmation number, ACH number, etc."/>
+
+                            </p>
+                            <p>                    
+                              <lightning:textarea name="input1"  value="{!v.receivePaymentObj.Reference__c}"/>
+                            </p>
+	                	</div>
+            </lightning:layoutItem>
+             </lightning:layout>
+             
+              
+             
+             
+        </div>
+     </div>
+          
+         
+         
+    </article>  
+    
+    
+ <aura:if isTrue="{!and(v.receivePaymentObj.Payment_Form__c != 'Check') }">
+  <aura:if isTrue="{!and(v.receivePaymentObj.Payment_Form__c != 'Cash' , v.receivePaymentObj.Payment_Form__c != 'ACH') }">
+ <aura:if isTrue="{!and(v.receivePaymentObj.Payment_Form__c != 'Clearing Account') }">
+     
+    
+
+ <article class="slds-card " >
+       <div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom83" title="custom83" />
+        <div class="slds-media__body">
+                      <div class="slds-grid">
+
+            <aura:If isTrue="{!v.receivePaymentObj.Payment_Form__c != 'Credit Card'}">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Debit Card Information</h1>
+                                    <aura:set attribute="else">
+                                        <aura:If isTrue="{!v.receivePaymentObj.Invoice__c != 'Debit Card'}">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Credit Card Information</h1>
+                                           
+                                        </aura:If>
+                                    </aura:set>
+                                </aura:If>    
+    
+            
+           
+          </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+         
+       
+              
+      </div>
+    </div>
+           </div>
+   
+  </div>
+          
+    <div class="slds-card__header ">
+        <div class="c-container">
+         <lightning:layout class="paddings" >
+
+            <lightning:layoutItem class="paddings">
+                <div class="header-column" style="width: 300px;" >
+                     <aura:If isTrue="{!v.receivePaymentObj.Payment_Form__c != 'Credit Card'}">
+                    <p class="field-title" title="Field 1">Debit Card Number</p>
+                                    <aura:set attribute="else">
+                                        <aura:If isTrue="{!v.receivePaymentObj.Invoice__c != 'Debit Card'}">
+                    <p class="field-title" title="Field 1">Credit Card Number</p>
+                                           
+                                        </aura:If>
+                                    </aura:set>
+                                </aura:If>    
+                    
+                    
+                    <p>                    
+  <lightning:input value="{!v.receivePaymentObj.Credit_Card_Number__c}"	aura:id="Creditnumvalidate" required ="true" />   
+               <ui:outputText class="error_text" aura:id="errormessage" value="{!v.CreditError}" />  
+                       
+                                    </p>
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem class="paddings">
+                                <div class="header-column "  style="width: 300px;"  >
+                                    
+                                    
+                                    <p class="field-title" >Valid Thru Month
+                                            <lightning:helptext iconName="utility:info" content="Select representation of year of expiration."/>
+
+                                    </p>
+                                    <p>                    
+                                        <lightning:select name="mySelectBank" value="{!v.receivePaymentObj.Valid_Thru_Month__c}" aura:id="Monthvalidate" required ="true">
+                                            <aura:iteration items="{!v.validMonths}" var="ind" indexVar="key">
+                                                <option text="{!ind.value}" value="{!ind.key}" selected="{!ind.key == v.receivePaymentObj.Valid_Thru_Month__c}" />
+                                            </aura:iteration>
+                                        </lightning:select> 
+                                     <ui:outputText class="error_text" aura:id="errormessage" value="{!v.Montherror}" />  
+
+                                    </p>
+                                    
+                                </div>
+                            </lightning:layoutItem>
+                            
+                            <lightning:layoutItem class="paddings">
+                                <div class="header-column " style="width: 300px;"  >
+                                    <p class="field-title" >Valid Thru Year
+        <lightning:helptext iconName="utility:info" content="Select representation of year of expiration."/>
+                                    </p>
+                                    <p> 
+                                        <lightning:select name="mySelectBank" value="{!v.receivePaymentObj.Valid_Thru_Year__c}" aura:id="yearvalidate" required ="true">
+                                            <aura:iteration items="{!v.validyear}" var="indy" indexVar="key">
+                                                <option text="{!indy.value}" value="{!indy.key}" selected="{!indy.key == v.receivePaymentObj.Valid_Thru_Year__c}" />
+                                                                                     <ui:outputText class="error_text" aura:id="errormessage" value="{!v.yearerror}" />  
+
+                                            </aura:iteration>
+                                        </lightning:select>
+                   <ui:outputText class="error_text" aura:id="errormessage" value="{!v.yearerror}" />  
+
+                                        
+                                    </p>
+                                </div>
+                            </lightning:layoutItem>
+                            
+                            
+                            <lightning:layoutItem class="paddings">
+                                <div class="header-column" style="width: 300px;"  >
+
+                                    <p class="field-title" >
+
+                                        Security Code
+                                        <span>
+                                  <lightning:helptext iconName="utility:info" content="Security Code of Credit Card such as CWC."/>
+
+                                        </span>
+
+                                    </p>
+
+                                    <p>                    
+                                        <lightning:input type="number" value="{!v.receivePaymentObj.Security_Code__c}" max="9999" min="0" aura:id="codevalidate" required ="true"/>
+                                    <ui:outputText class="error_text" aura:id="errormessage" value="{!v.CodeError}" />  
+
+                                    </p>              
+                                </div>
+            </lightning:layoutItem>
+              
+            </lightning:layout>     
+   
+        </div>
+     </div>
+    </article>  
+    
+    </aura:if>
+    </aura:if>
+    
+      </aura:if>
+    
+    
+    
+
+       
+  <article class="slds-card " >
+       <div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom83" title="custom83" />
+        <div class="slds-media__body">
+         
+          <div class="slds-grid">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title"> Finance Reconciliation</h1>
+           
+          </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+         
+       
+              
+      </div>
+    </div>
+           </div>
+   
+  </div>
+          
+    <div class="slds-card__header ">
+    
+         <div class="c-container">
+             
+      <lightning:layout class="paddings" >
+            <lightning:layoutItem class="paddings">
+                <div class="header-column" style="width: 300px;margin-bottom: 17px;">
+   
+                    <p class="field-title" title="Field 1">Posted Date</p>
+                    <p>                    
+                    <lightning:input type="date" value="{!v.receivePaymentObj.Posted_Date__c}" />
+                    </p>
+
+                </div>
+            </lightning:layoutItem>
+               <lightning:layoutItem class="paddings">
+                <div class="header-column " style="width: 300px;" >
+
+    
+                    <p class="field-title" title="Field 1">Reconciliation Notes</p>
+                    <p>                    
+                 	<lightning:textarea name="input1" value="{!v.receivePaymentObj.Reconciliation_Notes__c}"/>   
+                        </p>
+
+                </div>
+            </lightning:layoutItem>
+            </lightning:layout>            
+             
+             
+             
+             
+             
+             
+             
+<aura:if isTrue="{!v.associatedBank.Id != null}">
+         <lightning:layout class="paddings" >
+            <lightning:layoutItem >
+                <div class="header-column" style="width: 299px;">
+   
+                    <p class="field-title" title="Field 1">Bank</p>
+                    <p>                    
+                        <a href="{!'/' + v.associatedBank.Id}" ><u>{!v.associatedBank.Account__r.DBA__c} - {!v.associatedBank.Bank_Name__c}</u></a>
+                    </p>
+
+                </div>
+            </lightning:layoutItem>
+               <lightning:layoutItem >
+                <div class="header-column " style="margin-left:4px;width: 299px;" >
+
+    
+                    <p class="field-title" title="Field 1"> Type</p>
+                    <p>                    
+                        {!v.associatedBank.Register_Type__c}  
+                        </p>
+
+                </div>
+            </lightning:layoutItem>
+               <lightning:layoutItem class="paddings">
+                <div class="header-column" style="width: 299px;margin-bottom: 17px;">
+   
+                    <p class="field-title" title="Field 1">Account Name</p>
+                    <p>                    
+ <aura:if isTrue="{!v.associatedBank.Account_Number__c != null}">
+                       		{!v.accName}
+                        </aura:if>                    </p>
+
+                </div>
+            </lightning:layoutItem>
+              <lightning:layoutItem class="paddings">
+                <div class="header-column " style="margin-left: 15px;" >
+
+    
+                    <p class="field-title" title="Field 1">Routing Number</p>
+                    <p>                    
+                        {!v.associatedBank.Routing_Number__c}   
+                        </p>
+
+                </div>
+            </lightning:layoutItem>
+            </lightning:layout> 
+          
+                        
+        </aura:if>
+              </div>
+       <!--  <aura:if isTrue="{!v.associatedBank.Id != null}">
+            <div class="slds-is-relative slds-p-horizontal_small">
+                <div class="slds-grid slds-wrap slds-text-align_center custom-container">
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: right;"><b>Bank</b></div>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: left;padding-left: 2%;">
+                        <a href="{!'/' + v.associatedBank.Id}" style="color:black;"><u>{!v.associatedBank.Account__r.DBA__c} - {!v.associatedBank.Bank_Name__c}</u></a>
+                    </div><br/><br/>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: right;"><b>Register Type</b></div>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: left;padding-left: 2%;">
+                        {!v.associatedBank.Register_Type__c}  
+                    </div><br/><br/>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: right;"><b>Account Number</b></div>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: left;padding-left: 2%;">
+                        <aura:if isTrue="{!v.associatedBank.Account_Number__c != null}">
+                       		{!v.accName}
+                        </aura:if>
+                    </div><br/><br/>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: right;"><b>Routing Number</b></div>
+                    <div class="slds-size_1-of-4 slds-max-small-size_1-of-2" style="text-align: left;padding-left: 2%;">
+                        {!v.associatedBank.Routing_Number__c}   
+                    </div><br/><br/>
+                </div>
+            </div>
+        </aura:if>-->
+        <aura:if isTrue="{!v.associatedBank.Id == null}">
+            <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small">
+                <table class="dataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Bank</th>
+                            <th> Type</th>
+                            <th>Account Number</th>
+                            <th>Routing Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	<aura:iteration items="{!v.bankDetails}" var="itm">
+                            <tr>
+                            	<td>
+                                    <div onclick="{!c.handleRadioClick}" data-value="{!itm.bankRegisterSO.Id}">
+                                        <lightning:input type="radio" aura:id="{!itm.bankRegisterSO.Id}" name="select" value="{!itm.bankRegisterSO.id}"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{!'/' + itm.bankRegisterSO.Id}" style="color:black;"><u>{!itm.bankRegisterSO.Account__r.DBA__c} - {!itm.bankRegisterSO.Bank_Name__c}</u></a>
+                                </td>
+                                <td>{!itm.bankRegisterSO.Register_Type__c}</td>
+                                <td>XXXXXXXX{!itm.bankRegisterSO.Account_Number__c}</td>
+                                <td>{!itm.bankRegisterSO.Routing_Number__c}</td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </aura:if> 
+    
+    
+     
+           
+           </div>  
+    </article>       
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+</aura:component>

@@ -1,0 +1,78 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" controller="UpdateExpenseController">
+    <aura:attribute name="loaded" type="Boolean" default="false"/>
+    <aura:attribute name="expense" type="sObject" default="{sobjectType:'Expense_Number__c'}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:html tag="style">
+    	.slds-card__header-link{display:none;}
+        .uiContainerManager .uiModal.forceModal .modal-container .modal-body.scrollable.slds-p-around--medium,.uiContainerManager .uiModal.forceModal .modal-container .modal-body.scrollable.slds-p-around--medium .cuf-content {padding: 0 !important;}
+        .uiContainerManager .uiModal.forceModal .modal-container .modal-body.scrollable.slds-modal__content {overflow: visible !important;overflow-y: visible !important;}
+        .slds-modal__container {margin: 0 auto;width:40%!important;max-width:unset!important;}
+        .slds-modal__close{display:none!important}
+    </aura:html>
+    <div class="slds-is-relative slds-p-around_none">
+        <lightning:spinner variant="brand" alternativeText="Processing..." class="{!(v.loaded? 'slds-show': 'slds-hide')}" />   
+        <header class="slds-modal__header">
+            <h2 class="slds-text-heading_medium slds-hyphenate">{!v.expense.Name}</h2>
+        </header>
+        <div class="slds-modal__content" style="max-height:70vh;min-height:30vh">
+            <div class="slds-p-horizontal_small slds-p-horizontal slds-size--1-of-1 slds-m-top_x-small">
+            	<lightning:layout horizontalAlign="center" multipleRows="true">
+                    <lightning:layoutItem padding="around-small" size="6">
+						<lightning:input  value="{!v.expense.Owner.Name}" label="Submitter" disabled="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <lightning:input variant="label-stacked" type="checkbox" checked="{!v.expense.Reimbursed__c}"  required="true" label="Reimbursed"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <lightning:input  value="{!v.expense.Project__r.Name}" label="Project" disabled="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <lightning:input type="date" value="{!v.expense.Reimbursed_Date__c}" required="true" label="Reimbursed Date"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <!--div><label>Total Expense Amount</label>
+                            </div-->
+                        <lightning:input type="number" label="Total Expense Amount" formatter="currency" disabled="true" value="{!v.expense.TotalExpenseAmount__c}">
+                        </lightning:input>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <lightning:input  value="{!v.expense.Approver__c}" label="Approver" disabled="true"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>  
+        </div>
+        <footer class="slds-modal__footer">
+            <lightning:button  class="submitButton slds-m-right_small" label="Submit" onclick="{!c.updateExpense}"></lightning:button>
+                    <lightning:button variant="Neutral" class="cancelButton" label="Cancel" onclick="{!c.onCancel}"></lightning:button>
+        </footer>
+    </div>
+	<!--div>
+        <aura:if isTrue="{!v.loaded }">
+            <lightning:spinner alternativeText="Loading" />
+        </aura:if>
+        <lightning:layout horizontalAlign="center" multipleRows="true">
+            <lightning:layoutItem padding="around-small" size="12">
+                <h1>Expense Name: {!v.expense.Name}</h1>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem padding="around-small" size="6">
+                <lightning:input type="checkbox" checked="{!v.expense.Reimbursed__c}" label="Reimbursed"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="6">
+                <lightning:input type="date" value="{!v.expense.Reimbursed_Date__c}" label="Reimbursed Date"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="slds-float_right">
+                    <lightning:button  class="submitButton slds-m-right_small" label="Submit" onclick="{!c.updateExpense}"></lightning:button>
+                    <lightning:button variant="Neutral" class="cancelButton" label="Cancel" onclick="{!c.onCancel}"></lightning:button>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div-->
+</aura:component>

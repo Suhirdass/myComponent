@@ -1,0 +1,18 @@
+<template>
+    <lightning-card title="Account Record Form">
+        <div class="slds-p-around_medium">
+            <!--RecordForm is combination of RecordView & RecordEdit Form & not need more markup and js code for this type tag-->
+            <!-- mode - edit/view/read-only based on the type we can do the record -->
+            <!-- fields or layout-type (Full,Compact) -based on this attribute we can use our fields either selected fields (fieldArray -Property in JS)
+                 or all fields (layout-type = "Full")-->
+             <!-- onsuccess - event - to get record id to view the records -->
+            <!-- <lightning-record-form object-api-name="Account" fields={fieldsArray} columns ="2" mode="edit" record-id={recordId}
+                 onsuccess={successHandler}></lightning-record-form> -->
+                <!-- <lightning-record-form object-api-name="Account" layout-type="Compact" columns ="2" mode="edit" record-id={recordId}
+                 onsuccess={successHandler}></lightning-record-form> -->
+
+                 <!-- Get RecordId & Object Name from framework -->
+        <lightning-record-form object-api-name={objectApiName} record-id={recordId} layout-type="Full" columns ="2" mode="edit"></lightning-record-form>
+        </div>
+    </lightning-card>
+</template>

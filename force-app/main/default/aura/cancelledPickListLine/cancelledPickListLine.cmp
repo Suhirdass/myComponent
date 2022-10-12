@@ -1,0 +1,264 @@
+<aura:component extends="c:utility" controller="CancelledPickListCtrl" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable" access="global">
+    <aura:attribute name="recordName" type="String" />
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:attribute name="pickLines" type="object"/>
+    <aura:attribute name="picRecord" type="object"/>
+    <aura:attribute name="recId" type="String"/>
+    <aura:attribute name="master" type="Boolean" default="false"/>
+    <aura:attribute name="masterDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="isShowButtons" type="boolean" default="false"/>
+    <aura:attribute name="hasServiceInvoice" type="boolean" default="false"/>
+    <aura:html tag="style">
+        .cUtility button {
+        text-transform: inherit !important;
+        }
+        .closeIcon{
+        	right: 0em !important;
+        	top: -3rem !important;
+        }
+        .cUtility .slds-modal__content {
+    padding: 4em 3em;
+    border-radius: 0px !important;
+}
+    </aura:html>
+    
+    <aura:if isTrue="{!v.isShowButtons}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" >
+                <header class="slds-modal__header" style="padding-top: 20px; width: 730px;">
+                    <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                    
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close closeIcon"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.picRecord.Name}</h2>
+                </header>
+                <span style="height:14px !important;width: 35px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                
+                <footer class="slds-modal__footer"  style="width: 730px; height: 60px; z-index: 2; display:inline-flex !important;">
+                    <span style="height: 65px !important;width: 30px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-left: -16px;"></span>
+                    <span style="height: 50px !important; width: 610px  !important; z-index: 1;">
+                        <aura:if isTrue="{!v.hasServiceInvoice}">
+                        	<lightning:button class="slds-button_neutral textCappop" label="Cancel Only Stage &amp; Manifest,Mileage &amp; Weight Service Line" title="Cancel Only Stage &amp; Manifest,Mileage &amp; Weight Service Line"  onclick="{! c.onCancelOnlyMileage }"/>
+                        </aura:if>
+                        <lightning:button class="slds-button_neutral textCappop" label="Cancel Picklist Only" title="Cancel Picklist Only"  onclick="{!c.onSave}"/>
+                    </span>
+                    <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                </footer>
+                <span style="height: 67px !important;background-color: white !important;z-index: 2;margin-top: -64px; width: 30px;margin-right: -40px;margin-left: 700px;"></span>
+                <div style="padding-bottom: 60px;height:56px; width: 730px; background-color: white; border-radius: 3px; margin-top: -5px; z-index: 1;"></div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+       <aura:if isTrue="{!v.isOpen}">
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="margin-left: 407px;" >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="padding-top: 20px; width: 650px;height: 63px;">
+                    <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                    
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="margin-top: -12px;">{!v.picRecord.Name}</h2>
+                </header>
+                <span style="height:14px !important;width: 35px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                
+                <!--###### MODAL BOX BODY Part Start######-->
+                <span style="height:14px !important;margin-left:636px;width:14px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right:250px;"></span>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 650px;padding: 29px;">
+                    
+                    <p class="slds-m-left_xx-large" style="margin-left:31px;">Cancel Picklist Lines. Are you sure?</p>
+                    
+                </div>
+                
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                
+                <footer class="slds-modal__footer"  style="width: 650px; height: 60px; z-index: 2; display:inline-flex !important;margin-top:-11px;">
+                    <span style="height: 65px !important;width: 30px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-left: -16px;"></span>
+                    <span style="height: 50px !important; width: 560px  !important; z-index: 1;margin-left: 26px;">
+                        <lightning:button class="slds-button_brand textCappop"  label="Yes" title="Yes"  onclick="{! c.onSave }"/>
+                        <lightning:button class="slds-button_neutral textCappop"  label="No" title="No"  onclick="{! c.closeModel }"/>
+                    </span>
+                    <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                </footer>
+                <span style="height: 69px !important;background-color: white !important;z-index: 2;margin-top: -64px; width: 12px;margin-right: -40px;margin-left: 638px;"></span>
+                
+                
+                <div style="padding-bottom: 36px;height:76px; width: 650px; background-color: white; border-radius: 3px; margin-top: -5px; z-index: 1;"></div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    <article class="slds-card " >
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom46" title="custom46" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 style="margin-left: 7px;" class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Picklist Details</h1> 
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        
+                        <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel Picklist" onclick="{!c.openModel}"/>
+                        <lightning:button class="slds-button slds-button--neutral textCap" label="Return" onclick="{!c.onCancel}"/>   
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <br/>
+        <div class="slds-is-relative slds-p-horizontal_small">
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+                <div class="slds-col">
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Sales Order</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;"> <a href="{!'/' + v.picRecord.Sales_Order__r.Id}" style="color:#006dcc;"><u>{!v.picRecord.Sales_Order__r.Name}</u></a></div>
+                        
+                    </div>
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Status</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;">{!v.picRecord.Status__c}</div>	
+                        
+                    </div>
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Picklist</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;"><a href="{!'/' + v.picRecord.Id}" style="color:#006dcc;"><u>{!v.picRecord.Name}</u></a></div>
+                    </div>
+                </div>
+                
+                <div class="slds-col">
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Assigned To Name</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;">{!v.picRecord.Assigned_To_Name__c}</div>
+                    </div>
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Scheduled Pick Date</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;"><ui:outputDate value="{!v.picRecord.Scheduled_Pick_Date__c}" format="MM/DD/YYYY"/></div>	
+                        
+                    </div>
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Picklist Lines</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;">{!v.picRecord.Picklist_Lines__c}</div>	
+                        
+                    </div>
+                </div>
+                
+                <div class="slds-col">
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Receiver DBA</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;">{!v.picRecord.Receiver_DBA__c}</div>	
+                        
+                    </div>
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Delivery City</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;">{!v.picRecord.Delivery_City__c}</div>	
+                        
+                    </div>
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Planned Ship Date</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 4%;"><ui:outputDate value="{!v.picRecord.Planned_Ship_Date__c}" format="MM/DD/YYYY"/></div>	
+                        
+                    </div>
+                </div>
+            </div>   
+        </div>
+        <br/>
+    </article><br/>
+    
+    <article class="slds-card " style=" margin-bottom:20px;">
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom96" title="custom96" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 style="margin-left: 7px;" class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Picklist Line Items</h1> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div  class="slds-card__header ">
+            <table class="slds-table_bordered slds-table_col-bordered  ">
+                <thead>
+                    <tr style="background-color:#F5F5F5;" >
+                        <th class="talignCenter">
+                            <lightning:input type="checkbox" aura:id="selectAll" name="input4" checked="{!v.master}" value="{!v.master}"  onchange="{!c.selectAllCheckboxes}" disabled="{!v.masterDisabled}"/> 
+                        </th>
+                        <th class="cell-breakAll" style="width: 187px;">Product Name</th>
+                        <th class="cell-breakAll" style="width: 187px;">Producer Name</th>
+                        <th class="cell-breakAll" style="width: 336px;">Product Description</th>
+                        <th class="cell-breakAll" style="width: 93px;"> Qty to Pick</th>
+                        <th class="cell-breakAll" style="width: 112px;">QA Status</th>
+                        <th class="cell-breakAll" style="width: 128px;">Status</th>
+                        <th class="cell-breakAll" style="width: 114px;">Sample?</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <aura:iteration items="{!v.pickLines}" var="pick" indexVar="sNo">
+                        <tr >
+                            <aura:If isTrue="{!pick.wrp.picklistLineObj.Status__c == 'Cancelled'}">
+                                <td  class="talignCenter cell-breakAll">
+                                    <p></p>                                                 
+                                </td>
+                            </aura:If>
+                            <aura:If isTrue="{!pick.wrp.picklistLineObj.Status__c != 'Cancelled'}">
+                                <td  class="talignCenter cell-breakAll">
+                                    <lightning:input type="checkbox" name="input3" aura:id="checkRec" value="{!pick.isSelect}"
+                                                     checked="{!pick.isSelect}" />                                                  
+                                    
+                                </td>
+                            </aura:If>
+                            <td class="cell-breakAll"><div><a href="{!'/' + pick.wrp.picklistLineObj.Product_Name__r.Id}" style="color:#006dcc;" target="_blank">{!pick.wrp.picklistLineObj.Product_Name__r.Name}</a>
+                                </div></td>
+                            <td class="cell-breakAll">{!pick.wrp.picklistLineObj.Producer_Name__c}</td>
+                            <td class="cell-breakAll">{!pick.wrp.picklistLineObj.Product_Description__c}</td>
+                            <td class="cell-breakAll">{!pick.wrp.qtytoPick}</td>
+                            <td class="cell-breakAll">{!pick.wrp.picklistLineObj.QA_Status__c}</td>
+                            <td class="cell-breakAll">{!pick.wrp.picklistLineObj.Status__c}</td>
+                            <td class="cell-breakAll">
+                                <aura:renderIf isTrue="{!pick.wrp.picklistLineObj.Is_Sample__c}">
+                                    Yes
+                                    <aura:set attribute="else">
+                                        No
+                                    </aura:set>
+                                </aura:renderIf>
+                            </td>
+                        </tr>
+                    </aura:iteration>      
+                </tbody>
+            </table>
+        </div>
+    </article>
+</aura:component>

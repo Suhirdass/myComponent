@@ -1,0 +1,153 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:html tag="style">
+        .slds-button-group{
+        	height: 32px;
+        }
+    </aura:html>
+    <ltng:require  scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler
+		name="paginatorChangeEvt"
+		event="c:paginatorChangeEvt"
+		action="{!c.fetchRetailers}"
+	/>
+    <aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+    <aura:attribute name="isList" type="Boolean" default="true" />
+    <aura:attribute name="filters" type="Map" default="" />
+    <aura:attribute name="hasFilter" type="Boolean" default="false" />
+    <aura:attribute name="searchTerm" type="String" default="" />
+    <aura:attribute name="selectedFilter" type="String" default="My Retailers" />
+    <aura:attribute name="selectedCIndex" type="Integer" default="-1" />
+    <aura:attribute name="selectedLIndex" type="Integer" default="-1" />
+    <aura:attribute name="contactRTId" type="String" default="" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+  <aura:dependency resource="markup://c:retailerDetails" />
+<aura:attribute name="isTablet" type="Boolean" default="false" />
+	<div class="slds-is-relative slds-p-horizontal_small">
+		<lightning:spinner
+            variant="brand"
+            alternativeText="{!v.processingMessage}"
+            class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+        <lightning:layout multipleRows="true">
+            <div class="flex slds-size_full">
+                <div class="slds-m-right_x-large">
+                    <lightning:buttonGroup>
+                        <lightning:button class="{!if(equals(v.selectedFilter,'My Retailers'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedFilter,'My Retailers'),'brand','neutral')}" label="My Retailers" onclick="{!c.changeRetailers}"/>
+                        <lightning:button class="{!if(equals(v.selectedFilter,'Other Retailers'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedFilter,'Other Retailers'),'brand','neutral')}" label="Other Retailers" onclick="{!c.changeRetailers}"/>
+                        <lightning:button class="{!if(equals(v.selectedFilter,'All'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedFilter,'All'),'brand','neutral')}" label="All" onclick="{!c.changeRetailers}"/>
+                    </lightning:buttonGroup>
+                </div>
+                <div class="flex m-left_auto">
+                    <!--div class="slds-m-right_small select__hidden-label">
+                        <lightning:select value="" label="" variant="label-hidden" onchange="{!c.onOrderChange}">
+                            <option value="" style="color:rgb(6, 94, 102);font-size:14px;">Sort By</option>
+                            <option value="Name ASC" style="color:rgb(6, 94, 102);font-size:14px;">Name A-Z</option>
+                            <option value="Name DESC" style="color:rgb(6, 94, 102);font-size:14px;">Name Z-A</option>
+                        </lightning:select>
+                    </div-->
+                    <div style="width: 318px;" class="{!v.isTablet ? '' : 'slds-m-left_xx-large'}">
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right" onkeyup="{!c.handleSearch}">
+                            <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                            <input type="text" style="color:#42472a;font-size:14px;height:32px;" aura:id="searchRec" id="searchRec"  placeholder="Search by name, DBA, location or license" variant="label-hidden" class="slds-input" value="{!v.searchString}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex slds-size_full">
+                <br/>
+            </div>
+            <lightning:layoutItem size="12">
+            	<aura:if isTrue="{!v.records.length > 0}">
+                    <div class="table-container slds-m-top_small">
+						<table class="slds-table slds-table_cell-buffer">
+							<thead>
+								<tr>
+                                    <th style="background-color:#d1cdb0;" class="sortable" onclick="{!c.onSortOrders}" data-sortfield="DBA__c">
+                                        DBA
+                                        <aura:if isTrue="{!v.filters.orderByField=='DBA__c'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+                                    </th>
+                                    <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="Name" style="background-color:#d1cdb0;">
+                                        Legal Business Name
+                                        <aura:if isTrue="{!v.filters.orderByField=='Name'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+                                    </th>
+                                    <th class="sortable" onclick="{!c.onSortOrders}" data-sortfield="BillingCity" style="background-color:#d1cdb0;">
+                                        City
+                                        <aura:if isTrue="{!v.filters.orderByField=='BillingCity'}">
+											<span class="sortIcon">
+                                                <aura:if isTrue="{!v.filters.isASC}">
+                                                    &#8593;
+                                                    <aura:set attribute="else">
+                                                        &#8595;
+                                                    </aura:set>
+                                                </aura:if>
+											</span>
+										</aura:if>
+                                    </th>
+                                    <th style="background-color:#d1cdb0;">Sales Rep</th>
+                                    <th style="background-color:#d1cdb0;">Terms</th>
+                                    <th style="background-color:#d1cdb0;">Account Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								<aura:iteration items="{!v.records}" var="record" indexVar="index">
+                                    <tr>
+                                        <td>
+                                            <div class="slds-truncate ticketNumber slds-truncate" data-id="{!record.id}" data-ordername="{!record.retailerName}" onclick="{!c.onViewReialer}" style="color:#518397">
+                                                {!record.retailerDBA}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            
+                                            <div class="slds-truncate ticketNumber slds-truncate" data-id="{!record.id}" data-ordername="{!record.retailerName}" onclick="{!c.onViewReialer}" style="color:#518397">
+                                                {!record.retailerName}
+                                            </div>
+                                        </td>
+                                        <td> <div class="slds-truncate">{!record.city}</div> </td>
+                                        <td> <div class="slds-truncate">{!record.salesPersonName}</div> </td>
+                                        <td> <div class="slds-truncate">{!record.mutualPaymentTerms}</div> </td>
+                                        <td> <div class="slds-truncate">{!record.retailAccountRating}</div> </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                	<!--lightning:layout  multipleRows="true">
+                    	<aura:iteration items="{!v.records}" var="record" indexVar="indx">
+                        	<lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="12" largeDeviceSize="6">
+                                <c:retailer retailer="{!record}" isRight="{!mod(indx,2)}"/>
+                        	</lightning:layoutItem>
+                    	</aura:iteration>
+                	</lightning:layout-->
+               	 	<aura:set attribute="else">
+                    	<div class="flex slds-size_full noRecord">
+                    		<h3
+                                class="slds-section-title_divider slds-text-align_center"
+                                style="font-weight: 700;font-family:'Alliance Neue';">
+                                NO RETAILERS FOUND.
+                        	</h3>
+                    	</div>
+                	</aura:set>
+            	</aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>        
+        <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+    </div>
+</aura:component>

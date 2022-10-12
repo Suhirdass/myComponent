@@ -1,0 +1,8 @@
+<apex:page controller="DropboxUploadController">
+    <apex:pageMessages />
+  <apex:form id="myForm">
+      <apex:commandButton id="login" action="{!getAuthorizationCode}" value="Dropbox login"/>
+      <apex:outputPanel rendered="{!connected}">Dropbox is connected to "{!username}"s account</apex:outputPanel>
+      <br/><br/>
+  </apex:form>
+</apex:page>

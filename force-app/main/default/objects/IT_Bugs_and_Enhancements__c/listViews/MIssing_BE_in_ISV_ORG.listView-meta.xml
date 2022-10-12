@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MIssing_BE_in_ISV_ORG</fullName>
+    <columns>NAME</columns>
+    <columns>Assigned_To_Dev__c</columns>
+    <columns>Type__c</columns>
+    <columns>Priority__c</columns>
+    <columns>Short_Description__c</columns>
+    <columns>Released_Date__c</columns>
+    <columns>Status__c</columns>
+    <columns>Related_To__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Closed_Live_in_PROD</value>
+    </filters>
+    <filters>
+        <field>Released_Date__c</field>
+        <operation>greaterThan</operation>
+        <value>7/20/2019</value>
+    </filters>
+    <label>Missing BE in ISV ORG</label>
+    <sharedTo>
+        <group>Filigreen_Admin_Users</group>
+        <portalRole>IrrationalRaccoonTechCustomerUser</portalRole>
+    </sharedTo>
+</ListView>

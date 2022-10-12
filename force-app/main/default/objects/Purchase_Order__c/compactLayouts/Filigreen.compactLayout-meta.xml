@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Filigreen</fullName>
+    <fields>PO_Status__c</fields>
+    <fields>Name</fields>
+    <fields>RecordTypeId</fields>
+    <fields>Supplier_Name__c</fields>
+    <fields>Sold_to_Party_Legal_Name__c</fields>
+    <fields>Total_Cost__c</fields>
+    <fields>Supplier_Payment_Settled_Date__c</fields>
+    <label>Filigreen</label>
+</CompactLayout>

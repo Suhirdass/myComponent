@@ -1,0 +1,29 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="force:hasRecordId">
+
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+    <aura:attribute name="product" type="Map" default="" />
+    <aura:attribute name="rating" type="Integer" default="0" />
+    <aura:attribute name="review" type="String" default="" />
+    <aura:attribute name="isReviewed" type="Boolean" default="false" />
+
+
+    <lightning:overlayLibrary aura:id="overlay" />
+    <div class="slds-is-relative">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                <label class="slds-form-element__label">
+                    <abbr title="required" class="slds-required">*</abbr>Rating
+                </label>
+                <c:productRating product="{!v.product}" rating="{!v.rating}" canUpdate="{#true}" />
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                <lightning:textarea aura:id="rating" required="true" label="Write your review" value="{!v.review}" />
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                <lightning:button variant="brand" class="addToCardButton" label="Submit" onclick="{!c.onRating}" />
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+
+</aura:component>

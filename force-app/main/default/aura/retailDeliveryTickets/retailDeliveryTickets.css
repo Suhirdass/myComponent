@@ -1,0 +1,57 @@
+.THIS {
+    font-family:token(salesforceSans);
+    color: token(fontColor);
+}
+.THIS .selectBtn{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .nonSelectBtn{
+    color:token(land);
+}
+.THIS .slds-select{
+	color: token(land);
+    font-size:14px;
+}
+.THIS .ticketNumber:hover{
+  text-decoration:underline;
+  cursor:pointer;
+}
+.THIS #searchRec::-webkit-input-placeholder {
+  /*color: rgb(6, 94, 102);*/
+  color:token(fontColor);
+  opacity: 1; /* Firefox */
+}
+.THIS .eyeIcon{
+    fill: token(land);
+}
+.THIS .width300{
+  width: 300px !important;
+}
+.THIS .sortable{
+    cursor:pointer;
+}
+.THIS .sortIcon{
+    color:token(land);
+    font-size: 9px;
+    padding-left: 4px;
+}
+.THIS .ps{
+  height: 500px;
+}
+.THIS .jumptotop{
+    margin-bottom:50px;
+    cursor:pointer;
+    right: -15px;
+    position: absolute;
+    top: 60%;
+}
+.THIS .select__hidden-label label {
+  display: none;
+}
+
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    cursor: pointer;
+    /*fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(6, 94, 102)));*/
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,token(land)));
+}

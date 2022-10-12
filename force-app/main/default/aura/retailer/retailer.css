@@ -1,0 +1,113 @@
+.THIS {
+    font-family:'Salesforce Sans' !important;
+}
+.THIS .slds-card__footer{
+    border-color: #dddbda;
+}
+
+.THIS .max300{
+    height: 300px !important;
+    width: 300px !important;
+}
+
+.THIS .max250{
+    height: 250px !important;
+    width: 250px !important;    
+}
+@media (min-width: 64em){
+    .THIS .retailerBox{
+        width: 20%!important;
+    }
+}
+@media (min-width: 48em){
+    .THIS .retailerBox{
+        width: 25%!important;
+    }
+}
+@media (min-width: 30em){
+    .THIS .retailerBox{
+        width: 50%!important;
+    }
+}
+.THIS.retailerBox{
+    max-width:25%;
+    min-width:10%;
+    display:inline-block;
+}
+.THIS .linecard{
+    position:absolute;
+    top: -15px;
+    right: -10px;
+}
+.THIS .brand-card {
+	display: flex;
+	/*width: 515px;*/
+	border: 1px solid var(--lwc-colorGray7);
+}
+.THIS .brand-card:hover {
+	border-color: var(--c-greenAccent);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+.THIS .brand-card:hover .brand-card__details-btn {
+	color: #fff;
+	background: var(--c-greenPrimary);
+	border-color: var(--c-greenPrimary);
+}
+
+.THIS .brand-card__img-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--lwc-colorGray7);
+	width: 80px;
+	height: 80px;
+	padding: 8px;
+	border-radius: 5px;
+}
+
+.THIS .brand-card__img {
+	flex: 1;
+}
+
+.THIS .brand-card__header {
+	display: flex;
+	align-items: center;
+}
+
+.THIS .brand-card__location {
+	display: inline-block;
+	color: var(--c-greenPrimary);
+}
+
+.THIS .brand-card__btn-container {
+	margin-left: auto;
+	align-self: flex-start;
+}
+
+.THIS .brand-card__details-btn {
+	display: inline-block;
+	background: #fff;
+	color: var(--c-greenPrimary);
+	border: 1px solid var(--lwc-colorGray7);
+	border-radius: 4px;
+	font-size: 13px;
+	padding: 6px 16px;
+	text-decoration: none;
+	cursor:pointer;
+}
+.THIS .ipadMaxwidth{
+	max-width: 117px;
+	min-width: 117px;
+}
+.THIS .dasktopMaxWidth{
+	max-width: 215px;
+	min-width: 215px;
+}
+.THIS .businessLneIpadMaxwidth{
+	max-width: 117px;
+	min-width: 117px;
+}
+.THIS .businessLneDasktopMaxWidth{
+	max-width: 175px;
+	min-width: 175px;
+}

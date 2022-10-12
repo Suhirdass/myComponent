@@ -1,0 +1,54 @@
+<aura:component extends="c:infiniteLoading" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="RMA" type="Map" default="{}" />
+    <aura:attribute name="returnCode" type="List" default="[]" />
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <div class="slds-box slds-box_small slds-m-vertical_small" style="padding: 0;">
+            <lightning:layout multipleRows="true" class="slds-page-header orderHeaderLastColumn">
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="2" class="slds-p-horizontal_small">
+                    <div>Order#</div>
+                    {!v.RMA.orderNumber}
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="2" class="slds-p-horizontal_small">
+                    <div>Order Date</div>
+                    <ui:outputDate value="{!v.RMA.orderDate}" />
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="2" class="slds-p-horizontal_small slds-text-align_center">
+                    <div>Total Line Items</div>
+                    {!v.RMA.items.length}
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" mediumDeviceSize="3" class="slds-p-horizontal_small">
+                    <div>Order Status</div>
+                    <aura:if isTrue="{!v.RMA.orderStatus != 'Approved'}">
+                        {!v.RMA.orderStatus}
+                        <aura:set attribute="else">
+                            {!v.RMA.SMStatus}
+                            <aura:renderIf isTrue="{!!(or(v.RMA.SMStatus == undefined,equals(v.RMA.SMStatus, '')))}">
+                            	-{!v.RMA.SMStatus}
+                            </aura:renderIf>
+                        </aura:set>
+                    </aura:if>
+                </lightning:layoutItem>
+                <lightning:layoutItem flexibility="grow" size="6" class="slds-text-align_right" mediumDeviceSize="3">
+                    <lightning:button class="addToCardButton" value="{!v.RMA.id}"
+                                      label="Cancel" onclick="{!c.onCancel}" />
+                    <lightning:button class="addToCardButton" disabled="{!!equals(v.RMA.status, 'New')}" value="{!v.RMA.id}"
+                                      label="Save" onclick="{!c.onSaveRMA}" />
+                    <lightning:button class="addToCardButton" disabled="{!!equals(v.RMA.status, 'New')}" value="{!v.RMA.id}"
+                                      label="Cancel RMA" onclick="{!c.onRMACancel}" />
+                    
+                </lightning:layoutItem>
+            </lightning:layout>
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem flexibility="grow" size="12">
+                    
+                    <aura:iteration items="{!v.RMA.items}" var="item">
+                        <c:rmaLineEdit aura:id="RMALineItem" RMALineItem="{!item}" returnCode="{!v.returnCode}"/>
+                    </aura:iteration>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

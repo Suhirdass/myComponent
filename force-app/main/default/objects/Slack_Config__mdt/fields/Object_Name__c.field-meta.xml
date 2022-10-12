@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Object_Name__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Object Name</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>None</fullName>
+                <default>true</default>
+                <label>None</label>
+            </value>
+            <value>
+                <fullName>Brand</fullName>
+                <default>false</default>
+                <label>Brand</label>
+            </value>
+            <value>
+                <fullName>Retailer</fullName>
+                <default>false</default>
+                <label>Retailer</label>
+            </value>
+            <value>
+                <fullName>Transfer</fullName>
+                <default>false</default>
+                <label>Transfer</label>
+            </value>
+            <value>
+                <fullName>Service Ticket</fullName>
+                <default>false</default>
+                <label>Service Ticket</label>
+            </value>
+            <value>
+                <fullName>Inbound Transfer</fullName>
+                <default>false</default>
+                <label>Inbound Transfer</label>
+            </value>
+            <value>
+                <fullName>Adira Distribution Orders</fullName>
+                <default>false</default>
+                <label>Adira Distribution Orders</label>
+            </value>
+            <value>
+                <fullName>Shipping Manifest</fullName>
+                <default>false</default>
+                <label>Shipping Manifest</label>
+            </value>
+            <value>
+                <fullName>Order Revision</fullName>
+                <default>false</default>
+                <label>Order Revision</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

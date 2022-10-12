@@ -1,0 +1,174 @@
+<aura:component extends="c:utility" controller="MiscReceiptController" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	
+    <aura:handler name="init" action="{!c.init}" value="{!this}" access="global" />
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="prod" type="Product2" />
+    <aura:attribute name="invPerAdj" type="Inventory_Perpetual_Adjustment__c" />
+    <aura:attribute name="invPositionRec" type="Inventory_Position__c" />
+    <aura:attribute name="typeOptions" type="Object" />
+    
+    <aura:attribute name="selectedSite" type="Object" default="" description="selected Site Details"/>
+    <aura:attribute name="selectedBatchID" type="Object" default="" description="selected Batch ID Details"/>
+    <aura:attribute name="selectedOwnership" type="Object" default="" description="selected Ownership Details"/>
+    <aura:attribute name="selectedUID" type="Object" default="" description="selected UID Details"/>
+    
+    <aura:attribute name="totalInventory" type="Integer" />
+  
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        	min-width: 90%;
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .back {
+        	background-color: white;
+        }
+        .title-align {
+    	padding-left: 10px;
+        padding-top: 5px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .textCap {
+        text-transform: capitalize !important; 
+        }
+    </aura:html>
+    
+<article class="slds-card " >
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom83" title="custom83" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Product Details</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+           <lightning:button class="slds-button slds-button--neutral textCap" label="Save" onclick="{!c.onSave}"/>
+           <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel" onclick="{!c.onCancel}"/>   
+      </div>
+    </div>
+  </div>
+</div>
+      <br/>
+    <div class="slds-is-relative slds-p-horizontal_small">
+       <div class="slds-grid slds-wrap slds-text-align_center custom-container">         
+           <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Product Name</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Name}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Active</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><lightning:input class="slds-float_left" type="checkbox" name="input1" disabled="true" checked="{!v.prod.IsActive}"/></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>MOQ</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.MOQ__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Product Description</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3 slds-truncate" style="text-align: left;padding-left: 2%;">{!v.prod.Description}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Quantity Type</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Quantity_Type__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Total Inventory</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.totalInventory}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Producer Name</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.prod.Producer_Name__c}" style="color:#006dcc;"><u>{!v.prod.Producer_Name__r.Name}</u></a></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Supplier UOM</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Supplier_UOM__c}</div>
+            
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Item To Put Away</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.ItemToPutAway__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Brand Name</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Brand_Name__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Cannabis Weight/UOM</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Cannabis_Weight__c} {!v.prod.Cannabis_Weight_UOM__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Allocated Inventory</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Allocated_Inventory__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Product Family</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Family}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Total Cannabis Weight</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.totalCannabisWeight} {!v.prod.Cannabis_Weight_UOM__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Inventory On Hold</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Inventory_On_Hold_Qty__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Strain</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.prod.Strain__c}" style="color:#006dcc;"><u>{!v.prod.Strain__r.Name}</u></a></div>
+            
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Hide From Marketplace</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><lightning:input class="slds-float_left" type="checkbox" name="input1" disabled="true" checked="{!v.prod.Hide_From_Marketplace__c}"/></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Available Inventory</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Available_Inventory__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Strain Type</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Strain_Type__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Total Order Qty</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Total_Order_Qty__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Available to Sell</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prod.Available_Qty__c}</div>
+        </div> 
+        <br/>
+    </div> 
+ </article>
+   
+<article class="slds-card">
+    
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom83" title="custom83" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="New Inventory Position">New Inventory Position</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+  </div>
+</div>    
+    
+<br/>
+
+<div class="slds-grid slds-wrap">
+     <div class=" slds-size--1-of-4  proDet ">
+      <p class="slds-text-title slds-truncate slds-has-flexi-truncate" title="Sales Order">Type<span style="color:red;">*</span></p>
+      <p class="slds-form-element__static slds-truncate paddings" ><lightning:select name="a_opt1" aura:id="a_opt1" value="{!v.invPerAdj.Type__c}" required="true">
+                                <aura:iteration items="{!v.typeOptions}" var="proTitle">
+                                    <option value="{!proTitle.label}">{!proTitle.value}</option>
+                                </aura:iteration>
+                            </lightning:select></p>
+      </div>
+     <div class="slds-size--1-of-4  proDet">
+       <p class="slds-text-title slds-truncate" title="SO Date">Reason for Adjustments<span style="color:red;">*</span></p>
+      <p class="slds-form-element__static slds-truncate paddings"><lightning:input name="input1" aura:id="a_opt2" required="true" value="{!v.invPerAdj.Reason_for_Adjustments__c}"/></p>
+    </div>
+     <div class="slds-size--1-of-4 proDet">
+       <p class="slds-text-title slds-truncate" title="Order or Service #">Qty<span style="color:red;">*</span></p>
+      <p class="slds-form-element__static slds-truncate paddings" ><lightning:input aura:id="a_opt3" type="number" name="input1" required="true" value="{!v.invPositionRec.Qty_On_Hand__c}" /></p>
+    </div>
+  <div class="slds-size--1-of-4 proDet">
+       <p class="slds-text-title slds-truncate" title="Opportunity Name">Ownership<span style="color:red;">*</span></p>
+    <div> <c:lightningLookup aura:id="a_opt4" objectName="Account" fieldName="Name" label="" value="{!v.invPositionRec.Ownership__c}" selectedRecord="{!v.selectedOwnership}" isRequired="true"  hideLabel="true"  allowCreate="true"/></div>
+    </div>
+   <div class="slds-size--1-of-4 proDet">
+       <p class="slds-text-title slds-truncate" title="Site">Site<span style="color:red;">*</span></p>
+     <div> <c:lightningLookup aura:id="a_opt5" objectName="Site__c" fieldName="Name" label="" value="{!v.invPositionRec.Site__c}" selectedRecord="{!v.selectedSite}" isRequired="true"  hideLabel="true"  allowCreate="true"/></div>
+    </div> 
+</div>     
+    
+ </article>     
+
+ 
+</aura:component>

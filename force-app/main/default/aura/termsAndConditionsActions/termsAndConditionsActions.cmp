@@ -1,0 +1,6 @@
+<aura:component extends="c:utility">
+
+
+    <lightning:overlayLibrary aura:id="overlay"/>
+    <lightning:button label="I ACCEPT" variant="brand" onclick="{!c.onAccept}"/>
+</aura:component>

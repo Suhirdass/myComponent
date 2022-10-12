@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION" description="Event template">
+	<aura:attribute name="currentUser" type="String" default=""/>
+    <aura:attribute name="selectedStage" type="String" default="All Open"/>
+    <aura:attribute name="selectedOppsByRegion" type="String" default="My Opportunities"/>
+    <aura:attribute name="selectedRegion" type="String" default="All"/>
+</aura:event>

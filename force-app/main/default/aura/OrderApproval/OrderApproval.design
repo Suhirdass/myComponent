@@ -1,0 +1,3 @@
+<design:component label="Retailer Order Approval">
+	<design:attribute name="recordId" label="Retailer Order Id" description="Please pass retailer order Id" />
+</design:component>

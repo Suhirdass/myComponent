@@ -1,0 +1,9 @@
+.time {
+    font-size: 4rem; /* rem depands upon screen width ==> 1rem = 16px */
+    font-weight: 600;
+}
+
+.greeting {
+    font-size: 2rem;
+    font-weight: 400;
+}

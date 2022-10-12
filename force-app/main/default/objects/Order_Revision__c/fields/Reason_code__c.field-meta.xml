@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_code__c</fullName>
+    <externalId>false</externalId>
+    <label>Reason Code</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Missed Delivery Window</fullName>
+                <default>false</default>
+                <label>Missed Delivery Window</label>
+            </value>
+            <value>
+                <fullName>Invoice Collection Issue</fullName>
+                <default>false</default>
+                <label>Invoice Collection Issue</label>
+            </value>
+            <value>
+                <fullName>Retailer Requests Reschedule</fullName>
+                <default>false</default>
+                <label>Retailer Requests Reschedule</label>
+            </value>
+            <value>
+                <fullName>Requires METRC Adjustments</fullName>
+                <default>false</default>
+                <label>Requires METRC Adjustments</label>
+            </value>
+            <value>
+                <fullName>Brand Requests Reschedule</fullName>
+                <default>false</default>
+                <label>Brand Requests Reschedule</label>
+            </value>
+            <value>
+                <fullName>Route Compromised</fullName>
+                <default>false</default>
+                <label>Route Compromised</label>
+            </value>
+            <value>
+                <fullName>Clerical Error</fullName>
+                <default>false</default>
+                <label>Clerical Error</label>
+            </value>
+            <value>
+                <fullName>Incorrectly Entered Order</fullName>
+                <default>false</default>
+                <label>Incorrectly Entered Order</label>
+            </value>
+            <value>
+                <fullName>Incorrectly Packed Order</fullName>
+                <default>false</default>
+                <label>Incorrectly Packed Order</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

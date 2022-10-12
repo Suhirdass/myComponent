@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Universal_Symbol__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>The California symbol that identifies cannabis and cannabis products: in black, at least 0.5” X 0.5”</inlineHelpText>
+    <label>Universal Symbol</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>QA_Result</valueSetName>
+    </valueSet>
+</CustomField>

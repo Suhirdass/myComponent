@@ -1,0 +1,31 @@
+.slds-tabs_default__nav {
+	background: #E7E6E2;
+}
+
+.slds-tabs_default__item {
+	padding: 0 1rem;
+}
+
+.slds-tabs_default__item::after {
+	display: none !important
+}
+
+.slds-tabs_default__nav .slds-is-active {
+	background: #fff;
+	border-left: 1px solid #DDDBDA;
+	border-right: 1px solid #DDDBDA;
+}
+
+.slds-tabs_default__nav .slds-is-active .slds-tabs_default__link {
+	color: #080707;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.slds-tabs_default__nav .slds-is-active .slds-tabs_default__link:hover {
+	color: #080707;
+}
+
+.slds-tabs_default__nav .slds-is-active:first-child {
+	border-left: none;
+}

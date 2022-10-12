@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="batchId Event" >
+	<aura:attribute name="selectedRecord" type="Object"/>
+    <aura:attribute name="selRec" type="String"/>
+    <aura:attribute name="selectedIndex" type="Integer"/>
+</aura:event>

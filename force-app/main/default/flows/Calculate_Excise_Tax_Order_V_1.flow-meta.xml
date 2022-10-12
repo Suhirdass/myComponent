@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>ReCalc_Excise_Tax_Checkbox_Flow</name>
+        <label>ReCalc Excise Tax Checkbox Flow</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Recalc_Excise_Tax</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Exclude_Excise_Tax__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Recal_Excise_Tax_Amount</targetReference>
+            </connector>
+            <label>Recalc Excise Tax</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Calculate Excise Tax - Order V.1 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Calculate Excise Tax - Order</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Recal_Excise_Tax_Amount</name>
+        <label>Recal Excise Tax Amount</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Order__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Recalc_Excise_Tax__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <object>Order_Line_Item__c</object>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>ReCalc_Excise_Tax_Checkbox_Flow</targetReference>
+        </connector>
+        <object>Order__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+</Flow>

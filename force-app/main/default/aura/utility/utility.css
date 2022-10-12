@@ -1,0 +1,567 @@
+/* css class override */
+@media (hover: none) and (pointer: coarse){
+    .THIS .slds-button--icon-border, .THIS .slds-button--icon-border-filled, .THIS .slds-button--icon-border-inverse, .THIS .slds-button--icon-container, .THIS .slds-button--icon-container-more, .THIS .slds-button--icon-more, .THIS .slds-button_icon-border, .THIS .slds-button_icon-border-filled, .THIS .slds-button_icon-border-inverse, .THIS .slds-button_icon-brand, .THIS .slds-button_icon-container, .THIS .slds-button_icon-container-more,.THIS .slds-button_icon-more {
+        width: 32px!important;
+    }
+    .THIS .slds-button--icon, .THIS .slds-button--icon-border, .THIS .slds-button--icon-border-filled, .THIS .slds-button--icon-border-inverse, .THIS .slds-button--icon-container, .THIS .slds-button--icon-error, .THIS .slds-button--icon-inverse, .THIS .slds-button--icon-more, .THIS .slds-button_icon, .THIS .slds-button_icon-border, .THIS .slds-button_icon-border-filled, .THIS .slds-button_icon-border-inverse, .THIS .slds-button_icon-container, .THIS .slds-button_icon-error, .THIS .slds-button_icon-inverse, .THIS .slds-button_icon-more {
+    	height:unset!important;
+    }
+    .THIS .slds-button {
+        line-height: 30px!important;
+        font-weight: unset!important;
+    }
+    .THIS .slds-button--icon{
+        line-height: 13px!important;
+        width: 32px!important;
+    }
+}
+.THIS {
+	/* --lwc- */
+	--lwc-fontSize3: 0.875rem;
+	--sds-c-tooltip-color-background: token(greenPrimary);
+}
+
+/* Layout Utilites */
+.THIS .verical-rhythm > * + * {
+	margin-top: 1em;
+}
+.THIS .toastMessage{
+    font-family:token(salesforceSans) !important;
+    color :token(fontColor);
+}
+.THIS .flex {
+	display: flex;
+}
+.THIS .flex-1 {
+	flex: 1;
+}
+.THIS .height-full {
+	height: 100%;
+}
+.THIS .items-center {
+	align-items: center;
+}
+.THIS .content-center {
+	justify-content: center;
+    
+}
+.THIS .m-left_auto {
+	margin-left: auto;
+}
+
+.THIS .no-padding-x {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+.THIS .no-padding-y {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+/* Text utilities */
+.THIS .slds-text-heading_medium,
+.THIS .slds-text-heading_small {
+	font-weight: normal;
+}
+
+.THIS .text__x-small {
+	font-size: 9px;
+}
+
+.THIS .text__bold {
+	font-weight: bold;
+}
+.THIS .text__semibold {
+	font-weight: 600;
+}
+
+.THIS .text__grey {
+	color: #706e6b;
+}
+.THIS .text__greenPrimary {
+	color: token(greenPrimary);
+}
+.THIS .text__grayMid {
+	color: token(grayMid);
+}
+.THIS .text__blue {
+	color: token(blue);
+}
+
+.THIS .uppercase {
+	text-transform: uppercase;
+	font-weight: 500;
+	color: #0c0d0d;
+}
+
+.THIS .text__uppercase {
+	text-transform: uppercase;
+}
+
+/* Visual Utilities */
+
+.THIS .bg__white {
+	background: #fff;
+}
+.THIS .bg__tan {
+	background: token(tan);
+}
+.THIS .bg__complete {
+	background:rgba(136,203,193,0.2);
+}
+.THIS .box-shadow {
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 12px;
+}
+
+/* Components */
+
+/* tabs */
+.THIS .slds-tabs_scoped__nav {
+	background: token(tan);
+}
+
+/* tables */
+.THIS .table-container {
+	border-radius: 5px;
+	border: 1px solid token(grayAccent);
+	overflow: auto;
+}
+.THIS .table--double-border tbody td:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 2px;
+	border-top: 1px solid token(grayAccent);
+}
+
+.THIS .slds-table {
+	background: #fff;
+}
+.THIS .slds-table thead th {
+	color: token(fontColor);
+	background: token(tan);
+	font-size: 12px;
+}
+.THIS .slds-table tr td:first-child,
+.THIS .slds-table tr th:first-child {
+	padding-left: 1rem;
+}
+.THIS .slds-table tr td:last-child,
+.THIS .slds-table tr th:last-child {
+	padding-right: 1rem;
+}
+.THIS .slds-table tr + tr {
+	border-top: 1px solid token(grayAccent);
+}
+.THIS .slds-table .sortIcon {
+	color: #065e66;
+	font-size: 13px;
+	padding-left: 4px;
+}
+
+/* Forms */
+.THIS .slds-form-element__label {
+	font-weight: bold;
+	color: #3e3e3c;
+}
+
+.THIS .slds-form-element__label .slds-required {
+	display: none;
+}
+
+.THIS .slds-select,
+.THIS .slds-input {
+	color: #706e6b;
+}
+
+.THIS .slds-textarea {
+	display: block;
+}
+
+.THIS .slds-has-error .slds-select,
+.THIS .slds-has-error .slds-input,
+.THIS .slds-has-error .slds-textarea {
+	box-shadow: none;
+	border-color: #c23934;
+}
+
+.THIS .slds-input[inputmode='decimal'] {
+	padding-right: 0;
+}
+
+/* Buttons */
+.THIS .slds-button {
+	/* background-color: transparent;
+  border-radius: 3px;
+  border-width: 1px;
+  border-color: token(tan);
+  color: token(greenPrimary);
+  font-size: 10px;
+  vertical-align: middle;
+  padding: 7px 10px;
+  line-height: 1em; */
+}
+
+.THIS .slds-button:hover,
+.THIS .slds-button:focus {
+	/* background-color: token(greenPrimary);
+  border-color: token(greenPrimary);
+  color: token(tan); */
+}
+
+/* Inputs */
+.THIS .slds-input {
+	border-color: token(tan);
+	font-size: 12px;
+	border-radius: 3px;
+	vertical-align: middle;
+	min-height: 0;
+    height: 32px;
+}
+
+.THIS .slds-input:focus,
+.THIS .slds-select:focus {
+	border-color: token(greenPrimary);
+	outline: none;
+	box-shadow: none;
+}
+
+.THIS .slds-select {
+	border-color: token(tan);
+	font-size: 12px;
+	border-radius: 3px;
+	vertical-align: middle;
+	min-height: 0;
+}
+
+.THIS .slds-input[inputmode='decimal'] {
+	/* padding: 6px 10px;
+  line-height: 1em; */
+}
+
+.THIS .hide-label .slds-form-element__label {
+	display: none;
+}
+
+/* box */
+.THIS .slds-box {
+	box-shadow: rgba(0, 0, 0, 0.1) 0 2px 2px;
+    background:white;
+}
+.THIS .slds-box__header {
+  background: #E7E6E2;
+  border-bottom: 1px solid #d4d4d4;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 calc(var(--lwc-spacingMedium) + var(--lwc-spacingSmall));
+  margin-left: calc(-1 * var(--lwc-spacingMedium));
+  margin-right: calc(-1 * var(--lwc-spacingMedium));
+  width: calc(100% + 2 * var(--lwc-spacingMedium))
+}
+
+.THIS .slds-tabs_default__nav {
+  margin-left: calc(-1 * var(--lwc-spacingMedium));
+  margin-right: calc(-1 * var(--lwc-spacingMedium));
+  width: calc(100% + 2 * var(--lwc-spacingMedium))
+}
+
+.THIS .slds-box__heading-1 {
+  font-size: 16px;
+}
+
+.THIS .slds-box__heading-2 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.THIS .box-header {
+}
+
+/* Action Bar */
+.THIS .action-bar {
+	position: sticky;
+	bottom: 0;
+	left: -10px;
+	right: -10px;
+	background-color: token(greenSuperDark);
+	color: white;
+	display: flex;
+	padding: 24px;
+	justify-content: space-between;
+	z-index: 1000;
+	margin: 24px -24px -12px -24px;
+}
+
+.THIS .action-bar > * {
+	width: 100%;
+}
+
+/* Modals */
+.THIS.productDetailsModal {
+}
+
+.THIS .slds-modal__container {
+	width: 100%;
+	max-width: 900px;
+}
+
+.THIS .slds-modal__content {
+	padding: 4em 3em;
+	border-radius: 12px;
+}
+
+.THIS .slds-modal__close {
+	top: 1em;
+	right: 1em;
+	padding: 9px;
+	z-index: 100;
+	border: none;
+	color: #444;
+}
+
+.THIS .slds-modal__close:hover,
+.THIS .slds-modal__close:focus {
+	background-color: transparent;
+	color: token(greenPrimary);
+	border: none;
+}
+
+.THIS .closeIcon {
+	font-size: 2em;
+}
+
+/* Modal Buttons */
+.THIS.productDetailsModal .slds-button {
+	font-size: 12px;
+}
+.THIS .cancelButton{
+    color: token(tanLight);
+    background-color: token(greenSuperDark);
+    font-family: "Alliance Neue";
+    font-size: 12px;
+}
+.THIS .draftButton{
+    color: token(greenAccent);
+    font-family: "Alliance Neue";
+    font-size: 12px;
+    text-align: center;
+    background-color: token(greenSuperDark);
+}
+.THIS .submitButton{
+    color: #25282A;
+    font-family: "Alliance Neue";
+    font-size: 12px;
+    text-align: center;
+    background-color: #b0b1b2;
+}
+.THIS .submitButtonGreen{
+    color: #fff;
+    font-family: "Alliance Neue";
+    font-size: 12px;
+    text-align: center;
+    background-color: token(greenPrimary);
+    border-color:token(black);
+}
+.THIS .fullWidth{
+    width: 100%;
+}
+.THIS .NOWRAP{
+    white-space: nowrap;
+}
+.THIS .searchAndExport{
+    color:token(greenPrimary);
+    font-size:14px;
+}
+.THIS .clickable{
+    cursor: pointer;
+}
+.THIS .line-through{
+    text-decoration: line-through;
+}
+/* Old Code */
+/*
+.THIS.roboto, .THIS .roboto{
+    font-family: 'Roboto', sans-serif;
+}
+.THIS.montserrat, .THIS .montserrat{
+    font-family: 'Montserrat', sans-serif;
+}
+.THIS.workSans, .THIS .workSans{
+	font-family: 'Work Sans', sans-serif;
+}
+.THIS.workSansSemiBold, .THIS .workSansSemiBold{
+	font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+}
+
+.THIS .properCase{
+	text-transform: capitalize;
+}
+
+.THIS .hide-label label, .THIS.hide-label label{
+    display: none;
+}
+.THIS.clickable, .THIS .clickable{
+    cursor: pointer;
+}
+.THIS .productPrice{
+    font-size: 18px;
+    font-weight: 600;
+    color:#0c0d0d;
+}
+.THIS .productName{
+    font-size: 18px;
+    /*color: #000;#ba8c4f; $/
+    color: #0c0d0d;
+}
+.THIS .productText{
+    font-size: 16px;
+    color: #0c0d0d;/*#ba8c4f; $/
+    margin-bottom:5px;
+    font-family: 'Work Sans', sans-serif;
+}
+.THIS .producerName{
+    font-size: 20px;
+    color: #0c0d0d;/*#ba8c4f; $/
+    margin-bottom:5px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+.THIS .productArticle{
+    /*background-color: #c9c9c9;/*#242529; $/
+    border:none;
+}
+
+.THIS .fullWidth{
+    width: 100%;
+}
+.THIS .line-through{
+    text-decoration: line-through;
+    font-size: 18px;
+    font-weight: normal;
+    /*color: red!important; $/
+}
+.THIS .a-meter {
+    border-radius: 1px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.4), inset 0 0 0 1px rgba(0,0,0,.1);
+    height:17px;
+}
+.THIS .a-meter .a-meter-bar {
+    border-radius: 1px;
+    background: #fb0;
+    background: -webkit-linear-gradient(top,#ffce00,#ffa700);
+    background: linear-gradient(to bottom,#ffce00,#ffa700);
+    background-color: #ffce00;
+    -webkit-transition: width .5s ease;
+    transition: width .5s ease;
+    float: left;
+    font-size: 0;
+    height: 100%;
+    width: 0;
+}
+.THIS .slds-form-element__label{
+    margin-right:0;
+}
+.THIS .max300{
+    height: 300px !important;
+    width: 300px !important;
+}
+.THIS .max250{
+    height: 250px !important;
+    width: 250px !important;
+}
+.THIS .whiteIcons svg{
+    fill:#fff;
+}
+.THIS .deepJade{
+    background-color:#065E66;
+}
+
+
+.THIS.slds-button.theme, .THIS .slds-button.theme{
+    outline: 0;
+    letter-spacing: 3px;
+    width: 120px;
+    padding: .15rem 0;
+    border-radius: 0;
+}
+.THIS .slds-button_brand.theme{
+    color: #FFF;
+    background-color: #065E66;
+    border: 2px solid #065E66;
+}
+.THIS .slds-button_brand.theme:disabled{
+    background-color: rgba(6, 94, 102, .5);
+    color: rgba(255, 255, 255, .5);
+    border: 2px solid transparent;
+}
+.THIS .slds-button_brand.theme:focus, .THIS .slds-button_neutral.theme:focus{
+    box-shadow: none;
+}
+
+.THIS .slds-button_neutral.theme{
+    border: 2px solid #065E66;
+    color: #065E66;
+    background-color: #FFF;
+}
+.THIS .slds-button_neutral.theme:disabled{
+    background-color: rgba(255, 255, 255, .7)
+}
+.THIS.fullWidth, .THIS .fullWidth{
+    width: 100% !important;
+}
+.THIS.slds-button_brand.amber, .THIS .slds-button_brand.amber{
+    border-color: #B2772B;
+    background-color: #B2772B;
+}
+.THIS.slds-button_brand.jade, .THIS .slds-button_brand.jade{
+    border-color: #065e66;
+    background-color: #065e66;
+}
+.THIS.slds-button_neutral.amber, .THIS .slds-button_neutral.amber, .THIS.slds-button.text.amber, .THIS .slds-button.text.amber{
+    color: #B2772B;
+}
+.THIS.slds-button_neutral.amber:disabled, .THIS .slds-button_neutral.amber:disabled, .THIS.slds-button.text.amber:disabled, .THIS .slds-button.text.amber:disabled{
+    color: rgba(178, 119, 43, .3);
+}
+.THIS .slds-file-selector__button{
+    background-color: #065E66;
+    color: #fff;
+    border-radius: 0;
+    padding: 1rem;
+}
+.THIS .slds-carousel__content{
+  display: none!important;
+}
+.THIS .slds-carousel__indicator-action.slds-is-active{
+  color: #065e66;
+  background: #065e66;
+  border-color: #065e66;
+}
+.THIS .max300 .slds-carousel__image img, .THIS .max300 .slds-carousel__panel div[role="tabpanel"]{
+    height: 300px !important;
+    width: 300px !important;
+}
+.THIS .max250 .slds-carousel__image img, .THIS .max250 .slds-carousel__panel div[role="tabpanel"]{
+    height: 250px !important;
+    width: 250px !important;
+}
+.THIS .slds-carousel__panel-action:focus{
+  box-shadow: none;
+  border-color:transparent;
+}
+.THIS .slds-carousel__panel-action{
+  border: none;
+}
+.THIS .sortable{
+    cursor:pointer;
+}
+.THIS .sortIcon{
+    color: #065e66;
+    font-size: 11px;
+} */

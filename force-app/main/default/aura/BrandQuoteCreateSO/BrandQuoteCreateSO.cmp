@@ -1,0 +1,42 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="DataCRUDUtility">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="recordStatus" type="String" />
+    <aura:attribute name="error" type="String" default=""/> 
+    <aura:attribute name="isCancelled" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:html tag="style">
+        
+             .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+
+    </aura:html> 
+    <header class="slds-modal__header" style="width: 600px !important;">
+        
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.recordName}</h2>
+      </header>
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"  style="width: 600px !important;">
+
+          <aura:if isTrue="{!v.isCancelled}">
+              <ui:outputText value="{!v.error}" aura:id="errorMsg"/>
+              <aura:set attribute="else">
+                  <p>Create New Sales Order?</p>
+              </aura:set>
+          </aura:if>
+        
+      </div>
+      <footer class="slds-modal__footer"  style="width: 600px !important;">
+          <aura:if isTrue="{!!v.isCancelled}">
+              <lightning:button class="slds-button_brand" onclick="{!c.createSO}" label="Yes" />
+          </aura:if>
+        <lightning:button class="slds-button_neutral" onclick="{!c.cancel}" label="{!if(v.isCancelled,'Ok','No')}" />
+      </footer>
+   
+  
+
+    
+    
+</aura:component>

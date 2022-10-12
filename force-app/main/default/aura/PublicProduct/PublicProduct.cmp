@@ -1,0 +1,101 @@
+<aura:component extends="c:utility" controller="ProductsCtlr">
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+  <aura:attribute name="product" type="Map" default="" required="true" />
+  <aura:attribute name="isList" type="Boolean" default="false" />
+  <aura:attribute name="isPublic" type="Boolean" default="false" />
+  <aura:attribute name="warehouseTotalOrderedMap" type="Map" default="" />
+  <aura:attribute name="largeSize" type="Boolean" default="true" />
+    <aura:attribute name="fromPublicProducts" type="Boolean" default="false" />
+    <aura:attribute name="brandId" type="String" default="" />
+	<aura:registerEvent name="changeBreadCrumbEvent" type="c:changeBreadcrumbEvent" />
+  <lightning:overlayLibrary aura:id="overlay" />
+  <aura:if isTrue="{!v.isList}">
+    <lightning:layout multipleRows="true" class="productArticle">
+      <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="3" largeDeviceSize="3">
+        <img src="{!v.product.imageUrl}" class="responsive clickable" onclick="{!c.onProductClick}" />
+      </lightning:layoutItem>
+      <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="7" largeDeviceSize="7" padding="horizontal-small">
+        <div class="slds-show_inline-block slds-p-vertical_small fullWidth " style="vertical-align: top;">
+          <ul class="slds-has-inline-block-links clickable" onclick="{!c.onProductClick}">
+            <li class="productName slds-truncate montserrat uppercase" title="{!v.product.producerName}">{!v.product.producerName}&nbsp;<div class="slds-show_inline-block">
+                <c:productRating product="{!v.product}" rating="{!v.product.rating}" />
+              </div>
+            </li>
+            <li class="productName slds-truncate workSans" title="{!v.product.shortDescrption}">{!v.product.shortDescrption}</li>
+
+            <li class="productText slds-truncate" title="{!v.product.strainName}">{!v.product.strainName}&nbsp;</li>
+            <li class="productText slds-truncate" title="{!v.product.strainType}">
+              <span style="{!'padding: 0 3px;border-radius: 3px;'+if(equals(v.product.strainTypeBGColor,'','','color:#fff;background-color:'+v.product.strainTypeBGColor))}">{!v.product.strainType}</span>&nbsp;
+            </li>
+            <li class="productDescription slds-truncate">{!v.product.description}</li>
+          </ul>
+
+          <div class="slds-show_inline-block slds-scrollable" style="{!or(v.product.productDetails == undefined,or(v.product.productDetails == 'undefined',v.product.productDetails == ''))?'display:none':''}">
+            <aura:unescapedHtml value="{!v.product.productDetails}" />
+          </div>
+
+          <ul class="slds-list_dotted" style="margin-left:0">
+            <aura:if isTrue="{!!empty(v.product.cultivationMethod)}">
+              <li class="productText slds-truncate" title="{!v.product.cultivationMethod}">{!v.product.cultivationMethod}</li>
+            </aura:if>
+          </ul>
+        </div>
+      </lightning:layoutItem>
+
+      <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="2" largeDeviceSize="2" padding="around-small">
+        <aura:renderIf isTrue="{!v.product.discount>0}">
+          <ui:outputCurrency class="productPrice workSansSemiBold" value="{!v.product.salePrice}" />&nbsp;
+        </aura:renderIf>
+        <!--<ui:outputCurrency class="{!'productPrice'+if(v.product.discount>0,' workSans line-through',' workSansSemiBold')}" value="{!v.product.price.unitPrice}" />-->
+          <c:availableInventoryComponent isCurrencyFld="true" label="{!v.product.price.unitPrice}" labelClass="{!' productPrice'+if(v.product.discount>0,' workSans line-through',' workSansSemiBold')}" helpText="{!v.product.warehouseInventoryDetails}" required="false"/>
+        <!--ui:outputCurrency class="productPrice" value="{!v.product.price.unitPrice}" /-->
+        <c:addToCart isBrand="{!v.isBrand}" fromPublicProducts="{!v.fromPublicProducts}" product="{!v.product}" allowSample="true" showQuantityInput="{!v.isBrand}" />
+      </lightning:layoutItem>
+    </lightning:layout>
+
+    <aura:set attribute="else">
+      <div class="{!'productBox' + (v.largeSize ? ' productBox--large' : '')}" style="min-width:300px;">
+        <article class="slds-card productArticle" onclick="{!c.onProductDetails}">
+          <div class="slds-card__header">
+            <div aura:id="preview" class="{!$Browser.isTablet ? 'eyeballforipad' : 'eyeball'}" onclick="{!c.onProductClick}"></div>
+            <header class="slds-media slds-has-flexi-truncate">
+              <img src="{!v.product.imageUrl}" class="responsive clickable" />
+            </header>
+          </div>
+          <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-grid slds-gutters">
+              <div class="slds-col slds-size_1-of-2">
+                <div>
+                  <p class="slds-truncate producerName" title="{!v.product.producerName}">{!v.product.producerName}</p>
+                  <p class="productFamily slds-truncate" title="{!v.product.shortDescrption}">{!v.product.shortDescrption}</p>
+                </div>
+              </div>
+              <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                
+              </div>
+            </div>
+
+            <p class="productDescription">{!v.product.productFamily}</p>
+
+            <div class="slds-grid  slds-m-bottom_medium">
+              <div class="slds-col slds-size_6-of-12">
+                
+              </div>
+
+              <div class="slds-col slds-size_6-of-12 slds-text-align_right">
+                <span class="listPriceText">
+                   {!v.product.MOQ} Units/Case
+                </span>
+              </div>
+
+            </div>
+
+            <div class="add-to-card" aura:id="addcard">
+              <c:addToCart isBrand="{!v.isBrand}" fromPublicProducts="{!v.fromPublicProducts}" product="{!v.product}" allowSample="true" showQuantityInput="{!v.isBrand}" showDetails="true" passiveAction="true" />
+            </div>
+          </div>
+        </article>
+      </div>
+    </aura:set>
+  </aura:if>
+</aura:component>

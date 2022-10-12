@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Earliest_Packaging_Date2__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>NOTE: Based on PWO date and US Holidays. Standard Lead-Time 7 Calendar Days</inlineHelpText>
+    <label>Earliest Packaging Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

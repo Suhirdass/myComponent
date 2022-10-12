@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Refresh username on profile update">
+    <aura:attribute name="username" type="String" default="" />
+</aura:event>

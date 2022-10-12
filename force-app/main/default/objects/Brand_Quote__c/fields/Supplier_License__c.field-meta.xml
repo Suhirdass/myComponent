@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Supplier_License__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Supplier License</label>
+    <lookupFilter>
+        <active>true</active>
+        <booleanFilter>1 OR 2</booleanFilter>
+        <filterItems>
+            <field>State_Licenses__c.License_Name__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Supplier_Name__c</valueField>
+        </filterItems>
+        <filterItems>
+            <field>State_Licenses__c.State_License_Holder__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Supplier_Name__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>State_Licenses__c</referenceTo>
+    <relationshipLabel>Brand Quotes</relationshipLabel>
+    <relationshipName>Brand_Quotes2</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

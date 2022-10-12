@@ -1,0 +1,185 @@
+<apex:page controller="PrintOrdersPdfCtlr" renderAs="pdf" showHeader="false"
+           sidebar="false" applyBodyTag="false" applyHtmlTag="false" action="{!callgetServiceTicketsData}">
+    <html>
+        <head>
+            <style type="text/css">
+                html,body,div,span,table,thead,tbody,tr,th,td{
+            		font-family:'sans-serif';
+            	}
+                table
+                {
+                border-collapse: collapse;
+                border: none;
+                }
+                @page{
+                margin-top: 3cm;
+                size: A4 landscape;
+                font-size: 13px;
+                font-family:'sans-serif';
+                @top-center {
+                content: element(header);
+                }
+                @bottom-right {
+                content: element(footer);
+                }
+                }
+                @page :first {
+                @top-center {
+                content: element(header);
+                }
+                }
+                * {
+                margin: 0px;
+                padding: 0px;
+                }
+                div.header {
+                height: 130px;
+                text-align: left;
+                position: running(header);
+                }
+                div.content {
+                margin-top: 30px;
+                }
+                div.right {
+                float: right;
+                }
+                .stationName {
+                text-align: right;
+                font-weight: bold;
+                font-size: 20pt;
+                margin-bottom: 10px;
+                }
+                .footerAlign{
+                text-align: right;
+                margin-bottom: 10px;
+                }
+                .sectionHeader {
+                width: 100%;
+                background-color: #eee;
+                font-size: 16pt;
+                padding: 5px;
+                margin: 20px 0px;
+                font-weight: bold;
+                }
+                table {
+                width: 100%;
+                text-align: left;
+                border-collapse: collapse;
+                -fs-table-paginate: paginate;
+                }
+                th,td{
+                padding:4px;
+                }
+                thead{
+                background: #e7e6e2;
+                display: table-header-group;
+                text-align: center;
+                }
+                th{
+                font-size:12px;
+                }
+                td{
+                font-size:13px;
+                }
+                tr.noBorder td {
+                border: 0;
+                }
+                .labelCol {
+                white-space: nowrap;
+                width: 1%;
+                }
+                div.footer {
+                height: 100px;
+                text-align: left;
+                position: running(footer);
+                }
+                .pagenumber:before {
+                content: counter(page);
+                }
+                .pagecount:before {
+                content: counter(pages);
+                }
+				tfoot{display: table-footer-group;}
+            </style>
+        </head>
+        <div class="header"   >
+            <table>
+                <tr>
+                    <td>
+                        <br/>
+                        <img src="{!$Resource.filigreenLogoHeader}" style="height:50px;width:200px;"/>
+                    </td>
+                    <td>
+                        <br/>
+                        <h1 class="stationName">{!HeaderTxt}</h1>
+                    </td>
+                </tr>
+            </table>
+            
+        </div> 
+        
+        <div class="footer">
+            <div class="footerAlign" id="footerId">
+                <apex:outputText value=" {!NOW()}"/>
+            </div> 
+        </div>
+        <div class="tbl-header">
+            <table  border="1" cellspacing="0" cellpadding="6" width="100%">
+                <thead>
+                    <tr>                    
+                        <th rowspan="1" colspan="1" aria-sort="ascending"  data-sortfield="Name">
+                            <span class="headerText">Order #</span>
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending"  data-sortfield="CreatedDate">
+                            <span class="headerText">PO</span>                        
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending"  data-sortfield="CreatedDate">
+                            <span class="headerText">Business Name</span>                        
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending" data-sortfield="Brand_Name__r.Name">
+                            <span class="headerText">Delivered Date</span>                        
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending"  data-sortfield="Brand_Contact__r.Name">
+                            <span class="headerText">Status</span>                        
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending"  data-sortfield="Transfer_Method__c">
+                            <span class="headerText"># of Products</span>                        
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending">
+                            <span class="headerText">Order Total</span>
+                        </th>
+                        <th rowspan="1" colspan="1" aria-sort="ascending">
+                            <span class="headerText">Sales Rep</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat var="innerList" value="{!rec}">
+                        <apex:repeat var="record" value="{!innerList}">
+                            <tr>
+                                <td>{!record.name}</td>
+                                <td>{!record.retailerPO}</td>
+                                <td>{!record.retailerDBA}</td><!--retailerName-->
+                                <td>
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!record.deliveredDate}" /> </apex:outputText>
+                                </td>
+                                <td>{!record.status}</td>
+                                <td>
+                                    <apex:outputText value="{0, number, 0}">
+                                        <apex:param value="{!record.totalLineItems}" />
+                                    </apex:outputText>
+                                </td>
+                                <td>
+                                    <apex:outputText value="{0,number,$###,###,###,##0.00}">
+                                        <apex:param value="{!record.total}"/>
+                                    </apex:outputText>
+                                </td>
+                                <td>{!record.salesPersonName}</td>
+                            </tr> 
+                        </apex:repeat>
+                    </apex:repeat>                    
+                </tbody>
+            </table>
+        </div>
+    </html>    
+</apex:page>

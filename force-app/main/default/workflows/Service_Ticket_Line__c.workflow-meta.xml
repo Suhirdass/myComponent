@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Calculate_Converted_Cases</fullName>
+        <field>Total_Converted_Cases__c</field>
+        <formula>IF(Qty_Per_Multi_Unit__c = 0 , 0 , 
+IF( 
+ISPICKVAL(Package_Type__c, &apos;Pre-Rolling&apos;)|| 
+ISPICKVAL(Package_Type__c,&apos;Pre-Roll Packing&apos;) , 
+Total_Pre_Roll_Packs__c / Qty_Per_Multi_Unit__c ,
+IF( 
+New_Packaged_Product__r.Cannabis_Weight__c &gt; 0 &amp;&amp; 
+Total_Cannabis_Weight_g__c &gt; 0 &amp;&amp; 
+Converted_Single_Qty__c &gt; 0 , 
+Converted_Single_Qty__c / Qty_Per_Multi_Unit__c ,
+0
+)
+)
+)</formula>
+        <name>Calculate Converted Cases</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_Total_Label_Qty</fullName>
+        <field>Total_Label_Qty__c</field>
+        <formula>IF(
+OR(
+ISPICKVAL(Package_Type__c,&apos;Pre-Rolling&apos;),
+ISPICKVAL(Package_Type__c,&apos;Pre-Roll Packing&apos;)
+), 
+Total_Pre_Roll_Packs__c * Subtotal_Label_Qty__c ,
+IF(
+New_Packaged_Product__r.Cannabis_Weight__c &gt; 0 &amp;&amp; 
+Total_Cannabis_Weight_g__c &gt; 0 &amp;&amp; 
+Converted_Single_Qty__c &gt; 0 ,
+Converted_Single_Qty__c * Subtotal_Label_Qty__c ,
+0
+)
+)</formula>
+        <name>Calculate Total Label Qty</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Update Total Label Qty</fullName>
+        <actions>
+            <name>Calculate_Converted_Cases</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Calculate_Total_Label_Qty</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED( LastModifiedDate)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

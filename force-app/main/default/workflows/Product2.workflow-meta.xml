@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>New_Product_Notification</fullName>
+        <description>New Product Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>New_Product_Notification</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/New_Product_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>Product_below_Qty_0</fullName>
+        <description>Product below Qty 0</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>vijay@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Product_below_0_Qty</template>
+    </alerts>
+    <alerts>
+        <fullName>Safety_Stock_Level_Low_Alert</fullName>
+        <description>Safety Stock Level Low Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Safety_Stock_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <recipient>Order_Administrators</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>ravi@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Safety_Stock_Level_Low_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>Safety_Stock_Level_Low_Alert_to_Brand</fullName>
+        <description>Safety Stock Level Low Alert to Brand</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Safety_Stock_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <recipient>Order_Administrators</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>khanh@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>max@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>vijay@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Safety_Stock_Level_Low_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>Safety_Stock_Level_Medium_Alert_to_Brand</fullName>
+        <description>Safety Stock Level Medium Alert to Brand</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Safety_Stock_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <recipient>Order_Administrators</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>ravi@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Safety_Stock_Level_Medium_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>Safety_Stock_Level_ow_Alert</fullName>
+        <description>Safety Stock Level ow Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Safety_Stock_Contact_Name__c</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <recipient>Order_Administrators</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <recipient>ravi@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>All_templates/Safety_Stock_Level_Low_Alert</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Activate_After_Approval</fullName>
+        <field>IsActive</field>
+        <literalValue>1</literalValue>
+        <name>Activate After Approval</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Approve_to_Activate</fullName>
+        <field>IsActive</field>
+        <literalValue>1</literalValue>
+        <name>Approve to Activate</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_UCT_1</fullName>
+        <field>Unit_Cultivation_Tax_1__c</field>
+        <formula>IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Flower&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;GM&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 9.65/28.35*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Flower&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;OZ&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 9.65*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Flower&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;LB&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 154.4*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Leaves&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;GM&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 2.87/28.35*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Leaves&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;OZ&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 2.87*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Leaves&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;LB&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 45.92*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Fresh&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;GM&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 1.35/28.35*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Fresh&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;OZ&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 1.35*Cannabis_Ratio_1__c,
+IF(AND(ISPICKVAL(Cannabis_Category_1__c,&apos;Fresh&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;LB&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_1__c * 21.60*Cannabis_Ratio_1__c,null)))))))))</formula>
+        <name>Calculate UCT 1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_UCT_2</fullName>
+        <field>Unit_Cultivation_Tax_2__c</field>
+        <formula>IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Flower&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;GM&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 9.65/28.35*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Flower&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;OZ&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 9.65*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Flower&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;LB&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 154.4*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Leaves&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;GM&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 2.87/28.35*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Leaves&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;OZ&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 2.87*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Leaves&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;LB&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 45.92*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Fresh&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;GM&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 1.35/28.35*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Fresh&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;OZ&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 1.35*Cannabis_Ratio_2__c, 
+IF(AND(ISPICKVAL(Cannabis_Category_2__c,&apos;Fresh&apos;),ISPICKVAL(Cannabis_Weight_UOM__c,&apos;LB&apos;),ISPICKVAL( Apply_Cultivation_Tax__c,&apos;Yes&apos;)), Unit_Cannabis_Weight_2__c * 21.60*Cannabis_Ratio_2__c,null)))))))))</formula>
+        <name>Calculate UCT 2</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Calculate_WAVG_Cannabis_Weight</fullName>
+        <field>Cannabis_Weight__c</field>
+        <formula>IF(ISBLANK(Unit_Cannabis_Weight_2__c),Unit_Cannabis_Weight_1__c,(Unit_Cannabis_Weight_1__c*Cannabis_Ratio_1__c)+(Unit_Cannabis_Weight_2__c*Cannabis_Ratio_2__c))</formula>
+        <name>Calculate WAVG Cannabis Weight</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Check_Hide_from_Markplace</fullName>
+        <field>Hide_From_Marketplace__c</field>
+        <literalValue>1</literalValue>
+        <name>Check Hide from Markplace</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Gross_Carton_Weight</fullName>
+        <field>Carton_Gross_Weight__c</field>
+        <formula>IF( MOQ__c &gt; 1, Unit_Gross_Weight__c *  MOQ__c *1.05, Null)</formula>
+        <name>Update Gross Carton Weight</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Product_Status</fullName>
+        <field>Status__c</field>
+        <literalValue>Inactive</literalValue>
+        <name>Update Product Status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Status_to_Active</fullName>
+        <field>Status__c</field>
+        <literalValue>Active</literalValue>
+        <name>Update Status to Active</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Calculate Product Unit Cannabis WAVG</fullName>
+        <actions>
+            <name>Calculate_UCT_1</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Calculate_UCT_2</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Calculate_WAVG_Cannabis_Weight</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED(LastModifiedDate)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Product below 0qty</fullName>
+        <actions>
+            <name>Product_below_Qty_0</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <description>Email when product &lt; 0</description>
+        <formula>AND( IsActive , RecordType.DeveloperName  = &apos;Product&apos;,  Available_Qty__c  &lt; 0, Available_Qty__c   &lt;&gt;  0, ISCHANGED(Available_Qty__c) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Safety Stock Level Low Alert</fullName>
+        <active>true</active>
+        <formula>(Enable_Replenishment_Alert__c = True) &amp;&amp;  (Available_Inventory__c &lt;  Safety_Stock_Low__c )</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Safety_Stock_Level_ow_Alert</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Safety_Stock_Level_Low_Alert</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>3</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Safety Stock Level Medium Alert</fullName>
+        <active>false</active>
+        <formula>(Enable_Replenishment_Alert__c = True) &amp;&amp;  (Available_Inventory__c &lt; Safety_Stock_Medium__c )</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Safety_Stock_Level_Medium_Alert_to_Brand</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Safety_Stock_Level_Medium_Alert_to_Brand</name>
+                <type>Alert</type>
+            </actions>
+            <timeLength>3</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

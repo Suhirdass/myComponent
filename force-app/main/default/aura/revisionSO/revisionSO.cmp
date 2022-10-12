@@ -1,0 +1,33 @@
+<aura:component extends="c:utility" controller="RevisionSOController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="SO" type="Map" default="{}" />
+    <aura:attribute name="showAlert" type="Boolean" default="false"/>
+    <aura:attribute name="changeFee" type="decimal" default="0"/>
+    <aura:attribute name="versionNumber" type="decimal" default="0"/>
+    <aura:attribute name="SOLIVersionMap" type="Map" default="{}" />
+    <aura:attribute name="SO_NO_LINES_MODIFIED_FOR_REVISION" type="String" default=""/>
+    <aura:attribute name="SO_ORDER_REVISION_PRICE_MESSAGE" type="String" default=""/>
+    <aura:attribute name="isAllocatedLineItemsToolTip" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:html tag="style">
+        
+        .runtime_platform_actionsQuickActionWrapper {
+        display: flex;
+        flex-direction: unset !important;
+        max-height: 100%;
+        }
+    </aura:html>
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    <aura:if isTrue="{!v.showAlert}">
+        <header class="slds-modal__header" style="width: 600px !important;">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.SO.Name}</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 600px !important;" >
+            Each line change will incur a change fee to order.
+        </div>
+        <footer class="slds-modal__footer"  style="width: 596px !important;">
+            <lightning:button  class="slds-button_brand buttonsm" variant="brand" name='Yes' label='Yes' onclick='{!c.onRevisionYes}'/>
+            <lightning:button  class="slds-button buttonsm" name='No' label='No' onclick='{!c.onCancel}'/>
+        </footer>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tax_Payment_Validation__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(Total_Excise_Tax_Payments_Received__c &gt; Total_Excise_Tax_Amount__c, &quot;Tax Over Payment&quot;,
+IF(Total_Excise_Tax_Payments_Received__c &lt; Total_Excise_Tax_Amount__c, &quot;Tax Under Payment&quot;,Null))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Tax Payment Validation</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

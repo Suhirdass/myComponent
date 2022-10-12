@@ -1,0 +1,10 @@
+.THIS .checkGray{
+ 	font-size:30px; 
+    color: gray;
+    border-radius: 50%;
+}
+.THIS .checkGreen{
+ 	font-size:30px; 
+    color: red;
+    border-radius: 50%;
+}

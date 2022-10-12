@@ -1,0 +1,937 @@
+<apex:page controller="BrandQuotePDFCtlr" id="pg" title="{!brandQuote.Name}">
+    <c:waitingComponent />
+    <apex:slds />
+    <style>
+         .slds-scope .slds-notify_toast .slds-notify__close{
+        	top:24px;
+        }
+        .lookupInput a {
+            border: none!important;
+            padding : 0px !important;
+        }
+        .cke_dialog_body{
+            width: 80%;
+            margin-left: 10%;
+        }
+        .cke_dialog_tabs{
+        	margin-left: 10%;
+        }
+        .cke_dialog_contents_body,.cke_dialog_page_contents{
+        	padding:10px;
+        }
+        .cke_dialog_close_button{
+        	margin-right: 10% !important;
+        }
+        .hiddenCol {
+        	display:none;
+        }
+        #pg:frm:toFld_lkwgt{
+            padding: 0 !important;
+            border:  0 !important;
+        }
+        .moveIcon{
+            cursor: pointer;
+            padding: 2px;
+            border: 1px solid #e7e7e7;
+            border-radius: 3px;
+            height: 20px;
+            width: 20px;
+            margin:5px;
+        }
+        .addDiv{
+        	height : 119px;
+        }
+        .selectedRow{
+        	background-color: gainsboro;
+        }
+        #additionalTo tr, #ccTo tr {
+        	cursor:pointer;        
+        }
+        #additionalTo td, #ccTo td {
+        	padding: 4px 8px;
+        }
+        body{
+            padding:16px;
+            background-color: rgba(176, 196, 223, 1.0)!important;
+        }        
+        /* These are the gradients and image used in the Salesforce theme */
+        body:before {
+        	background-image: url(/_slds/images/themes/lightning_blue/lightning_blue_background.png),linear-gradient(to top, rgba(255, 255, 255, 0.0) 0, rgba(160, 180, 206, 1.0))!important;
+        }
+        body:after {
+        	background-image: linear-gradient(to bottom, rgba(176, 196, 223, 0.0) 60%, rgba(176, 196, 223, 1.0))!important;
+        }
+        .slds-template_iframe{
+        	background-color:transparent!important;
+        }
+        .slds-card{
+        	background:transparent!important;
+        }
+        .slds-media__figure {
+            flex-shrink: 0;
+            margin-right: var(--lwc-spacingSmall,0.75rem);
+        }
+    </style>
+    <script>
+        function sentEmailSuccess(){
+            showToastDiv('success','Email sent successfully.');
+            setTimeout(function(){ redirectBack(); }, 1000);
+        } 
+        function closePreview(){ 
+            var rId = '{!recordId}';
+            var tId = '{!selectedTemplatedId}';
+            var qId = '{!queryIdParams}';
+            var pageUrl = '/apex/BrandQuotePDF?id='+rId+'&QueryId='+qId+'&TemplateId='+tId+'&TemplateGroup=BrandSellQuote';
+            goBackToEmail();
+        } 
+        window.onload = function() {               
+            leadTemplateAndPreview();
+            document.getElementById('pg:frm:toFld').disabled = 'disabled';
+        };
+        function leadTemplateAndPreview(){
+            loadTemplateDataAndPreview();
+            showLoading(true);
+            return false;
+        }
+        var lstClicked=0;
+        function selectRow(ev,k,className){
+            console.log('className : '+className);
+            console.log('index : '+k);
+            console.log('event : ',ev);
+            var rows = document.getElementsByClassName(className);
+            console.log('Rows:',rows.length);
+            //debugger;
+            if(ev.ctrlKey){
+                rows[k].classList.add("selectedRow");
+                //rows[k].dataset.index = k;
+            }else if(ev.shiftKey){
+                for (i = parseInt(lstClicked)+1; i <= k; i++) {
+                    rows[i].classList.add("selectedRow");
+                    //rows[i].dataset.index = i;
+                }
+            }else{
+                var i;
+                for (i = 0; i < rows.length; i++) {
+                    rows[i].classList.remove("selectedRow");
+                }
+                console.log('Length:',rows.length);
+                console.log('i:',i);
+                console.log('k:',k);
+                rows[k].classList.add("selectedRow");
+                //rows[k].dataset.index = k;
+            }   
+            lstClicked = k;        
+        }
+        function selectContactRow(ev,k){
+            selectRow(ev,k,"searchedRow");    
+        }
+        function addEmail(className){
+            var addedEmails = '';
+            var table  = document.getElementById(className);
+            var rows = table.getElementsByTagName("tr");
+            console.log('Rows:',rows.length);
+            for (i = 0; i < rows.length; i++) {
+                var calls = rows[i].getElementsByTagName("td"); 
+                for(m = 0; m < calls.length; m++){
+                    addedEmails = addedEmails + calls[m].className + ' ';
+                }
+            }
+            var a = rows.length-1;
+            var selectedRow = document.getElementsByClassName("selectedRow");
+            for (i = 0; i < selectedRow.length; i++) {
+                var calls = selectedRow[i].getElementsByTagName("td");
+                for(m = 0; m < calls.length; m++){
+                    var colId, colIdx;
+                    if(calls[m].classList.contains("hiddenCol")){
+                        colId = calls[m].innerText;
+                        //colIdx = 'selectedRow-'+a;
+                        a++;
+                    }
+                    console.log('colId:',colId);
+                    if(calls[m].classList.contains("emailTd")){
+                        if(addedEmails.includes(colId) == false){
+                            var currentRow = table.insertRow(rows.length);
+                            //currentRow.classList.add(colIdx);
+                            var cell1 = currentRow.insertCell(0);
+                            cell1.innerHTML = calls[m].innerText;
+                            cell1.classList.add(colId);
+                        }
+                    }
+                }
+            }
+            var table = document.getElementById(className);
+            var rows = table.getElementsByTagName("tr");
+            var rLength = rows.length;
+            for(var i = 0; i < rLength; i++) {
+                if(rows[i].cells[0].innerText == ''){
+                    rows[i].remove();   
+                    rLength = rows.length;
+                    i--;
+                    continue;
+                }
+                rows[i].dataset.index = i;
+                rows[i].classList.add(className+'Row');
+                rows[i].addEventListener('click', function(event) {
+                    selectSelectedEmail(event,className+'Row')
+                    //selectRow(event,i,className);    
+                });
+            }
+        }
+        function selectSelectedEmail(event,className){
+            //debugger;
+            console.log('index:',event.currentTarget.dataset.index);
+            console.log('Class Name:',className);
+            selectRow(event,event.currentTarget.dataset.index,className);
+        }
+        function addEmailRow(className,emailStr){
+            var table  = document.getElementById(className);    
+            var rowNo = table.getElementsByTagName("tr").length;
+            var res = emailStr.split(",");
+            for(var i=0;i<res.length;i++){
+                var currentRow = table.insertRow(rowNo);
+                var cell1 = currentRow.insertCell(0);
+                cell1.innerHTML = res[i];
+                rowNo++;
+            }
+            var table = document.getElementById(className);
+            var rows = table.getElementsByTagName("tr");
+            for(var i = 0; i < rows.length; i++) {
+                rows[i].addEventListener('click', function() {
+                    selectRow(event,i,className);    
+                });
+            }
+        }
+        function removeEmail(className){
+            var table  = document.getElementById(className);
+            var rows = table.getElementsByTagName("tr");
+            for (var i = rows.length-1; i >= 0; i--) {
+                if(rows[i].classList.contains("selectedRow")){
+                    rows[i].remove();   
+                }
+            }
+        }
+        function addAllEmail(){
+            var additinalToEmailStr = emailStr('additionalTo');
+            var ccToEmailStr = emailStr('ccTo');
+            //var bccToEmailStr = emailStr('bccTo');
+            if(additinalToEmailStr != '' || ccToEmailStr != ''/* || bccToEmailStr != ''*/){
+                document.getElementById("pg:frm:additionalAdd").value = additinalToEmailStr;
+                document.getElementById("pg:frm:ccAdd").value = ccToEmailStr;
+                //document.getElementById("pg:frm:bccAdd").value = bccToEmailStr;
+                closeRecipients();
+            }else{
+                document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+                showToastDiv('error','Please add Recipients to Save.');
+            }
+        }
+        function  emailStr(className){
+            var emailStr = '';
+            var table  = document.getElementById(className);
+            var rows = table.getElementsByTagName("tr");
+            for (i = 0; i < rows.length; i++) {
+                var calls = rows[i].getElementsByTagName("td");
+                for(m = 0; m < calls.length; m++){
+                    emailStr = emailStr == '' ? calls[m].innerText : emailStr+','+calls[m].innerText;
+                }
+            }   
+            return emailStr;
+        }
+    	function removeAllRows(className){
+            var table  = document.getElementById(className);
+            table.innerHTML = "";
+        }
+        function addRecipients(){
+            console.log('Existing Emails:',document.getElementById("pg:frm:additionalAdd").value);
+            document.getElementById("pg:frm:srchBox").value = '';
+            loadEmail1();
+            removeAllRows('additionalTo');
+            removeAllRows('ccTo');
+            //removeAllRows('bccTo');
+            addEmailRow('additionalTo',document.getElementById("pg:frm:additionalAdd").value);
+            addEmailRow('ccTo',document.getElementById("pg:frm:ccAdd").value);
+            //addEmailRow('bccTo',document.getElementById("pg:frm:bccAdd").value);
+            document.getElementById("errorDiv").style.display = "none";
+            document.getElementById("fade").classList.remove("displayNone");
+            document.getElementById("fade").classList.add("displayBlock");
+            document.getElementById("recipientDiv").classList.remove("displayNone");
+            document.getElementById("recipientDiv").classList.add("displayBlock");           
+        }
+        function closeRecipients(){
+            removeAllRows('additionalTo');
+            removeAllRows('ccTo');
+            //removeAllRows('bccTo');
+            var fadeClasses = document.getElementById("fade").classList;
+            fadeClasses.add("displayNone");
+            fadeClasses.remove("displayBlock");
+            document.getElementById("fade").classList = fadeClasses;
+            var recipientDivClasses = document.getElementById("recipientDiv").classList;
+            recipientDivClasses.add("displayNone");
+            recipientDivClasses.remove("displayBlock");
+            document.getElementById("recipientDiv").classList = recipientDivClasses;
+            
+        }
+        function loadEml(){
+            document.getElementById("pg:frm:srchBox").style.borderColor ="rgb(221, 219, 218)";
+            var searchTxt  = document.getElementById('pg:frm:srchBox').value;
+            if(searchTxt == null || searchTxt == ''){
+                document.getElementById("pg:frm:srchBox").style.borderColor ="red";
+                return false;
+            }
+            loadEmail1();
+            return false;
+        }
+        function openAttachmentDiv(){
+            document.getElementById("pg:frm:fileName").value = '';
+            document.getElementById("fade").classList.remove("displayNone");
+            document.getElementById("fade").classList.add("displayBlock");
+            document.getElementById("attachmentDiv").classList.remove("displayNone");
+            document.getElementById("attachmentDiv").classList.add("displayBlock");   
+        }
+        function openAttachmentAlertDiv(){
+            document.getElementById("pg:frm:fileName").value = '';
+            document.getElementById("noFileSelectedDiv").classList.remove("displayNone");
+            document.getElementById("noFileSelectedDiv").classList.add("displayBlock");   
+        }
+        function closeAttachmentDiv(){
+            document.getElementById("fade").classList.add("displayNone");
+            document.getElementById("fade").classList.remove("displayBlock");
+            document.getElementById("attachmentDiv").classList.add("displayNone");
+            document.getElementById("attachmentDiv").classList.remove("displayBlock");
+        }
+        function closeAttachmentAlertDiv(){
+            document.getElementById("noFileSelectedDiv").classList.add("displayNone");
+            document.getElementById("noFileSelectedDiv").classList.remove("displayBlock");
+        }
+        function selectFile(){
+            var fileinput = document.getElementById("SnapshotInputfile");
+            fileinput.click();
+        }
+        function handleFileChange(){
+            var fileinput = document.getElementById("SnapshotInputfile");
+            var file = fileinput.files[0];  
+            if(file != undefined){
+                var filename = file.name;
+                document.getElementById("pg:frm:fileName").value = filename;
+                closeAttachmentAlertDiv();
+            }else{
+                document.getElementById("pg:frm:fileName").value = '';
+            }
+        }   
+    	function toastLaunch(){
+           
+            document.getElementById("errorIconId").style.display = "none";
+            document.getElementById("successIconId").style.display = "none";
+            document.getElementById('errorMsg').innerHTML = '';
+            var element = document.getElementById("ToastMessage");
+            document.getElementById("toastDiv").style.margin = "0px";
+            document.getElementById("toastDiv").style.padding = "0px";
+            element.classList.add("slds-hidden");        
+            return false;
+        }
+        function showToastDiv(type,msg){
+            
+            //error screen scroll to top
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+            document.getElementById('errorMsg').innerHTML = msg;
+                var element = document.getElementById("toastDiv");
+                element.style.margin = ".5rem";
+                element.style.paddingTop = "0.75rem";
+                element.style.paddingRight = "3rem";
+                element.style.paddingBottom = "0.75rem";
+                element.style.paddingLeft = "1.5rem";
+                if(type == 'success'){
+                    element.classList.add("slds-theme_success");
+                    element.classList.remove("slds-theme_error"); 
+                    document.getElementById("errorIconId").style.display = "none";
+                    document.getElementById("successIconId").style.display = "block";
+                }else if(type == 'error'){
+                    element.classList.add("slds-theme_error");
+                    element.classList.remove("slds-theme_success");
+                    document.getElementById("errorIconId").style.display = "block";
+                    document.getElementById("successIconId").style.display = "none";
+                }
+                var element = document.getElementById("ToastMessage");
+                element.classList.remove("slds-hidden");
+        }
+    </script>  
+    <apex:form id="frm">
+        <div class="demo-only slds-hidden" id='ToastMessage'>
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast " role="alert" id="toastDiv" style="margin: 0px;padding: 0px;">
+                    <span class="slds-assistive-text">success</span>
+                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        <svg class="slds-icon slds-icon_small" aria-hidden="true" id="successIconId" style="display:none;">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#success')}" />
+                        </svg>
+                        <svg class="slds-icon slds-icon_small" aria-hidden="true" id="errorIconId" style="display:none;">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#error')}" />
+                        </svg>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small " id="errorMsg"></h2>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close" onclick='toastLaunch();return false;'>
+                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="fade" class="blackOverlayScreen displayNone"></div>
+        <apex:pageMessages id="messages"></apex:pageMessages>
+        <apex:actionFunction name="redirectBack" action="{!redirectBack}" ></apex:actionFunction>
+        <apex:actionFunction name="goBackToEmail" action="{!goBackToEmail}" ></apex:actionFunction>
+        <apex:actionFunction name="sendEmail1" action="{!sendEmail}" reRender="messages" oncomplete="sentEmailSuccess();">
+            <apex:param assignTo="{!bodyStr}" id="a" name="b" value=""/>
+            <apex:param assignTo="{!additionalFiles}" id="af" name="af" value=""/>
+            <apex:param assignTo="{!defaultAttRemoved}" id="c" name="d" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!loadEmail}" name="loadEmail1" reRender="tblData"/>
+        <apex:actionFunction action="{!loadTemplate}" name="loadTemplateDataAndPreview" reRender="messages,scriptPanel" oncomplete="generatePDF(false);"/>
+        <apex:actionFunction action="{!createFile}" name="createAndPreview" reRender="messages,scriptPanel" oncomplete="showLoading(false);">
+            <apex:param name="data" assignTo="{!fileData}" value=""/>
+            <apex:param name="frmDownload" assignTo="{!fromDownload}" value=""/>
+            <apex:param name="sveAtt" assignTo="{!details.isSaveAsAttachment}" value=""/>
+            <apex:param name="sveActivity" assignTo="{!details.isLogActivity}" value=""/>
+        </apex:actionFunction>
+        <apex:outputPanel id="recipientPanel">
+            <div id="recipientDiv" class="popup displayNone"  style="width: 80%;margin-top: 25px;height:450px;overflow:auto;">
+                <header class="slds-modal__header">
+                    Add Recipients 
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div style="text-align: center;color: red;margin-top:-10px;display:none;" id="errorDiv">
+                        Please search and select a contact.
+                    </div>
+                    <table>
+                        <tr>
+                            <td style="width: 64%;max-widtd:64%">
+                                <h1 class="slds-p-top_xx-small slds-p-left_small slds-p-right_small slds-p-bottom_xx-small" style="font-size:14px;font-weight:bold">
+                                    Email Contact List
+                                </h1>
+                            </td>
+                            <td style="width: 1%;"></td>
+                            <td style="width: 35%;max-width: 35%;">
+                                <h1 class="slds-p-top_xx-small slds-p-left_small slds-p-right_small slds-p-bottom_xx-small" style="font-size:14px;font-weight:bold">
+                                    Additional To
+                                </h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="slds-box slds-box_small">
+                                    <apex:inputText id="srchBox" styleClass="slds-input" style="width:86%" html-placeholder="Enter a filter to start...." value="{!searchText}"/>
+                                    <button type="button" class="slds-button slds-button_neutral" onclick="loadEml();return false;">
+                                        Go
+                                    </button>
+                                    <div style="height: 156px;overflow-y:auto;overflow-x: hidden;">
+                                        <apex:outputPanel id="tblData">
+                                            <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="overflow: hidden;table-layout: fixed;">
+                                                <thead>
+                                                    <tr class="slds-line-height_reset">
+                                                        <th class="slds-truncate hiddenCol" scope="col" >
+                                                            <div class="slds-truncate" >Id</div>
+                                                        </th>
+                                                        <th class="slds-truncate" scope="col" style="max-width:15%;">
+                                                            <div class="slds-truncate" >Name</div>
+                                                        </th>
+                                                        <th class="slds-truncate" scope="col"  style="max-width:10%;">
+                                                            <div class="slds-truncate" >Type</div>
+                                                        </th>
+                                                        <th class="slds-truncate" scope="col" style="max-width:50%;">
+                                                            <div class="slds-truncate" >Email</div>
+                                                        </th>
+                                                        <th class="slds-truncate" scope="col" style="max-width:25%;">
+                                                            <div class="slds-truncate" >Account</div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:variable id="idx" value="{!0}" var="idx"/>
+                                                    <apex:repeat value="{!EmailWrapperList}" var="listItem">
+                                                        <tr data-index="{!idx}" class="slds-hint-parent searchedRow" onclick="selectContactRow(event,{!idx})" style="cursor:pointer;">
+                                                            <td class="hiddenCol slds-truncate" scope="col" >
+                                                                <div class="slds-truncate" >{!listItem.id}</div>
+                                                            </td>
+                                                            <td data-label="Account Name" class="slds-truncate" style="max-width:15%;">
+                                                                <div class="slds-truncate">{!listItem.name}</div>
+                                                            </td>
+                                                            <td data-label="Account Name" class="slds-truncate" style="max-width:10%;">
+                                                                <div class="slds-truncate">{!listItem.emailType}</div>
+                                                            </td>
+                                                            <td data-label="Account Name" class="emailTd slds-truncate" style="max-width:50%;">
+                                                                <div class="slds-truncate">{!listItem.email}</div>
+                                                            </td>
+                                                            <td data-label="Account Name" class="slds-truncate" style="max-width:25%;">
+                                                                <div class="slds-truncate">{!listItem.account}</div>
+                                                            </td>
+                                                        </tr>
+                                                        <apex:variable id="idx" value="{!idx+1}" var="idx"/>
+                                                    </apex:repeat>
+                                                </tbody>
+                                            </table>
+                                        </apex:outputPanel>
+                                    </div>
+                                    <div class="slds-col slds-size_4-of-4 slds-box slds-box_small">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-4 slds-p-around_xx-small">
+                                                Include:  
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-4 slds-p-around_xx-small">
+                                                <apex:inputCheckbox id="con" value="{!contacts}"/>&nbsp;Contacts
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-4 slds-p-around_xx-small">
+                                                <apex:inputCheckbox id="usr" value="{!users}"/>&nbsp;Users
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="vertical-align: top;">
+                                <div class="slds-col slds-size_4-of-4 slds-p-top_x-large addDiv">
+                                    <div class="slds-col slds-size_1-of-4 slds-p-right_small slds-p-left_small">
+                                        <div class="moveIcon" onclick="addEmail('additionalTo');">
+                                            <span class="slds-icon_container slds-icon-utility-right ">
+                                                <svg aria-hidden="true" class="slds-icon slds-icon-text-default slds-icon_xx-small">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                         xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#right">
+                                                    </use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Add</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-right_small slds-p-left_small">
+                                        <div class="moveIcon" onclick="removeEmail('additionalTo');">
+                                            <span class="slds-icon_container slds-icon-utility-left" style="cursor:pointer">
+                                                <svg aria-hidden="true" class="slds-icon slds-icon-text-default slds-icon_xx-small">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                         xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#left">
+                                                    </use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h1 class="slds-p-around_xx-small" style="font-size:14px;font-weight:bold">
+                                    &nbsp;
+                                </h1>
+                                <div class="slds-col slds-size_4-of-4 slds-p-top_x-large addDiv">
+                                    <div class="slds-col slds-size_1-of-4 slds-p-right_small slds-p-left_small">
+                                        <div class="moveIcon" onclick="addEmail('ccTo');">
+                                            <span class="slds-icon_container slds-icon-utility-right" style="cursor:pointer">
+                                                <svg aria-hidden="true" class="slds-icon slds-icon-text-default slds-icon_xx-small">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                         xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#right">
+                                                    </use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Add</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-right_small slds-p-left_small">
+                                        <div class="moveIcon" onclick="removeEmail('ccTo');">
+                                            <span class="slds-icon_container slds-icon-utility-left" style="cursor:pointer">
+                                                <svg aria-hidden="true" class="slds-icon slds-icon-text-default slds-icon_xx-small">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                         xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#left">
+                                                    </use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </td>
+                            <td style="vertical-align: top;">
+                                <div class="slds-col slds-size_4-of-4 slds-p-top_small slds-box slds-box_small addDiv" style="width: 317px;overflow: auto;">
+                                    <table id="additionalTo" class="additionalTo"></table>
+                                </div>
+                                <h1 class="slds-p-around_xx-small" style="font-size:14px;font-weight:bold">
+                                    CC To
+                                </h1>
+                                <div class="slds-col slds-size_4-of-4 slds-p-top_small slds-box slds-box_small addDiv " style="width: 317px;overflow: auto;">
+                                    <table id="ccTo" class="ccTo"></table>
+                                </div>
+                                <!--<h1 class="slds-p-around_xx-small" style="font-size:14px;font-weight:bold">
+                                    BCC To
+                                </h1>
+                                <div class="slds-col slds-size_4-of-4 slds-p-top_small slds-box slds-box_small addDiv " style="width: 317px;overflow: auto;">
+                                    <table id="bccTo" class="bccTo">   </table>
+                                </div>-->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <footer class="slds-modal__footer">   
+                    <button type="button" class="slds-button slds-button_neutral" onclick="closeRecipients();return false;">
+                        Cancel
+                    </button>
+                    <button type="button" class="slds-button slds-button_neutral" onclick="addAllEmail();return false;">
+                        Save
+                    </button>
+                </footer>
+                <div class="closePreviewIcon" onclick="closeRecipients();" style="position: absolute;right: -25px;top: -22px;height: 20px;width: 20px;border: 1px solid #ccc;border-radius: 4px;background-color: #000;color: #fff;padding-left: 6px;cursor: pointer;">
+                    x
+                </div>
+            </div>
+        </apex:outputPanel>        
+        <apex:outputPanel id="attachmentPanel">
+            <div id="attachmentDiv" class="popup displayNone"  style="height:200px;width: 50%;top: 40%;left:25%;">
+                <div class="closePreviewIcon" onclick="closeAttachmentDiv();" style="position: absolute;right: -25px;top: -22px;height: 20px;width: 20px;border: 1px solid #ccc;border-radius: 4px;background-color: #000;color: #fff;padding-left: 6px;cursor: pointer;">
+                    x
+                </div>
+                <div class="slds-is-relative">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_4-of-4 slds-p-around_small">
+                            <h1 style="font-size:18px;font-weight:bold">
+                                Attach File 
+                            </h1>
+                        </div>
+                        <div class="slds-col slds-size_4-of-4 slds-p-around_small">
+                            <apex:inputText styleClass="slds-input" id="fileName" style="width:83%;" disabled="true"/>
+                            <!--<apex:inputFile id="SnapshotInputfile" contentType="{!fileType}" fileName="{!fileName}" value="{!fileBody}" style="display:none;" onchange="handleFileChange();"/>-->
+                            <input type="file" id="SnapshotInputfile" name="myfile" style="display:none;" onchange="handleFileChange();"/>
+                            <button type="button" class="slds-button slds-button_neutral" onclick="selectFile();return false;">
+                                Select File
+                            </button>
+                            <div id="noFileSelectedDiv" class="displayNone" style="font-size:20px;color:red;font-weight:600">
+                                Please Select file.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align:right;position:absolute;right:20px;bottom:5px;" class="slds-p-bottom_xx-small">
+                    <button type="button" class="slds-button slds-button_neutral" onclick="closeAttachmentDiv();return false;">
+                        Cancel
+                    </button>
+                    <button type="button" class="slds-button slds-button_neutral" onclick="getFileData();return false;">
+                        Attach
+                    </button>
+                </div>
+            </div>
+        </apex:outputPanel>
+        <div class="slds-is-relative">
+            <article class="slds-card " style="background-color:#fff!important">
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_4-of-4 slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <div>
+                                    <span class="slds-icon_container slds-icon-standard-document" style="cursor:pointer;margin-right: var(--lwc-spacingSmall,0.75rem);">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default">
+                                            <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                 xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#document">
+                                            </use>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_5-of-7" style="margin:0 auto">
+                                            <h1  title="Record Title">
+                                                <div class="entityNameTitle slds-line-height_reset">Brand Quote</div>
+                                                <div class="slds-page-header__title slds-m-right--small slds-align-middle fade-text">
+                                                    {!details.quoteName} <a href="/{!brandQuote.ID}">{!brandQuote.Name}</a>
+                                                </div>
+                                            </h1> 
+                                        </div>
+                                        <div class="slds-col slds-size_2-of-7" style="margin:0 auto;text-align: right;">
+                                            <button type="button" class="slds-button slds-button_neutral" onclick="closePreview();return false;">
+                                                Return
+                                            </button>
+                                            <button type="button" class="slds-button slds-button_neutral" onclick="sendEmail2();return false;">
+                                                Send Email
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            <article class="slds-card " style="background-color:white!important">
+                <div class="slds-page-header heightfix" role="banner" style="background-color:white;">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_4-of-4 slds-p-around_small">
+                            <table>
+                                <tr>
+                                    <td class="slds-p-around_xx-small" style="text-align: right;font-weight: bold;">
+                                        To
+                                    </td>
+                                    <td class="slds-p-around_xx-small slds-p-right_large">
+                                        <apex:inputField id="toFld" value="{!brandQuote.Receiver_Contact__c}" style="border: 1px solid rgb(221, 219, 218);border-radius: .25rem;padding: 0 1rem 0 .75rem;line-height: 1.875rem;min-height: calc(1.875rem + (1px * 2));width: 85%;"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-p-around_xx-small" style="text-align: right;font-weight: bold;">
+                                        Related To
+                                    </td>
+                                    <td class="slds-p-around_xx-small slds-p-right_large">
+                                        <apex:inputText styleClass="slds-input" value="{!BrandQuoteStr}" style="width:20%;"/>
+                                        <apex:inputText styleClass="slds-input" value="{!brandQuote.Name}" style="width:65%;"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-p-around_xx-small" style="text-align: right;font-weight: bold;">
+                                        Additional To
+                                    </td>
+                                    <td class="slds-p-around_xx-small slds-p-right_large">
+                                        <apex:inputText styleClass="slds-input" value="{!additionalAdd}" style="width: 85%;" id="additionalAdd"/>
+                                        &nbsp;
+                                        <button type="button" class="slds-button slds-button_neutral" onclick="addRecipients();return false;">
+                                            Add Recipients
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-p-around_xx-small" style="text-align: right;font-weight: bold;">
+                                        CC
+                                    </td>
+                                    <td class="slds-p-around_xx-small slds-p-right_large">
+                                        <apex:inputText styleClass="slds-input" value="{!ccAdd}" style="width: 85%;" id="ccAdd"/>
+                                    </td>
+                                </tr>
+       
+                                <tr>
+                                    <td class="slds-p-around_xx-small" style="text-align: right;font-weight: bold;">
+                                        Subject
+                                    </td>
+                                    <td class="slds-p-around_xx-small slds-p-right_large">
+                                        <apex:inputText styleClass="slds-input" value="{!emailTemplate.Email_Subject__c}" style="width: 85%;"/>
+                                    </td> 
+                                </tr>
+                                <tr> 
+                                    <td class="slds-p-around_xx-small" colspan="2">
+                                        <apex:inputTextarea richText="true" value="{!emailBody}" />
+                                    </td>
+                                </tr>
+                            </table>
+                            <table>
+                                <tr>
+                                    <td class="slds-p-around_xx-small" style="width: 85%;">
+                                        <div id="attachmentIconDiv">
+                                            <span id="defualtIcon" class="slds-is-relative slds-icon_container" title="{!docName}.pdf" style="margin-right: 1%;">
+                                                <div style="position:absolute;top:-8px;right:-10px;border-radius:50%;background:#e7e7e7;border:1px solid #ccc;padding-left:3px;height:16px;width:16px;cursor:pointer" onClick="removeDefaultAtt();">x</div>
+                                                <svg aria-hidden="true" class="slds-icon ">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                         xlink:href="/apexpages/slds/latest/assets/icons/doctype-sprite/svg/symbols.svg#pdf">
+                                                    </use>
+                                                </svg>
+                                                <span class="slds-assistive-text">PDF</span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <button type="button" class="slds-button slds-button_neutral" onclick="openAttachmentDiv();return false;">
+                                            Add Attachment
+                                        </button>
+                                    </td>
+                                </tr>                            
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div id="loadingDiv" class="displayNone">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.6/docxtemplater.js"></script>
+        <script src="https://unpkg.com/pizzip@3.0.6/dist/pizzip.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+        <script src="https://unpkg.com/pizzip@3.0.6/dist/pizzip-utils.js"></script>
+    </apex:form>
+    <apex:outputPanel id="scriptPanel">
+        <script>
+        var fileNameList = [];
+        var dataURI;
+        function validateEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }        
+        function generatePDF(isDownload) {
+            console.log('Calling generatePDF...');
+            dataURI = '{!details.templateBody}';
+            var BASE64_MARKER = ';base64,';
+            var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+            var base64 = dataURI.substring(base64Index);
+            var raw = window.atob(base64);
+            var rawLength = raw.length;
+            var array = new Uint8Array(new ArrayBuffer(rawLength));
+            for(var i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+            var zip = new PizZip(array);
+            var doc;
+            try {
+                doc=new window.docxtemplater(zip,{nullGetter(part) {
+                                                  if (!part.module) {
+                                                  return "";
+                                                 }
+                                                  if (part.module === "rawxml") {
+                                                  return "";
+                                                 }
+                                                  return "";
+                                                 },delimiters:{start:'{{',end:'}}'}});
+            } catch(error) {
+                // Catch compilation errors (errors caused by the compilation of the template : misplaced tags)
+                console.error(error);
+            }
+            doc.setData(JSON.parse('{!details.JSONData}'));
+            try {
+                // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+                doc.render();
+            }
+            catch (error) {
+                // Catch rendering errors (errors relating to the rendering of the template : angularParser throws an error)
+                console.error(error);
+            }
+            var out=doc.getZip().generate({
+                type:"blob",
+                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            }) 
+            var reader = new FileReader();
+            reader.readAsDataURL(out); 
+            reader.onloadend = function() {
+                var base64data = reader.result;     
+                console.log('base64data:',base64data);
+                showLoading(true);
+                createAndPreview(base64data,false,false,false,false);  
+            }
+        }
+        function showLoading(val){
+            if(val){
+                document.getElementById("loadingDiv").classList.add("displayBlock");
+                document.getElementById("loadingDiv").classList.remove("displayNone");
+            }else{
+                document.getElementById("loadingDiv").classList.add("displayNone");
+                document.getElementById("loadingDiv").classList.remove("displayBlock");
+            }
+        }
+        function sendEmail2(){
+            var toEmail = document.getElementById('pg:frm:toFld').value;
+            var additionalToEmail = document.getElementById('pg:frm:additionalAdd').value;
+            var CCEmail = document.getElementById('pg:frm:ccAdd').value;
+            //var BCCEmail = document.getElementById('pg:frm:bccAdd').value;
+            if((toEmail == '' || toEmail == undefined) && (additionalToEmail == '' || additionalToEmail == undefined)){
+                showToastDiv('error','To and Additional To address can not be blank.');
+                return;
+            }else if(additionalToEmail != undefined && additionalToEmail != ''){
+                let additionalToEmails = additionalToEmail.split(',');
+                for(let i =0 ; i < additionalToEmails.length; i++){
+                    if(!validateEmail(''+additionalToEmails[i].trim())){
+                        showToastDiv('error','Invalid Additional To address.');
+                        return;
+                    }
+                }
+            }
+            if(CCEmail != undefined && CCEmail != ''){
+                let CCEmails = CCEmail.split(',');
+                for(let i =0 ; i < CCEmails.length; i++){
+                    if(!validateEmail(''+CCEmails[i].trim())){
+                        showToastDiv('error','Invalid CC address.');
+                        return;
+                    }
+                }
+            }
+            /*if(BCCEmail != undefined && BCCEmail != ''){
+                let BCCEmails = BCCEmail.split(',');
+                for(let i =0 ; i < BCCEmails.length; i++){
+                    if(!validateEmail(''+BCCEmails[i].trim())){
+                        showToastDiv('error','Invalid BCC address.');
+                        return;
+                    }
+                }
+            }*/
+            showLoading(true);
+            console.log('fileArray:',fileArray);
+            sendEmail1('{!details.templateBodyPDF}',JSON.stringify(fileArray),defaultAttRemoved);
+        }
+        var fileArray = [];
+        var defaultAttRemoved = false;
+        function getFileData(){
+            var fileinput = document.getElementById("SnapshotInputfile");
+            var selectedFile = document.getElementById("pg:frm:fileName").value;
+            if(!selectedFile){
+                showToastDiv('error','Please select a file.');
+                return;
+            }
+            var file = fileinput.files[0];  
+            var filename = file.name;   
+            var filetype = file.type;
+            var encodedFile ;
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                encodedFile = reader.result;
+                console.log('filetype:',filetype);
+                var fArray={
+                    'filename':filename,
+                    'filetype':filetype,
+                    'file':encodedFile
+                };
+                fileArray.push(fArray);
+                var attachmentIconDiv = document.getElementById('attachmentIconDiv');
+                var iconName = 'pdf';
+                if(filetype == 'application/pdf'){
+                    iconName = 'pdf';
+                }else if(filetype == 'application/vnd.ms-excel' || filetype == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+                    iconName = 'excel';
+                }else if(filetype == 'text/csv'){
+                    iconName = 'csv';
+                }else if(filetype == 'image/jpeg' || filetype == 'image/png'){
+                    iconName = 'image';
+                }else if(filetype == 'text/html'){
+                    iconName = 'html';
+                }else if(filetype == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'){
+                    iconName = 'ppt';
+                }else if(filetype == 'text/plain'){
+                    iconName = 'txt';   
+                }else if(filetype == 'application/x-zip-compressed'){
+                    iconName = 'zip';   
+                }else if(filetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+                    iconName = 'word';
+                }else{
+                    iconName = 'attachment';
+                }
+                var fileHTML = '<span class="slds-is-relative slds-icon_container" id="icon'+fileArray.length+'" style="margin-right: 1%;" title="'+filename+'">'
+                    +'<div style="position:absolute;top:-8px;right:-10px;border-radius:50%;backgound:#e7e7e7;border:1px solid #ccc;padding-left:3px;height:16px;width:16px;cursor:pointer" onClick="removeAttachment('+fileArray.length+');">x</div>'
+                    +'<svg aria-hidden="true" class="slds-icon ">'
+                    +'<use xmlns:xlink="http://www.w3.org/1999/xlink" '
+                    +'xlink:href="/apexpages/slds/latest/assets/icons/doctype-sprite/svg/symbols.svg#'+iconName+'">'
+                    +'</use>'
+                    +'</svg>'
+                    +'<span class="slds-assistive-text">'+filename+'</span>'
+                    +'</span>';
+                attachmentIconDiv.innerHTML += fileHTML;
+            };
+            fileNameList.push(filename);
+            closeAttachmentDiv();
+        }
+        function removeAttachment(idx){
+            fileArray.splice((idx-1), 1);
+            var div = document.getElementById('icon'+idx);
+            div.remove(); 
+        }
+        function removeDefaultAtt(){
+            var div = document.getElementById('defualtIcon');
+            div.remove();
+            defaultAttRemoved = true;
+        }
+        </script>
+    </apex:outputPanel>
+</apex:page>

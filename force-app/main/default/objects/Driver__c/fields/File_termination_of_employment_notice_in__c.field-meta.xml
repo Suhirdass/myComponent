@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>File_termination_of_employment_notice_in__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <label>File termination of employment notice in</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

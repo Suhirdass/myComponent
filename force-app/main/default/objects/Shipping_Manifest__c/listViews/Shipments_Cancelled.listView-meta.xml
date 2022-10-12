@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Shipments_Cancelled</fullName>
+    <columns>Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Sales_Order__c</columns>
+    <columns>Picklist__c</columns>
+    <columns>Receiver_DBA__c</columns>
+    <columns>Planned_Ship_Transfer_Date__c</columns>
+    <columns>Actual_Departure_Date_Time__c</columns>
+    <columns>Receiver_Acceptance_Date__c</columns>
+    <columns>Payment_Terms__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Price__c</columns>
+    <columns>Customer_PO_or_Quote__c</columns>
+    <columns>Supplier_Name__c</columns>
+    <columns>Delivery_City__c</columns>
+    <columns>Driver__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Cancelled</value>
+    </filters>
+    <label>Shipments Cancelled</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

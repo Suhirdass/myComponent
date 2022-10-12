@@ -1,0 +1,17 @@
+.THIS .timeSlot{
+    width:133px!important;
+}
+.THIS .timeSlot label{
+    display:none!important;
+}
+.THIS .record:hover{
+    background-color:#f6f7f9;
+}
+.THIS .verticalAlign {
+	cursor: pointer;
+	margin: 6px 0px 0px 6px!important;
+}
+.THIS .calendarIcon{
+    right: 5px;
+    top: 8px;
+}

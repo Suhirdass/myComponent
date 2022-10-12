@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Create_Cultivation_Tax_Invoice</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Create Cultivation Tax Invoice</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&apos;//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js&apos;)} 
+{!REQUIRESCRIPT(&apos;//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js&apos;)} 
+try{ 
+jQuery(function() { 
+jQuery(&apos;head&apos;).append(&apos;&lt;link rel=&quot;stylesheet&quot; href=&quot;//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/start/jquery-ui.css&quot; type=&quot;text/css&quot; /&gt;&apos;); 
+var html = 
+&apos;&lt;div id=&quot;createTaxInvdialog&quot; title=&quot;{!Shipping_Manifest__c.Name}&quot;&gt;&lt;p&gt;Create New Cultivation Tax Invoice ?&lt;/p&gt;&lt;/div&gt;&apos;; 
+if(!jQuery(&apos;[id=createTaxInvdialog]&apos;).size()){ 
+jQuery(&apos;body&apos;).append(html); 
+} 
+jQuery( &quot;#createTaxInvdialog&quot; ).dialog({ 
+autoOpen: true, 
+modal: true, 
+buttons: { 
+&quot;Yes&quot;: function() { 
+location.replace(&apos;/apex/CreateCTIfromTSM?id={!Shipping_Manifest__c.Id}&apos;); 
+jQuery( this ).dialog( &quot;close&quot; ); 
+}, 
+&quot;No&quot;: function() { 
+jQuery( this ).dialog( &quot;close&quot; ); 
+} 
+} 
+}); 
+}); 
+} 
+catch(e){ 
+alert(&apos;An Error has Occurred. Error: &apos; + e); 
+}</url>
+</WebLink>

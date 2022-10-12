@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_PO_or_Quote__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>For Sell Quote, input Leaflink Order ID, or Retail Delivery Ticket. For Buy Quote, input Sell Quote or TSM</inlineHelpText>
+    <label>Order or Service #</label>
+    <length>200</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

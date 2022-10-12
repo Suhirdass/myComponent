@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Case_has_been_closed</fullName>
+        <description>Case has been closed</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Internal_Support_Case_CLOSED</template>
+    </alerts>
+    <alerts>
+        <fullName>New_IT_Support_case_has_been_assigned</fullName>
+        <description>New IT Support case has been assigned</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/An_Internal_Support_Case_has_been_assigned_to_you</template>
+    </alerts>
+    <alerts>
+        <fullName>New_IT_Support_case_has_been_opened</fullName>
+        <description>New IT Internal Support case has been created</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <recipients>
+            <recipient>IT_ADMIN_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Internal_Support_Case_NEW</template>
+    </alerts>
+    <alerts>
+        <fullName>New_comment_on_IT_Support_case</fullName>
+        <description>New comment on IT Support case</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/IT_Support_Case_Internal_comment</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Updates_To_Customer</fullName>
+        <description>Notify Updates To Customer</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Notify_Updates_To_Customer</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Updates_To_Owner</fullName>
+        <description>Notify Updates To Owner</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <recipient>ravi@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Notify_Updates_To_Owner</template>
+    </alerts>
+    <alerts>
+        <fullName>Ticket_Closed_Notification_To_Customer</fullName>
+        <description>Ticket Closed Notification To Customer</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Ticket_Closure_Notification_to_Customer</template>
+    </alerts>
+    <alerts>
+        <fullName>Tickets_Closed_Notification_to_Case_Owner</fullName>
+        <description>Tickets Closed Notification to Case Owner</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <recipient>ravi@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Ticket_Closed_Notification_to_Owner</template>
+    </alerts>
+    <rules>
+        <fullName>Case has been closed</fullName>
+        <actions>
+            <name>Case_has_been_closed</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Case.Status</field>
+            <operation>equals</operation>
+            <value>Closed</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>IT Support Case- Internal comment</fullName>
+        <actions>
+            <name>New_comment_on_IT_Support_case</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <formula>ISCHANGED(Internal_Notes__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ticket Closed Notification to Customer</fullName>
+        <actions>
+            <name>Ticket_Closed_Notification_To_Customer</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <description>Ticket Closure Notification to Customer on Ticket Close by Customer or Internal user</description>
+        <formula>ISCHANGED(Status) &amp;&amp; TEXT( Status)  = &apos;Closed&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ticket Closed by Customer</fullName>
+        <actions>
+            <name>Tickets_Closed_Notification_to_Case_Owner</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <description>Ticket Closure Notification to Ticket Owner when Closed by Customer</description>
+        <formula>LastModifiedBy.ContactId  != null &amp;&amp; ISCHANGED(Status)  &amp;&amp; TEXT( Status)  = &apos;Closed&apos;</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ticket Update by Brand%2Fretailer</fullName>
+        <actions>
+            <name>Notify_Updates_To_Owner</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <description>Notify Ticket Owner of Updates by Customer</description>
+        <formula>( ISCHANGED(Subject) || ISCHANGED(Priority) ||  ISCHANGED( Description) ||  ISCHANGED( Notes__c) || ISCHANGED( Type) || ISCHANGED( Contact_Preference__c )) &amp;&amp;  LastModifiedBy.ContactId &lt;&gt; null</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Ticket Update by Owner</fullName>
+        <actions>
+            <name>Notify_Updates_To_Customer</name>
+            <type>Alert</type>
+        </actions>
+        <active>false</active>
+        <description>Notify Ticket Updates by Internal Team  to Customer</description>
+        <formula>( ISCHANGED(Subject) || ISCHANGED(Priority) ||  ISCHANGED( Description) ||  ISCHANGED( Notes__c) || ISCHANGED( Type) || ISCHANGED( Contact_Preference__c ) || ISCHANGED( Owner_Information_Notes__c ) || (ISCHANGED(Status) &amp;&amp;  (!ISPICKVAL(Status, &apos;Closed&apos;)) ))&amp;&amp; LastModifiedBy.ContactId =null</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

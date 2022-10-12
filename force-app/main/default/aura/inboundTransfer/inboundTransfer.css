@@ -1,0 +1,66 @@
+.THIS{
+    font-family:token(salesforceSans);
+    color:token(fontColor);
+}
+.THIS .ticket-header{
+    font-family:token(salesforceSans);
+    color:token(fontColor);
+    background:token(tableHeaderColor);
+}
+.THIS .headerBackground{
+    background: #e5e5e5;
+}
+.THIS .slds-size_1-of-8{
+    width:50%;
+}
+.THIS button{
+    /*text-transform: uppercase;*/
+    font-size:13px;
+}
+.THIS .hoverCss:hover{
+    /*background-color:token(tableHeaderColor);*/
+}
+
+.THIS .selectedSlot{
+    background-color:token(land);
+    /*border-color:#065e66!important;*/
+    color:token(daze);
+}
+.THIS .slds-box {
+	padding: 0;
+	background-color: white;
+}
+
+.THIS .slds-box__header {
+	background: token(tan);
+	border-bottom: 2px solid token(grayAccent);
+}
+.THIS .ticketNumber{
+    height: 32px;
+    color: #393A3D;
+    font-family: token(salesforceSans);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 32px;
+}
+.THIS .sortIcon{
+    color: #065e66;
+    font-size: 13px;
+    filter: brightness(0.5) grayscale(1);
+}
+.THIS .draftButton{
+ 	font-family:token(salesforceSans);
+    background-color :token(land);
+    color:token(daze);   
+}
+.THIS .submitButtonGreen{
+        font-family:token(salesforceSans);
+    background-color :token(land);
+    color:token(daze);
+    border-color: token(daze);
+    }
+.THIS .specialInstructions textarea{
+    height:32px;
+    padding-top:5px;
+}

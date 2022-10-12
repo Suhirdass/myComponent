@@ -1,0 +1,105 @@
+<aura:component extends="c:utility"
+	controller="ProductsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+	access="global">
+    <aura:attribute name="retailerContacts" type="List" default="[]" />
+    <aura:attribute name="retailerId" type="String" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="contactRTId" type="String" default="" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchBrandContacts}"/>
+    <lightning:overlayLibrary aura:id="overlay"/>
+    <lightning:spinner
+			variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+    <div class="slds-size_full slds-text-align_right slds-m-bottom_small">
+        <lightning:button label="New" variant="brand" onclick="{!c.onNewContact}"/>
+    </div>
+    <table class="slds-table" style="border: solid 1px gainsboro;">
+        <thead>
+            <tr>
+                <th class="sortable"  onclick="{!c.sortBrandContact}" data-field="Name" style="background-color:#d1cdb0;">
+                    Name
+                    <aura:if isTrue="{!v.filters.orderByField=='Name'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable"  onclick="{!c.sortBrandContact}" data-field="email" style="background-color:#d1cdb0;">
+                    Email
+                    <aura:if isTrue="{!v.filters.orderByField=='email'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable" onclick="{!c.sortBrandContact}" data-field="title" style="background-color:#d1cdb0;">
+                    Title
+                    <aura:if isTrue="{!v.filters.orderByField=='title'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable" onclick="{!c.sortBrandContact}" data-field="phone" style="background-color:#d1cdb0;">
+                    Phone
+                    <aura:if isTrue="{!v.filters.orderByField=='phone'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:if isTrue="{!v.retailerContacts.length > 0}">
+                <aura:iteration items="{!v.retailerContacts}" var="retailerContact" indexVar="index">
+                    <tr>
+                        <td>
+                            <!--<a data-id="{!retailerContact.id}" onclick="{!c.onContactClick}" style="color:#006DCC">-->{!retailerContact.Name}<!--</a>-->
+                        </td>
+                        <td>{!retailerContact.email}</td>
+                        <td>{!retailerContact.title}</td>
+                        <td>{!retailerContact.phone}</td>
+                    </tr>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    <tr>
+                    	<td colspan="4">
+                        	<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700;font-family:'Alliance Neue';">
+								No Contacts Found.
+							</h3>
+                        </td>
+                    </tr>
+                </aura:set>
+            </aura:if>
+        </tbody>
+    </table>
+    <c:paginator aura:id="contactpaginator" perPage="{!v.perPage}" />
+</aura:component>

@@ -1,0 +1,38 @@
+<aura:component extends="c:infiniteLoading" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+<ltng:require styles="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.css')}" scripts="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.min.js')}" afterScriptsLoaded="{!c.onScriptsLoaded}" />
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+  <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchBrands}" />
+  <aura:handler event="c:searchFiltersEvt" action="{!c.handleSearch}" />
+
+  <aura:attribute name="filters" type="Map" default="" />
+  <aura:attribute name="hasFilter" type="Boolean" default="false" />
+  <aura:attribute name="searchTerm" type="String" default="" />
+  <div class="slds-is-relative" >
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+      
+    <lightning:layout multipleRows="true">
+      <lightning:layoutItem flexibility="grow" size="12">
+          <div class="ps slds-is-relative" id="psContainer" aura:id="psContainer" style="{!'height: calc(100vh - ' + v.topHeight + ')'}">
+        <lightning:layout multipleRows="true">
+          <aura:if isTrue="{!v.records.length >0}">
+            <aura:iteration items="{!v.records}" var="record">
+              <c:brandView isBrand="{!v.isBrand}" brand="{!record}" isPublic="true"/>
+            </aura:iteration>
+            <aura:set attribute="else">
+              <div class="noData">
+                No Brand Found.
+              </div>
+            </aura:set>
+          </aura:if>
+        </lightning:layout>
+          
+              </div>
+          <aura:if isTrue="{!v.showScrollToTop}">
+        <lightning:icon class="jumptotop" iconName="utility:jump_to_top" onclick="{!c.scrollToTop}" />
+      </aura:if>
+      </lightning:layoutItem>
+    </lightning:layout>
+	
+    <c:paginator aura:id="paginator" perPage="{!v.perPage}" />
+  </div>
+</aura:component>

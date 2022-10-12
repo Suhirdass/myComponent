@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Filigreen_Buy</fullName>
+    <fields>BQ_Status__c</fields>
+    <fields>Name</fields>
+    <fields>Supplier_Name__c</fields>
+    <fields>Total_Line_Items__c</fields>
+    <fields>Total_Product_Cost__c</fields>
+    <label>Filigreen Buy</label>
+</CompactLayout>

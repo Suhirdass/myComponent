@@ -1,0 +1,23 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="schedulePaymentURL" type="string" default=""/>
+	<div class="slds-is-relative slds-p-horizontal_small">
+    	<lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <lightning:tabset>
+        	<lightning:tab label="Tickets" id="tickets">
+                <c:cases perPage="16"/>
+            </lightning:tab>
+            <aura:renderIf isTrue="{!v.isBrand}">
+                <lightning:tab label="My Products" id="newProductRequests">
+                    <c:newProductRequests/>
+                </lightning:tab>
+                <lightning:tab label="Manage External Products" id="manageExternalProducts">
+                    <c:ManageExternalProducts/>
+                </lightning:tab>
+                <lightning:tab label="Schedule Payment" id="SchedulePayment">
+                    <iframe src="{!v.schedulePaymentURL}" width="100%" height="450" frameborder="0" style="border:none"/>
+                </lightning:tab>
+            </aura:renderIf>
+        </lightning:tabset>
+    </div>
+</aura:component>

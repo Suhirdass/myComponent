@@ -1,0 +1,17 @@
+.THIS .slds-table.adjustPadding th, .THIS .slds-table.adjustPadding td{
+    padding: .25rem;
+}
+.THIS .address{
+    height:200px;
+}
+.THIS .orderNumber:hover{
+  text-decoration:underline;
+  cursor:pointer;
+}
+.THIS .SalesOrderTable th{
+    text-align: center
+}
+
+.THIS .barndDeviceSize{
+        /*max-width:1230px;*/
+}

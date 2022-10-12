@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Apply_Excise_Tax__c</fullName>
+    <description>IF(TExt(Product_Name__r.Apply_Excise_Tax__c) = &apos;Yes&apos;  &amp;&amp;  Brand_Quote_Number__r.Apply_Excise_Tax__c  = true, 
+TEXT(Product_Name__r.Apply_Excise_Tax__c), &apos;No&apos;)</description>
+    <externalId>false</externalId>
+    <formula>IF(TExt(Product_Name__r.Apply_Excise_Tax__c) = &apos;Yes&apos;  &amp;&amp;  Brand_Quote_Number__r.Apply_Excise_Tax__c  = true, 
+&apos;Yes&apos;, &apos;No&apos;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Apply Excise Tax?</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

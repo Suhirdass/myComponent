@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Cannabis_Weight_or_Qty__c</fullName>
+    <description>IF(OR(Service_Type__c = &quot;Jarring&quot;,Service_Type__c = &quot;Bagging&quot;, Service_Type__c = &quot;Pre-Rolling&quot;),
+Targeted_Batch_Qty__c * CASE(Desired_Net_Weight_or_Qty__c, 
+&apos;1 (each)&apos;, 1, 
+&apos;0.05(g)&apos;, 0.05, 
+&apos;0.25(g)&apos;, 0.25, 
+&apos;0.50(g)&apos;, 0.50,
+&apos;0.71(g)&apos;, 0.71,
+&apos;0.75(g)&apos;, 0.75, 
+&apos;1.00(g)&apos;, 1, 
+&apos;3.54(g)&apos;, 3.54, 
+&apos;3.55(g)&apos;, 3.55, 
+&apos;3.60(g)&apos;, 3.60, 
+&apos;14.18(g)&apos;, 14.18, 
+&apos;28.35(g)&apos;, 28.35,1) * Yield_Factor__c / 453.6, 
+Targeted_Batch_Qty__c * Yield_Factor__c)</description>
+    <externalId>false</externalId>
+    <formula>IF(OR(
+Service_Type__c = &quot;Casing&quot;,
+Service_Type__c = &quot;Labeling&quot;, 
+Service_Type__c = &quot;Sample Conversion&quot;),
+0,
+Targeted_Batch_Qty__c * New_Packaged_Product__r.Unit_Cannabis_Weight_1__c * (1- Yield_Factor__c) + Targeted_Batch_Qty__c * New_Packaged_Product__r.Unit_Cannabis_Weight_1__c )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Calculated; Yield * Target Batch Qty + Yield. Expressed in the UOM of New Packaged Product</inlineHelpText>
+    <label>Required Weight</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

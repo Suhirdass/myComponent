@@ -1,0 +1,116 @@
+<aura:component extends="c:utility"
+	controller="ProductsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+	access="global">
+    <aura:attribute name="inSights" type="List" default="[]" />
+    <aura:attribute name="retailerId" type="String" />
+    <aura:attribute name="lineCardId" type="String" />
+    <aura:attribute name="isLineCard" type="Boolean" default="false" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchinSights}"/>
+    <lightning:overlayLibrary aura:id="overlay" />
+    <lightning:spinner
+			variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+    <div class="slds-size_full slds-text-align_right slds-m-bottom_small">
+        <lightning:button disabled="{!!v.isLineCard}" label="New" variant="brand" onclick="{!c.onNewInsight}"/>
+    </div>
+    <div style="width: calc(100vw - 655px);overflow-x: auto;border: solid 1px gainsboro;">
+    <table class="slds-table">
+        <thead>
+            <tr>
+                <th class="sortable" onclick="{!c.sortInSights}" data-field="CreatedDate" style="background-color:#d1cdb0;">
+                    Created Date
+                    <aura:if isTrue="{!v.filters.orderByField=='CreatedDate'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <!--th>Insight</th-->
+                <th class="sortable" onclick="{!c.sortInSights}" data-field="Insight_Type__c" style="background-color:#d1cdb0;">
+                    Type
+                    <aura:if isTrue="{!v.filters.orderByField=='Insight_Type__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th style="background-color:#d1cdb0;">Contact</th>
+                <th style="background-color:#d1cdb0;">Date And Time</th>
+                <th style="background-color:#d1cdb0;">Memo</th>
+                <th style="background-color:#d1cdb0;">Completed</th>
+                <th style="background-color:#d1cdb0;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:if isTrue="{!v.inSights.length > 0}">
+                <aura:iteration items="{!v.inSights}" var="insight" indexVar="index">
+                    <tr>
+                        <td  >
+                            <ui:outputDate value="{!insight.CreatedDate}" format="MM/dd/YYYY" />
+                        </td>
+                        
+                        <td>{!insight.Insight_Type__c}</td>
+                        <td>
+                            <!--<a data-id="{!insight.Contact__c}" onclick="{!c.onContactClick}" style="color:#006DCC">-->{!insight.Contact__r.Name}<!--</a>-->
+                        </td>
+                        <td>
+                            <lightning:formattedDateTime value="{!insight.Date_Time__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                                         minute="2-digit" hour12="true" timeZone="{!$Locale.timezone}"/>
+                        </td>
+                        <td style="max-width: 300px;">
+                            <div class="slds-truncate">
+                                <ui:outputText value="{!insight.Memo__c}" title="{!insight.Memo__c}"/>
+                            </div>
+                        </td>
+                        <td>
+                            <aura:if isTrue="{!insight.Completed__c}">
+                                <lightning:icon iconName="utility:check" alternativeText="Approved" title="Approved" size="x-small"/>
+                                <aura:set attribute="else">
+                                    <lightning:icon iconName="utility:close" alternativeText="close" title="close" size="x-small" />
+                                </aura:set>
+                            </aura:if>
+                        </td>
+                        <td style="min-width: 65px;">
+                            <lightning:buttonIcon 
+                                                  iconClass="editIcon"
+                                                  size="large" 
+                                                  value="{!insight}" 
+                                                  iconName="utility:edit"   
+                                                  alternativeText="Edit" 
+                                                  onclick="{!c.onEdit}"/>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    <tr>
+                    	<td colspan="7">
+                        	<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700;font-family:'Alliance Neue';">
+								No Insight Found.
+							</h3>
+                        </td>
+                    </tr>
+                </aura:set>
+            </aura:if>
+        </tbody>
+    </table>
+        </div>
+    <c:paginator aura:id="productpaginator" perPage="{!v.perPage}" />
+</aura:component>

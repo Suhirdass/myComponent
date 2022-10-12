@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PersonToMeet__c</fullName>
+    <externalId>false</externalId>
+    <label>Person To Meet</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>John Hanley</fullName>
+                <default>false</default>
+                <label>John Hanley</label>
+            </value>
+            <value>
+                <fullName>Khanh Ngo</fullName>
+                <default>false</default>
+                <label>Khanh Ngo</label>
+            </value>
+            <value>
+                <fullName>Max Rudsten</fullName>
+                <default>false</default>
+                <label>Max Rudsten</label>
+            </value>
+            <value>
+                <fullName>Tracey Erker</fullName>
+                <default>false</default>
+                <label>Tracey Erker</label>
+            </value>
+            <value>
+                <fullName>Jess Cosca</fullName>
+                <default>false</default>
+                <label>Jess Cosca</label>
+            </value>
+            <value>
+                <fullName>Arielle McHenry</fullName>
+                <default>false</default>
+                <label>Arielle McHenry</label>
+            </value>
+            <value>
+                <fullName>Sinatra Wynn</fullName>
+                <default>false</default>
+                <label>Sinatra Wynn</label>
+            </value>
+            <value>
+                <fullName>Anthony Revsbech</fullName>
+                <default>false</default>
+                <label>Anthony Revsbech</label>
+            </value>
+            <value>
+                <fullName>Alema Hoskins</fullName>
+                <default>false</default>
+                <label>Alema Hoskins</label>
+            </value>
+            <value>
+                <fullName>Colin Brown</fullName>
+                <default>false</default>
+                <label>Colin Brown</label>
+            </value>
+            <value>
+                <fullName>Donna Nguyen</fullName>
+                <default>false</default>
+                <label>Donna Nguyen</label>
+            </value>
+            <value>
+                <fullName>Emilia Quinones</fullName>
+                <default>false</default>
+                <label>Emilia Quinones</label>
+            </value>
+            <value>
+                <fullName>Evan McDonnell</fullName>
+                <default>false</default>
+                <label>Evan McDonnell</label>
+            </value>
+            <value>
+                <fullName>Hassan Moore</fullName>
+                <default>false</default>
+                <label>Hassan Moore</label>
+            </value>
+            <value>
+                <fullName>Isaiah Ramos</fullName>
+                <default>false</default>
+                <label>Isaiah Ramos</label>
+            </value>
+            <value>
+                <fullName>James Nguyen</fullName>
+                <default>false</default>
+                <label>James Nguyen</label>
+            </value>
+            <value>
+                <fullName>Jeff Ninomiya</fullName>
+                <default>false</default>
+                <label>Jeff Ninomiya</label>
+            </value>
+            <value>
+                <fullName>Jeremy Scavarda</fullName>
+                <default>false</default>
+                <label>Jeremy Scavarda</label>
+            </value>
+            <value>
+                <fullName>John Truong</fullName>
+                <default>false</default>
+                <label>John Truong</label>
+            </value>
+            <value>
+                <fullName>Kofi Incoom</fullName>
+                <default>false</default>
+                <label>Kofi Incoom</label>
+            </value>
+            <value>
+                <fullName>Matt Vaughan</fullName>
+                <default>false</default>
+                <label>Matt Vaughan</label>
+            </value>
+            <value>
+                <fullName>Oscar Medina</fullName>
+                <default>false</default>
+                <label>Oscar Medina</label>
+            </value>
+            <value>
+                <fullName>Phong Truong</fullName>
+                <default>false</default>
+                <label>Phong Truong</label>
+            </value>
+            <value>
+                <fullName>Robert Payne</fullName>
+                <default>false</default>
+                <label>Robert Payne</label>
+            </value>
+            <value>
+                <fullName>Scott Casias</fullName>
+                <default>false</default>
+                <label>Scott Casias</label>
+            </value>
+            <value>
+                <fullName>Tristen McDorman</fullName>
+                <default>false</default>
+                <label>Tristen McDorman</label>
+            </value>
+            <value>
+                <fullName>Vijay Salem</fullName>
+                <default>false</default>
+                <label>Vijay Salem</label>
+            </value>
+            <value>
+                <fullName>Albert Clifford Hudson III</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Albert Clifford Hudson III</label>
+            </value>
+            <value>
+                <fullName>Alessandra Nieto</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Alessandra Nieto</label>
+            </value>
+            <value>
+                <fullName>Avi Byer</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Avi Byer</label>
+            </value>
+            <value>
+                <fullName>Cayla Batac</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cayla Batac</label>
+            </value>
+            <value>
+                <fullName>Mac Burton</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Mac Burton</label>
+            </value>
+            <value>
+                <fullName>Manh Nguyen</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Manh Nguyen</label>
+            </value>
+            <value>
+                <fullName>Reed Befus</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Reed Befus</label>
+            </value>
+            <value>
+                <fullName>Scott McFadden</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Scott McFadden</label>
+            </value>
+            <value>
+                <fullName>Tyler Smith</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Tyler Smith</label>
+            </value>
+            <value>
+                <fullName>Victor Johnson</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Victor Johnson</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

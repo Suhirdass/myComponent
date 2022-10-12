@@ -1,0 +1,3 @@
+<design:component label = "Case Details">
+	<design:attribute name="hideButtons" label="Hide Save Buttons" description="Please pass True from Thank you page" />
+</design:component>

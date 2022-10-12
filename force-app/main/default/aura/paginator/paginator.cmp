@@ -1,0 +1,50 @@
+<aura:component>
+
+  <aura:handler name="change" value="{!v.perPage}" action="{!c.onPerPageChange}" />
+
+  <aura:attribute name="ids" type="List" default="" />
+    
+  <aura:attribute name="perPage" type="Integer" default="10" />
+  <aura:attribute name="displayPages" type="Integer" default="5" />
+
+  <aura:attribute name="totalPages" type="Integer" default="0" />
+  <aura:attribute name="currentPage" type="Integer" />
+  <aura:attribute name="pageNumbers" type="Integer[]" />
+  <aura:attribute name="noData" type="String" default="" />
+    <aura:attribute name="recordsCount" type="String" default="" />
+    <aura:attribute name="show25" type="Boolean" default="false" />
+
+  <aura:method name="setIds">
+    <aura:attribute name="ids" type="List" />
+  </aura:method>
+
+  <aura:registerEvent name="paginatorChangeEvt" type="c:paginatorChangeEvt" />
+
+
+    <div class="flex items-center content-center slds-is-relative slds-p-around_large">
+        <aura:if isTrue="{!!empty(v.ids)}">
+            <!-- <legend class="slds-form-element__label slds-text-title_caps slds-m-right_large" style="line-height: 2rem;">{!v.currentPage} of
+          Total {!v.totalPages} Pages</legend> -->
+            <div class="" role="group"><!--slds-button-group-->
+                <lightning:buttonIcon iconName="utility:chevronleft" disabled="{!equals(1, v.currentPage)}" variant="border" alternativeText="Previous" class="heightAuto text amber pageNumber" onclick="{!c.onPreviousPage}" />
+                <aura:iteration items="{!v.pageNumbers}" var="pn">
+                    <lightning:button value="{!pn}" variant="{!(equals(pn, v.currentPage) ? 'brand' : 'neutral')}" label="{!pn}" onclick="{!c.onPageChange}" class="{!(equals(pn, v.currentPage) ? 'amber pageNumber selectedAmber' : 'amber pageNumber nonSelectedAmber')}" />
+                </aura:iteration>
+                <lightning:buttonIcon iconName="utility:chevronright" disabled="{!equals(v.currentPage, v.totalPages)}" variant="border" alternativeText="Next" class="heightAuto text amber pageNumber" onclick="{!c.onNextPage}" />
+                <div style="display:inline-block;">
+                    <lightning:select value="{!v.perPage}" variant="label-hidden" label="select size">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <aura:if isTrue="{!v.show25}">
+                        	<option value="25">25</option>
+                        </aura:if>
+                        <option value="50">50</option>
+                    </lightning:select> 
+                </div>
+                <div class="slds-text-align_center">
+                    Displaying {!v.recordsCount} of {!v.ids.length} records
+                </div>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

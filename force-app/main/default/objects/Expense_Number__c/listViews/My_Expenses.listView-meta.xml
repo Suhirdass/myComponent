@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Expenses</fullName>
+    <columns>NAME</columns>
+    <columns>Approved_Date__c</columns>
+    <columns>ExpenseName__c</columns>
+    <columns>ExpenseStatus__c</columns>
+    <columns>Project__c</columns>
+    <columns>Reimbursed_Date__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>TotalExpenseAmount__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>0</value>
+    </filters>
+    <label>My Expenses</label>
+</ListView>

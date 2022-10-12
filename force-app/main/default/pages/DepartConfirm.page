@@ -1,0 +1,41 @@
+<!--
+- Copyright (c) 2018 Filigreen Distro
+- All rights reserved.
+- DepartConfirm
+-->
+<apex:page lightningStylesheets="true"  standardController="Shipping_Manifest__c"  
+           extensions="DepartConfirmController"  
+           action="{!departConfirm}" 
+           title="Depart Confirm">
+    <apex:form >
+        <style>
+       .newstyle{
+            background: rgb(206, 81, 76);
+            font-size: 16px;
+            color: white;
+            padding: 10px;
+            }
+        </style>
+        <apex:pageBlock title="Depart Confirm">
+            <apex:actionStatus id="idRefreshingStatus" style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockButtons styleClass="slds-button slds-button--brand buttonclass" />
+                
+            <ul class="newstyle">
+                    <apex:repeat value="{!errors}" var="error" >
+                        <li >{!error}</li>
+                    </apex:repeat>
+             </ul>
+            <br/>	
+          <apex:commandButton action="{!redirectToRSM}" value="Return to ShipManifest" status="idRefreshingStatus"/> 
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

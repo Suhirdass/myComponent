@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Entity__c</fullName>
+    <externalId>false</externalId>
+    <label>Entity</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Fuming Sparrow</fullName>
+                <default>false</default>
+                <label>Fuming Sparrow</label>
+            </value>
+            <value>
+                <fullName>Green Thread Holdings</fullName>
+                <default>false</default>
+                <label>Green Thread Holdings</label>
+            </value>
+            <value>
+                <fullName>Green Thread Property</fullName>
+                <default>false</default>
+                <label>Green Thread Property</label>
+            </value>
+            <value>
+                <fullName>Green Thread Technology</fullName>
+                <default>false</default>
+                <label>Green Thread Technology</label>
+            </value>
+            <value>
+                <fullName>Headwater Farms</fullName>
+                <default>false</default>
+                <label>Headwater Farms</label>
+            </value>
+            <value>
+                <fullName>Humboldt Headwaters</fullName>
+                <default>false</default>
+                <label>Humboldt Headwaters</label>
+            </value>
+            <value>
+                <fullName>Incensed Iguana</fullName>
+                <default>false</default>
+                <label>Incensed Iguana</label>
+            </value>
+            <value>
+                <fullName>Irrational Raccoon</fullName>
+                <default>false</default>
+                <label>Irrational Raccoon</label>
+            </value>
+            <value>
+                <fullName>Yelling Yeti</fullName>
+                <default>false</default>
+                <label>Yelling Yeti</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

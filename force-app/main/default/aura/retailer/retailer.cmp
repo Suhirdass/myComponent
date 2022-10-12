@@ -1,0 +1,44 @@
+<aura:component extends="c:utility" controller="ProductsCtlr">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="retailer" type="Map" default="" required="true" />
+    <aura:attribute name="isRight" type="Boolean" default="false" />
+    <aura:attribute name="isTablet" type="Boolean" default="false" />
+    <lightning:overlayLibrary aura:id="overlay" />
+    
+    <!--<div class="{!v.isRight ? 'slds-p-bottom_large slds-m-left_medium' : 'slds-p-bottom_large slds-m-right_medium'}">-->
+    <div class="{!v.isRight ? 'slds-p-bottom_large slds-m-left_medium' : 'slds-p-bottom_large slds-m-right_medium'}">
+		<div class="brand-card slds-card slds-p-around_large">
+            <div>
+				<c:brandImg imageUrl="{! v.retailer.imageUrl }" name="{! v.retailer.retailerDBA }" />
+			</div>
+			<div class="slds-m-left_medium" style="width:calc(100% - 93px)">
+                <lightning:layout>
+                    <lightning:layoutItem size="12">
+						<div class="brand-card__header">
+							<div class="slds-m-right_medium slds-m-top_x-small">
+                                <h3 class="{!v.isTablet ? 'slds-text-heading_medium slds-truncate ipadMaxwidth' : 'slds-text-heading_medium slds-truncate dasktopMaxWidth' }" style="float: left;">
+                                    <ui:outputText value="{!v.retailer.retailerDBA}" title="{!v.retailer.retailerDBA}"/>
+                                </h3>
+                                <br/>
+                                <p class="brand-card__location slds-text-body_small slds-m-top_xx-small" style="float: left;">
+                                    {!v.retailer.city}<aura:if isTrue="{!and(notequals(v.retailer.city,null),notequals(v.retailer.state,null))}" >,&nbsp;</aura:if> {!v.retailer.state}
+                                    <br/>
+                                    <h3 class="{!v.isTablet ? 'slds-truncate businessLneIpadMaxwidth' : 'slds-truncate businessLneDasktopMaxWidth'}">
+                                        <ui:outputText value="{!v.retailer.businessLine}" title="{!v.retailer.businessLine}"/>
+                                    </h3>
+                                </p>
+							</div>
+                            <div class="brand-card__btn-container">
+                                <div class="brand-card__details-btn" onclick="{!c.onRetailerClick}">Details</div>
+                            </div>
+						</div>
+                        <p class="slds-text-body_regular slds-m-top_small truncate">                    
+                            <aura:unescapedHtml value="{!v.retailer.description}"/>
+                        </p>
+                    </lightning:layoutItem>
+                </lightning:layout>
+			</div>
+		</div>
+    </div>
+</aura:component>

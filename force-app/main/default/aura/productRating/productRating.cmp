@@ -1,0 +1,44 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="force:hasRecordId">
+
+  <ltng:require styles="{!join(',', $Resource.ratingPlugin + '/css/jquery.raty.css')}" scripts="{!join(',', $Resource.ratingPlugin + '/js/jquery.min.js', $Resource.ratingPlugin + '/js/jquery.raty.js')}"
+    afterScriptsLoaded="{!c.onInit}" />
+
+  <aura:attribute name="product" type="Map" default="" />
+  <aura:attribute name="rating" type="Integer" default="" />
+  <aura:attribute name="canUpdate" type="Boolean" default="false" />
+  <aura:attribute name="showReviews" type="Boolean" default="false" />
+  <aura:attribute name="totalReviews" type="Integer" default="0" />
+  <aura:attribute name="ratingsSummary" type="List" default="[]" />
+
+
+  <div class="slds-is-relative slds-text-align_left">
+    <span aura:id="ratingStars"></span>
+    <aura:if isTrue="{!and(v.showReviews, greaterthan(v.totalReviews, 0))}">
+      &nbsp;<a class="totalReviews" onclick="{!c.onProductReviews}" href="javascript:void(0);">{!v.totalReviews}
+        reviews</a>
+    </aura:if>
+    <div id="ratingSection" class="ratingsSummary slds-popover_small slds-popover slds-nubbin_top slds-hide slds-is-absolute"
+      style="width:275px" role="dialog">
+      <div class="slds-popover__body">
+        <div class="slds-media">
+          <div class="slds-media__body">
+            <h2 id="dialog-heading-id-2" class="slds-text-heading_small slds-text-align_center">{!v.rating} out of 5
+              stars</h2>
+            <table>
+              <aura:iteration items="{!v.ratingsSummary}" var="rating" indexVar="stars">
+                <tr>
+                  <th style="width: 20%">{!subtract(5, stars)} star</th>
+                  <td style="width: 70%;" class="a-meter">
+                    <div class="slds-show_inline-block a-meter-bar" style="{!'width:'+rating.percent+'%'}"></div>
+                  </td>
+                  <td style="width: 10%" class="slds-p-left_xx-small">{!rating.count+'&nbsp;('+rating.percent+'%)'}</td>
+                </tr>
+              </aura:iteration>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</aura:component>

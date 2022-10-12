@@ -1,0 +1,63 @@
+<apex:page controller="VisitCreateController" lightningStylesheets="true"  showHeader="false" >
+    <apex:slds />
+    <style>
+        .bPageBlock{
+        background-color: white !important;
+        margin-left:10% !important;	
+        margin-right:10% !important;
+        border-top: 1px solid rgb(234, 234, 234) !important;
+        }
+        
+        .ptBody{
+        margin-left:8% !important;	
+        }
+        .pbSubheader {
+        display:flex !important;
+        }
+        .customPB .slds-textarea{
+        height : 60px !important; 
+        }
+        .customPB .pbTitle{
+        width : 50% !important; 
+        }
+        .customPB .pbButton{
+        float : right !important; 
+        }
+    </style>
+    <div class="header">
+    <center><img src="{!$Resource.filigreenLogoHeader}" width="25%"/></center>
+  </div>
+  <apex:sectionHeader title="Welcome To" subtitle="Filigreen Distribution Center - San Francisco, CA"/>
+
+  <apex:form styleClass="customPB">
+    <apex:pageMessages /> <!-- this is where the error messages will appear -->
+    <apex:pageBlock title="Please complete below information">
+    
+      <apex:pageBlockButtons location="top">
+        <apex:commandButton action="{!save}" value="Check-In" styleClass="slds-button slds-button_brand" />
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection showHeader="false" columns="2">
+        <apex:inputField value="{!CustomerVisit.FirstName__c}" styleClass="slds-input" />
+        <apex:inputField value="{!CustomerVisit.LastName__c}"  styleClass="slds-input" />
+        <apex:inputField value="{!CustomerVisit.Email__c}"  styleClass="slds-input" />
+        <apex:inputField value="{!CustomerVisit.Phone__c}"  styleClass="slds-input" />
+        <apex:inputField value="{!CustomerVisit.CompanyName__c}"  styleClass="slds-input" />
+        <apex:inputField value="{!CustomerVisit.Website__c}"  styleClass="slds-input" />
+        <apex:inputField value="{!CustomerVisit.VisityType__c}"  styleClass="slds-select" />
+        <apex:inputField value="{!CustomerVisit.ReasonForVisit__c}"  styleClass="slds-textarea" />
+        <apex:inputField value="{!CustomerVisit.PersonToMeet__c}"  styleClass="slds-select" />
+        
+        <apex:inputField value="{!CustomerVisit.Address__c}"  styleClass="slds-textarea" />
+ <!--      <apex:outputField value="{!CustomerVisit.InTime__c}" />   
+        <apex:inputField value="{!CustomerVisit.Photo__c}" /> -->
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title=" Photo Upload">
+                <apex:inputFile value="{!cont.VersionData}" fileName="{!cont.Title}" accept="image/*;capture=camera"/>
+            </apex:pageBlockSection>
+
+    </apex:pageBlock>
+      <!--<marquee behavior="scroll" direction="left">HTML scrolling text... </marquee>--> 
+
+  </apex:form>
+</apex:page>

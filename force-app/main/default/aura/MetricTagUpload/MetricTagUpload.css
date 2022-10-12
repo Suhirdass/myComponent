@@ -1,0 +1,27 @@
+.THIS {
+  /*  background-color:#fff;*/
+}
+.THIS .slds-file-selector__button{
+    border-radius: 0;
+    padding: 7px  !important;
+    background-color: #fff   !important;
+    color:#1B5297 !important;
+
+}
+.THIS .buttonSm {
+    text-transform: capitalize !important;
+left: 1px!important;
+}
+.THIS .buttonSave {
+    text-transform: capitalize !important;
+left: 18px!important;
+}
+.THIS .selected{
+    font-weight: bold;
+    background-color:gray  !important;
+
+}
+.THIS .slds-table tr td:first-child,
+.THIS .slds-table tr th:first-child {
+	padding-left: 1px !important;
+}

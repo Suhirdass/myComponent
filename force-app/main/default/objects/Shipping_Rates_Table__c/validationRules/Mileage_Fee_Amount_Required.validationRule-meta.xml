@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mileage_Fee_Amount_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>Fixed_Mileage_Fee__c &amp;&amp; ISNULL( Fixed_Mileage_Amount__c )</errorConditionFormula>
+    <errorDisplayField>Fixed_Mileage_Amount__c</errorDisplayField>
+    <errorMessage>* Required</errorMessage>
+</ValidationRule>

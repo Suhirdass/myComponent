@@ -1,0 +1,31 @@
+<aura:component implements="forceCommunity:searchInterface" extends="c:utility" access="global">
+
+  
+  <aura:attribute name="isSearchExpanded" type="Boolean" default="true" />
+
+  <aura:registerEvent name="searchFiltersEvt" type="c:searchFiltersEvt" />
+
+  <div class="{!'header-search' + (v.isSearchExpanded ? ' is-expanded' : '')}">
+    <a href="#" class="header-search-toggle" onclick="{!c.expandSearch}"></a>
+
+    <div class="search-expand">
+      <div onkeyup="{!c.onSearch}">
+        <lightning:input
+          type="text"
+          aura:id="searchBox"
+          value="{!v.searchTerm}"
+          placeholder="Search..."
+          class="header-search-input hide-label"
+        />
+      </div>
+
+      <lightning:button
+        class="header-search-submit"
+        variant="base"
+        iconName="utility:search"
+        onclick="{!c.onSearchClick}"
+        label=""
+      />
+    </div>
+  </div>
+</aura:component>

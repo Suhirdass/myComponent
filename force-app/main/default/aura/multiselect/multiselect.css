@@ -1,0 +1,59 @@
+.THIS .slds-select_container {
+	font-size: 12px;
+	color: #706e6b;
+}
+
+.THIS .slds-picklist input[readonly] {
+	border-color: var(--c-tan,#E7E6E2);
+	box-shadow: none;
+	padding-left: var(--lwc-spacingXSmall,0.5rem);
+	padding-right: var(--lwc-spacingXSmall,0.5rem);
+}
+
+.THIS .ms-filter-input {
+	/*margin: 0px 5%;*/
+	width: 100%;
+	height: 32px;
+	border-radius: 2px;
+	border-style: solid;
+	border-width: thin;
+	border-color: darkgray;
+	padding: 2px 5px;
+}
+
+.THIS .ms-input {
+	background-color: rgb(255, 255, 255);
+	border: 1px solid rgb(217, 219, 221);
+	border-radius: 0.25rem;
+	width: 100%;
+	transition: border 0.1s linear, background-color 0.1s linear;
+	display: inline-block;
+	padding: 0 1rem 0 0.75rem;
+	line-height: 1.875rem;
+	min-height: calc(1.875rem + (1px * 2));
+}
+
+.THIS .ms-refresh-icon {
+	position: absolute;
+}
+
+.THIS .ms-clear-icon {
+	position: absolute;
+}
+
+.THIS .ms-dropdown {
+	max-height: 500px;
+	overflow-y: auto;
+}
+
+.THIS .ms-dropdown ul {
+	padding: 0;
+}
+
+.THIS li svg {
+	fill: #027e46 !important;
+}
+
+.THIS .slds-dropdown {
+	width: 100%;
+}

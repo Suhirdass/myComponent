@@ -1,0 +1,176 @@
+<aura:component extends="c:utility" controller="SettingsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="isPrimaryContact" type="Boolean" default="false" />
+    <aura:attribute name="totalLicenseLimit" type="Integer" default="0" />
+    <aura:attribute name="totalLicenseUsed" type="Integer" default="0" />
+    <aura:attribute name="profile" type="Map" default="" />
+    <aura:attribute name="existingUsers" type="List" default="[]" />
+    <aura:attribute name="passwords" type="Map" default="" />
+    <aura:attribute name="newProfile" type="Map" default="{'profileType':'Community Plus User'}" />
+    <aura:attribute name="FRTRateURL" type="String" default="" />
+    <aura:attribute name="SRTRateURL" type="String" default="" />
+    <aura:attribute name="isBrand" type="Boolean" default="false" />
+    <aura:attribute name="platformLevel" type="String" default="" />
+    <aura:attribute name="membershipLevel" type="String" default="" />
+    <aura:registerEvent name="refreshUsernameEvt" type="c:refreshUsernameEvt" />
+    
+    
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem flexibility="grow" size="12" padding="horizontal-small">
+               
+                <span class="pLevel">Platform Level: {!v.platformLevel}</span>
+                <span class="mLevel">Membership Level: {!v.membershipLevel}</span>
+                <lightning:tabset variant="scoped">
+                    <lightning:tab label="Profile">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input disabled="{!true}" aura:id="profile"  label="First Name" value="{!v.profile.firstName}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input disabled="{!true}" aura:id="profile"  label="Last Name" value="{!v.profile.lastName}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input disabled="{!true}" label="Account Name" value="{!v.profile.accountName}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="profile" disabled="{!true}"  type="email" label="Email" value="{!v.profile.email}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="profile" label="Title" value="{!v.profile.title}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="profile" required="false" type="phone" label="Mobile Phone" value="{!v.profile.mobilePhone}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" messageWhenTypeMismatch ="Invalid phone number" onchange ="{!c.onMobileChange}"/>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="profile" required="false" type="phone" label="Business Phone" value="{!v.profile.phone}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" messageWhenTypeMismatch ="Invalid phone number" onchange ="{!c.onPhoneChange}"/>
+                            </lightning:layoutItem>
+                            
+                            <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                                <lightning:button variant="brand" class="updateBtn" label="Update" onclick="{!c.onProfileUpdate}" />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+                    <lightning:tab label="Update Password">
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="password" required="true" type="password" label="Old Password" value="{!v.passwords.oldPassword}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" class="slds-show_medium" padding="around-small">
+								&nbsp;
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="password" required="true" type="password" label="New Password" value="{!v.passwords.newPassword}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                <lightning:input aura:id="password" required="true" type="password" label="Confirm Password" value="{!v.passwords.verifyNewPassword}" />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                                <lightning:button variant="brand" class="updateBtn" label="Update" onclick="{!c.onPasswordUpdate}" />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:tab>
+
+                    <aura:if isTrue="{!v.isBrand}">
+                        <lightning:tab label="Fulfillment Rates">
+                            <c:Rates loginUserId="{!v.profile.Id}" ratesType="FRTRates"/>
+                        </lightning:tab>
+                        <lightning:tab label="Shipping Rates">
+                            <c:Rates loginUserId="{!v.profile.Id}" ratesType="SRTRates"/>
+                        </lightning:tab>
+                    </aura:if>
+                    <!--lightning:tab label="Upload Attachments">
+                    	<lightning:fileUpload label="Upload Attachments" multiple="true" 
+                                  recordId="{!v.profile.accountId}"
+                                  onuploadfinished="{!c.handleUploadFinished}" />
+                    </lightning:tab-->
+                    <aura:renderIf isTrue="{!v.isPrimaryContact}">
+                        <lightning:tab label="Manage Users">
+                            <div class="table-container slds-m-top_small">
+                                <table class="slds-table slds-table_cell-buffer">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Title</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.existingUsers}" var="u">
+                                            <tr>
+                                                
+                                                <td>
+                                                    {!u.firstName}&nbsp;{!u.lastName}
+                                                </td>
+                                                <td>
+                                                    {!u.email}
+                                                </td>
+                                                <td>
+                                                    {!u.title}
+                                                </td>
+                                                <td>
+                                                    <a data-item-id="{!u.Id}" data-item-action="{!if(u.isActive,'deactivate','activate')}" onclick="{!c.updateUser}">
+                                                        <aura:renderIf isTrue="{!u.isActive}">
+                                                            Deactivate
+                                                            <aura:set attribute="else">
+                                                                Activate
+                                                            </aura:set>
+                                                        </aura:renderIf>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                            </div>
+                        	
+                        </lightning:tab>
+                    	<lightning:tab label="Create User">
+                            <lightning:layout multipleRows="true">
+                                <aura:renderIf isTrue="{!v.totalLicenseLimit > v.totalLicenseUsed}">
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                        <lightning:input  aura:id="newprofile" required="true" label="First Name" value="{!v.newProfile.firstName}" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                        <lightning:input aura:id="newprofile" required="true" label="Last Name" value="{!v.newProfile.lastName}" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                        <lightning:input aura:id="newprofile" required="true"  type="email" label="Email" value="{!v.newProfile.email}" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                        <lightning:input aura:id="newprofile" label="Title" value="{!v.newProfile.title}" />
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                        <lightning:input aura:id="newprofile"  type="phone" label="Phone" value="{!v.newProfile.phone}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" messageWhenTypeMismatch ="Invalid phone number" onchange ="{!c.onNewPhoneChange}"/>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                                        <lightning:input aura:id="newprofile" type="phone" label="Mobile Phone" value="{!v.newProfile.mobilePhone}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" messageWhenTypeMismatch ="Invalid phone number" onchange ="{!c.onNewMobileChange}"/>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small" >
+                                        <lightning:select aura:id="newprofile" name="profileType" label="Type" required="true" value ="{!v.newProfile.profileType}">
+                                            <option value="Community Plus User">Community Plus User</option>
+                                            <option value="Community Standard">Community Standard</option>
+                                        </lightning:select>
+                                    </lightning:layoutItem>
+                                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+                                        <lightning:button variant="brand" label="Create" onclick="{!c.onProfileCreate}" />
+                                    </lightning:layoutItem>
+                                    <aura:set attribute="else">
+                                    	<lightning:layoutItem class="slds-text-heading_small slds-text-align_center" flexibility="grow" size="12" padding="around-small">
+                                        	No Licenses available. 
+                                        </lightning:layoutItem>
+                                    </aura:set>
+                                </aura:renderIf>
+                            </lightning:layout>
+                        </lightning:tab>
+                    </aura:renderIf>
+                </lightning:tabset>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

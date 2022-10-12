@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>First_Notification_Vehicle_Tag_Expiration</fullName>
+        <description>First Notification - Vehicle Tag Expiration</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>arielle@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sinatra@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/First_Notice_Vehicle_Tag_Expiration</template>
+    </alerts>
+    <alerts>
+        <fullName>Second_Notification_Vehicle_Tag_Expiration</fullName>
+        <description>Second Notification - Vehicle Tag Expiration</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>arielle@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sathiyaraj@trumatics.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>sinatra@wearewovn.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>itsupport@wearewovn.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All_templates/Second_Notice_Vehicle_Tag_Expiration</template>
+    </alerts>
+    <rules>
+        <fullName>Vehicle Tag Expiration</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>Vehicles__c.Tag_Expiration_Date__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Vehicle tag expiration</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>First_Notification_Vehicle_Tag_Expiration</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>Vehicles__c.Tag_Expiration_Date__c</offsetFromField>
+            <timeLength>-30</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Second_Notification_Vehicle_Tag_Expiration</name>
+                <type>Alert</type>
+            </actions>
+            <offsetFromField>Vehicles__c.Tag_Expiration_Date__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

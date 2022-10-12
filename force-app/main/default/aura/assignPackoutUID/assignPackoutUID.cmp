@@ -1,0 +1,761 @@
+<aura:component extends="c:utility" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" controller="AssignPackoutUIDController">
+    <aura:attribute name="customStyle" type="String" default=""/> 
+    <aura:attribute name="messages" type="boolean" />
+        <aura:attribute name="sitemessages" type="boolean" />
+
+    <aura:unescapedHtml value="{!v.customStyle}" />
+    <ltng:require scripts="{!join(',',$Resource.SweetAlert)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    
+    <aura:attribute name="recordName" type="String" />
+    <aura:attribute name="ReceiverName" type="String" />
+    <aura:attribute name="notemessage" type="String" />
+    
+    <aura:attribute name="errorPicId" type="String" />
+    <aura:attribute name="errorPicSelId" type="String" />
+    <aura:attribute name="errorpicMul" type="String" />
+    <aura:attribute name="pickListLine" type="List" default="[]" />
+    <aura:attribute name="lstQaRec" type="List" default="[]" />
+    <aura:attribute name="uidRecords" type="List" default="[]" />
+    <aura:attribute name="lstPack" type="List" default="[]" />
+    <aura:attribute name="listItems" type="List" default="[]" />
+    <aura:attribute name="notemessageBarCode" type="Boolean" />
+    
+    <aura:attribute name="isSuccess" type="Boolean" default="true"/>
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="message" type="String" default=""/>
+    <aura:attribute name="selectedPickLineId" type="String" />
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="isChange" type="boolean" default="false"/>
+    <aura:attribute name="selectedRecord" type="Object" default="" description="selected Record Details" />
+    <aura:attribute name="qaRecord" type="Quality_Assurance__c" default="{ 'sobjectType': 'Quality_Assurance__c'}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:selectedRecordLookupEvent" action="{!c.handleComponentEvent}"/>
+    <aura:attribute name="setPicklist" type="Picklist__c" default="{'sobjectType': 'Picklist__c',
+                                                                   'Name':''
+                                                                   }"/> 
+    <aura:attribute name="packoutUIDError" type="Boolean" default="false"  />
+    <aura:attribute name="UIDuseError" type="Boolean" default="false"  />
+        <aura:attribute name="LASite" type="Boolean" default="false"  />
+    <aura:attribute name="qualityRecord" type="list[]" />
+    <aura:attribute name="lstPicklistLine" type="list[]" />
+
+    <aura:attribute name="showpopup" type="boolean" default="false"/>
+    <aura:attribute name="Confirmation_for_QA_Record" type="String"/>
+    <aura:attribute name="rlIds" type="list[]"/>
+    
+    <aura:html tag="style">
+        
+        .cuf-content {
+        	padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        	padding: 0rem !important;
+        } 
+        .slds-brand-band{
+        	height: 86%;
+        }
+        .cUtility button {
+    		text-transform: initial;
+        }
+        .slds-align_absolute-center{
+            align-items: unset;
+        }
+        .slds-p-around_small{
+        	width:50% !important;
+        }
+        .cUtility button {
+    		text-transform: initial;
+        	border-radius: var(--lwc-buttonBorderRadius,.25rem);
+        }
+        .slds-form-element__label {
+        	display : none;
+        }
+        .back {
+        	background-color: white;
+        	height: 100%;
+        }
+        .backTwo {
+        	background-color: white;
+        	max-height: 2000%;
+        }
+        .dataTables_filter{
+        	display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        
+        .textCap{
+        text-transform: capitalize !important; 
+        }
+         .title-align {
+    	padding-left: 10px;
+        padding-top: 5px;
+        }
+         .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+       .layout-left{
+        text-align: right; 
+        margin-left:-5%;
+        }
+        .layout-left-auto{
+        text-align: right; 
+        }
+        .layout-right{
+        text-align: left;
+        padding-left: 2%;
+        }
+        .layout-right-auto{
+        text-align: left;
+        padding-left: 2%; 
+        width: auto;
+        }
+          
+       #containerIntro{
+        
+           padding-top: 9px;
+           margin-left: 25%;
+       }
+       #containerIntro h1{
+        	color: #172b4d;
+            display: inline;
+       } 
+       #containerIntro p {
+           display: inline;
+          color:red;
+       }
+        .refVar{
+        display:none;
+        }
+        .uiderror{
+        text-align: center;
+        font-weight: 600;
+        color: red;
+        }
+           span.toastMessage.slds-text-heading--small.forceActionsText {
+        white-space: pre-line !important;
+        } 
+    </aura:html>
+    
+    <aura:renderIf isTrue="{!!v.isSuccess}">
+        <div style="width:100%;text-align:center">
+            <div style="color:red;font-weight:bold">
+                {!v.message}
+            </div>
+            <br/>
+            <lightning:button label="Cancel" title="Cancel" onclick="{!c.cancel}"/>
+        </div>
+    </aura:renderIf>
+    <aura:if isTrue="{!v.showpopup}">
+        
+         <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-slide-up-open slds-modal_medium " >
+  <div class="slds-modal__container" style="width: 600px !important;">
+    
+    <div class="slds-modal__header">
+      <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Quality Assurance</h1>
+    </div>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="border-radius: 0px;">
+        {!v.Confirmation_for_QA_Record}
+      </div>
+    <div class="slds-modal__footer">
+      <lightning:button label="Yes" onclick="{!c.handleConfirmDialogYes}" class="slds-button_brand " />
+        <lightning:button label="No" onclick="{!c.handleConfirmDialogNo}" class="slds-button_neutral " />
+    </div>
+      
+  </div>
+</section>
+   
+    <div class="slds-backdrop slds-backdrop_open"></div>    
+        </aura:if>
+    
+    <aura:if isTrue="{!v.isOpen}">
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+           <div class="slds-modal__container" >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Quality Assurance: QA Picklist</h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_medium" style="border-radius: 0px;" id="modal-content-id-1">
+                    <div class="test-id__section slds-section  slds-is-open full forcePageBlockSection forcePageBlockSectionEdit" data-aura-rendered-by="6326:0" data-aura-class="forcePageBlockSection forcePageBlockSectionEdit">
+                        <h3 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container" data-aura-rendered-by="6328:0">
+                            <span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate" data-aura-rendered-by="6330:0">Failure Summary</span>
+                        </h3>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <!--<label class="slds-form-element__label" style="margin-right: 0.5rem;">Pass All</label>-->
+                                <label style="margin-right: 0.5rem;">Pass All</label>
+                                <lightning:input type="checkbox" variant="label-hidden" label="Pass All" value="{!v.qaRecord.Pass_All__c}" name="passAll"/>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <lightning:textarea name="failureSummary" value="{!v.qaRecord.Failure_Summary__c}" label="Failure Summary" />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Failed?</label>
+                                <lightning:input value="{!v.qaRecord.Failed__c}" variant="label-hidden" type="checkbox" label="Failed?" name="Failed"/>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                    <div class="test-id__section slds-section  slds-is-open full forcePageBlockSection forcePageBlockSectionEdit" data-aura-rendered-by="6326:0" data-aura-class="forcePageBlockSection forcePageBlockSectionEdit">
+                        <h3 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container" data-aura-rendered-by="6328:0"><span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate" data-aura-rendered-by="6330:0">Information</span>
+                        </h3>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Batch ID </label>
+                                <lightning:select required="false" aura:id="BatchID" name="BatchID" label="Batch ID" value="{!v.qaRecord.Batch_ID__c}">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Product Verification</label>
+                                <lightning:select required="false" aura:id="BatchID" name="ProductVerification" value="{!v.qaRecord.Product_Verification__c}" label="Product Verification">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">UID</label>
+                                <lightning:select required="false" aura:id="BatchID" name="UID" label="UID" value="{!v.qaRecord.UID__c}">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Qty Verification</label>
+                                <lightning:select required="false" aura:id="BatchID" name="QtyVerification" label="Qty Verification" value="{!v.qaRecord.Qty_Verification__c}">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                    <div class="test-id__section slds-section  slds-is-open full forcePageBlockSection forcePageBlockSectionEdit" data-aura-rendered-by="6326:0" data-aura-class="forcePageBlockSection forcePageBlockSectionEdit">
+                        <h3 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container" data-aura-rendered-by="6328:0"><span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate" data-aura-rendered-by="6330:0">Primary Panel</span>
+                        </h3>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Clear and Legible</label>
+                                <lightning:select name="ClearandLegible" value="{!v.qaRecord.Clear_and_Legible__c}" label="Clear and Legible">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Net Weight</label>
+                                <lightning:select name="NetWeight" value="{!v.qaRecord.Net_weight__c}" label="Net Weight">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Product Identification</label>
+                                <lightning:select name="ProductIdentification" value="{!v.qaRecord.Product_Identification__c}" label="Product Identification">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Net Weight Threshold</label>
+                                <lightning:select name="NetWeightThreshold" value="{!v.qaRecord.Net_Weight_Threshold__c}" label="Net Weight Threshold">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Universal Symbol</label>
+                                <lightning:select name="UniversalSymbol" value="{!v.qaRecord.Universal_Symbol__c}" label="Universal Symbol">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto"></lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                    <div class="test-id__section slds-section  slds-is-open full forcePageBlockSection forcePageBlockSectionEdit" data-aura-rendered-by="6326:0" data-aura-class="forcePageBlockSection forcePageBlockSectionEdit">
+                        <h3 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container" data-aura-rendered-by="6328:0"><span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate" data-aura-rendered-by="6330:0">Information Panel</span>
+                        </h3>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Licensee Contact Information</label>
+                                <lightning:select name="LicenseeContactInformation" value="{!v.qaRecord.Licensee_Contact_Information__c}" label="Licensee Contact Information">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Manufacture and Packaging Date</label>
+                                <lightning:select name="ManufactureandPackagingDate" value="{!v.qaRecord.Manufacture_and_Packaging_Date__c}" label="Manufacture and Packaging Date">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Cannabis Government Warning</label>
+                                <lightning:select name="CannabisGovernmentWarning" value="{!v.qaRecord.Cannabis_Government_Warning__c}" label="Cannabis Government Warning">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Packaging Date</label>
+                                <lightning:select name="PackagingDate" value="{!v.qaRecord.Packaging_Date__c}" label="Packaging Date">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Prop65 Warning</label>
+                                <lightning:select name="Prop65Warning" value="{!v.qaRecord.Prop65_Warning__c}" label="Prop65 Warning">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Best or Use by Date</label>
+                                <lightning:select name="BestorUsebyDate" value="{!v.qaRecord.Best_or_Use_by_Date__c}" label="Best or Use by Date">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Product Ingredient</label>
+                                <lightning:select name="ProductIngredient" value="{!v.qaRecord.Product_Ingredients__c}" label="Product Ingredient">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Harvest Date</label>
+                                <lightning:select name="HarvestDate" value="{!v.qaRecord.Harvest_Date__c}" label="Harvest Date">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                    <div class="test-id__section slds-section  slds-is-open full forcePageBlockSection forcePageBlockSectionEdit" data-aura-rendered-by="6326:0" data-aura-class="forcePageBlockSection forcePageBlockSectionEdit">
+                        <h3 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container" data-aura-rendered-by="6328:0"><span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate" data-aura-rendered-by="6330:0">Cannabinoid Content</span>
+                        </h3>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Cannabinoid Threshold</label>
+                                <lightning:select name="CannabinoidThreshold" value="{!v.qaRecord.Cannabinoid_Threshold__c}" label="Cannabinoid Threshold">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Cannabis Cannabinoid Content</label>
+                                <lightning:select name="CannabisCannabinoidContent" value="{!v.qaRecord.Cannabis_Cannabinoid_Content__c}" label="Cannabis Cannabinoid Content">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Cannabis Product Cannabinoid Content</label>
+                                <lightning:select name="CannabisProductCannabinoidContent" value="{!v.qaRecord.Cannabis_Product_Cannabinoid_Content__c}" label="Cannabis Product Cannabinoid Content">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto"></lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                    <div class="test-id__section slds-section  slds-is-open full forcePageBlockSection forcePageBlockSectionEdit" data-aura-rendered-by="6326:0" data-aura-class="forcePageBlockSection forcePageBlockSectionEdit">
+                        <h3 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container" data-aura-rendered-by="6328:0"><span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate" data-aura-rendered-by="6330:0">Packaging</span>
+                        </h3>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Tamper Evident</label>
+                                <lightning:select name="TamperEvident" value="{!v.qaRecord.Tamper_Evident__c}" label="Tamper Evident">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Multi-Layered Packaging</label>
+                                <lightning:select name="MultiLayeredPackaging" value="{!v.qaRecord.Multi_Layered_Packaging__c}" label="Multi-Layered Packaging">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Child Resistant Packaging</label>
+                                <lightning:select name="ChildResistantPackaging" value="{!v.qaRecord.Child_Resistant_Packaging__c}" label="Child Resistant Packaging">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Resealable for Multiple Uses</label>
+                                <lightning:select name="ResealableforMultipleUses" value="{!v.qaRecord.Resealable_for_Multi_Servings__c}" label="Resealable for Multiple Uses">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                        <lightning:layout>
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <label style="margin-right: 0.5rem;">Opaque</label>
+                                <lightning:select name="Opaque" label="Opaque" value="{!v.qaRecord.Opaque__c}">
+                                    <option value="">--None--</option>
+                                    <option value="Pass">Pass</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="N/A">N/A</option>
+                                </lightning:select>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small" flexibility="auto"></lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                </div>
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="brand" 
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{!c.createQA}"/>
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                </footer>
+            </div>
+        </section>
+       <div class="slds-backdrop slds-backdrop_open"></div>
+       <!--  ###### MODAL BOX Part END Here ######-->
+    </aura:if>
+    
+    <article class="slds-card">
+     <div class="slds-page-header heightfix" role="banner">
+      <div class="slds-grid">
+        <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media">
+            <lightning:icon iconName="custom:custom93" title="custom93" />
+            <div class="slds-media__body">
+              <div class="slds-grid">
+               <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Picklist Details">Picklist Details</h1> 
+                  <aura:if isTrue="{!not(empty(v.notemessage))}"> 
+                      <div id="containerIntro">
+                          <h1>NOTE: </h1>
+                          <p style="color: #172b4d;font-size: 15px;font-weight: bold !important;"> {!v.setPicklist.Sales_Order__r.Receiver_Name__r.DBA__c} - </p>
+                         
+                          <p> {!v.notemessage}</p>
+                      </div>
+                  </aura:if>
+                       <aura:if isTrue="{!v.notemessageBarCode}">
+                            <div id="containerIntro">
+                                 <h1>NOTE: </h1>
+                   <p style="color: #172b4d;font-size: 15px;font-weight: bold !important;"> {!v.setPicklist.Sales_Order__r.Receiver_Name__r.DBA__c} - </p>
+                           <p> Required Bar Code Label</p>
+                           <p style="color: #172b4d"> &amp; </p>
+                           <p> QR Code </p>
+                           </div>
+                  </aura:if>
+                </div>
+            </div>	
+          </div>
+        </div>
+           <div class="slds-col slds-no-flex slds-align-bottom">
+          <div class="slds-button-group" role="group">
+              <lightning:button class="slds-button slds-button--neutral" label="Mass QA" onclick="{!c.createMassQA}"/>   
+               <lightning:button class="slds-button slds-button--neutral" label="Assign Pack-out UID" onclick="{!c.assignUID}"/>
+            <lightning:button class="slds-button slds-button--neutral" label="Cancel" onclick="{!c.cancel}"/>   
+              
+          </div>
+        </div>
+      </div>
+    </div>
+	<br/>
+           <div class="slds-is-relative slds-p-horizontal_small">
+           <div class="slds-grid slds-wrap slds-text-align_center custom-container">      
+               
+               <div class="slds-col">
+                    <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Picklist Name</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.setPicklist.Id}" style="color:#0070D2;" > <span >{!v.setPicklist.Name} </span></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Record Type</b></div>
+                            <div class="slds-size_1-of-2 slds-truncate" style="text-align: left; padding-left: 2%;">{!v.setPicklist.Sales_Order__r.FG_Record_Type__c}</div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Brand Quote</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setPicklist.Brand_Quote__c}</div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Sales Order</b></div>
+                         <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.setPicklist.Sales_Order__c}" style="color:#0070D2;" ><u>{!v.setPicklist.Sales_Order__r.Name}</u></a></div>
+                    </div>
+               </div>
+               
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Scheduled Pick Date</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><ui:outputDate value="{!v.setPicklist.Scheduled_Pick_Date__c}" format="MM/DD/YYYY"/></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-2" style="text-align: right;"><b>Order or Service</b></div>
+                            <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setPicklist.Sales_Order__r.Customer_PO_or_Quote__c}</div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Ownership</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;">{!v.setPicklist.Ownership__c}</div>	
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-2" style="text-align: right;"><b>Site</b></div>
+                        <div class="slds-size_1-of-2" style="text-align: left; padding-left: 2%;"><a href="{!'/' + v.setPicklist.Site__c}" style="color:#0070D2;"><u>{!v.setPicklist.Site__r.Name}</u></a><span>, </span> {!v.setPicklist.Site__r.Warehouse_Name__c}</div>		
+                    </div>
+               </div>
+             
+               <div class="slds-col">
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Distributor Name</b></div>
+                            <div class="slds-size_2-of-3" style="text-align: left;"><a href="{!'/' + v.setPicklist.Sales_Order__r.Distributor_Name__c}" style="color:#0070D2;"><u>{!v.setPicklist.Sales_Order__r.Distributor_Name__r.DBA__c}</u></a></div>
+                   </div>
+                   
+                   <div class="slds-grid"> 
+                            <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Supplier Name</b></div>
+                        	<div class="slds-size_2-of-3" style="text-align: left;"><a href="{!'/' + v.setPicklist.Sales_Order__r.Supplier_Name__c}" style="color:#0070D2;"><u>{!v.setPicklist.Sales_Order__r.Supplier_Name__r.DBA__c}</u></a></div> 
+                   </div>
+                   
+                    <div class="slds-grid"> 
+                        <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Receiver Name</b></div>
+                        <div class="slds-size_2-of-3" style="text-align: left;"><a href="{!'/' + v.setPicklist.Sales_Order__r.Receiver_Name__c}" style="color:#0070D2;"><u>{!v.setPicklist.Sales_Order__r.Receiver_Name__r.DBA__c}</u></a></div>
+                    </div>
+                   
+                   <div class="slds-grid"> 
+                        <div class="slds-size_1-of-3" style="text-align: right; padding-right: 2%;"><b>Receiver Contact</b></div>
+                        <div class="slds-size_2-of-3" style="text-align: left;"><a href="{!'/' + v.setPicklist.Sales_Order__r.Receiver_Contact__c}" style="color:#0070D2;"><u>{!v.setPicklist.Sales_Order__r.Receiver_Contact__r.Name}</u></a></div>
+                    </div>
+                  
+              </div>
+            </div>   
+            </div> 
+       
+    <br/>
+	</article>
+    <br/>
+    <article class="slds-card">
+              <div class="slds-page-header heightfix" role="banner">
+                  <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                      <div class="slds-media">
+                         <lightning:icon iconName="standard:product" title="product" /> 
+                        <div class="slds-media__body">
+                          <div class="slds-grid">
+                           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Picklist Line Items">Picklist Line Items</h1> 
+                            </div>
+                        </div>	
+                      </div>
+                    </div>
+                  </div>
+            </div> 
+    
+        <div class="slds-is-relative slds-p-horizontal_small slds-m-top_small slds-scrollable heightfix" style="min-width: 100%;">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small" style="margin-top: 0 !important;">
+                <thead>
+                    <tr>
+                        <th class="upperCase borderLeft">Name</th>
+                        <th class="upperCase borderLeft">Type</th><!--Is Sample-->
+                        <th class="upperCase">Inventory Position</th>
+                        <th class="upperCase">Product Name</th>
+                        
+                        <th class="upperCase">Qty to Pick</th>
+                        <th class="upperCase">Unit Price</th>
+                        <th class="upperCase">Batch ID</th>
+                        <th class="upperCase">Source UID</th>
+                        <!--  <th class="upperCase">QA Status</th>-->
+                        <th class="upperCase">Packout UID</th>
+                        <th class="upperCase">Quality Assurance</th>
+                        <th class="upperCase">Brand Name</th>
+                        <!--th class="upperCase">Ownership</th-->
+                        <th class="upperCase">Lab Status</th>
+                        <th class="upperCase borderRight">QA Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.pickListLine}" var="pickLine" indexVar="index">
+                        <tr>
+                            <!--td><lightning:input type="checkbox" aura:id="myCheckboxes" name="selectSingle" checked="{!pickLine.isSelected}" value="{!pickLine.isSelected}"/></td-->
+                            <td class="borderLeft"><a href="{!'/' + pickLine.Id}">{!pickLine.Name}</a></td>
+                            <td>
+                                <aura:If isTrue="{!pickLine.Is_Sample__c}">
+                                    Sample<!--ui:outputCheckbox aura:id="checkbox" value="{!pickLine.Is_Sample__c}"/-->
+                                    <!--aura:set attribute="else">Promo</aura:set-->
+                                </aura:If>
+                                <aura:If isTrue="{!pickLine.IsPromo__c}">Promo</aura:If>
+                            </td>
+                              <td><a href="{!'/' + pickLine.Inventory_Position__c}">{!pickLine.Inventory_Position__r.Name}</a></td>
+                            <td id="{!'index'+index}" >
+                                <div id="{!pickLine.Id}" class="refVar">{!pickLine.Product_Name__r.Name}</div>
+                                <div id="{!'price'+pickLine.Id}" class="refVar">{!pickLine.Unit_Price__c}</div>
+                                <div id="{!'batchid'+pickLine.Id}" class="refVar">{!pickLine.Harvest_Batch_or_Lot_Code__c}</div>
+                                <div id="{!'uid'+pickLine.Id}" class="refVar">{!pickLine.selectedPackOut.label}</div>
+                                 
+                               
+                                <a href="{!'/' + pickLine.Product_Name__c}">{!pickLine.Product_Name__r.Name}</a></td>
+                          
+                            <td>{!pickLine.Qty_to_Pick__c}</td>
+                            <td><ui:outputCurrency value="{!pickLine.Unit_Price__c}"/></td>
+                            <td><a href="{!'/' + pickLine.Inventory_Position__r.Harvest_Batch_Code__c}">{!pickLine.Harvest_Batch_or_Lot_Code__c}</a></td>
+                            <td><a href="{!'/' + pickLine.Inventory_Position__r.UID_New__c}">{!pickLine.UID__c}</a></td>
+                            <!--  <td style="text-align:center;">{!pickLine.QA_Status__c}</td> -->
+                            <td>
+                                <div onclick="{!c.selectUID}" data-sortfield="{!pickLine.Id}" style="position:relative;">
+                                    <aura:renderIf isTrue="{!pickLine.hasPackOut}">
+                                    	<c:customLookup isViewLabel="false" objectName="UID__c" iconName="standard:article" isFixed="true" fieldName="Name" placeholder="Pack-out UID" selectedRecord="{!pickLine.selectedPackOut}"/>
+                                        <aura:set attribute="else">
+                                          <c:customLookup isViewLabel="false" objectName="UID__c" iconName="standard:article" isFixed="true" fieldName="Name" placeholder="Pack-out UID" />
+                                        </aura:set>
+                                    </aura:renderIf>
+                                    <div id="{!'uiderror'+pickLine.Id}" class="refVar1 uiderror"></div>
+                                    <!--aura:iteration items="{!v.lstPack}" var="rec">
+                                        <aura:if isTrue="{!rec.key == pickLine.Id}">
+                                            <c:customLookup objectName="UID__c" fieldName="Name" placeholder="Pack-out UID" selectedRecord="{!rec.value}"/>
+                                            <aura:set attribute="else">
+                                                <c:customLookup objectName="UID__c" fieldName="Name" placeholder="Pack-out UID"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:iteration-->
+                                    
+                                    <!--c:auraIfContains items="{!v.listItems}"  element="{!pickLine.Id}">
+                                        Hello
+                                        <aura:iteration items="{!v.lstPack}" var="rec">
+                                            <aura:if isTrue="{!rec.key == pickLine.Id}">
+                                                <c:customLookup objectName="UID__c" fieldName="Name" placeholder="Pack-out UID" selectedRecord="{!rec.value}"/>
+                                            </aura:if>
+                                        </aura:iteration>
+                                    </c:auraIfContains-->
+                                    
+                                    
+                                    <!--aura:set attribute="else">
+                                                    <c:customLookup objectName="UID__c" fieldName="Name" placeholder="Pack-out UID"/>
+                                                </aura:set-->
+                                </div>
+                            </td>
+                            <td>
+                                <aura:if isTrue="{!pickLine.availableQA}">
+                                    <aura:iteration items="{!v.lstQaRec}" var="qa">
+                                        <aura:if isTrue="{!qa.Picklist_Line__c == pickLine.Id}">
+                                        	<a href="{!'/' + qa.Id}">{!qa.Name}</a><br/>
+                                        </aura:if>
+                                    </aura:iteration>
+                                    
+                                    <aura:set attribute="else">
+                                        <div style="cursor: pointer;font-size: inherit;color:var(--lwc-brandTextLink,rgb(0, 109, 204))" onclick="{! c.openModel }" data-sortfield="{!pickLine.Id}">+ New QA</div>
+                                    </aura:set>
+                                </aura:if>
+                            </td>
+                            <td>{!pickLine.Producer_Name__c}</td>
+                            <!--td><a href="{!'/' + pickLine.Inventory_Position__r.Ownership__c}">{!pickLine.Ownership__c}</a></td-->
+                            <td>{!pickLine.Lab_Test_Status__c}</td>
+                            <td class="borderRight" style="text-align:center;">{!pickLine.QA_Count__c}</td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <br/><br/><br/>
+        </div>
+    <br/>
+        	</article>
+    <br/>
+    
+    <!--div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <lightning:button variant="Brand" class="slds-button" label="Assign" onclick="{!c.assignUID}"/>
+        <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.cancel}"/>
+    </div-->
+    
+</aura:component>

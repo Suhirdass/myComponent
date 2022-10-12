@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Distribution__c</fullName>
+    <externalId>false</externalId>
+    <formula>if(Text( SO_Status__c )  &lt;&gt; &quot;rejected&quot;  &amp;&amp; Text( SO_Status__c )  &lt;&gt; &quot;cancelled&quot; &amp;&amp; Total_Price__c &gt; 0,
+Total_Distribution_Fees__c /  Total_Price__c, 0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Total Distribution Fees compared to Total Product Price</inlineHelpText>
+    <label>Distribution (%)</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

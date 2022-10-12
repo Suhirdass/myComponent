@@ -1,0 +1,50 @@
+<apex:page standardController="Opportunity" extensions="OpportunityProductEditAllExtension"  >
+   <apex:form >
+  <!-- notice we use a lot of $ObjectType merge fields... I did that because if you have changed the labels of fields or objects it will reflect your own lingo -->
+            <apex:pageBlock title="Selected {!$ObjectType.Product2.LabelPlural}" id="selected">
+                <apex:pageMessages id="showmsg"></apex:pageMessages>
+                       
+                <apex:pageblockTable value="{!shoppingCart}" var="s">
+                
+<!--                    <apex:column headerValue="{!$ObjectType.Product2.LabelPlural}" value="{!s.PriceBookEntry.Product2.Name}"/> -->
+                    <apex:column headerValue="{!$ObjectType.Product2.Fields.Name.Label}">
+                            <apex:outputlink value="/{!s.PriceBookEntry.Product2Id}">{!s.PriceBookEntry.Product2.Name}</apex:outputlink>
+                        </apex:column>
+
+                    <!--apex:column headerValue="{!$ObjectType.Product2.Fields.Available_Inventory__c.Label}">
+                        <apex:outputText value="{! IF(OR(ISNULL(s.Product2.Available_Inventory__c) ,ISBLANK(s.Product2.Available_Inventory__c)), 0.00, s.Product2.Available_Inventory__c)}"/>
+                    </apex:column-->
+                    <apex:column headerValue="{!$ObjectType.Product2.Fields.Available_Qty__c.Label}">
+                        <apex:outputText value="{! IF(OR(ISNULL(s.Product2.Available_Qty__c) ,ISBLANK(s.Product2.Available_Qty__c)), 0.00, s.Product2.Available_Qty__c)}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.MOQ__c.Label}">
+                        <apex:inputField value="{!s.MOQ__c}" required="false"/>
+                    </apex:column>                       
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Quantity.Label}">
+                        <apex:inputField value="{!s.Quantity}" style="width:70px" required="true">
+                        <apex:actionSupport event="onchange" action="{!getTotalQty}" rerender="selected">
+                        </apex:actionSupport> 
+                        </apex:inputField>
+                    </apex:column>
+                    <apex:column headerValue="Total Qty">
+                        <apex:outputText value="{!s.MOQ__c* s.Quantity}" />
+                    </apex:column>  
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.UnitPrice.Label}">
+                        <apex:inputField value="{!s.UnitPrice}" style="width:70px" required="true" onkeyup="refreshTotals();"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Product_Title__c.Label}">
+                        <apex:inputField value="{!s.Product_Title__c}" required="true"/>
+                    </apex:column>
+                </apex:pageblockTable>
+            
+            
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!onSave}" value="Save"/>
+                    <apex:commandButton action="{!onCancel}" value="Cancel" immediate="true"/>
+                </apex:pageBlockButtons>
+            
+            </apex:pageBlock>
+                </apex:form>
+
+</apex:page>

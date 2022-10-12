@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Testing__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Select application state mandated testing such as Phase 1, Phase 2, Phase 3</inlineHelpText>
+    <label>Required Testing</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Lab_Test_Types</valueSetName>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

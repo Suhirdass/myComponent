@@ -1,0 +1,15 @@
+<apex:page standardController="Purchase_Order__c"  extensions="CreateShippingManifestfromPO"  
+    action="{!createTrShipManifest}" title="Transfer Shipping Manifest: Create New Tr.Manifest" >  
+  <apex:form >
+  <apex:pageBlock title="PO Detail">
+  <apex:pageBlockButtons >
+      <apex:commandButton action="{!goBack}" value="Return"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection title="Warnings and Errors Associated with Create Transfer Shipping Manifest" columns="1">
+      <apex:pageBlockSectionItem >
+        <apex:pageMessages />
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

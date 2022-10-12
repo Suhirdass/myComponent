@@ -1,0 +1,212 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global"  extends="c:utility"  controller="InvoiceLockingScreenController">
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="Invoice" type="Map" default="{}" />
+    <!--ltng:require scripts="{!join(',',$Resource.SweetAlert)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/-->
+    <aura:handler event="c:selectedRecordLookupEvent" action="{!c.handleComponentEvent}"/>
+    
+    <aura:attribute name="selectRecConId" type="String" />
+    <aura:attribute name="payAmount" type="Decimal" default="0"/>
+    <aura:attribute name="InvoiceBalance" type="Decimal" default="0"/>
+    
+    <aura:html tag="style">
+        .slds-modal__container {
+        /*min-width: 90%;*/
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .back {
+        background-color: white;
+        height: 100%;
+        }
+        .backTwo {
+        background-color: white;
+        max-height: 200%;
+        }
+        .dataTables_filter{
+        display : none;
+        }
+        .textColorBlue{
+        color: blue;
+        }
+        .textGap div{
+        margin-top: 5px;
+        word-wrap: normal;
+        }
+        .SOtable{
+        border-collapse: collapse;
+        width: 100%;
+        height: 100%;
+        }
+        .SOtable td, .SOtable th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+        
+        
+        .SOtable tr:hover {background-color: #F5F5F5;}
+        .SOtable th {
+        background-color: #F5F5F5;
+        border: 1px solid #D9D7D7;
+        }
+        .textCap{
+        text-transform: capitalize !important; 
+        border-radius: 5px !important;
+        }
+        .title-align {
+        padding-left: 10px;
+        padding-top: 5px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .cUtility .slds-modal__content {
+        padding: 4em 3em;
+        border-radius: 0;
+        }
+        .slds-modal {
+        left:200px;
+        }
+        
+    </aura:html>
+    <article class="slds-card " >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <lightning:icon iconName="custom:custom31" title="Invoice" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle slds-m-top_xx-small" title="Record Title" style="margin-left: 1%;">Invoice</h1>
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <div class="slds-button-group" role="group">
+                        <aura:If isTrue="{!not(empty(v.Invoice.Id))}">
+                            <lightning:button class="slds-button slds-button--neutral" label="Cancel" onclick="{!c.onCancel}"/> 
+                            <lightning:button class="slds-button slds-button--neutral" label="Save &#38; Lock" onclick="{!c.onSubmit}"/>
+                            
+                        </aura:If>  
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <div class="slds-card__header">    
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container">
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;"><b>Invoice</b></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;"><a data-id="{!v.Invoice.Id}" onclick="{!c.onView}" style="color:#006DCC">{!v.Invoice.Name}</a></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Receiver Name</b></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;"><a data-id="{!v.Invoice.Receiver_Name__c}" onclick="{!c.onView}" style="color:#006DCC">{!v.Invoice.Receiver_Name__r.Name}</a></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Receiver DBA</b></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;">{!v.Invoice.Receiver_DBA__c}</div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;"><b>Invoice Due Date</b></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;"><ui:outputDate value="{!v.Invoice.Invoice_Due_Date__c}" format="MM/DD/YYYY"/></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Payment Terms</b></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;">{!v.Invoice.Payment_Terms__c}</div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Record Type</b></div>
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;">{!v.Invoice.RecordType.Name}</div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        
+                    </div>
+                </div>
+                <div class="slds-size_1-of-4">
+                    <div class="slds-grid slds-wrap">
+                        
+                    </div>
+                </div>
+                <div class="slds-size_1-of-3">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Receiver Contact Name</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-top: 5px;">
+                            <div onclick="{!c.selectContact}" data-sortfield="{!v.Invoice.Id}" >
+                                    <aura:renderIf isTrue="{!v.Invoice.hasReciCon}">
+                                    	<c:customLookup isViewLabel="false" objectName="Contact" iconName="standard:article" isFixed="true" fieldName="Name" placeholder="Receiver Contact" selectedRecord="{!v.Invoice.selectedRC}"/>
+                                        <aura:set attribute="else">
+                                            <c:customLookup isViewLabel="false"  objectName="Contact" iconName="standard:article" isFixed="true" fieldName="Name" placeholder="Receiver Contact" />
+                                        </aura:set>
+                                    </aura:renderIf>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-3">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Receiver Email</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-top: 5px;">
+                            <ui:inputEmail aura:id="email" label="" class="field" value="{!v.Invoice.Receiver_Contact__r.Email}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-3">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 8%;"><b>Receiver Phone</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-top: 5px;">
+                            <ui:inputPhone aura:id="phone" label="" class="field" value="{!v.Invoice.Receiver_Contact__r.Phone}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article><br/>
+    <article class="slds-card " >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <!--lightning:icon iconName="custom:custom31" title="Receive a Payment" /-->
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle slds-m-top_xx-small" title="Record Title" style="margin-left: 1%;">Receive Payment</h1>
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <div class="slds-card__header">    
+            <div class="slds-grid slds-wrap slds-text-align_center custom-container">
+                
+                <div class="slds-size_1-of-3">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 3%;"><b>Total Invoice Amount</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-top: 5px;">
+                           <lightning:formattedNumber style="currency" currencyCode="USD" value="{!v.Invoice.Total_Invoice_Amount__c}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-3">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 3%;"><b>Invoice Balance</b></div>
+                        <div class="slds-size_2-of-3 colMargin" style="text-align: left;padding-top: 5px;">
+                            <lightning:formattedNumber aura:id="passAmt" style="currency" currencyCode="USD" value="{!v.Invoice.Invoice_Balance__c}"/>
+                            <div class="slds-hidden" Style="display:none;"><lightning:formattedNumber aura:id="avlAmt" value="{!v.InvoiceBalance}"/></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-3">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_3-of-3 colMargin" style="text-align: left;padding-top: 3%;"><b>New Payment Amount</b></div>
+                        <div class="slds-size_1-of-3 colMargin" style="text-align: left;padding-top: 5px;">
+                            <lightning:input label="Input" type="number" formatter="currency" variant="label-hidden" value="{!v.payAmount}" step="1" onchange="{!c.onChangeAmt}"></lightning:input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+</aura:component>

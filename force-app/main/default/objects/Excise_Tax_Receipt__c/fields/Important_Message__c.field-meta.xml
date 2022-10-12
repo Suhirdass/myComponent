@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Important_Message__c</fullName>
+    <externalId>false</externalId>
+    <formula>&quot;Step 1: DO NOT create Excise Tax Receipts for Type 11 or Type 12 Licensees.&quot; &amp; BR() &amp; 
+&quot;Step 2: Excise Tax CANNOT be discounted. DELETE line(s) that include PRODUCER-DISCOUNT.&quot; &amp; BR() &amp; 
+&quot;Step 3: Excise Tax is due upon delivery. Payment terms is always COD unless specifically requested or granted. &quot; &amp; BR() &amp; 
+&quot;Step 4: Once Excise Tax is received, Driver to update Excise Tax Acceptance Date.&quot; &amp; BR() &amp; 
+&quot;Step 5: Finance to reconcile and update Payment Form and Reconciliation Date&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Important Message</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

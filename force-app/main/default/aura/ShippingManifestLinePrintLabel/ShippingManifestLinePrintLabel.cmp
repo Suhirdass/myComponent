@@ -1,0 +1,400 @@
+<!--**************************************************************************************
+Apex Class Name    : ShipmentManifestPrintLabelctrls 
+Test Class Name    :ShipmentManifestPrintLabelctrlsTest
+Components Name    :ShippingManifestLinePrintLabelNavi,ShippingManifestLinePrintLabel
+Created Date       : Aug 10 2020
+Function           : Used to generate Labels for Shipping Manifest related Shipping ManifestLine.
+Developer          :Saranya
+
+*******************************************************************************-->
+
+
+<aura:component extends="c:utility" controller="ShipmentManifestPrintLabelctrls" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+   	<aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="prodRec" type="Object"/>
+    <aura:attribute name="Obj" type="Object"/>
+    <aura:attribute name="searchStr" type="String"/>
+    <aura:attribute name="printlabels2" type="String"/>
+    <aura:attribute name="selectedDymoLabelLayout" type="String" default=''/>
+    <aura:attribute name="selectedPrinter" type="String" default=''/>  
+    <aura:attribute name="imageXml" type="String" default=''/>
+    <aura:attribute name="printers" type="List" default='[]'/>
+    <aura:attribute name="imagetext" type="String" default=''/>
+    <aura:attribute name="isSelectedInventory" type="Boolean"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isOpenprint" type="boolean" default="false"/>
+        <aura:attribute name="isOpenprintbox" type="boolean" default="false"/>
+
+    <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js',
+                                                                                                            $Resource.datatable+ '/js/jquery.dataTables.min.js',$Resource.DymoFramework)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    
+    <aura:html tag="style">
+        . slds-table_bordered tbody td {
+        border-right: hidden !important; 
+        }
+       
+        .textCap {
+        text-transform: capitalize !important; 
+        }
+        .text-center{
+        text-align: center;
+        }
+        .slds-page-header__name h1 {
+        
+        margin-left: 8px;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .swal2-container{z-index:10000;}
+        
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        margin-bottom:7px;
+        }
+        .slds-modal__content slds-p-around--medium
+        {
+        height: 600px !important;
+        max-height: None  !important; 
+        
+        }
+        .modal-body{
+        max-height:500px !important;
+        height: 600px !important;
+        }
+        .slds-table td {
+        width: 172px;
+        }
+        .heightfixprint {
+        width: 871px;
+        margin-left: -21px;
+        margin-top: -16px;
+        }
+        heightfixtable
+        {
+        width: 643px;
+        margin-left: -21px;
+        margin-top: -16px;
+        }
+        .leftalign
+        {
+        left:22px;
+        }
+    </aura:html>
+    
+    
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    <aura:if isTrue="{!v.isOpenprint}">
+        <!--Modal Box Start-->
+        <div role="dialog" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                
+                <!--Modal Box Header-->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <article class="slds-card " >
+                        <div class="slds-page-header heightfixprint" role="banner">
+                            <div class="slds-grid">
+                                <div class="slds-col slds-has-flexi-truncate">
+                                    <div class="slds-media">
+                                        <lightning:icon iconName="custom:custom29" title="custom29" />
+                                        <div class="slds-media__body">
+                                            <div class="slds-page-header__name">
+                                                <div class="slds-page-header__name-title">
+                                                    <h1>
+                                                        <span class="slds-page-header__title slds-truncate" title="Shipping Manifest ">Shipping Manifest</span>
+                                                    </h1>
+                                                </div>
+                                            </div>
+                                        </div>	
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-no-flex slds-align-bottom">
+                                    <div class="slds-button-group" role="group">
+                                        <lightning:button class="textCap"  label="Print Label" onclick="{!c.printLabel}"/>
+
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="slds-card__header ">
+                            <div >
+                                <img src="{!v.imagetext}"/>
+                            </div>
+                        </div>  
+                    </article>  
+                </div>
+                <!--Modal Box Button-->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--brand textCap"  onclick="{!c.handleCloseModal}">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>            
+    </aura:if> 
+    
+     <aura:if isTrue="{!v.isOpenprintbox}">
+        <!--Modal Box Start-->
+        <div role="dialog" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                
+                <!--Modal Box Header-->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <article class="slds-card " >
+                        <div class="slds-page-header heightfixprint" role="banner">
+                            <div class="slds-grid">
+                                <div class="slds-col slds-has-flexi-truncate">
+                                    <div class="slds-media">
+                                        <lightning:icon iconName="custom:custom29" title="custom29" />
+                                        <div class="slds-media__body">
+                                            <div class="slds-page-header__name">
+                                                <div class="slds-page-header__name-title">
+                                                    <h1>
+                                                        <span class="slds-page-header__title slds-truncate" title="Shipping Manifest ">Shipping Manifest</span>
+                                                    </h1>
+                                                </div>
+                                            </div>
+                                        </div>	
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-no-flex slds-align-bottom">
+                                    <div class="slds-button-group" role="group">
+                                        <lightning:button class="textCap"  label="Print Label" onclick="{!c.printLabeldynamic}"/>
+
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="slds-card__header ">
+                            <div >
+                                <p style="width:107px;margin-top: 23px;font-weight: bold;">Enter Box count# </p>
+                                <lightning:input type="number" aura:id="boxPack" name="Enter Box Count" label="Enter Box Count" style="width: 119px;margin-left:112px;margin-top: -27px;" />
+
+
+                            </div>
+                            <div style="margin-top: 39px;">
+                                <img src="{!v.imagetext}"/>
+                            </div>
+                        </div>  
+                    </article>  
+                </div>
+                <!--Modal Box Button-->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--brand textCap"  onclick="{!c.handleCloseModal}">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>            
+    </aura:if> 
+    
+    <article class="slds-card " >
+        <div class="slds-page-header banner-header" role="banner" >
+            <div class="slds-col slds-has-flexi-truncate" style="margin-top:-14px">
+                <div class="slds-media">
+                    <lightning:icon iconName="custom:custom29" title="custom29" style=" margin-top: 12px;" />
+                    <div class="slds-media__body">
+                        <p class="slds-text-heading--label">
+                        </p>
+                        <div class="slds-medium-size--12-of-12">
+                            <div class="slds-medium-size--10-of-12 slds-button-group" role="group" style="float: right; margin-top:-4px;">
+                                <div class="slds-medium-size--2-of-12" style="text-align: center;margin-top: 5px;margin-left: -26px;">
+                                    <b>Please select Dymo Label</b>
+                                </div>
+                                <div class="slds-medium-size--2-of-12">
+                                    <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.selectedDymoLabelLayout}">
+                                        <aura:iteration items="{!v.prodRec.dymoLabelLayouts}" var="proTitle">
+                                            <option value="{!proTitle.label}" selected="{!proTitle.label == v.prodRec.selectedDymoLabelLayout}">{!proTitle.value}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+                                <div class="slds-medium-size--2-of-12 slds-col--padded" style="text-align: right;margin-top: 5px;">
+                                    <b>List of Dymo Printers </b>
+                                </div>
+                                <div class="slds-medium-size--2-of-12">
+                                    <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.printers.selectedPrinter}">                        
+                                        <option value="">Select Printer</option>
+                                        <aura:iteration items="{!v.printers}" var="p">
+                                            <option value="{!p.label}" >{!p.value}</option>
+                                        </aura:iteration> 
+                                    </lightning:select>
+                                </div>
+                                <div class="slds-medium-size--4-of-12">
+                                    <lightning:button class="textCap right leftalign"  label="Return" onclick="{!c.redirectItemDetail}" />
+                                    <lightning:button  class="textCap right leftalign" label="Print Label" onclick="{!c.PrintbtPreview}" />
+                                    <lightning:button  class="textCap right leftalign" label="Print All Label" onclick="{!c.PrintAllbtPreview}" />
+                                    <!-- <lightning:button  class="textCap right leftalign" label="Preview" onclick="{!c.updatePreview}" />-->
+
+                                </div>
+                            </div>
+                            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle"
+                                title="Record Title" style="margin-top: 17px;">
+                                &nbsp;Shipping Manifest
+                            </h1>
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+            <div class="slds-col slds-no-flex slds-align-bottom">
+            </div>
+        </div>
+        <div class="slds-card__header ">
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-medium-size--2-of-12 slds-col--padded righta">
+                    <b>Shipping Manifest</b>
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta">
+                    <a href="{!'/' + v.prodRec.SMrecords.Id}" style="color:#006dcc;">{!v.prodRec.SMrecords.Name}</a>
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded righta" >
+                    <b>Order or Service</b>
+                </div>   
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta" >
+                    
+                    {!v.prodRec.SMrecords.Customer_PO_or_Quote__c}
+                </div>
+                <div class="slds-medium-size--1-of-12 slds-col--padded righta">
+                    <b> Attn </b>
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta" >
+                    {!v.prodRec.SMrecords.Receiver_Contact__r.Name}
+                    
+                </div>
+                
+            </div>
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-medium-size--2-of-12 slds-col--padded righta" >
+                    <b> Status </b>
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta">
+                    
+                    {!v.prodRec.SMrecords.Status__c}
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded righta" >
+                    <b>Sales Order</b>
+                </div>   
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta">
+                    
+                    <a href="{!'/' + v.prodRec.SMrecords.Sales_Order__r.Id}" style="color:#006dcc;">{!v.prodRec.SMrecords.Sales_Order__r.Name}</a>
+                </div>
+                <div class="slds-medium-size--1-of-12 slds-col--padded righta" >
+                    <b> Receiver </b>
+                </div>
+                <div class="slds-medium-size--3-of-12 slds-col--padded lefta" >
+                    {!v.prodRec.SMrecords.Receiver_DBA__c} 
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-medium-size--2-of-12 slds-col--padded righta">
+                    <b> METRC Manifest </b>
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta">
+                    
+                    {!v.prodRec.SMrecords.Metrc_Manifest__c}
+                </div>
+                <div class="slds-medium-size--2-of-12 slds-col--padded righta">
+                    <b>Picklist</b>
+                </div>   
+                <div class="slds-medium-size--2-of-12 slds-col--padded lefta">
+                    
+                    <a href="{!'/' + v.prodRec.SMrecords.Picklist__r.Id}" style="color:#006dcc;">{!v.prodRec.SMrecords.Picklist__r.Name}</a>                
+                </div>
+                <div class="slds-medium-size--1-of-12 slds-col--padded righta" >
+                    <b> Ship To  </b>
+                </div>
+                <div class="slds-medium-size--3-of-12 slds-col--padded lefta" >
+                    {!v.prodRec.SMrecords.Receiver_Address__c},{!v.prodRec.SMrecords.Receiver_City_State_Zip__c} 
+                    
+                </div> 
+                
+                
+            </div>
+        </div>
+    </article>  
+
+    <article class="slds-card " style="margin-bottom: 27px;" >
+        <div class="slds-page-header heightfix" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                      <lightning:icon iconName="custom:custom29" title="custom29" />
+                        <div class="slds-media__body">
+                            <div class="slds-grid">
+                                <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" style=" margin-left: 12px; margin-top: 6px;" title="Record Title">Shipping Mainfest Lines</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             
+            </div>
+        </div>
+        <div class="slds-card__header ">
+            <div class="slds-is-relative slds-p-horizontal_small slds-scrollable">
+                <table class="slds-table_bordered slds-table_col-bordered  ">
+                    <thead>
+                        <tr style="background-color:#F5F5F5;" >
+                          <!--<th class="talignCenter"><label class="slds-checkbox">
+                                <ui:inputCheckbox aura:id="box3" change="{!c.selectAll}"/>
+                                <span class="slds-checkbox-faux"></span>
+                                <span class="slds-form-element__label text"></span>
+                                </label></th>-->
+                           
+                            <th class="cell-breakAll"> SM Line </th>
+                            <th class="cell-breakAll"> Status </th>
+                            <th class="cell-breakAll"> Product Name</th>
+                            <th class="cell-breakAll"> Description </th> 
+                            <th class="cell-breakAll"> Harvest Batch Code </th>
+                            <th class="cell-breakAll"> UID  </th>
+                            <th class="cell-breakAll"> Shipment Qty </th>
+                            <th class="cell-breakAll">  Picklist Line </th>
+                            <th class="cell-breakAll"> SO Line </th>
+                        </tr>
+                    </thead>
+                    <aura:if isTrue="{!not(empty(v.prodRec.SMWrapperList))}"> 
+                        <tbody>
+                            <aura:iteration items="{!v.prodRec.SMWrapperList}" var="itm" >
+                                <tr> 
+                                  <!--  <td  class="talignCenter cell-breakAll">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox">
+                                                    <ui:inputCheckbox text="{!itm.invPos.Id}" aura:id="boxPack" value="{!itm.isSelected}" change="{!c.checkboxSelect}"/>{!itm.invPos.Id}
+                                                    <span class="slds-checkbox-faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </td>-->
+                                   <!-- <td><lightning:input type="checkbox" name="input2"  aura:id="checkbx" checked="{!itm.isSelected}" styleClass="checkbx" style="width:40px;" value="{!itm.invPos.Id}"/></td>   -->                      
+                                    <td class="cell-breakAll"><a href="{!'/' + itm.SMPos.Id}" style="color:#006dcc;" target="_blank">{!itm.SMPos.Name}</a></td> 
+                                    <td class="cell-breakAll">{!itm.SMPos.SMLine_Status__c} </td> 
+                                    <td class="cell-breakAll"><a href="{!'/' + itm.SMPos.Product_Name__r.Id}" style="color:#006dcc;" target="_blank">{!itm.SMPos.Product_Name__r.Name}</a></td>
+                                    <td class="cell-breakAll">{!itm.SMPos.Product_Description__c} </td> 
+                                    <td class="cell-breakAll">{!itm.SMPos.Harvest_Batch_Code__c}</td>
+                                    <td class="cell-breakAll2">{!itm.SMPos.UID_1__c}</td>
+                                    <td class="cell-breakAll"><ui:inputNumber format="0.00" value="{!itm.SMPos.Shipment_Qty__c}" /></td>
+                                    <td class="cell-breakAll"><a href="{!'/' + itm.SMPos.Picklist_Line__r.Id}" style="color:#006dcc;" target="_blank"> {!itm.SMPos.Picklist_Line__r.Name}</a></td>
+                                    <td class="cell-breakAll"><a href="{!'/' + itm.SMPos.Sales_Order_Line__r.Id}" style="color:#006dcc;" target="_blank">{!itm.SMPos.Sales_Order_Line__r.Name}</a></td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                        <aura:set attribute="else">
+                            <tr class="odd"><td valign="top" colspan="17" style="text-align: center;" class="dataTables_empty">No data available in table</td></tr>
+                        </aura:set>
+                      
+                    </aura:if>
+                </table>
+            </div>
+        </div>  
+    </article>  
+    <article class="slds-card slds-hide " >
+    </article>
+</aura:component>

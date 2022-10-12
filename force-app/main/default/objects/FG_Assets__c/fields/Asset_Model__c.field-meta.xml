@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset_Model__c</fullName>
+    <description>Dell XPS 2in1 13inch / 15inch , Mac Book Pro, ......</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Dell XPS 2in1 13inch / 15inch , Mac Book Pro, ......</inlineHelpText>
+    <label>Asset Model</label>
+    <length>255</length>
+    <required>true</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,71 @@
+.THIS {
+	font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+.THIS .slds-button_brand{
+    background-color :token(land);
+    color:token(daze);
+}
+.THIS .retailer-page__title {
+	font-weight: normal;
+}
+.THIS .redColor{
+	color:red;
+}
+.THIS .greenColor{
+	color:green;
+}
+
+.THIS .slds-map {
+	min-width: 0px;
+}
+
+.THIS .tag {
+	background: token(tanLight);
+	border: 1px solid #B0B1B2;
+	font-size: 12px;
+	padding: 2px 8px
+}
+.THIS .redColor{
+	color:red;
+}
+
+        .THIS .retailerLeftPanel{
+	box-sizing: border-box;
+  
+  width: 283px;
+  border: 1px solid token(grayAccent);
+  border-radius: 4px 4px 8px 4px;
+  background-color: token(white);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);   
+            
+}
+        .THIS .text__blue a{
+            color:token(wovnlink);
+        }
+.THIS .print-export{
+	height: 13px;
+	width: 78px;
+	color: token(land);
+	font-family: "Alliance Neue";
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 0;
+	line-height: 13px;
+	text-align: right;
+	float: right;
+    padding-top: 3px;
+	cursor:pointer;
+            position: absolute;
+    top: 10px;
+            right: 3%;
+}
+.THIS .slds-tabs_default__nav{
+    width: 100%;
+    margin-left: 0%;
+	background-color:token(tableHeaderColor);
+}
+.THIS .slds-text-heading_small{
+    font-family:'Alliance Neue' ;
+    color: token(fontColor)
+}

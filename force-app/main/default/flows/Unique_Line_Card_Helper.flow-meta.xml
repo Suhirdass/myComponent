@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Check_Unique_Line_Card_Helper</name>
+        <label>Check Unique Line Card Helper</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Unique_Line_Card_Helper</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.LastModifiedDate</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.LastModifiedDate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Unique_Field_Update</targetReference>
+            </connector>
+            <label>Unique Line Card Helper</label>
+        </rules>
+    </decisions>
+    <formulas>
+        <name>UniqueLineHardHelper</name>
+        <dataType>String</dataType>
+        <expression>CASESAFEID({!$Record.Brand_Name__r.Name})  &amp; &quot; , &quot; &amp; CASESAFEID({!$Record.Retailer_Name__r.Name})</expression>
+    </formulas>
+    <interviewLabel>Unique Line Card Helper {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Unique Line Card Helper</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Unique_Field_Update</name>
+        <label>Unique Field Update</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Unique_Line_Card_Helper__c</field>
+            <value>
+                <elementReference>UniqueLineHardHelper</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Unique_Line_Card_Helper</targetReference>
+        </connector>
+        <object>Line_Card__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

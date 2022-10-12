@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resealable_for_Multi_Servings__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Resealable (for products with multiple uses) – The package can be closed after each use. Example: a lid, adhesive closure, box top closure, etc.</inlineHelpText>
+    <label>Resealable for Multiple Uses</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>QA_Result</valueSetName>
+    </valueSet>
+</CustomField>

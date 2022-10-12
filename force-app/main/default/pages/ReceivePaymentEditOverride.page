@@ -1,0 +1,112 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - ReceivePaymentEditOverride
+-->
+<apex:page standardController="Receive_Payment__c"  
+           extensions="ReceivePaymentEditOverrideController"  
+           action="{!retrieveBankDetails}"
+           tabStyle="Receive_Payment__c">
+           
+    <apex:form >
+        <apex:actionFunction name="refereshBankName" reRender="Information"/>
+        <apex:sectionHeader title="{!If(Receive_Payment__c.Invoice__c != null, 'Receive Payment Edit', 
+                                   'Bill Pay Edit')}" 
+                            subtitle="{!If(Receive_Payment__c.Id != null, Receive_Payment__c.Name,
+                                        If(Receive_Payment__c.Invoice__c != null, 'New Receive Payment', 
+                                        'New Bill Pay'))}"/>
+        <apex:actionStatus id="idRefreshingStatus" style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+        <apex:pageBlock title="{!If(Receive_Payment__c.Invoice__c != null, 'Receive Payment Edit', 'Bill Pay Edit')}">
+            <apex:pageMessages escape="false" id="errorBlockId"/>
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton value="Save" action="{!doSaveAction}" reRender="errorBlockId" status="idRefreshingStatus">
+                    <apex:param name="actionType" assignTo="{!actionType}" value="Save" />
+                </apex:commandButton>
+                <apex:commandButton value="Save & New" action="{!doSaveAction}" reRender="errorBlockId" status="idRefreshingStatus">
+                    <apex:param name="actionType" assignTo="{!actionType}" value="Save and New" />
+                </apex:commandButton>
+                <apex:commandButton value="Cancel" action="{!doCancelAction}"  />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="Information" title="Information" columns="2" collapsible="false">
+                <!-- Display Invoice Lookup field if RP is created/edited from Invoice -->
+                <apex:outputField value="{!Receive_Payment__c.Invoice__c}" rendered="{!Receive_Payment__c.Id != null && Receive_Payment__c.Bill_Pay__c == null}"/>
+                <apex:inputField value="{!Receive_Payment__c.Invoice__c}" rendered="{!Receive_Payment__c.Id == null && Receive_Payment__c.Bill_Pay__c == null}"/>
+                
+                <!-- Display PO Lookup field if RP is created/edited from PO -->
+                <apex:outputField value="{!Receive_Payment__c.Bill_Pay__c}" rendered="{!Receive_Payment__c.Id != null && Receive_Payment__c.Invoice__c == null}" />
+                <apex:inputField value="{!Receive_Payment__c.Bill_Pay__c}" rendered="{!Receive_Payment__c.Id == null && Receive_Payment__c.Invoice__c == null}" />
+                
+                <apex:inputField value="{!Receive_Payment__c.Payment_Memo__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Payment_Received_Date__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Payment_Form__c}" onchange="refereshBankName()"/>
+                
+                <apex:inputField value="{!Receive_Payment__c.Bank_Name__c}" rendered="{!Receive_Payment__c.Payment_Form__c != 'Cash'}"/>
+                <apex:inputField value="{!Receive_Payment__c.Payment_Amount__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Reference__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Credit Card Information" columns="2" collapsible="false">
+                <apex:inputField value="{!Receive_Payment__c.Credit_Card_Number__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Valid_Thru_Month__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Security_Code__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Valid_Thru_Year__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Finance Reconciliation" columns="2" collapsible="false">
+                <apex:inputField value="{!Receive_Payment__c.Posted_Date__c}"/>
+                <apex:inputField value="{!Receive_Payment__c.Reconciliation_Notes__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Bank Information" columns="2" collapsible="false" id="bankRegisterSection">
+                <apex:actionStatus id="idBankSelectionStatus" style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:outputText value="" />
+                <apex:pageBlockTable value="{!bankDetails}" var="bankDetail" rendered="{!associatedBank.Id == null}">
+                    <apex:column >
+                        <input type="radio" name="bankId">
+                            <apex:actionSupport event="onclick" rerender="" status="idBankSelectionStatus">
+                                <apex:param name="bankDetailId" value="{!bankDetail.bankRegisterSO.id}" assignTo="{!selectedBankRegisterId}"/>
+                            </apex:actionSupport>
+                        </input>
+                    </apex:column>
+                    <apex:column headerValue="Bank">
+                        <apex:outputLink value="/{!bankDetail.bankRegisterSO.Id}" target="__blank">
+                        {!bankDetail.bankRegisterSO.Account__r.DBA__c} - {!bankDetail.bankRegisterSO.Bank_Name__c}
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!bankDetail.bankRegisterSO.Register_Type__c}"/>
+                    <apex:column headerValue="Account Number">
+                         <apex:outputText value="{!if(bankDetail.bankRegisterSO.Account_Number__c != null, 'XXXXXXXX' + RIGHT(bankDetail.bankRegisterSO.Account_Number__c,4), '')}" />
+                    </apex:column>
+                    <apex:column value="{!bankDetail.bankRegisterSO.Routing_Number__c}"/>
+                </apex:pageBlockTable>
+                <apex:pageBlockSectionItem rendered="{!associatedBank.Id != null}">
+                    Bank
+                    <apex:outputLink value="/{!associatedBank.Id}" target="__blank">
+                        {!associatedBank.Account__r.DBA__c} - {!associatedBank.Bank_Name__c}
+                    </apex:outputLink>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!associatedBank.Register_Type__c}" rendered="{!associatedBank.Id != null}"/>
+                <apex:pageBlockSectionItem rendered="{!associatedBank.Id != null}">
+                    Account Number
+                    <apex:outputText value="{!if(associatedBank.Account_Number__c != null, 'XXXXXXXX' + RIGHT(associatedBank.Account_Number__c,4), '')}" rendered="{!associatedBank.Id != null}"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!associatedBank.Routing_Number__c}" rendered="{!associatedBank.Id != null}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

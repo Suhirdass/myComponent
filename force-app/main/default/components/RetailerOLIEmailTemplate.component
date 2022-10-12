@@ -1,0 +1,126 @@
+<apex:component controller="RetailerOrderEmailTemplateController" access="global">
+    <apex:attribute name="recordId" description="" type="String"  assignTo="{!orderId}"></apex:attribute>
+    <style>
+        th,td,tr,table{
+            border:1px solid #000
+        }
+        td{
+            padding-left:5px;padding-right:5px;
+        }
+    </style>
+    <table cellspacing="0" style="border:1px solid #000">
+            <tr style="border:1px solid #000">
+                <th style="border:1px solid #000">
+                    Order Line
+                </th>
+                <th style="border:1px solid #000">
+                    Brand
+                </th>
+                <th style="border:1px solid #000">
+                    Product Name
+                </th>
+                <th style="border:1px solid #000">
+                    Product Description
+                </th>
+                <th style="border:1px solid #000">
+                    Total Qty
+                </th>
+                <th style="border:1px solid #000">
+                        Type
+                    </th>
+                <th style="border:1px solid #000">
+                    Unit Price
+                </th>                
+                <th style="border:1px solid #000">
+                    Unit Excise Tax
+                </th>
+                <th style="border:1px solid #000">
+                    Product Price
+                </th>
+                <th style="border:1px solid #000">
+                    Total Excise Tax
+                </th>
+                <th style="border:1px solid #000">
+                    Total Quoted Price
+                </th>
+            </tr> 
+            <apex:repeat var="oli" value="{!OrderLineItems}">
+                <tr style="border:1px solid #000">
+                    <td style="border:1px solid #000;padding-left:5px;padding-right:5px;">
+                        {!oli.Name}
+                    </td>
+                    <td style="border:1px solid #000;padding-left:5px;padding-right:5px;">
+                        {!oli.Product__r.Brand_Name__c}
+                    </td>
+                    <td style="border:1px solid #000;padding-left:5px;padding-right:5px;">
+                        {!oli.Product__r.Product_Short_Description__c}
+                    </td>
+                    <td style="border:1px solid #000;padding-left:5px;padding-right:5px;">
+                        {!oli.Product__r.Description}
+                    </td>
+                    <td style="border: 1px solid #000; text-align: left;padding-left:5px;padding-right:5px;">
+                        <apex:outputText value="{0,number,#,###,###}">
+                            <apex:param value="{!oli.Line_Total_Qty__c}" />
+                          </apex:outputText>
+                    </td>
+                    <td style="border: 1px solid #000; text-align: center;font-size: 11px;">
+                            <apex:outputPanel rendered="{!oli.IsPromo__c}">
+                                <apex:outputText value="Promo"/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!oli.Is_Sample__c}">
+                                <apex:outputText value="Sample"/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!oli.Product__r.RecordType.Name == PRODUCT_RECORD_TYPE_NAME_DISCOUNT}">
+                                <apex:outputText value="Discount"/>
+                            </apex:outputPanel>
+                        </td>
+                    <td style="border: 1px solid #000; text-align: left;padding-left:5px;padding-right:5px;">
+                         <apex:outputText value="{0,number,$#,###,###.00}"  rendered="{!and(oli.UnitPrice__c != null,oli.UnitPrice__c >= 1)}">
+                            <apex:param value="{!oli.UnitPrice__c}" />
+                          </apex:outputText>
+                        <apex:outputText value="${!oli.UnitPrice__c}" rendered="{!oli.UnitPrice__c != null && oli.UnitPrice__c <1 && oli.UnitPrice__c > 0}">
+                        </apex:outputText>
+                        <apex:outputText value="$0.00" rendered="{!oli.UnitPrice__c == null || oli.UnitPrice__c == 0}"/>
+                    </td>                    
+                    <td style="border: 1px solid #000; text-align: left;padding-left:5px;padding-right:5px;">
+                        <apex:outputText value="{0,number,$#,###,###.00}"  rendered="{!and(oli.Unit_Excise_Tax__c != null,oli.Unit_Excise_Tax__c >= 1)}">
+                            <apex:param value="{!oli.Unit_Excise_Tax__c}" />
+                          </apex:outputText>
+                        <apex:outputText value="${!oli.Unit_Excise_Tax__c}" rendered="{!oli.Unit_Excise_Tax__c != null && oli.Unit_Excise_Tax__c <1 && oli.Unit_Excise_Tax__c > 0}">
+                        </apex:outputText>
+                        <apex:outputText value="$0.00" rendered="{!oli.Unit_Excise_Tax__c == null || oli.Unit_Excise_Tax__c == 0}">
+                        </apex:outputText>
+                    </td>
+                    <td style="border: 1px solid #000; text-align: left;padding-left:5px;padding-right:5px;">
+                        <apex:outputText value="{0,number,$#,###,###.00}" rendered="{!and(oli.Line_Total_Cost__c != null,oli.Line_Total_Cost__c >= 1)}">
+                            <apex:param value="{!oli.Line_Total_Cost__c}" />
+                          </apex:outputText>
+                        <apex:outputText value="${!oli.Line_Total_Cost__c}" rendered="{!oli.Line_Total_Cost__c != null && oli.Line_Total_Cost__c <1 && oli.Line_Total_Cost__c > 0}">
+                        </apex:outputText>
+                        <apex:outputText value="$0.00" rendered="{!oli.Line_Total_Cost__c == null || oli.Line_Total_Cost__c == 0}">
+                        </apex:outputText>
+                    </td>
+                    <td style="border: 1px solid #000; text-align: left;padding-left:5px;padding-right:5px;">
+                        <apex:outputText value="{0,number,$#,###,###.00}" rendered="{!and(oli.Line_Total_Excise_Tax__c != null,oli.Line_Total_Excise_Tax__c >= 1)}">
+                            <apex:param value="{!oli.Line_Total_Excise_Tax__c}" />
+                          </apex:outputText>
+                        <apex:outputText value="${!oli.Line_Total_Excise_Tax__c}" rendered="{!oli.Line_Total_Excise_Tax__c != null && oli.Line_Total_Excise_Tax__c <1 && oli.Line_Total_Excise_Tax__c > 0}">
+                        </apex:outputText>
+                        <apex:outputText value="$0.00" rendered="{!oli.Line_Total_Excise_Tax__c == null || oli.Line_Total_Excise_Tax__c == 0}">
+                        </apex:outputText>
+                    </td>
+                    <td style="border:1px solid #000;text-align:left;padding-left:5px;padding-right:5px;">   
+                        
+                        <apex:outputText value="{0,number,$#,###,###.00}" rendered="{!and(oli.Total__c != null,oli.Total__c >= 1)}">
+                            <apex:param value="{!oli.Total__c}" />
+                        </apex:outputText>
+                        <apex:outputText value="${!oli.Total__c}" rendered="{!oli.Total__c != null && oli.Total__c <1 && oli.Total__c > 0}">
+                        </apex:outputText>
+                        <apex:outputText value="$0.00" rendered="{!oli.Total__c == null || oli.Total__c == 0.00}">
+                        </apex:outputText>
+                    </td>    
+                </tr>
+            </apex:repeat>
+   
+        </table>
+</apex:component>

@@ -1,0 +1,753 @@
+<aura:component extends="c:utility" controller="InventoryDetails" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="prodRec" type="Object"/>
+    <aura:attribute name="searchStr" type="String"/>
+    <aura:attribute name="inventoryList" type="InventoryPositionWrapper[]"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="limit" type="Integer" default="10" />
+    <aura:attribute name="sortOrder" type="String" default=" ASC "/>
+    <aura:attribute name="space" type="String" default="       "/>
+    <aura:attribute name="inventoryPositionByIdLight" type="Object" />
+     <aura:attribute name="selectedDymoLabelLayout" type="String" default=''/>
+    <aura:attribute name="selectedPrinter" type="String" default=''/>
+    <aura:attribute name="imageXml" type="String" default=''/>
+    <aura:attribute name="printers" type="List" default='[]'/>
+    <aura:attribute name="imagetext" type="String" default=''/>
+    <aura:attribute name="isSelectedInventory" type="Boolean"/>
+     <aura:attribute name="isOpenprint" type="boolean" default="false"/>
+     <aura:attribute name="isOpenprintQR" type="boolean" default="false"/>
+    <aura:attribute name="Twobyfour" type="string"/>
+    <aura:attribute name="noofcopies" type="string"/>
+
+   <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js',
+                           $Resource.datatable+ '/js/jquery.dataTables.min.js',$Resource.DymoFramework)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    
+    <aura:html tag="style">
+        .cUtility button {
+        border-radius: 4px !important;
+        } 
+        table {
+        border-collapse: unset; 
+        /* border-spacing: 0; */
+        }
+        .textCap {
+        text-transform: capitalize !important; 
+        }
+        .slds-card__header {
+        
+        margin-bottom: -25px;
+        }  
+        .slds-page-header__name h1 {
+        margin-left: 8px;
+        }
+        .slds-table td {
+        width: 172px;
+        }
+        .slds-modal__container {
+        min-width: 35%;
+        left: 100px;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        margin-bottom:7px;
+        }
+        .slds-card
+        {
+        margin-top: 9px;
+        margin-left: 17px;
+        margin-right: 17px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        }
+        .title-align {
+        padding-left: 10px;
+        padding-top: 5px;
+        }
+        .title-align-two {
+        padding-left: 10px;
+        }
+        .title-align-two li{
+        padding-bottom: 0px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 20px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        .slds-media{
+        padding-bottom: 0px;
+        }
+        .text-center{
+        text-align: center;
+        }
+        .heightfixprint {
+        width: 629px;
+        margin-left: -26px;
+        }
+        .proDet{
+        margin-bottom: 10px;
+        margin-left: 50px;
+        }
+        .proDet p {
+        padding-bottom: 3px;
+        }
+        
+        .heightfixprint {
+        width: 855px;
+        margin-left: -31px;
+        margin-top: -23px;
+        }
+        .cUtility .slds-modal__content {
+        padding: 17px; 
+        border-radius: 1px !important;
+        }  
+        .runtime_platform_actionsQuickActionWrapper .quick-actions-panel {
+        overflow-y: auto;
+        }
+    </aura:html>
+    
+
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    
+    <div class="">
+        
+        <aura:if isTrue="{!v.isOpenprint}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    
+                    
+                    <!--Modal Box Header-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <article class="slds-card " >
+                            <div class="slds-page-header heightfixprint" role="banner">
+                                <div class="slds-grid">
+                                    <div class="slds-col slds-has-flexi-truncate">
+                                        <div class="slds-media">
+                                            <lightning:icon iconName="custom:custom29" title="custom29" />
+                                            <div class="slds-media__body">
+                                                
+                                                <div class="slds-page-header__name">
+                                                    <div class="slds-page-header__name-title">
+                                                        <h1>
+                                                            <span>Products</span>
+                                                            <span class="slds-page-header__title slds-truncate" title="Print Label">Print Label</span>
+                                                        </h1>
+                                                    </div>
+                                                </div>
+                                            </div>	
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-no-flex slds-align-bottom">
+                                        <div class="slds-button-group" role="group">
+                                            
+                                            <lightning:button class="textCap" label="Preview" onclick="{!c.updatePreview}"/>
+                                            <lightning:button class="textCap"  label="Print Label" onclick="{!c.printLabel}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="slds-card__header ">
+                                
+                                <div >
+                                    <table class="slds-table">
+                                        <thead ></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="slds-float_left lay" style="width:175px;bottom:-5px;"><b>Please select Dymo Label</b></td>
+                                                <td class="slds-float_left"> 
+                                                    <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.selectedDymoLabelLayout}">
+                                                        <aura:iteration items="{!v.prodRec.dymoLabelLayouts}" var="proTitle">
+                                                            <option value="{!proTitle.label}" selected="{!proTitle.label == v.prodRec.selectedDymoLabelLayout}">{!proTitle.value}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slds-float_left"  style="width:175px;bottom: -4px;"><b>List of Dymo Printers </b></td>
+                                                <td class="slds-float_left"> 
+                                                    <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.printers.selectedPrinter}">
+                                                        <option value="">Select Printer</option>
+                                                        <aura:iteration items="{!v.printers}" var="p">
+                                                            <option value="{!p.label}" >{!p.value}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slds-float_left"  style="width:175px;bottom: -4px;"><b>Print Qty </b></td>
+                                                <td class="slds-float_left"> 
+                                       <lightning:input  name="inputDate" value="{!v.noofcopies}"  />
+ 
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <img src="{!v.imagetext}"/>
+                                </div>
+                                
+                                
+                            </div>  
+                        </article>  
+                        
+                    </div>
+                    <!--Modal Box Button-->
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button--brand textCap"  onclick="{!c.handleCloseModal}">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+    </div>
+    
+   
+   <div class="">
+        
+        <aura:if isTrue="{!v.isOpenprintQR}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    
+                    
+                    <!--Modal Box Header-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <article class="slds-card " >
+                            <div class="slds-page-header heightfixprint" role="banner">
+                                <div class="slds-grid">
+                                    <div class="slds-col slds-has-flexi-truncate">
+                                        <div class="slds-media">
+                                            <lightning:icon iconName="custom:custom29" title="custom29" />
+                                            <div class="slds-media__body">
+                                                
+                                                <div class="slds-page-header__name">
+                                                    <div class="slds-page-header__name-title">
+                                                        <h1>
+                                                            <span>Products</span>
+                                                            <span class="slds-page-header__title slds-truncate" title="Print Label">Print QR Code</span>
+                                                        </h1>
+                                                    </div>
+                                                </div>
+                                            </div>	
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-no-flex slds-align-bottom">
+                                        <div class="slds-button-group" role="group">
+                                            
+                                            <lightning:button class="textCap" label="Preview" onclick="{!c.updatePreviewQR}"/>
+                                            <lightning:button class="textCap"  label="Print QR Code" onclick="{!c.printLabelQR}"/>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="slds-card__header ">
+                                
+                                <div >
+                                    <table class="slds-table">
+                                        <thead ></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="slds-float_left lay" style="width:175px;bottom:-5px;"><b>Please select Dymo Label</b></td>
+                                                <td class="slds-float_left"> 
+                                                    <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.Twobyfour}">
+                                                         <option value="2 X 4">2 X 4</option>
+                                                        <!--<aura:iteration items="{!v.prodRec.dymoLabelLayouts}" var="proTitle">
+                                                            
+                                                            <option value="{!proTitle.label}" selected="{!proTitle.label == v.prodRec.selectedDymoLabelLayout}">{!proTitle.value}</option>
+                                                        </aura:iteration>-->
+                                                    </lightning:select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slds-float_left"  style="width:175px;bottom: -4px;"><b>List of Dymo Printers </b></td>
+                                                <td class="slds-float_left"> 
+                                                    <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.printers.selectedPrinter}">
+                                                        <option value="">Select Printer</option>
+                                                        <aura:iteration items="{!v.printers}" var="p">
+                                                            <option value="{!p.label}" >{!p.value}</option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <img src="{!v.imagetext}"/>
+                                </div>
+                                
+                                
+                            </div>  
+                        </article>  
+                        
+                    </div>
+                    <!--Modal Box Button-->
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button--brand textCap"  onclick="{!c.handleCloseModal}">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+    </div>   
+    <aura:if isTrue="{!v.isOpen}">
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"  class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="padding-top: 20px; width: 630px;">
+              <span style="height: 62px !important;width: 15px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }" alternativeText="close"
+                                          variant="bare-inverse" class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Merge IP</h2>
+                </header>
+       <span style="height:14px !important;width: 35px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -270px;"></span>
+
+                <!--###### MODAL BOX BODY Part Start######-->
+             <span style="height:14px !important;margin-left:613px;;width:14x`px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right:270px;"></span>
+
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="width: 630px;">
+
+                    <p class="slds-m-left_xx-large" style="margin-left: 26px;">You won't be able to revert this! Are you sure?</p>
+ 
+                </div>
+
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                
+                <footer class="slds-modal__footer"  style="width: 630px; height: 60px; z-index: 2; display:inline-flex !important;">
+               <span style="height: 65px !important;width: 30px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-left: -16px;"></span>
+                    <span style="height: 50px !important; width: 560px  !important; z-index: 1;">
+                    <lightning:button class="slds-button_brand textCap"  label="Yes" title="Yes"  onclick="{! c.likenClose }"/>
+                    <lightning:button class="slds-button_neutral textCap"  label="No" title="No"  onclick="{! c.closeModel }"/>
+                    </span>
+                    <span style="height: 65px !important;background-color: white !important;z-index: 2;margin-top: -14px;margin-right: -20px;"></span>
+                </footer>
+                 <span style="height: 67px !important;background-color: white !important;z-index: 2;margin-top: -64px; width: 12px;margin-right: -40px;margin-left: 618px;"></span>
+
+
+                <div style="padding-bottom: 60px;height:56px; width: 630px; background-color: white; border-radius: 3px; margin-top: -5px; z-index: 1;"></div>
+            </div>
+
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+       
+<article class="slds-card " style="margin-top:0 !important;">
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom83" title="custom83" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Product Details</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+          <aura:if isTrue="{! v.prodRec.miscIssueSectionRender}">
+   <lightning:button class="slds-button slds-button--neutral textCap" label="Save" onclick="{!c.onSave}"/>     
+   <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel" onclick="{!c.onCancel}"/> 
+  </aura:if> 
+    <aura:if isTrue="{!or(v.prodRec.showMassTransferBlock, v.prodRec.miscIssueSectionRender)}">
+    <aura:set attribute="else">
+      <lightning:button class="slds-button slds-button--neutral textCap" label="Item Detail" onclick="{!c.redirectItemDetail}"/>
+      <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel" onclick="{!c.onCancel}"/>   
+    </aura:set>
+  </aura:if> 
+          <aura:if isTrue="{! v.prodRec.showMassTransferBlock}">
+           <lightning:button class="slds-button slds-button--neutral textCap" onclick="{!c.submitTransfer}" label="Submit Transfer"/>
+          <lightning:button class="slds-button slds-button--neutral textCap" label="Cancel" onclick="{!c.onCancel}"/> 
+          </aura:if> 
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+    <br/>
+    <div class="slds-is-relative slds-p-horizontal_small">
+       <div class="slds-grid slds-wrap slds-text-align_center custom-container">         
+            
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Product Name</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Name}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Active</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><lightning:input class="slds-float_left" type="checkbox" name="input1" disabled="true" checked="{!v.prodRec.prod.IsActive}"/></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>MOQ</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.MOQ__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Product Description</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3 slds-truncate" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Description}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Quantity Type</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Quantity_Type__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Total Inventory</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.totalInventory}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Producer Name</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.prodRec.prod.Producer_Name__c}" style="color:#006dcc;"><u>{!v.prodRec.prod.Producer_Name__r.Name}</u></a></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Supplier UOM</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Supplier_UOM__c}</div>
+            
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Item To Put Away</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.itemToPutAway}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Brand Name</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Brand_Name__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Cannabis Weight/UOM</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Cannabis_Weight__c} {!v.prodRec.prod.Cannabis_Weight_UOM__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Allocated Inventory</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.allocatedInventoryQty}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Product Family</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Family}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Total Cannabis Weight</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.totalCannabisWeight} {!v.prodRec.prod.Cannabis_Weight_UOM__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Inventory On Hold</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.inventoryOnHoldQty}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Strain</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><a href="{!'/' + v.prodRec.prod.Strain__c}" style="color:#006dcc;"><u>{!v.prodRec.prod.Strain__r.Name}</u></a></div>
+            
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Hide From Marketplace</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"><lightning:input class="slds-float_left" type="checkbox" name="input1" disabled="true" checked="{!v.prodRec.prod.Hide_From_Marketplace__c}"/></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Available Inventory</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.availableInventoryQty}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Strain Type</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Strain_Type__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Total Order Qty</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.prod.Total_Order_Qty__c}</div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;"></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: right;"><b>Available to Sell</b></div>
+            <div class="slds-size_1-of-6 slds-max-small-size_1-of-3" style="text-align: left;padding-left: 2%;">{!v.prodRec.availableQty}</div>
+        </div>
+    </div>
+ </article>
+     
+ <article class="slds-card " >       
+    <aura:if isTrue="{! v.prodRec.invPosSectionRender}">    
+ <div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom29" title="custom29" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle title-align" title="Record Title">Inventory Positions</h1>
+          </div>
+        </div>	
+      </div>
+    </div>
+       <div class="slds-col slds-no-flex slds-align-bottom">
+      <div class="slds-button-group" role="group">
+           <lightning:button class="slds-button slds-button--neutral textCap" label="Misc Receipt" onclick="{!c.redirectToMiscReceipt}"/> 
+           <lightning:button class="slds-button slds-button--neutral textCap" label="Misc Issue" onclick="{!c.miscIssue}"/> 
+          <lightning:button class="slds-button slds-button--neutral textCap" label="Inventory Transfer" onclick="{!c.massTransfer}"/>
+           <lightning:button class="slds-button slds-button--neutral textCap" label="Merge IP" onclick="{!c.mergeConfirm}"/> 
+          <lightning:button class="slds-button slds-button--neutral textCap" label="Hold" onclick="{!c.holdIps}"/>
+           <lightning:button class="slds-button slds-button--neutral textCap" label="Remove Hold" onclick="{!c.unHoldIPs}"/>
+          <lightning:button class="slds-button slds-button--neutral textCap" label="Generate QR Code" onclick="{! c.handleOpenModalQR }"/>
+             <lightning:button class="slds-button slds-button--neutral textCap" label="Print Label" onclick="{! c.handleOpenModal }"/>
+
+      </div>
+    </div>
+  </div>
+</div>
+        
+        
+        <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small">
+            <table class="mydataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th> <div data-id="Hold__c">OnHold </div></th>
+                        <th> <div data-id="Name">Inventory Position Name </div></th>
+                        <th> <div data-id="Site__r.Name">Site </div></th>
+                        <th> <div data-id="Inventory_Location__r.Name">Inventory Location </div></th>
+                        <th> <div data-id="Rack__r.Name">Rack </div></th>
+                        <th> <div data-id="Rack_Level__r.Name">Rack Level </div></th>
+                        <th> <div data-id="Bin_Location__r.Name">Bin Location </div></th>
+                        <th> <div data-id="Ownership__r.Name">Ownership </div></th>
+                        <th> <div data-id="Qty_On_Hand__c">Qty Available </div></th>
+                        <th> <div data-id="Qty_Allocated__c">Qty Allocated </div></th>
+                        <th> <div data-id="Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name">Purchase Order </div></th>
+                        <th> <div data-id="Sales_Order_Line__r.Name">Sales Order Line </div></th>
+                        <th> <div data-id="Date_Received__c">Date Received </div></th>
+                        <th> <div data-id="Harvest_Batch_Code__r.Name">Harvest Batch Code </div></th>
+                        <th> <div data-id="UID_New__r.Name">UID </div></th>
+                        <th> <div data-id="Lab_Test_Status__c"> Lab Test Status </div> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:if isTrue="{!not(empty(v.prodRec.invPositionWrappList))}"> 
+                    <aura:iteration items="{!v.prodRec.invPositionWrappList}" var="itm">
+                        <tr> 
+                            <td><lightning:input type="checkbox" name="input2"  aura:id="checkbx" checked="{!itm.isSelected}" styleClass="checkbx" value="{!itm.invPos.Id}"/></td>
+                            <td>
+                                <aura:renderIf isTrue="{!itm.invPos.Hold__c}">
+                                    Yes
+                                    <aura:set attribute="else"> No </aura:set>
+                                </aura:renderIf>
+                            </td>
+                            <td><a href="{!'/' + itm.invPos.Id}" style="color:#006dcc;"><u>{!itm.invPos.Name}</u></a></td> 
+                            <td><a href="{!'/' + itm.invPos.Site__c}" style="color:#006dcc;"><u>{!itm.invPos.Site__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Inventory_Location__c}" style="color:#006dcc;" ><u>{!itm.invPos.Inventory_Location__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Rack__c}" style="color:#006dcc;"><u>{!itm.invPos.Rack__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Rack_Level__c}" style="color:#006dcc;"><u>{!itm.invPos.Rack_Level__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Bin_Location__c}" style="color:#006dcc;"><u>{!itm.invPos.Bin_Location__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Ownership__c}" style="color:#006dcc;"><u>{!itm.invPos.Ownership__r.Name}</u></a></td>
+                            <td>{!itm.invPos.Qty_On_Hand__c}</td>
+                            <td>{!itm.invPos.Qty_Allocated__c}</td>
+                            <td><a href="{!'/' + itm.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}" style="color:#006dcc;"><u>{!itm.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name}</u></a></td>
+                                <td><a href="{!'/' + itm.invPos.Sales_Order_Line__c}" style="color:#006dcc;"><u>{!itm.invPos.Sales_Order_Line__r.Name}</u></a></td>
+                            <td><lightning:formattedDateTime value="{!itm.invPos.Date_Received__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true" timeZone="{! $Locale.timezone }"/></td>
+                            <td>{!itm.invPos.Harvest_Batch_Code__r.Name}</td>
+                            <td>{!itm.invPos.UID_New__r.Name}</td>
+                            <td>{!itm.invPos.Lab_Test_Status__c}</td>
+                        </tr>
+                    </aura:iteration>
+                        <aura:set attribute="else">
+                            <td>
+                    <ui:outputText class="text-center" value="No data available in table"/>	
+                                </td>
+                </aura:set>
+            </aura:if>
+                </tbody>
+            </table>
+        </div>
+    </aura:if>
+    
+    
+    <!-- *********************************Misc Issue *********************************************-->
+<aura:if isTrue="{! v.prodRec.miscIssueSectionRender}"> 
+<article class="" >
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom13" title="custom13" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Inventory Positions</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+  </div>
+</div>
+ <br/>        
+         <div class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered slds-scrollable slds-m-top_small">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th> Qty to Adjust </th>
+                        <th> Inventory Position Name</th>
+                        <th> Site </th>
+                        <th> Inventory Location </th>
+                        <th> Rack </th>
+                        <th> Rack Level </th>
+                        <th> Bin Location </th>
+                        <th> Ownership </th>
+                        <th> Qty Available </th>
+                        <th> Qty Allocated </th>
+                        <th> Purchase Order </th>
+                        <th> Sales Order Line </th>
+                        <th> Date Received</th>
+                        <th> Harvest Batch Code </th>
+                        <th> UID </th>
+                        <th> Lab Test Status </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.prodRec.invPositionWrappList}" var="itm" >
+                        <tr> 
+                            <td><lightning:input type="checkbox" name="input2" checked="{!itm.isSelected}"/></td>
+                            <td>
+                                <lightning:input type="number" name="inputQty" value="{!itm.qtyToAdjust}" step="0.01"/> 
+                            </td>
+                            <td><a href="{!'/' + itm.invPos.Id}" style="color:#006dcc;"><u>{!itm.invPos.Name}</u></a></td> 
+                            <td><a href="{!'/' + itm.invPos.Site__c}" style="color:#006dcc;"><u>{!itm.invPos.Site__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Inventory_Location__c}" style="color:#006dcc;"><u>{!itm.invPos.Inventory_Location__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Rack__c}" style="color:#006dcc;"><u>{!itm.invPos.Rack__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Rack_Level__c}" style="color:#006dcc;"><u>{!itm.invPos.Rack_Level__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Bin_Location__c}" style="color:#006dcc;"><u>{!itm.invPos.Bin_Location__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Ownership__c}" style="color:#006dcc;"><u>{!itm.invPos.Ownership__r.Name}</u></a></td>
+                            <td>{!itm.invPos.Qty_On_Hand__c}</td>
+                            <td>{!itm.invPos.Qty_Allocated__c}</td>
+                            <td><a href="{!'/' + itm.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}" style="color:#006dcc;" target="_blank"><u>{!itm.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name}</u></a></td>
+                            <td><a href="{!'/' + itm.invPos.Sales_Order_Line__c}" style="color:#006dcc;"><u>{!itm.invPos.Sales_Order_Line__r.Name}</u></a></td>
+                            <td><lightning:formattedDateTime value="{!itm.invPos.Date_Received__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true" timeZone="{! $Locale.timezone }"/></td>
+                            <td>{!itm.invPos.Harvest_Batch_Code__r.Name}</td>
+                            <td>{!itm.invPos.UID_New__r.Name}</td>
+                            <td>{!itm.invPos.Lab_Test_Status__c}</td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>        
+ </article>
+<br/>
+<article class="" >
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom13" title="custom13" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Comments</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+  </div>
+</div>
+ <br/>        
+    <div class="slds-grid slds-wrap">
+     <div class=" slds-size--1-of-4  proDet ">
+      <p class="slds-text-title slds-truncate slds-has-flexi-truncate" title="Sales Order">Type</p>
+      <p class="slds-form-element__static slds-truncate paddings" ><lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.invPerAdj.Type__c}" required="true">
+                                <aura:iteration items="{!v.prodRec.invPerAdjTypes}" var="proTitle">
+                                    <option value="{!proTitle.label}">{!proTitle.value}</option>
+                                </aura:iteration>
+                            </lightning:select></p>
+      </div>
+     <div class="slds-size--1-of-4  proDet">
+       <p class="slds-text-title slds-truncate" title="SO Date">Reason for Adjustments</p>
+      <p class="slds-form-element__static slds-truncate paddings"><lightning:input name="input1" aura:id="a_opt4" required="true" value="{!v.prodRec.invPerAdj.Reason_for_Adjustments__c}"  /></p>
+    </div>
+   </div> 
+ </article>      
+</aura:if>
+ 
+<aura:if isTrue="{! v.prodRec.showMassTransferBlock}">       
+<article class="" >
+<div class="slds-page-header heightfix" role="banner">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <div class="slds-media">
+        <lightning:icon iconName="custom:custom13" title="custom13" />
+        <div class="slds-media__body">
+          <div class="slds-grid">
+           <h1 class="slds-page-header__title slds-m-rightsmall slds-truncate slds-align-middle title-align" title="Record Title">Transfer Inventory</h1> 
+            </div>
+        </div>	
+      </div>
+    </div>
+  </div>
+</div>
+ <br/>        
+ <div class="slds-is-relative slds-p-horizontal_small slds-scrollable">
+            <table class="mydataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable">
+                 <aura:iteration items="{!v.prodRec.inventoryPositions}" var="inventotyPosition" >
+                <thead>
+                    <tr>
+                        <th>Inventory Position Name</th>
+                        <th> Receipt Date </th>
+                        <th>PO Number</th>
+                        <th> Product Name </th>
+                        <th> Product Description </th>
+                        <th> Supplier Name </th>
+                        <th> Received Qty </th>
+                        <th> Qty to Transfer </th>
+                        <th> Ownership </th>
+                        <th> Select Site </th>
+                        <th> Select Location </th>
+                        <th> Rack </th>
+                        <th> Rack Level </th>
+                        <th> Bin Location</th>
+                        <th> Max Put-away Qty to Bin </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                        <tr> 
+                            <td><a href="{!'/' + inventotyPosition.invPositionSO.Id}" style="color:#006dcc;"><u>{!inventotyPosition.invPositionSO.Name}</u></a></td>
+                            <td><lightning:formattedDateTime value="{!inventotyPosition.invPositionSO.Date_Received__c}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true" timeZone="{! $Locale.timezone }"/></td>
+                            <td><a href="{!'/' + inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}" style="color:#006dcc;" ><u>{!inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name}</u></a></td> 
+                            <td><a href="{!'/' + inventotyPosition.invPositionSO.Product_Name__c}" style="color:#006dcc;"><u>{!inventotyPosition.invPositionSO.Product_Name__r.Name}</u></a></td>
+                            <td>{!inventotyPosition.invPositionSO.Product_Name__r.Description}   </td>
+                            <td>{!inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Supplier_Name__r.Name}</td>
+                            <td>{!inventotyPosition.invPositionSO.Qty_On_Hand__c}  </td>
+                            <td>
+                                <lightning:input type="number" name="inputQty" step="0.01" value="{!inventotyPosition.qtyToPutAway}"/>
+                            </td>
+                            <td><a href="{!'/' + inventotyPosition.invPositionSO.Ownership__c}" style="color:#006dcc;"><u>{!inventotyPosition.invPositionSO.Ownership__r.Name}</u></a></td>
+                     
+                            <td> 
+                                <div style="width:100px;">
+                                    <lightning:select onchange="{!c.loadIPSites}" name="{!inventotyPosition}" aura:id="a_opt4" label="{!inventotyPosition.invPositionSO.Id}" value="{!inventotyPosition.invPositionSO.Site__c}" >
+                                        <aura:iteration items="{!inventotyPosition.siteOptions}" var="proTitle">
+                                            <option value="{!proTitle.label}" selected="{!proTitle.label == inventotyPosition.invPositionSO.Site__c}">{!proTitle.value}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>  
+                            </td>
+
+                            <td> 
+                                <div style="width:100px;">
+                                    <lightning:select onchange="{!c.loadIPLocations}" name="{!inventotyPosition}" aura:id="a_opt5" label="{!inventotyPosition.invPositionSO.Id}" value="{!inventotyPosition.invPositionSO.Inventory_Location__c}" >
+                                        <aura:iteration items="{!inventotyPosition.locationOptions}" var="proTitle">
+                                            <option value="{!proTitle.label}" selected="{!proTitle.label == inventotyPosition.invPositionSO.Inventory_Location__c}">{!proTitle.value}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>  
+                            </td>
+
+                            <td>
+                                <div style="width:100px;">
+                                    <lightning:select onchange="{!c.loadRackLevels}" name="{!inventotyPosition}" aura:id="a_opt1" label="{!inventotyPosition.invPositionSO.Id}" value="{!inventotyPosition.invPositionSO.Rack__c}" >
+                                        <aura:iteration items="{!inventotyPosition.rackOptions}" var="proTitle">
+                                            <option value="{!proTitle.label}" selected="{!proTitle.label == inventotyPosition.invPositionSO.Rack__c}">{!proTitle.value}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>                      
+                            </td>
+                            <td>
+                                <lightning:select onchange="{!c.loadBinLocations}" name="{!inventotyPosition}" aura:id="a_opt2" label="{!inventotyPosition.invPositionSO.Id}" value="{!inventotyPosition.invPositionSO.Rack_Level__c}" >
+                                    <aura:iteration items="{!inventotyPosition.rackLevelOptions}" var="proTitle">
+                                        <option value="{!proTitle.label}" selected="{!proTitle.label == inventotyPosition.invPositionSO.Rack_Level__c}">{!proTitle.value}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td>
+                                <lightning:select onchange="{!c.loadBalanceQtyToPutAway}" name="a_opt3" aura:id="a_opt3" label="{!inventotyPosition.invPositionSO.Id}" value="{!inventotyPosition.invPositionSO.Bin_Location__c}" >
+                                    <aura:iteration items="{!inventotyPosition.binLocationOptions}" var="proTitle">
+                                        <option value="{!proTitle.label}" selected="{!proTitle.label == inventotyPosition.invPositionSO.Bin_Location__c}">{!proTitle.value}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td>{!inventotyPosition.balanceQtyToPutAway}</td>
+                        </tr>
+                    
+                </tbody>
+                     </aura:iteration>
+            </table>
+        </div>
+ 	</article> 
+    </aura:if>
+</article>
+<br/><br/>     
+</aura:component>

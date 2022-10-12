@@ -1,0 +1,56 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - RSMTSMMultiSelectComponent
+-->
+<apex:component controller="RSMTSMMultiSelectComponentController">
+    <apex:attribute name="initialAvailableList" 
+                    description="Default RSM/TSM list for available list" 
+                    type="RSMTSMWrapper[]" 
+                    required="false" 
+                    assignTo="{!initialList}" />
+    <apex:attribute name="selectedLists" 
+                    description="Selected RSM/TSM list" 
+                    type="RSMTSMWrapper[]" 
+                    required="true" 
+                    assignTo="{!selectedList}" />  
+    <apex:actionRegion >
+        <apex:outputPanel id="panelId">
+            <table style="width: 60%">
+                <tr>
+                    <th style="width:50%" class="selectTitle">Available RSM/TSM List</th>
+                    <th style="width:"></th>
+                    <th style="width:40%" class="selectTitle">Selected RSM/TSM List</th>
+                </tr>
+                <tr>
+                    <!-- Available RSM/TSM List -->
+                    <td>
+                        <apex:selectList value="{!availableRSMTSMOptions}" multiselect="true" style="width:100%" size="10">
+                            <apex:selectOptions value="{!AvailableOptionList}" />
+                        </apex:selectList>
+                    </td>
+
+                    <!-- Left/Right arrow to move items from one list to another -->
+                    <td align="center" style="vertical-align: middle;">
+                        <div>
+                            <apex:image styleClass="picklistArrowRight" value="/s.gif">
+                                <apex:actionSupport event="onclick" action="{!clickRight}" reRender="panelId" status="idRefreshingStatus" />
+                            </apex:image>
+                            <br/> <br/>
+                            <apex:image styleClass="picklistArrowLeft" value="/s.gif">
+                                <apex:actionSupport event="onclick" action="{!clickLeft}" reRender="panelId" status="idRefreshingStatus"/>
+                            </apex:image>
+                        </div>
+                    </td>
+
+                    <!-- Selected RSM/TSM List -->
+                    <td>
+                        <apex:selectList value="{!selectedRSMTSMOptions}" multiselect="true" style="width:100%" size="10">
+                            <apex:selectOptions value="{!SelectedOptionList}" />
+                        </apex:selectList>
+                    </td>
+                </tr>
+            </table>
+        </apex:outputPanel>
+    </apex:actionRegion>
+</apex:component>

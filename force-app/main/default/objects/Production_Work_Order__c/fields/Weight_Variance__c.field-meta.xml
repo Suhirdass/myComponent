@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Weight_Variance__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(OR(
+ISPICKVAL(Service_Type__c ,&apos;Casing&apos;),
+ISPICKVAL(Service_Type__c,&apos;Sample Conversion&apos;),
+ISPICKVAL(Service_Type__c,&apos;Labeling&apos;)),
+0,
+Intake_Weight__c - ( Consumed_Weight_or_Qty__c +  Byproduct_Weight__c ))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Calculated; Intake Weight minus by Consumed Weight and Byproduct Weight. Expressed in Required Weight UOM</inlineHelpText>
+    <label>Weight Variance</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

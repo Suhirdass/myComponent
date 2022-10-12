@@ -1,0 +1,193 @@
+<apex:page standardController="Picklist__c" extensions="picklistBarcodeScannerCtrl" lightningStylesheets="true" showHeader="false">
+
+<apex:includeLightning />
+
+<apex:includeScript value="{!URLFOR($Resource.barcodeCodeScanner, '/js/jquery.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.barcodeCodeScanner, '/js/quagga.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.barcodeCodeScanner, '/js/highlight.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.barcodeCodeScanner, '/js/html5-qrcode.min.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.barcodeCodeScanner, '/css/barcodeScanner.css')}"/>
+    <style>
+      .grid-container {
+          display: grid;
+          grid-row-gap: 50%;
+          grid-template-columns: auto auto auto;
+          padding: 10px;
+          
+        }
+        
+        .grid-item {
+          padding: 20px;
+          text-align: center;
+        }
+        .right {
+          position: absolute !important;
+          right: 5%;
+          margin-top: 0%;
+        }
+        body.sfdcBody {
+            background:rgb(6 94 102) !important; 
+        }
+        .bodyDiv {
+            border-bottom-right-radius: 0px; 
+            border-bottom-left-radius: 0px; 
+            -webkit-box-shadow: none !important; 
+            box-shadow:  none !important; 
+        }
+        .flex-container {
+          display: flex;
+          flex-wrap: nowrap;
+        /*background-color: DodgerBlue;*/
+        }
+        .flex-container .boxCamera {
+          width: 70%;
+          margin: 10px;
+        }
+        .flex-container .boxOutput {
+          width: 30%;
+          margin: 10px;
+        }
+        
+        
+    </style>
+<script>   
+function docReady(fn) {
+    // see if DOM is already available
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        // call on next available tick
+        setTimeout(fn, 1);
+    } else {
+        document.addEventListener("DOMContentLoaded", fn);
+    }
+}
+docReady(function() {
+    hljs.initHighlightingOnLoad();
+    var results = document.getElementById('scanned-result');
+    
+
+    var lastMessage;
+    var codesFound = 0;
+    function onScanSuccess(qrCodeMessage) {
+        if (lastMessage !== qrCodeMessage) {
+            lastMessage = qrCodeMessage;
+            ++codesFound;
+            //results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
+            //results.innerHTML += `<div>${qrCodeMessage}</div>`;            
+ $(this).text();            
+            console.log('qrCodeMessage>>>>',qrCodeMessage);            
+            jQuery('[id$=myHiddenField]').val(qrCodeMessage);
+            passStringToController();
+            
+            var str = qrCodeMessage;
+             $('.boxOutput').show();
+            // code for client side checked update
+            var splitStr = str.split(' - ',2)
+            var proName = splitStr[0];
+            $('.slds-table td:first-child').each(function(index) {
+                var pName =  $(this).text();
+                var id_bookslot = index + 1; 
+                var qtyPicket =$("#qtypicked"+index).text();
+                //alert(qtyPicket);
+                //  alert(pName);
+                //alert(proName);
+                if(pName==proName && qtyPicket=='')
+                {
+                    $("#notchecked"+index).hide();
+                    $("#"+index).show();
+                    $('#vl'+index).append('1');
+                }
+            });
+            
+            
+            var n = str.includes("R","L","B","QA");
+            $("#scanned-result").empty();
+            if(n){
+                 results.innerHTML='';
+                results.innerHTML += `${qrCodeMessage}`;
+                    setTimeout(function() {
+                         $('.boxOutput').fadeOut('fast');
+                        // location.reload();
+                    }, 2000);
+                //location.reload();
+            }else{
+                //alert("Barcode Incorrect or improperly scanned, Please Scan Again!");    
+            }
+         
+        }
+    }
+    var html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 120, aspectRatio: 1 }, /* verbose= */ false);
+    html5QrcodeScanner.render(onScanSuccess, _ => { /** ignore error */ });
+});
+    
+    
+    
+    //Lightning cmp render
+    var picklistId = "{!$CurrentPage.parameters.id}";
+        $Lightning.use("c:picklistBarcodeScannerApp", function() {
+            $Lightning.createComponent("c:picklistBarcodeScanner", {"recordId" : picklistId, vfMsgMethod : getMessage},
+            "FlipcardContainer", function(cmp) {
+            });
+        });
+    
+    //Function to call from Lightning Component
+    function getMessage(welcomeMsg){
+        CallApexMethod();
+    }
+    
+    setTimeout(function(){ 
+
+    
+        $('.slds-table td:first-child').each(function(index) {
+                var pName =  $(this).text();
+            
+            //  $('#vl'+index).append('<a href="#">I\'m a new link</a>');
+            //  $('#vl0').append('1');
+      
+            });
+    
+     }, 5000);
+
+    </script>
+    
+
+<apex:form >
+<apex:pageBlock title="Picklist Scanner" >  
+    <apex:pageBlockButtons location="top">
+        <apex:commandButton action="{!cancelAction}" value="Back"/> 
+    </apex:pageBlockButtons>
+    <apex:actionFunction name="CallApexMethod" action="{!cancelAction}"/> 
+    <apex:inputHidden value="{!myString}" id="myHiddenField" />
+    <apex:actionFunction name="passStringToController" action="{!getScannedValue}" rerender="myHiddenField"/>
+    <html>
+    <div class="container">
+    <div class="row">
+        <!--
+        <div class="col-md-12" style="text-align: center;margin-bottom: 20px;">
+            <div id="reader" style="display: inline-block; margin-right: 80%; min-height: 100%;"></div>
+            <div class="empty"></div>
+            <apex:outputPanel styleClass="right">
+               <div id="scanned-result--"></div>
+            </apex:outputPanel>
+        </div> -->
+        
+        
+        <div class="flex-container">
+          <div class="boxCamera"><div id="reader" style="display: inline-block; margin-right: 80%; min-height: 100%;"></div></div>
+          <div class="boxOutput" style="display:none;"><div id="scanned-result"></div></div>
+        </div>
+        
+        
+        
+    </div>
+    </div>
+    </html> 
+    
+    
+            <br/>
+    </apex:pageBlock>
+    </apex:form>
+    <!--Lightning Cmp--> 
+    <div id="FlipcardContainer" style="max-height: 500px;"/>
+    <br/>
+</apex:page>

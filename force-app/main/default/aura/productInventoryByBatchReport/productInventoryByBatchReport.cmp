@@ -1,0 +1,251 @@
+<aura:component extends="c:utility" controller="ProductInventoryByBatchController" implements="force:appHostable,force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">      
+    <!--<ltng:require scripts="{!join(',',$Resource.D3Chart)}" afterScriptsLoaded="{!c.doInit}"/>-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.perPage}" action="{!c.handleChange}" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="productInventoryWrapperList" type="object"/>
+    <aura:attribute name="totleProductInventoryWrapperList" type="object"/>
+    <aura:attribute name="data" type="object"/>
+    <aura:attribute name="productList" type="object"/>
+    <aura:attribute name="totelPage" type="Integer"/>
+    <aura:attribute name="cuurentPage" type="Integer"/>
+    <aura:attribute name="pageSize" type="Integer"/>
+    <aura:attribute name="startRec" type="Integer"/>
+    <aura:attribute name="endRec" type="Integer"/>
+    <aura:attribute name="totelRec" type="Integer"/>
+    <aura:attribute name="sortField" type="String"/>
+    <aura:attribute name="isCommunityPlusUser" type="Boolean"/>
+    <aura:attribute name="sortOrder" type="String"/>
+    <aura:attribute name="chartSortField" type="String" default="Product"/>
+    <aura:attribute name="chartSortOrder" type="String" default="ASC"/>
+    <aura:attribute name="chartType" type="String" default="Horizontal"/>
+    <aura:attribute name="searchString" type="String"/>
+    <aura:attribute name="pageNumbers" type="Integer[]" />
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': '25', 'value': '25'},
+                                                        {'label': '50', 'value': '50'},
+                                                        {'label': '100', 'value': '100'},]"/> 
+    <aura:attribute name="chartSortFieldOptions" type="List" default="[
+                                                        {'label': 'By Product Name', 'value': 'Product'},
+                                                        {'label': 'By Total Inventory', 'value': 'Inventory'},]"/> 
+    <aura:attribute name="chartSortOrderOptions" type="List" default="[
+                                                        {'label': 'Asc', 'value': 'ASC'},
+                                                        {'label': 'Desc', 'value': 'DESC'},]"/> 
+    <aura:attribute name="chartTypeOptions" type="List" default="[
+                                                        {'label': 'Horizontal Bar chart', 'value': 'Horizontal'},
+                                                        {'label': 'Vertical Bar chart', 'value': 'Vertical'},
+                                                        ]"/> 
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show': 'slds-hide')}" />    	
+        <article class="slds-card " style="background-color:#fff!important">
+            <div class="slds-page-header heightfix" role="banner">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_4-of-4 slds-has-flexi-truncate">
+                        <div class="slds-media">
+                            <div style="padding : 10px;padding-right: 0px;">
+                                <span class="slds-icon_container slds-icon-standard-document" style="cursor:pointer;margin-right: var(--lwc-spacingSmall,0.75rem);">
+                                    <lightning:icon iconName="standard:report" alternativeText="Report" title="Report" />
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_4-of-7" style="margin:0 auto;padding-top: 15px;">
+                                        <h1  title="Record Title"  style="font-size:18px;font-weight:bold;font-family:'Alliance Neue';color:#42472a;">
+                                            <div class="entityNameTitle slds-line-height_reset">Product Inventory by Batch</div>
+                                        </h1> 
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-7" style="margin:0 auto;text-align: right;padding-top: 10px;padding-left: 14%;">
+                                        <table>
+                                        	<tr>
+                                                <td>
+                                                	<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>                        
+                                                        <input type="text" style="color:#42472a;font-size:13px;" aura:id="searchRec" id="searchRec" oninput="{!c.searchProduct}" placeholder="Search by name or sku" class="slds-input" value="{!v.searchString}"/>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                        			<button type="button" class="slds-button slds-button_neutral" onclick="{!c.exportData}" style="text-transform: capitalize;color:#dcdac6;background-color:#32402A;border-color:#32402A;" disabled="{!empty(v.productInventoryWrapperList)}">
+                                            			Export
+                                        			</button>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <aura:if isTrue="{!not(empty(v.productInventoryWrapperList))}">
+        	<article class="slds-card " style="background-color:#fff!important">
+            	<div class="slds-card " style="overflow: auto;">
+                	<table  aura:id="tableCBQ" class="mydataTable slds-table slds-table_col-bordered slds-table_row-bordered slds-scrollable" style="padding-bottom:5%;" >
+                    	<thead >
+                            <tr class="slds-table_bordered">
+                                <th style="background-color: #d1cdb0;cursor:pointer;" data-sortfield="Product_Name__r.Brand_Name__c" onclick="{!c.sortInventory}">
+                                    Brand Name&nbsp; 
+                                    <aura:if isTrue="{!v.sortField == 'Product_Name__r.Brand_Name__c' ? true : false}">
+                                        <aura:if isTrue="{!v.sortOrder == 'ASC' ? true : false}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Ascending " title="Up" size="x-small"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.sortOrder == 'DESC' ? true : false}">
+                                            <lightning:icon iconName="utility:down" alternativeText="Descending  " title="Down" size="x-small"/>
+                                        </aura:if>
+                                    </aura:if>
+                                </th>
+                                <th style="background-color: #d1cdb0;cursor:pointer;" data-sortfield="Product_Name__r.Product_Short_Description__c" onclick="{!c.sortInventory}">
+                                    Product Name&nbsp; 
+                                    <aura:if isTrue="{!v.sortField == 'Product_Name__r.Product_Short_Description__c' ? true : false}">
+                                        <aura:if isTrue="{!v.sortOrder == 'ASC' ? true : false}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Ascending " title="Up" size="x-small"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.sortOrder == 'DESC' ? true : false}">
+                                            <lightning:icon iconName="utility:down" alternativeText="Descending  " title="Down" size="x-small"/>
+                                        </aura:if>
+                                    </aura:if>
+                                </th>
+                                <th style="background-color: #d1cdb0;cursor:pointer;" data-sortfield="Product_Name__r.Name" onclick="{!c.sortInventory}">
+                                    SKU&nbsp; 
+                                    <aura:if isTrue="{!v.sortField == 'Product_Name__r.Name' ? true : false}">
+                                        <aura:if isTrue="{!v.sortOrder == 'ASC' ? true : false}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Ascending " title="Up" size="x-small"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.sortOrder == 'DESC' ? true : false}">
+                                            <lightning:icon iconName="utility:down" alternativeText="Descending  " title="Down" size="x-small"/>
+                                        </aura:if>
+                                    </aura:if>
+                                </th>
+                                <th style="background-color: #d1cdb0;cursor:pointer;" data-sortfield="Site__r.Name" onclick="{!c.sortInventory}">
+                                    Site&nbsp;
+                                    <aura:if isTrue="{!v.sortField == 'Site__r.Name' ? true : false}">
+                                        <aura:if isTrue="{!v.sortOrder == 'ASC' ? true : false}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Ascending " title="Up" size="x-small"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.sortOrder == 'DESC' ? true : false}">
+                                            <lightning:icon iconName="utility:down" alternativeText="Descending  " title="Down" size="x-small"/>
+                                        </aura:if>
+                                    </aura:if>
+                                </th>
+                                <th style="background-color: #d1cdb0;cursor:pointer;" data-sortfield="Harvest_Batch_Code__r.Name" onclick="{!c.sortInventory}">
+                                    Batch Id&nbsp;
+                                    <aura:if isTrue="{!v.sortField == 'Harvest_Batch_Code__r.Name' ? true : false}">
+                                        <aura:if isTrue="{!v.sortOrder == 'ASC' ? true : false}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Ascending " title="Up" size="x-small"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.sortOrder == 'DESC' ? true : false}">
+                                            <lightning:icon iconName="utility:down" alternativeText="Descending  " title="Down" size="x-small"/>
+                                        </aura:if>
+                                    </aura:if>
+                                </th>
+                                <th style="background-color: #d1cdb0;">Total Inventory</th>
+                                <th style="background-color: #d1cdb0;">Total in Receiving</th>
+                                <th style="background-color: #d1cdb0;">Order Qty</th>
+                                <th style="background-color: #d1cdb0;">Total OnHold</th>
+                                <th style="background-color: #d1cdb0;">Total Allocated</th>
+                                <th style="background-color: #d1cdb0;">Qty On Hand</th>
+                                <th style="background-color: #d1cdb0;">Available to Sell</th>
+                                <!--<th style="background-color: #f3f2f2;">Sum of Qty Allocated</th>
+                                <th style="background-color: #f3f2f2;">Sum of Hold</th>-->
+                            </tr>
+                        </thead>
+                    	<tbody>
+                            <aura:iteration items="{!v.productInventoryWrapperList}" var="productInventory">
+                                <tr class="slds-table_bordered slds-border_left slds-border_right slds-border_bottom">  
+                                    <aura:if isTrue="{!productInventory.productId != ''}"> 
+                                        <td aura:id="tableTD" rowspan="{!productInventory.rowSpan}">
+                                            <p class="slds-truncate" style="max-width: 110px">
+                                                <!--<div class="text__blue slds-truncate" style="cursor:pointer;" data-id="{!productInventory.priceBookId}" data-productid="{!productInventory.productId}" onclick="{!c.onProductDetail}">--><ui:outputText title="{!productInventory.brandName}" value="{!productInventory.brandName}"/><!--</div>-->
+                                            </p>
+                                        </td>
+                                    </aura:if>
+                                    <aura:if isTrue="{!productInventory.productId != ''}"> 
+                                        <td style="max-width: 250px;" aura:id="tableTD" rowspan="{!productInventory.rowSpan}">
+                                            <p class="slds-truncate" style="max-width: 280px">
+                                                <div class="text__blue slds-truncate" style="cursor:pointer;" data-id="{!productInventory.priceBookId}" data-productid="{!productInventory.productId}" onclick="{!c.onProductDetail}"><ui:outputText title="{!productInventory.productName}" value="{!productInventory.productName}"/></div>
+                                            </p>                                            
+                                        </td>
+                                    </aura:if>
+                                    <aura:if isTrue="{!productInventory.productId != ''}"> 
+                                        <td aura:id="tableTD" rowspan="{!productInventory.rowSpan}">
+                                            <p class="slds-truncate" style="max-width: 230px">
+                                                <!--<div class="text__blue slds-truncate" style="cursor:pointer;" data-id="{!productInventory.priceBookId}" data-productid="{!productInventory.productId}" onclick="{!c.onProductDetail}">--><ui:outputText title="{!productInventory.SKU}" value="{!productInventory.SKU}"/><!--</div>-->
+                                            </p>
+                                        </td>
+                                    </aura:if>
+                                    <aura:if isTrue="{!productInventory.siteId != ''}"> 
+                                        <td aura:id="tableTD" rowspan="{!productInventory.siteRowSpan}">                                            
+                                            <!--<div class="text__blue" style="cursor:pointer;" data-id="{!productInventory.siteId}" onclick="{!c.onViewSite}">-->{!productInventory.siteName}<!--</div>-->                                                                                      
+                                        </td>
+                                    </aura:if>
+                                    <td  class="cell-breakAll">
+                                        <div class="text__blue" style="cursor:pointer;" data-id="{!productInventory.batchId}" onclick="{!c.onViewSite}">{!productInventory.batchName}</div>
+                                    </td>
+                                    <td  class="cell-breakAll">
+                                        <lightning:formattedNumber value="{!productInventory.largestTotalInventory}" />
+                                    </td>
+                                    <td  class="cell-breakAll">
+                                        <lightning:formattedNumber value="{!productInventory.totalReceivingIP}"/>                                        
+                                    </td>
+                                    <aura:if isTrue="{!productInventory.siteId != ''}"> 
+                                        <td aura:id="tableTD" rowspan="{!productInventory.siteRowSpan}">  
+                                        <lightning:formattedNumber value="{!productInventory.largestTotalOrdQty}"/>
+                                    </td>
+                                    </aura:if>
+                                    <td  class="cell-breakAll">
+                                        <lightning:formattedNumber value="{!productInventory.largestInvnetoryHoldQty}"/>
+                                    </td>
+                                    <td  class="cell-breakAll">
+                                        <lightning:formattedNumber value="{!productInventory.largestAllocatedInventory}"/>
+                                    </td>                                  
+                                    <td  class="cell-breakAll">
+                                        <lightning:formattedNumber value="{!productInventory.sumQtyHand}"/>
+                                    </td>
+                                    <!--aura:if isTrue="{!productInventory.productId != ''}"> 
+                                        <td aura:id="tableTD" rowspan="{!productInventory.rowSpan}"-->
+                                    <aura:if isTrue="{!productInventory.siteId != ''}"> 
+                                        <td aura:id="tableTD" rowspan="{!productInventory.siteRowSpan}">
+                                            <lightning:formattedNumber value="{!productInventory.largestAvailableToSell}"/>
+                                        </td>
+                                    </aura:if>
+                                </tr>
+                            </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            	<aura:set attribute="else">
+                    <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small slds-m-top_small">
+                        <h3
+                            class="slds-section-title_divider slds-text-align_center"
+                            style="font-weight: 700;font-family:'Alliance Neue';color:#42472a;"
+                            >
+                            No records found.
+                        </h3>
+                    </lightning:layoutItem>
+            </aura:set>
+            </aura:if>
+        <aura:if isTrue="{!not(empty(v.productInventoryWrapperList))}">
+            <div class="flex items-center content-center slds-is-relative slds-p-around_large" style="background-color: white;">
+                <div class="" role="group">
+                    <lightning:buttonIcon iconName="utility:chevronleft" disabled="{!equals(1, v.cuurentPage)}" variant="border" alternativeText="Previous" class="heightAuto text amber pageNumber" onclick="{!c.prev}" />
+                    <aura:iteration items="{!v.pageNumbers}" var="pn">
+                        <lightning:button value="{!pn}" variant="{!(equals(pn, v.cuurentPage) ? 'brand' : 'neutral')}" label="{!pn}" onclick="{!c.onPageChange}" class="{!(equals(pn, v.cuurentPage) ? 'pageNumber selectBtn' : 'amber pageNumber ')}" />
+                    </aura:iteration>
+                    <lightning:buttonIcon iconName="utility:chevronright" disabled="{!equals(v.cuurentPage, v.totelPage)}" variant="border" alternativeText="Next" class="heightAuto text amber pageNumber" onclick="{!c.next}" />
+                    <div style="display:inline-block;color:#42472a;">
+                        <lightning:select value="{!v.perPage}" variant="label-hidden" label="select size">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </lightning:select> 
+                    </div>
+                    <div class="slds-text-align_center">
+                        Displaying {!v.startRec} to {!v.endRec} of {!v.totelRec} records
+                    </div>
+                </div>
+            </div>
+        </aura:if>        
+    </div>
+</aura:component>

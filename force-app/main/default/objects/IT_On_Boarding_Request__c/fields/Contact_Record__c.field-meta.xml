@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contact_Record__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Contact Record in Irrational account</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Contact Record in Irrational account</inlineHelpText>
+    <label>Contact Record ?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WOVN</fullName>
+    <fields>Name</fields>
+    <fields>Product_Name__c</fields>
+    <fields>Producer_Name__c</fields>
+    <fields>Harvest_Batch_Code__c</fields>
+    <fields>Qty_to_Receive__c</fields>
+    <fields>Cases_Received__c</fields>
+    <fields>Total_Received_Qty__c</fields>
+    <label>WOVN</label>
+</CompactLayout>

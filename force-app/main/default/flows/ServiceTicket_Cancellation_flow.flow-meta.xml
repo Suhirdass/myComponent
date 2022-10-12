@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Service_Ticket_Cancellation_flow</name>
+        <label>Service Ticket Cancellation flow</label>
+        <locationX>182</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Service_Ticket_Cancellation</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Cancelled</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Cancel_Service_Ticket_Lines</targetReference>
+            </connector>
+            <label>Service Ticket Cancellation</label>
+        </rules>
+    </decisions>
+    <interviewLabel>ServiceTicket Cancellation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ServiceTicket Cancellation flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Cancel_Service_Ticket_Lines</name>
+        <label>Cancel Service Ticket Lines</label>
+        <locationX>50</locationX>
+        <locationY>455</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Service_Ticket__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Cancelled</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Service_Ticket_Line__c</object>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Service_Ticket_Cancellation_flow</targetReference>
+        </connector>
+        <object>Service_Ticket__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

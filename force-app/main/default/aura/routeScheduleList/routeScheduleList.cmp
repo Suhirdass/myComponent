@@ -1,0 +1,305 @@
+<aura:component	extends="c:utility" controller="routeScheduleRestWebService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable,force:lightningQuickActionWithoutHeader" access="global">   
+
+    <!--attributes-->
+    <aura:attribute name="res" type="Route_Schedule__c[]"/>
+    <aura:attribute name="ShippingManifestValues" type="Shipping_Manifest__c[]" />
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="selectedIds" type="String" />
+    <aura:attribute name="selectedDCId" type="String" />
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="smLinecount" type="Integer" default="0"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/> 
+    <aura:handler name="init" action="{!c.doInit}"   value="{!this}"/>
+   
+
+
+    <aura:attribute name="shDate" type="String"  />
+    <aura:attribute name="shredirectDate" type="String"  />
+    <aura:attribute name="selectedDay" type="string" /> 
+    <aura:attribute name="dateValues" type="String[]" /> 
+    <aura:attribute name="checkClick" type="Boolean" default="false"/>
+    <aura:attribute name="shipUrl" type="String" />
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <aura:attribute name="addVal" type="String" default="" />
+    <aura:attribute name="baseUrl" type="String" default=""></aura:attribute>
+    <aura:attribute name="requestDate" type="Date" default=""/>
+    <aura:attribute name="requestDateShow" type="Date" default=""/>
+    <aura:attribute name="hasDateError" type="Boolean" default="false"/>
+    <aura:attribute name="holidayList" type="List" default="[]" />
+    <aura:attribute name="cutOffTime" type="String" default=""/>
+      
+    <aura:handler name="change" value="{!v.requestDate}" action="{!c.onChange}"/>   
+    
+    <!-- aura attributes to store Map component information -->
+    <aura:attribute name="showFooter" type="Boolean" default="true"/>
+    <aura:attribute name="setShipLines" type="routeScheduleRestWebService.Route_Schedule__c[]" /> 
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+    <aura:attribute name="dataInValue" type="Date" />
+      
+ <ltng:require 
+                  styles="{!join(',', $Resource.ratingPlugin + '/css/jquery-ui.css')}" 
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js',
+                           $Resource.ratingPlugin + '/js/jquery-ui.js')}" 
+                  afterScriptsLoaded="{!c.onScriptsLoaded}" />
+        
+
+    
+     <aura:html tag="style">
+        .datetile{
+         display: inline-block; 
+         margin-right:10px;
+        }
+         .dateoption{
+         display: inline-block;
+         margin-top: -20px;
+         }
+         .smlinestop{
+         max-height: 100% !important;
+         width: 100% !important;
+         padding-bottom: 10px;
+         }
+         .smlinestrbg{
+         background-color:#F5F5F5;
+         height:35px;
+         }
+         .wdsevenfive{
+         width:75px;
+         }
+         .wd70{
+        width: 70px;
+         }
+         .wd101{
+         width: 101px;
+         }
+         .wd107{
+         width: 107px;
+         }
+         .wd150{
+            width: 150px;
+         }
+         .wd77{
+         width: 77px;
+         }
+
+         .wd158{
+          width: 158px;
+         }
+         .wd119{
+         width: 119px;
+         }
+         .tr40{
+         width: 40px;
+         }
+         .trrem{
+         width:3.25rem;
+         }
+         .tcenter{
+         text-align: center;
+         }
+         .acolor{
+         color:#0070D2;
+         }
+         #block_container{
+          text-align:center;
+         }
+         .dcnf{
+         display:block;
+             display:inline;
+         }
+         .tipBlock{
+         display:inline;
+         margin-left: -15px;
+         }
+         table.slds-table_bordered.slds-table_col-bordered {
+             border: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+             border-spacing: 0;
+             table-layout: fixed;
+             margin-left: auto;
+         }
+         td.slds-text-align-right.trrem {
+             word-wrap: break-word!important;
+             padding: 10px;
+             font-size: 13px;
+             padding-left:5px !important;
+         }
+        td.cell-breakAll {
+    padding-left: 5px;
+}
+         th.cell-breakAll {
+    padding-left: 5px;
+}
+         h1.slds-page-header__title.slds-m-right--small.slds-truncate.slds-align-middle {
+    padding-left: 5px;
+}
+         span.utc {
+    margin-left: -24px !important;
+    color: #ffffff !important;
+    background-color: white !important;
+}
+           #ui-datepicker-div{
+    z-index:99999 !important;
+}
+    </aura:html>
+              <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    <ui:scrollerWrapper class="scrollerSize">
+        <div class="innerDivWrapper">
+            <!-- Shipmainfest Start -->
+            <article class="slds-card " >
+                <div class="slds-page-header heightfix" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media">
+                                <lightning:icon iconName="custom:custom98" title="ShipConfirm RST/TSM" />
+                                <div class="slds-media__body">
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Route Schedule</h1>
+                                        </div>                                                            
+                                        <div class="slds-col">
+                                            <div class="datetile" >Date: </div>
+                                            <div class="dateoption">
+                                       <!--          <lightning:input   id="dueDate" type="date" label=""  
+                                                               value="{!v.dataInValue}"  name="dataInValue" 
+                                                               dateStyle="short"  data-row-index="" onchange="{! c.onChange }"  />  -->
+                                                
+                                              <!--  <lightning:select  onchange="{!c.onDateChange}" label=""   >
+                                                    <aura:iteration items="{!v.dateValues}" var="date">
+                                                        <option value="{!date}"  selected="{!date==v.shDate}"   >{!date}</option>
+                                                    </aura:iteration>
+                                                </lightning:select> -->
+                                          
+                                            
+                                            <div class="{!'form-element'+(v.hasDateError?' hasError':'')}">
+                                                <div class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" style="width:100%">
+                                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                                        <input type="text" class="slds-input slds-show_inline-block "  aura:id="dateValue" id="datepickerId" style="vertical-align:top" value="{!v.requestDateShow}" />
+                                                        <button style="padding-left: 10px;" class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Select a date" onclick="{!c.showDatePicker}" >
+                                                            <lightning:icon size="xx-small" iconName="utility:event" alternativeText="" title="weeklyview" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                              </div>
+                                        <div class="slds-col">
+                                                    
+                                            <div class="slds-float_right dcbtn-" >
+                                                <lightning:button aura:id="dcbtns" class="dft" variant="neutral" label="Route Schedule" title="Brand action" onclick="{!c.onRouteSchedule}"  />
+                                           
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div  class="slds-is-relative slds-p-horizontal_small slds-scrollable slds-m-top_small smlinestop"  style="height:500px;" >
+                    <table class="slds-table_bordered slds-table_col-bordered  ">
+                        <thead>
+                            <tr  class="smlinestrbg"  >
+                   
+                                 <th class=" cell-breakAll wdsevenfive">
+                                   
+                                </th>
+                                <th class="cell-breakAll wd70" style="    width: 100px;" >
+                                   Planned Ship Date
+                                </th>
+                                <th class="cell-breakAll wd107" >
+                                  Start Time
+                                </th>
+                                <th class="cell-breakAll wd150" >
+                                     End Time
+                                </th>
+                                <th class="cell-breakAll wdsevenfive" >
+                                  Route Name
+                                </th>
+                                 <th class="cell-breakAll wdsevenfive" >
+                                  Site
+                                </th>
+                                 <th class="cell-breakAll wdsevenfive" >
+                                  Vehicle Id
+                                </th>
+                                <th class="cell-breakAll wd101" >       
+                                    Start Location
+                                </th>
+                                <th class="cell-breakAll wd77" >       
+                                    Driver
+                                </th>
+                                <th class="cell-breakAll wd150" >
+                                    Vehicle
+                                </th>
+                                <th class="cell-breakAll wd158" >
+                                    Status
+                                </th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <aura:iteration items="{!v.setShipLines}" var="con"  indexVar="index">
+                                <tr  class="tr40">
+                          
+                                   <td scope="row" class="slds-text-align-right trrem" >
+                        
+                                                <lightning:input onchange="{!c.getrouteDetail}" type="radio" label="{!aSalutation}"  name="options" value="{!con.Id}"/>
+                                          
+                                    </td> 
+                                     <td scope="row" class="cell-breakAll">
+                                        
+                                         <lightning:formattedDateTime value="{!con.Route_Date__c}" year="numeric" month="numeric" day="numeric" />
+                                         
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                        
+                                        <lightning:formattedDateTime value="{!con.Route_Start_Time__c}" aura:id="{!index}index" hour="2-digit" minute="2-digit" timeZone="UTC"
+                                 timeZoneName="short"/>
+                                        <span class="utc">UTCtt</span>
+                                    </td>
+                                    <td scope="row"  class="cell-breakAll">
+                                          <lightning:formattedDateTime value="{!con.Route_End_Time__c}" hour="2-digit" minute="2-digit" timeZone="UTC"
+                                 timeZoneName="short"/> 
+                                          <span class="utc">UTCtt</span>
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                          <a href="{!'/' + con.Id}" class="acolor" >{!con.Name}</a>
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                          <a href="{!'/' + con.Site__c}" class="acolor" >{!con.Site__r.Name}</a>
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                         {!con.VehicleId__c}
+                                    </td>
+                          
+                                    <td scope="row" class="cell-breakAll">
+                                        --
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                         <a href="{!'/' + con.Driver__c}" class="acolor" >{!con.Driver__r.Name}</a>
+                                    </td>
+                                    
+                                    <td scope="row" class="cell-breakAll">
+                                       <a href="{!'/' + con.Vehicle__c}" class="acolor" >{!con.Vehicle__r.Name}</a>
+                                    </td>
+                                    <td scope="row" class="cell-breakAll">
+                                     {!con.Status__c}
+                                    </td>
+                                   
+                                </tr>
+                            </aura:iteration> 
+                        </tbody>
+                    </table>
+                </div>
+            </article> 
+            <!-- Shipmainfest end -->
+            
+           
+        </div>
+    </ui:scrollerWrapper>
+</aura:component>

@@ -1,0 +1,578 @@
+<aura:component extends="c:utility" controller="ServiceTicketsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="serviceTicket" type="Map" default="{}"/>
+    <aura:attribute name="branddetails" type="Map" default="{}"/>
+    <aura:attribute name="totalCompleted" type="Integer" default="0"/>
+    <aura:attribute name="totalCompletedPercent" type="Decimal" default="0"/>
+    <aura:attribute name="serviceTicketLines" type="List" default="[]"/>
+    <section class="slds-card no-padding-x">
+    	<h2 class="bg__tan ticket-header slds-text-heading_small">
+			Inbound Transfer Details
+            <span class="print-export" onclick="{!c.printDetails}">PRINT | EXPORT</span>
+		</h2>
+        <div class="bg__white ticket-body">
+			<div class="slds-grid">
+				<div class="slds-size_8-of-12">
+                    <div class="rectangle slds-show_inline-block">
+                        <img class="brandLogo" src="{!v.branddetails.Image_URL__c}"/>
+                    </div>
+                    <div class="slds-show_inline-block" style="vertical-align: top; margin-top: 6px; margin-left: 18px;">
+                        <p class="slds-text-heading_small brandName">{!v.serviceTicket.brandName}</p>
+                        <p class="serviceTicketNumber">
+                            {!v.serviceTicket.ticketNumber}
+                        </p>
+                    </div>
+				</div>
+				<div class="slds-size_4-of-12">
+                    <p class="slds-text-heading_small  slds-m-bottom_xx-small"><div class="serviceLinesCompleted slds-show_inline-block"><span>Transfer Lines Completed </span><span class="serviceLineNumber slds-show_inline-block">{!v.totalCompleted} of {!v.serviceTicketLines.length}</span></div></p>
+					<p class="slds-text-heading_small" style="color:#518397;"><lightning:progressBar value="{!v.totalCompletedPercent}" size="medium" /></p>
+				</div>
+			</div>
+			<div class="slds-grid slds-wrap slds-m-top_large">
+                <div class="slds-col slds-size_1-of-4 STHeader">
+                    Transfer Method
+                </div>
+                <aura:if isTrue="{!equals(v.serviceTicket.transferMethod, 'Pick-up')}">
+                    <div class="slds-col slds-size_1-of-4 STHeader">
+                        Pick Up From
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 STHeader">
+                        Pick Up Address
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 STHeader">
+                        TransPorter
+                    </div>
+                    <!--div class="slds-col slds-size_1-of-4 STHeader">
+                        On-Site Contact
+                    </div-->
+                    <aura:set attribute="else">
+                        <div class="slds-col slds-size_1-of-4 STHeader">
+                            Destination Site
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 STHeader">
+                            Destination Address
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 STHeader">
+                            TransPorter
+                        </div>
+                    </aura:set>
+                </aura:if>
+                
+                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                    {!v.serviceTicket.transferMethod}
+                </div>
+                <aura:if isTrue="{!equals(v.serviceTicket.transferMethod, 'Pick-up')}">
+                    <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                        {!v.serviceTicket.pickupFromDBAName}
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                        {!v.serviceTicket.licenseName}
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                        {!v.serviceTicket.transportLicenseName}
+                    </div>
+                    <aura:set attribute="else">
+                        <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                            {!v.serviceTicket.destinationSiteName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                            {!v.serviceTicket.destinationSiteAddress}
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                            {!v.serviceTicket.transportLicenseName}
+                        </div>
+                    </aura:set>
+                </aura:if>
+                
+                <aura:if isTrue="{!equals(v.serviceTicket.transferMethod, 'Pick-up')}">
+                    <div class="slds-col slds-size_1-of-4 STHeader">
+                        Destination Site
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 STHeader">
+                        Destination Address
+                    </div>    
+                    <aura:set attribute="else">
+                        <div class="slds-col slds-size_1-of-4 STHeader">
+                            Originating Entity
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 STHeader">
+                            Originating Address
+                        </div>
+                    </aura:set>
+                </aura:if>
+                <div class="slds-col slds-size_2-of-4 STHeader">
+                    Special Instructions
+                </div>
+                <aura:if isTrue="{!equals(v.serviceTicket.transferMethod, 'Pick-up')}">
+                    <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                        {!v.serviceTicket.destinationSiteName}
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                        {!v.serviceTicket.destinationSiteAddress}
+                    </div>
+                    <aura:set attribute="else">
+                        <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                            {!v.serviceTicket.pickupFromDBAName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                            {!v.serviceTicket.licenseName}
+                        </div>
+                    </aura:set>
+                </aura:if>
+                <div class="slds-col slds-size_2-of-4 slds-m-bottom_small">
+                    {!v.serviceTicket.specialInstruction}
+                </div>
+                <div class="slds-col slds-size_1-of-4 STHeader">
+                    <aura:if isTrue="{!equals(v.serviceTicket.transferMethod, 'Pick-up')}">
+                        On-Site Contact
+                        <aura:set attribute="else">
+                            Brand Contact
+                        </aura:set>
+                    </aura:if>
+                    
+                </div>
+                <div class="slds-col slds-size_1-of-4 STHeader">
+                    WOVN to provide payment to supplier
+                </div>
+                <div class="slds-col slds-size_2-of-4 STHeader">
+                    Requested Transfer Date
+                </div>
+                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
+                    {!v.serviceTicket.brandContact}
+                </div>
+                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small  " style="padding-left: 0px;">
+                    <ui:outputCheckbox aura:id="checkbox" value="{!v.serviceTicket.passThroughPayment}"/>
+                </div>
+                <div class="slds-col slds-size_2-of-4 slds-m-bottom_small slds-p-left_large">
+                    <ui:outputDate format="MM/dd/yyyy" value="{!v.serviceTicket.requestDate}"/>&nbsp;{!v.serviceTicket.requestTime}
+                </div>
+            </div>
+            <aura:iteration items="{!v.serviceTicketLines}" var="serviceTicketLine" indexVar="index">
+                <div class="slds-grid slds-wrap slds-m-top_small">
+                    <section class="slds-col slds-size_1-of-1">
+                        <div class="slds-box height-full slds-is-relative">
+                            <aura:if isTrue="{!equals(serviceTicketLine.PWOStatus,'Completed')}">
+                                <div class="completedST">
+                                    <lightning:icon iconName="utility:check" alternativeText="Completed" size="small" title="Completed" />
+                                </div>
+                                <aura:set attribute="else">
+                                	<div class="STStatus">
+                                        <lightning:buttonIcon
+                                                              variant="bare"
+                                                              iconClass="{!'editIcon'+if(or(!equals(serviceTicketLine.status, 'New'),!or(equals(v.serviceTicket.status, 'Pending'),equals(v.serviceTicket.status, 'Draft'))),' disabled','')}"
+                                                              value="{!v.serviceTicket.id}"
+                                                              iconName="utility:edit"
+                                                              size="large"
+                                                              onclick="{!c.onEdit}"
+                                                              alternativeText="Edit"
+                                                              disabled="{!or(!equals(serviceTicketLine.status, 'New'),!or(equals(v.serviceTicket.status, 'Pending'),equals(v.serviceTicket.status, 'Draft')))}"
+                                                              />
+                                    <!--lightning:icon iconName="utility:edit" alternativeText="Edit" size="x-small" title="Edit" disabled="{!!equals(serviceTicketLine.status,'New')}" class="clickable" /-->
+                                </div>
+                                </aura:set>
+                            </aura:if>
+                            <h2 class="{!'sl-ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium '+ if(equals(serviceTicketLine.PWOStatus,'Completed'),'bg__complete','bg__tan')}">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_medium STHeader">
+                                        <div class="slds-show_inline-block" style="margin-left: -26px;margin-right:3px;">
+                                            <lightning:buttonIcon iconName="{!if(serviceTicketLine.isAllCollapsed,'utility:right','utility:down')}" variant="bare" size="medium" onclick="{!c.onExpendCollapse}" value="{!index}"></lightning:buttonIcon>
+                                        </div>
+                                        <!--aura:if isTrue="{!equals(serviceTicketLine.Package_Type,'')}">
+                                            Service
+                                            <aura:set attribute="else">
+                                                {!serviceTicketLine.Package_Type}
+                                            </aura:set>
+                                        </aura:if-->
+                                        <aura:if isTrue="{!equals(v.serviceTicketLine.ProductName,'')}">
+                                            Product
+                                            <aura:set attribute="else">
+                                                {!serviceTicketLine.productDescription}
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_medium STHeader">    
+                                        <aura:if isTrue="{!and(not(equals(serviceTicketLine.Package_Type,'')),greaterthan(serviceTicketLine.Total_Units,0))}">
+                                            <lightning:formattedNumber value="{!serviceTicketLine.totalCases}" maximumFractionDigits="2"/> cases (<lightning:formattedNumber value="{!serviceTicketLine.Total_Units}" maximumFractionDigits="2"/> units)
+                                            <aura:set attribute="else">
+                                                Quantity
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_medium STHeader">
+                                        
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_medium STHeader slds-text-align_right">   
+                                        <aura:if isTrue="{!empty(serviceTicketLine.PWOStatus)}">
+                                            {!serviceTicketLine.status}
+                                            <aura:set attribute="else">
+                                                {!serviceTicketLine.PWOStatus}
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                    
+                                </div>
+                            </h2>
+                            <div class="{!'progressbarIndicator'+if(serviceTicketLine.isAllCollapsed,' slds-hide','')}">
+                                <lightning:progressIndicator currentStep="{!serviceTicketLine.currentStep}" type="base" hasError="false" variant="base" class="STBar">
+                                    <lightning:progressStep label="New" value="1" class ="slds-text-align_center"/>
+                                    <lightning:progressStep label="Accepted" value="2"/>
+                                    <lightning:progressStep label="Released for Production" value="3"/>
+                                    <lightning:progressStep label="WIP" value="4"/>
+                                    <lightning:progressStep label="Completed" value="5"/>
+                                </lightning:progressIndicator>
+                            </div>
+                            <div class="{!if(or(serviceTicketLine.isCollapsed,serviceTicketLine.isAllCollapsed),' slds-hide','')}">
+                                
+                                <div class="slds-grid slds-wrap">
+                                    <!--div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Service Type</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.Package_Type}</div>
+                                    </div-->
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Product Name</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.productDescription}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Product SKU</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.New_Packaged_ProductName}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Batch ID</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.Harvest_Batch_Code}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">UID</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.UIDName}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Total Qty</label>
+                                        <div class="slds-truncate"><lightning:formattedNumber value="{!serviceTicketLine.Total_Units}"/></div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Test Required</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.Test_Required}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Test Status</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.testStatus}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">COA Number</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.COA_Number}</div>
+                                    </div>
+                                    
+                                    <!--aura:if isTrue="{!equals(serviceTicketLine.Package_Type,'Casing')}">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Units per Case (MOQ)</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.Qty_Per_Multi_Unit}</div>
+                                        </div>
+                                        
+                                    </aura:if-->
+                                    
+                                    <aura:if isTrue="{!!serviceTicketLine.hasAttchment}">
+                                        <div class="slds-col slds-size_1-of-4 hasAttchment slds-p-around_medium">
+                                            <!--div class="form-group">
+                                                <label class="control-label text-lg-right pt-2" for="formGroupExampleInput">Upload Document</label>
+                                                
+                                            </div-->
+                                            <lightning:fileUpload name="fileUploader" multiple="true" recordId="{!serviceTicketLine.id}" label ="Upload Document" onuploadfinished="{!c.onInit}" />
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                                <label class="slds-form-element__label">Attached File Name</label>
+                                                <div data-id="{!serviceTicketLine.documentId}" onclick="{!c.onViewCompliance}">
+                                                    <h3 class="attachmentFile clickable">{!serviceTicketLine.documentTitle} </h3>
+                                                </div>
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                    <div class="slds-col slds-size_3-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Special Instructions</label>
+                                        <div class="slds-truncate" title="{!serviceTicketLine.Spl_Packaging_Notes}">{!serviceTicketLine.Spl_Packaging_Notes}</div>
+                                    </div>
+                                    <!--
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">UID</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.UIDName}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Request Date</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.Expected_Arrival_At_Filligreen}</div>
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                        <label class="slds-form-element__label">Net Weight or Qty</label>
+                                        <div class="slds-truncate">{!serviceTicketLine.Desired_Retail_Ready_Form}</div>
+                                    </div>
+                                    <aura:if isTrue="{!or(equals(serviceTicketLine.Package_Type,'Bagging'),or(equals(serviceTicketLine.Package_Type,'Jarring'),or(equals(serviceTicketLine.Package_Type,'Pre-Roll Packing'))))}">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Tamper Type</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.Tamper_Type}</div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Small Label Qty</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.smallLabelQty}</div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Medium Label Qty</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.mediumLabelQty}</div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Large Label Qty</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.largeLabelQty}</div>
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!or(equals(serviceTicketLine.Package_Type,'Bagging'),or(equals(serviceTicketLine.Package_Type,'Jarring'),or(equals(serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(serviceTicketLine.Package_Type,'Transfer Pick-up'),or(equals(serviceTicketLine.Package_Type,'Supplier Drop-off'),or(equals(serviceTicketLine.Package_Type,'Pick &amp; Pack'),or(equals(serviceTicketLine.Package_Type,'Transport'),or(equals(serviceTicketLine.Package_Type,'Sorting')))))))))}">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Testing Required</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.Test_Required}</div>
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!equals(serviceTicketLine.Package_Type,'Pre-Rolling')}">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Cone Size</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.Cone_Size}</div>
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!equals(serviceTicketLine.Package_Type,'Pre-Roll Packing')}">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">Pre-Rolls per Pack</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.PreRoll_Packaging}</div>
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!or(equals(serviceTicketLine.Package_Type,'Bagging'),or(equals(serviceTicketLine.Package_Type,'Jarring'),or(equals(serviceTicketLine.Package_Type,'Pre-Rolling'),or(equals(serviceTicketLine.Package_Type,'Pre-Roll Packing'),or(equals(serviceTicketLine.Package_Type,'Blending'))))))}">
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">New Product Name</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.New_Packaged_ProductName}</div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4 slds-p-around_medium">
+                                            <label class="slds-form-element__label">New Batch ID</label>
+                                            <div class="slds-truncate">{!serviceTicketLine.New_Batch_ID_Name}</div>
+                                        </div>
+                                        
+                                    </aura:if>
+									-->
+                                </div>
+                            </div>
+                            <div class="{!'hideshowBar'+if(serviceTicketLine.isAllCollapsed,' slds-hide','')}">
+                                <div  class="slds-text-align_center hideshowText" data-index="{!index}" onclick="{!c.showHideSLine}">
+                                    <aura:if isTrue="{!serviceTicketLine.isCollapsed}">
+                                    	Show Details
+                                        <aura:set attribute="else">
+                                        	Hide Details
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </aura:iteration>
+        </div>
+    </section>
+    <!--div class="slds-is-relative">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small">
+                <h3 class="slds-section-title_divider" style="font-weight: 700;display: inline-block;">Service Ticket</h3>
+                <lightning:button label="Cancel" onclick="{!c.onCancel}" class="slds-float_right theme workSansSemiBold uppserCase" />
+                <lightning:button disabled="{!!equals(v.serviceTicket.status, 'New')}" label="Edit" value="{!v.serviceTicket.id}" variant="brand" onclick="{!c.onEdit}" class="slds-float_right theme workSansSemiBold uppserCase slds-m-right_small" />
+            </lightning:layoutItem>
+            
+            <aura:if isTrue="{!v.serviceTicket != null}">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_small">
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th>Ticket Number</th>
+                            <th>Brand Name</th>
+                            <th>Brand Contact</th>
+                            <th>Transfer Method</th>
+                            <th>Licensed Premise</th>
+                            <th>Total Lines</th>
+                            <th>status</th>
+                            <th>Request Date Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.ticketNumber}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.brandName}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.brandContact}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.transferMethod}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.licensePremiseAddress}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.totalServiceLines}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">{!v.serviceTicket.status}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate">
+                                    <ui:outputDate format="MM-dd-yyyy" value="{!v.serviceTicket.requestDate}"/>&nbsp;{!v.serviceTicket.requestTime}
+                                </div>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+                <aura:iteration items="{!v.serviceTicketLines}" var="serviceTicket" indexVar="index">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground slds-m-top_small">
+                        <span class="productName">Service Ticket Line</span>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Service Type" labelClass="slds-text-title_caps" helpText="Please select the service type desired">
+                            <div class="slds-truncate">{!serviceTicket.Package_Type}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Product" labelClass="slds-text-title_caps" helpText="Please select from your Product Names">
+                            <div class="slds-truncate">{!serviceTicket.ProductName}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Pre-Rolls per Pack" labelClass="slds-text-title_caps" helpText="Please select how many pre-rolls will be packed into retail ready case">
+                            <div class="slds-truncate">{!serviceTicket.PreRoll_Packaging}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Harvest Batch ID or Lot Code" labelClass="slds-text-title_caps" helpText="Please enter the the Harvest Batch ID or Lot Code. This will be shall match the COA after testing">
+                            <div class="slds-truncate">{!serviceTicket.Harvest_Batch_ID}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12">
+                        <hr style="margin: 0;width:100%" />
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="UID" labelClass="slds-text-title_caps" helpText="Please enter the MTRC assigned UID">
+                            <div class="slds-truncate">{!serviceTicket.UID}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Pick-up or Arrival Date" labelClass="slds-text-title_caps" helpText="Please enter the date when ALL materials will arrive or requested drop-off/pick-up">
+                            <div class="slds-truncate">{!serviceTicket.Expected_Arrival_At_Filligreen}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Per Unit Weight (g)" labelClass="slds-text-title_caps" helpText="Please select the transferring per unit weight">
+                            <div class="slds-truncate">{!serviceTicket.Per_Unit_Weight_g}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Total Units" labelClass="slds-text-title_caps" helpText="Please enter the total qty of units to transfer">
+                            <div class="slds-truncate">{!serviceTicket.Total_Units}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12">
+                        <hr style="margin: 0;width:100%" />
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Desired Net Weight or Qty" labelClass="slds-text-title_caps" helpText="Please select the target weight per unit after transformation. Max allowance is 3% net weight variance">
+                            <div class="slds-truncate">{!serviceTicket.Desired_Retail_Ready_Form}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Tamper Type" labelClass="slds-text-title_caps" helpText="Please select the type of tamper evident label to apply.">
+                            <div class="slds-truncate">{!serviceTicket.Tamper_Type}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Top | Front Label" labelClass="slds-text-title_caps" helpText="Please select the type of label to apply">
+                            <div class="slds-truncate">{!serviceTicket.Top_Front_Label}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Bottom | Back Label" labelClass="slds-text-title_caps" helpText="Please select the type of label to apply">
+                            <div class="slds-truncate">{!serviceTicket.Bottom_Back_Label}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12">
+                        <hr style="margin: 0;width:100%" />
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Body | Tube Label" labelClass="slds-text-title_caps" helpText="Please select the type of label to apply">
+                            <div class="slds-truncate">{!serviceTicket.Body_Tube_Label}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="THC &amp; CBD Claim Label" labelClass="slds-text-title_caps" helpText="Please select the type of label to apply">
+                            <div class="slds-truncate">{!serviceTicket.THC_CBD_Claim_Label}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Qty of Misc Label" labelClass="slds-text-title_caps" helpText="Please select the type of label to apply">
+                            <div class="slds-truncate">{!serviceTicket.Qty_of_Misc_Label}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Testing Required" labelClass="slds-text-title_caps" helpText="Please check if required, if No, you will be required to provide tranferring COA">
+                            <div class="slds-truncate">{!serviceTicket.Test_Required}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12">
+                        <hr style="margin: 0;width:100%" />
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Transfer of Custody" labelClass="slds-text-title_caps" helpText="TBD">
+                            <div class="slds-truncate">{!serviceTicket.Transfer_of_Custody}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="COA Number" labelClass="slds-text-title_caps" helpText="Please enter the COA number that corresponds to the Harvest Batch or Lot Code">
+                            <div class="slds-truncate">{!serviceTicket.COA_Number}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+
+                        <c:labelWithHelpText label="Units per Case (MOQ)" labelClass="slds-text-title_caps" helpText="Please enter the retail ready units to pack per case or carton. Leave Blank if multipacking is NOT required">
+                            <div class="slds-truncate">{!serviceTicket.Qty_Per_Multi_Unit}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        
+                        <c:labelWithHelpText label="Total Qty" labelClass="slds-text-title_caps" helpText="Total Qty">
+                            <div class="slds-truncate">{!serviceTicket.Total_Qty}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>      
+                    <aura:if isTrue="{!!equals(serviceTicket.status,'Accepted')}">
+                        <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                            
+                            <c:labelWithHelpText label="Total Qty" labelClass="slds-text-title_caps" helpText="Total Quoted Price">
+                                <div class="slds-truncate">{!serviceTicket.Total_Quoted_Price}</div>
+                            </c:labelWithHelpText>
+                        </lightning:layoutItem>  
+                    </aura:if>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="New Packaged Product" labelClass="slds-text-title_caps" helpText="Please select from your Product Names" >
+                            <div class="slds-truncate">{!serviceTicket.New_Packaged_ProductName}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Cone Size" labelClass="slds-text-title_caps" helpText="Please select Cone Size to apply" >
+                            <div class="slds-truncate">{!serviceTicket.Cone_Size}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="3" padding="around-small">
+                        <c:labelWithHelpText label="Special Packaging Instructions" labelClass="slds-text-title_caps" helpText="Please provide any instructions petaining to drop-off, pick-up or label placements">
+                            <div class="slds-truncate">{!serviceTicket.Spl_Packaging_Notes}</div>
+                        </c:labelWithHelpText>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12">
+                        <hr style="margin: 0;width:100%" />
+                    </lightning:layoutItem> 
+                </aura:iteration>
+                
+            </aura:if>
+        </lightning:layout>
+    </div-->
+</aura:component>

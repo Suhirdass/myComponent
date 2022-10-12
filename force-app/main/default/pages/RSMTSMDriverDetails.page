@@ -1,0 +1,293 @@
+<apex:page controller="RSMTSMDriverDetailsController" docType="html-5.0" sidebar="false">
+
+     <style>
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+    </style>
+    
+    
+     <script type="text/javascript">
+        function selectAllCheckboxesTSM(obj){
+        
+            var container = obj;
+            while (container.tagName != "TABLE") {
+                container = container.parentNode;
+            }
+            
+            // Switch all checkboxes
+            var inputs = container.getElementsByTagName("input");
+            var checked = obj.checked;
+            for (var i = 0; i < inputs.length; i++) { 
+                var input = inputs.item(i);
+                if (input.type == "checkbox") {
+                        if (input != obj) {
+                            input.checked = checked;
+                        }
+                }
+            }
+         
+        }
+        
+        function selectAllCheckboxesRSM(obj){
+        
+            var container = obj;
+            while (container.tagName != "TABLE") {
+                container = container.parentNode;
+            }
+            
+            // Switch all checkboxes
+            var inputs = container.getElementsByTagName("input");
+            var checked = obj.checked;
+            for (var i = 0; i < inputs.length; i++) { 
+                var input = inputs.item(i);
+                if (input.type == "checkbox") {
+                        if (input != obj) {
+                            input.checked = checked;
+                        }
+                }
+            }
+         
+        }
+        </script>
+        
+  
+    
+    <apex:form >
+        <apex:actionFunction name="ResetTSMPageSize" 
+                             action="{!doResetTSMPageSize}" 
+                             reRender="tsmBlock"
+                             status="idRefreshingStatus" />
+
+        <apex:actionFunction name="ResetRSMPageSize" 
+                             action="{!doResetRSMPageSize}" 
+                             reRender="rsmBlock"
+                             status="idRefreshingStatus" />
+                             
+      
+  
+        <apex:pageBlock rendered="{!hideDatePicker}">
+            
+            <apex:actionStatus id="idRefreshingStatus" 
+                              style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            
+   
+                 <apex:outputLabel value="Planned Ship Date(RSM) / Planned Transfer Date(TSM):" style="text-align:right; font-size: 14px; font-weight: bold ; position: right; color : Black" for="datefield"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:input value="{!dat}" type="date" id="datefield" style="text-align:center"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:commandButton action="{!retreiveTSMRSM}" value="Submit" status="idRefreshingStatus"/>
+            
+        </apex:pageBlock>
+        
+         <apex:pageMessages ></apex:pageMessages>
+  
+        <apex:pageBlock rendered="{!hideDatePicker}">
+            
+            <apex:pageBlockSection columns="2" title="Driver Details : ">
+                
+                <apex:outputField value="{!objDriver.Name}"/>
+                <apex:outputField value="{!objDriver.Driver_License_Number__c}"/>
+                <apex:outputField value="{!objDriver.Expiration_Date__c}"/>
+                <apex:outputField value="{!objDriver.Driver_License_Class__c}"/>
+                <apex:outputField value="{!objDriver.State_Issued__c}"/>
+                <apex:outputField value="{!objDriver.Active__c}"/>
+                <apex:outputField value="{!objDriver.License_Expired__c}"/>
+
+           </apex:pageBlockSection>
+            
+            </apex:pageBlock>
+        
+        <apex:pageBlock id="tsmBlock" rendered="{!hideDatePicker}">
+            <apex:outputPanel rendered="{!hasTSM}">
+                <apex:actionStatus id="idRefreshingStatus" 
+                                  style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:pageMessages />
+                <apex:pageBlockSection columns="1" title="List of TSM Details">
+                <apex:pageBlockTable value="{!setTSM}" var="tsmTest" >
+                      <apex:column >
+                        <apex:facet name="header">
+                            <apex:inputCheckbox onclick="selectAllCheckboxesTSM(this,'inputId')"/> 
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!tsmTest.isSelectedTSM}" disabled="{!IF((tsmTest.tsm.Actual_Departure_Date_Time__c == null), false, true)}" id="TSMid"/>
+                    </apex:column>
+                    <apex:column headerValue="Transfer Shipping Manifest">                   
+                        <apex:outputLink value="/{!tsmTest.tsm.Id}">{!tsmTest.tsm.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!tsmTest.tsm.Status__c}" style="color:{!IF(tsmTest.tsm.Actual_Departure_Date_Time__c == null, 'black', 'grey')}"/>
+                    <apex:column value="{!tsmTest.tsm.Planned_Ship_Transfer_Date__c}" style="color:{!IF(tsmTest.tsm.Actual_Departure_Date_Time__c == null, 'black', 'grey')}" />
+                    <apex:column value="{!tsmTest.tsm.Actual_Arrival_Date_Time__c}" style="color:{!IF(tsmTest.tsm.Actual_Departure_Date_Time__c == null, 'black', 'grey')}" />
+                    <apex:column value="{!tsmTest.tsm.Actual_Departure_Date_Time__c}"  style="color:{!IF(tsmTest.tsm.Actual_Departure_Date_Time__c == null, 'black', 'grey')}"/>
+                </apex:PageblockTable>                        
+            </apex:pageBlockSection>
+                
+                <apex:outputPanel >
+                    <div style="text-align:center">
+                        &lt;<apex:outputLabel rendered="{!Not(hasPreviousTSM)}">{!$Label.First}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousTSM}" 
+                                          action="{!firstTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.First}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasPreviousTSM)}">{!$Label.Previous}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousTSM}" 
+                                          action="{!previousTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Previous}
+                        </apex:commandLink>
+                        &nbsp; {!$Label.Page} {!retreiveTSMIterable.currentPage} {!$Label.Of} {!retreiveTSMIterable.totalPages} &nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextTSM)}">{!$Label.Next}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextTSM}" 
+                                          action="{!nextTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Next}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextTSM)}">{!$Label.Last}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextTSM}" 
+                                          action="{!lastTSM}" 
+                                          reRender="tsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Last}
+                        </apex:commandLink>&gt;
+                        &nbsp;&nbsp;&nbsp;
+                        <b><apex:outputText value="{!$Label.Page_Size}"/></b> &nbsp;
+                        <apex:selectList value="{!pageSizeTSM}" size="1" 
+                                         onchange="ResetTSMPageSize()">
+                            <apex:selectOptions value="{!pageSizeOptionsTSM}" />
+                        </apex:selectList>
+                     </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!hasTSM}">
+                <b>No TSM record found</b>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        
+        <apex:pageBlock id="rsmBlock" rendered="{!hideDatePicker}">
+            <apex:outputPanel rendered="{!hasRSM}">
+                <apex:actionStatus id="idRefreshingStatus" 
+                                  style="align:center">
+                    <apex:facet name="start">
+                        <div class="grey-background">
+                            &nbsp;
+                        </div>
+                        <div class="loading-image">
+                            <img src="/img/loading.gif" />
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:pageMessages />
+                <apex:pageBlockSection columns="1" title="List of RSM Details">
+                <apex:pageBlockTable value="{!setRSM}" var="rsmTest" >
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:inputCheckbox onclick="selectAllCheckboxesRSM(this,'inputId')"/> 
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!rsmTest.isSelectedRSM}" disabled="{!IF((rsmTest.rsm.Receiver_Acceptance_Date__c== null), false, true)}" styleClass="case" />
+                    </apex:column>
+                    <apex:column headerValue="Retail Shipping Manifest">                   
+                        <apex:outputLink value="/{!rsmTest.rsm.Id}">{!rsmTest.rsm.Name}</apex:outputLink>
+                   </apex:column>
+                    <apex:column value="{!rsmTest.rsm.Status__c}" style="color:{!IF(rsmTest.rsm.Receiver_Acceptance_Date__c == null, 'black', 'grey')}"/>
+                    <apex:column value="{!rsmTest.rsm.Planned_Ship_Transfer_Date__c}" style="color:{!IF(rsmTest.rsm.Receiver_Acceptance_Date__c == null, 'black', 'grey')}"/>
+                    <apex:column value="{!rsmTest.rsm.Receiver_Acceptance_Date__c}" style="color:{!IF(rsmTest.rsm.Receiver_Acceptance_Date__c == null, 'black', 'grey')}"/>
+                    <apex:column value="{!rsmTest.rsm.Actual_Departure_Date_Time__c}" style="color:{!IF(rsmTest.rsm.Receiver_Acceptance_Date__c == null, 'black', 'grey')}"/>
+                </apex:PageblockTable>                        
+            </apex:pageBlockSection>
+                
+                <apex:outputPanel >
+                    <div style="text-align:center">
+                        &lt;<apex:outputLabel rendered="{!Not(hasPreviousRSM)}">{!$Label.First}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousRSM}" 
+                                          action="{!firstRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.First}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasPreviousRSM)}">{!$Label.Previous}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasPreviousRSM}" 
+                                          action="{!previousRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Previous}
+                        </apex:commandLink>
+                        &nbsp; {!$Label.Page} {!retreiveRSMIterable.currentPage} {!$Label.Of} {!retreiveRSMIterable.totalPages} &nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextRSM)}">{!$Label.Next}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextRSM}" 
+                                          action="{!nextRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Next}
+                        </apex:commandLink>
+                        &nbsp;|&nbsp;
+                        <apex:outputLabel rendered="{!Not(hasNextRSM)}">{!$Label.Last}</apex:outputLabel>
+                        <apex:commandLink rendered="{!hasNextRSM}" 
+                                          action="{!lastRSM}" 
+                                          reRender="rsmBlock"
+                                          status="idRefreshingStatus">
+                            {!$Label.Last}
+                        </apex:commandLink>&gt;
+                        &nbsp;&nbsp;&nbsp;
+                        <b><apex:outputText value="{!$Label.Page_Size}"/></b> &nbsp;
+                        <apex:selectList value="{!pageSizeRSM}" size="1" 
+                                         onchange="ResetRSMPageSize()">
+                            <apex:selectOptions value="{!pageSizeOptionsRSM}" />
+                        </apex:selectList>
+                     </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!hasRSM}">
+                <b>No RSM record found</b>
+            </apex:outputPanel>
+            
+            
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!updateRSMTSM}" 
+                                    value="Shipment Delivered"
+                                    status="idRefreshingStatus" rendered="{!hasRSM || hasTSM}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+ 
+    </apex:form>
+</apex:page>

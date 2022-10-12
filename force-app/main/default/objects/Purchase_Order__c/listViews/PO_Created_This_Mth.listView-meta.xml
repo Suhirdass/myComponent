@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Created_This_Mth</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>PO_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>Brand_Quote__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Sold_to_Party_Legal_Name__c</columns>
+    <columns>Retailer_Collection_Status__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Cost__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>PO_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancelled,Rejected</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>THIS_MONTH</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Purchase_Order__c.Invoice_Only</value>
+    </filters>
+    <label>PO - Created This Mth</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

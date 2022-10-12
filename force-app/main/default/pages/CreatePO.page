@@ -1,0 +1,15 @@
+<apex:page standardController="Brand_Quote__c"  extensions="CreatePOfromQuote"  
+    action="{!createPO}" title="Brand Quote: Create PO" >  
+  <apex:form >
+  <apex:pageBlock title="Brand Quote Detail">
+  <apex:pageBlockButtons >
+      <apex:commandButton action="{!goBack}" value="Return"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection title="Warnings and Errors Associated with Create Sales Order Request" columns="1">
+      <apex:pageBlockSectionItem >
+        <apex:pageMessages />
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

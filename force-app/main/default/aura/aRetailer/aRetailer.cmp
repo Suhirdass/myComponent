@@ -1,0 +1,954 @@
+<aura:component
+                extends="c:utility"
+                controller="ProductsCtlr"
+                implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global"
+                >
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="selectedTabId" type="String"  />
+    <aura:attribute name="selectedFilter" type="String"  />
+    <aura:attribute name="retailer" type="Map" default="" />
+    <aura:attribute name="mapMarkers" type="Object"/>
+    <aura:attribute name="stateLicenses" type="List" default="" />
+    <aura:attribute name="salesOrders" type="List" default="" />
+    <aura:attribute name="insights" type="List" default="" />
+    <aura:attribute name="linecards" type="List" default="[]" />
+    <aura:attribute name="retailerContacts" type="List" default="" />
+    <aura:attribute name="contactRTId" type="String" default="" />
+    <ltng:require styles="{! $Resource.tabset }" />
+    
+    <lightning:overlayLibrary aura:id="overlay" />
+    
+    <div class="slds-is-relative slds-p-horizontal_small">
+        <lightning:spinner
+                           variant="brand"
+                           alternativeText="{!v.processingMessage}"
+                           class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+        
+        <aura:if isTrue="{!!empty(v.retailer)}">
+            <div class="slds-grid slds-gutters">
+                <section class="slds-col" style="width:283px;">
+                    <div class="slds-card" style="width:283px;border:none;">
+                        <div class="retailerLeftPanel">
+                            <div style="padding:20px;">
+                                <c:brandImg
+                                            imageUrl="{! v.retailer.imageUrl }"
+                                            name="{!!v.retailer.retailerDBA}"/>
+                                
+                                <h2 style="font-family:'Alliance Neue';"
+                                    class="retailer-page__title slds-text-heading_medium slds-m-vertical_medium">
+                                    {!v.retailer.retailerDBA}
+                                </h2>
+                                
+                                <div class="slds-m-vertical_medium">
+                                    <p class="text__bold slds-text-body_small text__grayMid">
+                                        Legal Business Name
+                                    </p>
+                                    <p class="text__semibold">{!v.retailer.retailerName}</p>
+                                </div>
+                                <aura:if isTrue="{!notequals(v.retailer.businessLine,'')}">
+                                    <div class="slds-m-vertical_medium">
+                                        <p class="text__bold slds-text-body_small text__grayMid">
+                                            Business Type
+                                        </p>
+                                        <div title="{!v.retailer.businessLine}">
+                                            <p class="text__semibold slds-truncate" style="max-width: 195px;">
+                                                <aura:unescapedHtml value="{!v.retailer.businessLineInTwoLine}"/>
+                                            </p>
+                                        </div>
+                                    </div>	
+                                </aura:if>
+                                
+                                <div class="slds-m-vertical_medium slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-1">
+                                        <p class="text__bold slds-text-body_small text__grayMid">
+                                            Sales Rep
+                                        </p>
+                                        <p class="text__semibold">{!v.retailer.salesPersonName}</p>
+                                    </div>
+                                </div>
+                                <div class="slds-m-vertical_medium slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-1">
+                                        <p class="text__bold slds-text-body_small text__grayMid">
+                                            Phone
+                                        </p>
+                                        <p class="text__semibold">{!v.retailer.phone}</p>
+                                    </div>
+                                </div>
+                                <div class="slds-m-vertical_medium slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-1">
+                                        <p class="text__bold slds-text-body_small text__grayMid">
+                                            Fax
+                                        </p>
+                                        <p class="text__semibold">{!v.retailer.fax}</p>
+                                    </div>
+                                </div>
+                                <div class="slds-m-vertical_medium slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-1">
+                                        <p class="text__bold slds-text-body_small text__grayMid">
+                                            Website
+                                        </p>
+                                        <p class="slds-truncate text__semibold text__blue" style="color:#006DCC;">
+                                            <ui:outputURL
+                                                          value="{!v.retailer.website}"
+                                                          label="{!v.retailer.website}"
+                                                          target="_blank"/>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="slds-m-top_medium">
+                                    <p class="text__bold slds-text-body_small text__grayMid">
+                                        Shipping Address
+                                    </p>
+                                    <p class="text__semibold">{!v.retailer.billingAddress}</p>
+                                </div>
+                            </div>
+                            
+                            
+                            <lightning:map
+                                           mapMarkers="{! v.mapMarkers }"
+                                           zoomLevel="16"
+                                           class="address"/>
+                            
+                            <div style="padding:20px;">
+                                <!--<div class="slds-show_inline-block" style="width:100%;margin-top:5px;">
+                                    <lightning:button label="{!v.retailer.isLineCard?'Edit Line Card':'Add Line Card'}" variant="brand"  value="{!v.retailer.id}" onclick="{!c.onAddLinecard}"/>disabled="{!v.retailer.isLineCard}"
+                                 
+                                </div> -->
+                                
+                                <!--<div class="slds-m-top_medium">
+        <a href="{!v.retailer.facebook}" class="slds-m-right_small" target="_blank">
+         <img
+          src="{! $Resource.SocialAccounts + '/brand_facebook.svg' }"
+          alt="{! v.retailer.name + ' facebook icon' }"/>
+        </a>
+        <a href="{!v.retailer.twitter}" class="slds-m-right_small" target="_blank">
+         <img
+          src="{! $Resource.SocialAccounts + '/brand_twitter.svg' }"
+          alt="{! v.retailer.name + ' twitter icon' }"
+         />
+        </a>
+        <a href="{!v.retailer.linkedin}" class="slds-m-right_small" target="_blank">
+         <img
+          src="{! $Resource.SocialAccounts + '/brand_linkedin.svg' }"
+          alt="{! v.retailer.name + ' linkedin icon' }"
+         />
+        </a>
+        <a href="{!v.retailer.instagram}" class="slds-m-right_small" target="_blank">
+         <img
+          src="{! $Resource.SocialAccounts + '/brand_instagram.svg' }"
+          alt="{! v.retailer.name + ' instagram icon' }"
+         />
+        </a>
+       </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="slds-col slds-card no-padding-x" style="width:100%;margin-left:24px;margin-right:24px;">
+                    
+                    
+                    <lightning:tabset  selectedTabId="{!v.selectedTabId}">
+                        <aura:if isTrue="{!v.selectedFilter == 'Other Retailers' || v.selectedFilter == 'All'  }">
+                            
+                            <lightning:tab  label="General" id="overview">
+                                <div class="slds-p-horizontal_large slds-p-vertical_medium">
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_3-of-3">
+                                            <!-- @dev: attach real descriptions and blurbs for retailer -->
+                                            <h3 class="text__semibold slds-text-heading_small slds-m-bottom_small">
+                                                <aura:unescapedHtml value="{!v.retailer.fullDescription}"/>
+                                            </h3>
+                                            <p class="slds-text-body_regular">
+                                                <aura:unescapedHtml value="{!v.retailer.aboutus}" />
+                                            </p>
+                                            <div class="flex slds-m-top_medium">
+                                                <p class="tag " style="padding-top: 7px;margin-right: 7px;">
+                                                    Retailer Account Rating: 
+                                                    <aura:if isTrue="{!!empty(v.retailer.retailAccountRating)}">
+                                                        {!v.retailer.retailAccountRating}
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                                <p class="tag " style="padding-top: 7px;margin-right: 7px;">
+                                                    Mutual Payment Terms: 
+                                                    <aura:if isTrue="{!!empty(v.retailer.mutualPaymentTerms)}">
+                                                        {!v.retailer.mutualPaymentTerms}
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                                <p class="tag " style="padding-top: 7px;margin-right: 7px;">
+                                                    Onboard Date:
+                                                    <aura:if isTrue="{!!empty(v.retailer.onboardDate)}">
+                                                        <ui:outputDate value="{!v.retailer.onboardDate}" format="MM/dd/yyyy"/>
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    
+                                                </p>
+                                                <p class="tag" style="padding-top: 7px;">
+                                                    MOV:
+                                                    <aura:if isTrue="{!!empty(v.retailer.minimumOrderValue)}">
+                                                        <lightning:formattedNumber value="{!v.retailer.minimumOrderValue}" style="currency" currencyCode="USD" minimumFractionDigits="2"/>
+                                                        
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    
+                                                </p>
+                                                <lightning:button class="slds-m-left_small selectBtn" label="{!v.retailer.isLineCard?'Edit':'Add'}" variant="brand"  value="{!v.retailer.id}" onclick="{!c.onAddLinecard}" /><!--disabled="{!v.retailer.isLineCard}"-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-m-top_large">
+                                        <h3 class="slds-text-heading_small slds-m-bottom_small" >
+                                            StateLicense(s)
+                                        </h3>
+                                        <div class="table-container">
+                                            <c:aRetailerStateLicense retailerId="{!v.recordId}"/>
+                                        </div>                                    
+                                    </div>
+                                </div>
+                            </lightning:tab>
+                            
+                        </aura:if>
+                        <lightning:tab label="Orders" id="orders">
+                            <div class="slds-p-horizontal_large slds-p-vertical_medium">
+                                <c:aRetailerOrders retailerId="{!v.recordId}"/>		
+                            </div>
+                        </lightning:tab>
+                        <lightning:tab label="Retailer Contacts" id="retailerContacts">
+                            <div class="slds-p-horizontal_large slds-p-vertical_medium">
+                                <c:aRetailerContacts contactRTId="{!v.contactRTId}" retailerId="{!v.recordId}"/>		
+                            </div>
+                        </lightning:tab>
+                        <lightning:tab  label="Insights" id="insights">
+                            <div class="slds-p-horizontal_large slds-p-vertical_medium">
+                                <c:aRetailerInSights lineCardId="{!v.retailer.lineCardId}" retailerId="{!v.recordId}" isLineCard="{!v.retailer.isLineCard}"/>		
+                            </div>
+                        </lightning:tab>
+                        
+                        <aura:if isTrue="{!v.selectedFilter == 'My Retailers'}">
+                            <lightning:tab  label="General" id="overview">
+                                <div class="slds-p-horizontal_large slds-p-vertical_medium">
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_3-of-3">
+                                            <!-- @dev: attach real descriptions and blurbs for retailer -->
+                                            <h3 class="text__semibold slds-text-heading_small slds-m-bottom_small">
+                                                <aura:unescapedHtml value="{!v.retailer.fullDescription}"/>
+                                            </h3>
+                                            <p class="slds-text-body_regular">
+                                                <aura:unescapedHtml value="{!v.retailer.aboutus}" />
+                                            </p>
+                                            <div class="flex slds-m-top_medium">
+                                                <p class="tag " style="padding-top: 7px;margin-right: 7px;">
+                                                    Retailer Account Rating: 
+                                                    <aura:if isTrue="{!!empty(v.retailer.retailAccountRating)}">
+                                                        {!v.retailer.retailAccountRating}
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                                <p class="tag " style="padding-top: 7px;margin-right: 7px;">
+                                                    Mutual Payment Terms: 
+                                                    <aura:if isTrue="{!!empty(v.retailer.mutualPaymentTerms)}">
+                                                        {!v.retailer.mutualPaymentTerms}
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                                <p class="tag " style="padding-top: 7px;margin-right: 7px;">
+                                                    Onboard Date:
+                                                    <aura:if isTrue="{!!empty(v.retailer.onboardDate)}">
+                                                        <ui:outputDate value="{!v.retailer.onboardDate}" format="MM/dd/yyyy"/>
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    
+                                                </p>
+                                                <p class="tag" style="padding-top: 7px;">
+                                                    MOV:
+                                                    <aura:if isTrue="{!!empty(v.retailer.minimumOrderValue)}">
+                                                        <lightning:formattedNumber value="{!v.retailer.minimumOrderValue}" style="currency" currencyCode="USD" minimumFractionDigits="2"/>
+                                                        
+                                                        <aura:set attribute="else">
+                                                            Not Set
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    
+                                                </p>
+                                                <lightning:button label="{!v.retailer.isLineCard?'Edit':'Add'}" variant="brand"  value="{!v.retailer.id}" onclick="{!c.onAddLinecard}" class="slds-m-left_small"/><!--disabled="{!v.retailer.isLineCard}"-->
+                                            </div>
+                                        </div>
+                                        <!--<div class="slds-col slds-size_1-of-3 slds-p-left_xx-large flex">
+          <div class="slds-grid slds-wrap slds-size_full slds-p-left_large m-left_auto">
+           <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+            <img src="http://www.fillmurray.com/100/100" class="slds-size_full box-shadow" />
+           </div>
+           <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+            <img src="http://www.fillmurray.com/100/100" class="slds-size_full box-shadow" />
+           </div>
+           <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+            <img src="http://www.fillmurray.com/100/100" class="slds-size_full box-shadow" />
+           </div>
+           <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+            <img src="http://www.fillmurray.com/100/100" class="slds-size_full box-shadow" />
+           </div>
+           <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+            <img src="http://www.fillmurray.com/100/100" class="slds-size_full box-shadow" />
+           </div>
+           <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+            <img src="http://www.fillmurray.com/100/100" class="slds-size_full box-shadow" />
+           </div>
+          </div>
+         </div>-->
+                                    </div>
+                                    <div class="slds-m-top_large">
+                                        <h3 class="slds-text-heading_small slds-m-bottom_small">
+                                            State License(s)
+                                        </h3>
+                                        <div class="table-container">
+                                            <c:aRetailerStateLicense retailerId="{!v.recordId}"/>
+                                        </div>                                    
+                                    </div>
+                                </div>
+                            </lightning:tab>
+                        </aura:if>
+                        
+                        <lightning:tab  label="Account Preferences" id="accPreferences">
+                            <div class="slds-p-horizontal_large slds-p-vertical_medium">
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_3-of-3">
+                                            <div class="flex slds-m-top_medium">
+                                            <p class="tag" style="padding-top: 7px;margin-right: 7px;">
+                                                    Bar Code : 
+                                                    <aura:if isTrue="{!v.retailer.barcode}">
+                                                        Yes
+                                                        <aura:set attribute="else">
+                                                            No
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                            <p class="tag" style="padding-top: 7px;margin-right: 7px;">
+                                                    QR Code : 
+                                                    <aura:if isTrue="{!v.retailer.QRCode}">
+                                                        Yes
+                                                        <aura:set attribute="else">
+                                                            No
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                                <p class="tag" style="padding-top: 7px;margin-right: 7px;">
+                                                    Third-Party Scheduler : 
+                                                    <aura:if isTrue="{!v.retailer.ThirdpartyScheduler}">
+                                                        Yes
+                                                        <aura:set attribute="else">
+                                                            No
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p>
+                                                <!--p class="tag" style="padding-top: 7px;margin-right: 7px;">
+                                                    Upload COA : 
+                                                    <aura:if isTrue="{!v.retailer.uploadCOA}">
+                                                        Yes
+                                                        <aura:set attribute="else">
+                                                            No
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </p-->
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </lightning:tab>
+                        
+                    </lightning:tabset>
+                    
+                    <span class="print-export" onclick="{!c.printDetails}">PRINT | EXPORT</span>
+                </section>
+            </div>
+            <!-- <lightning:layout horizontalAlign="center" multipleRows="true">
+    <lightning:layoutItem
+     flexibility="grow"
+     size="12"
+     largeDeviceSize="12"
+     class="slds-p-horizontal_small barndDeviceSize"
+    >
+     <div
+      class="slds-box slds-box_small"
+      style="border-radius: 0; overflow-x: auto; overflow-y: hidden"
+     >
+      <lightning:layout multipleRows="true">
+       <lightning:layoutItem
+        flexibility="grow"
+        size="12"
+        smallDeviceSize="6"
+        class="slds-is-relative"
+       >
+        <div class="slds-card__body">
+         <ul class="slds-has-inline-block-links">
+          <li class="productName">{!v.brand.DBA}</li>
+         </ul>
+         <table class="slds-table adjustPadding">
+          <tr>
+           <th class="workSans uppercase">Brand Name:</th>
+           <td>{!v.brand.brandName}</td>
+          </tr>
+          <aura:if isTrue="{!not(empty(v.brand.salesPersonName))}">
+           <tr>
+            <th class="workSans uppercase">Sales Rep:</th>
+            <td>{!v.brand.salesPersonName}</td>
+           </tr>
+          </aura:if>
+
+          <tr>
+           <th class="workSans uppercase">Phone:</th>
+           <td>{!v.brand.Phone}</td>
+          </tr>
+          <tr>
+           <th class="workSans uppercase">Fax:</th>
+           <td>{!v.brand.Fax}</td>
+          </tr>
+          <tr>
+           <th class="workSans uppercase">Website:</th>
+           <td>
+            <ui:outputURL
+             value="{!v.brand.Website}"
+             label="{!v.brand.Website}"
+             target="_blank"
+            />
+           </td>
+          </tr>
+          <tr>
+           <th class="workSans uppercase">Brand Account Rating:</th>
+           <td>{!v.brand.AccountRating}</td>
+          </tr>
+          <tr>
+           <th class="workSans uppercase">Mutual Payment Terms:</th>
+           <td>{!v.brand.PaymentTerms}</td>
+          </tr>
+          <tr>
+           <th class="workSans uppercase">Onboard Date:</th>
+           <td>
+            <ui:outputDate
+             value="{!v.brand.onBoardDate}"
+             format="MM-dd-yyyy"
+            />
+           </td>
+          </tr>
+          <tr>
+           <th class="workSans uppercase">Billing Address:</th>
+           <td>{!v.brand.billingAddress}</td>
+          </tr>
+         </table>
+        </div>
+       </lightning:layoutItem>
+       <lightning:layoutItem
+        flexibility="grow"
+        class="slds-text-align_right"
+        size="12"
+        smallDeviceSize="6"
+       >
+        <div class="max250" style="float: right">
+         <img
+          src="{!v.brand.imageUrl}"
+          alt="{!v.brand.DBA}"
+          class="responsive"
+          style="max-width: 100%; max-height: 100%"
+         />
+        </div>
+        <div class="slds-show_inline-block" style="width: 100%">
+         <lightning:button
+          class="addToCardButton"
+          variant="brand"
+          label="View My Products"
+          onclick="{!c.showBrandProducts}"
+         />
+         <a
+          href="{!v.brand.Twitter}"
+          target="_blank"
+          style="margin: 3px"
+         >
+          <img src="{! $Resource.SocialAccounts + '/twitter.svg'}"  />
+         </a>
+         <a
+          href="{!v.brand.Facebook}"
+          target="_blank"
+          style="margin: 3px"
+         >
+          <img src="{! $Resource.SocialAccounts + '/facebook.svg'}"  />
+         </a>
+         <a
+          href="{!v.brand.LinkedIn}"
+          target="_blank"
+          style="margin: 3px"
+         >
+          <img src="{! $Resource.SocialAccounts + '/linkedin.svg'}"  />
+         </a>
+         <a
+          href="{!v.brand.Instagram}"
+          target="_blank"
+          style="margin: 3px"
+         >
+          <img src="{! $Resource.SocialAccounts + '/instagram.svg'}"  />
+         </a>
+        </div>
+       </lightning:layoutItem>
+       <lightning:layoutItem
+        flexibility="grow"
+        class="slds-text-align_center"
+        size="12"
+        smallDeviceSize="12"
+       >
+        <table>
+         <tr>
+          <td>
+           <div class="address">
+            <lightning:map
+             mapMarkers="{! v.mapMarkers }"
+             zoomLevel="16"
+             class="address"
+            />
+           </div>
+          </td>
+         </tr>
+        </table>
+       </lightning:layoutItem>
+       <lightning:layoutItem
+        flexibility="grow"
+        class="slds-text-align_center"
+        size="12"
+        smallDeviceSize="12"
+       >
+        <table
+         class="slds-table adjustPadding"
+         style="margin-top: 10px"
+        >
+         <tr>
+          <th class="workSans uppercase" style="vertical-align: top">
+           About Us:
+          </th>
+          <td>
+           <div style="white-space: normal">
+            <aura:unescapedHtml value="{!v.brand.aboutus}" />
+           </div>
+          </td>
+         </tr>
+        </table>
+       </lightning:layoutItem>
+      </lightning:layout>
+      <lightning:layout multipleRows="true" horizontalAlign="center">
+       <lightning:layoutItem size="12" flexibility="grow">
+        <lightning:accordion allowMultipleSectionsOpen="true">
+         <lightning:accordionSection
+          name="brandContacts"
+          label="brand Contact(s)"
+         >
+          <lightning:layout
+           multipleRows="true"
+           horizontalAlign="center"
+          >
+           <lightning:layoutItem size="12" padding="around-small">
+            <table
+             class="slds-table slds-table_cell-buffer slds-table_bordered"
+            >
+             <thead>
+              <tr>
+               <th>Name</th>
+               <th>Email</th>
+               <th>Title</th>
+               <th>Phone</th>
+               <th>Mobile</th>
+              </tr>
+             </thead>
+             <tbody>
+              <aura:iteration
+               items="{!v.brandContacts}"
+               var="con"
+              >
+               <tr>
+                <td>
+                 <div class="slds-truncate">{!con.Name}</div>
+                </td>
+                <td>
+                 <div class="slds-truncate">{!con.email}</div>
+                </td>
+                <td>
+                 <div class="slds-truncate">{!con.title}</div>
+                </td>
+                <td>
+                 <div class="slds-truncate">{!con.phone}</div>
+                </td>
+                <td>
+                 <div class="slds-truncate">{!con.mobile}</div>
+                </td>
+               </tr>
+              </aura:iteration>
+             </tbody>
+            </table>
+           </lightning:layoutItem>
+          </lightning:layout>
+         </lightning:accordionSection>
+         <lightning:accordionSection
+          name="stateLicenses"
+          label="State License(s)"
+         >
+          <lightning:layout
+           multipleRows="true"
+           horizontalAlign="center"
+          >
+           <lightning:layoutItem size="12" padding="around-small">
+            <table
+             class="slds-table slds-table_cell-buffer slds-table_bordered"
+            >
+             <thead>
+              <tr>
+               <th>Address</th>
+               <th>License Class</th>
+               <th>License Type</th>
+               <th>Number</th>
+               <th>Status</th>
+               <th>Expiration Date</th>
+              </tr>
+             </thead>
+             <tbody>
+              <aura:iteration
+               items="{!v.stateLicenses}"
+               var="address"
+              >
+               <tr>
+                <td>
+                 <div class="slds-truncate">
+                  <lightning:formattedAddress
+                   label="Address"
+                   disabled="{!true}"
+                   street="{!address.shipping.street}"
+                   country="{!address.shipping.country}"
+                   province="{!address.shipping.province}"
+                   city="{!address.shipping.city}"
+                   postalCode="{!address.shipping.postalCode}"
+                  />
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <span>{!address.licenseClass}</span>
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <span>{!address.licenseType}</span>
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <span>{!address.licenseNumber}</span>
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <span>{!address.licenseStatus}</span>
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <span
+                   class="{!(address.isActive? 'slds-text-color_success': 'slds-text-color_error')}"
+                   >{!address.expirationDate}</span
+                  >
+                 </div>
+                </td>
+               </tr>
+              </aura:iteration>
+             </tbody>
+            </table>
+           </lightning:layoutItem>
+          </lightning:layout>
+         </lightning:accordionSection>
+
+         <lightning:accordionSection name="orders" label="Orders">
+          <lightning:layout
+           multipleRows="true"
+           horizontalAlign="center"
+          >
+           <lightning:layoutItem size="12" padding="around-small">
+            <table
+             class="slds-table slds-table_cell-buffer slds-table_bordered SalesOrderTable"
+            >
+             <thead>
+              <tr>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="orderNumber"
+               >
+                Order number
+                <aura:if isTrue="{!v.sortField=='orderNumber'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="BQname"
+               >
+                Brand Quote
+                <aura:if isTrue="{!v.sortField=='BQname'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="name"
+               >
+                Sales Order
+                <aura:if isTrue="{!v.sortField=='name'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="sODate"
+               >
+                SO Date
+                <aura:if isTrue="{!v.sortField=='sODate'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th>Total Line Items</th>
+               <th>Total Price</th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="RSMName"
+               >
+                RSM
+                <aura:if isTrue="{!v.sortField=='RSMName'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="invoiceName"
+               >
+                Invoice
+                <aura:if isTrue="{!v.sortField=='invoiceName'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="purchaseOrderName"
+               >
+                Purchase Order
+                <aura:if
+                 isTrue="{!v.sortField=='purchaseOrderName'}"
+                >
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+               <th
+                class="sortable"
+                onclick="{!c.onSortOrders}"
+                data-sortfield="soStatus"
+               >
+                Status
+                <aura:if isTrue="{!v.sortField=='soStatus'}">
+                 <span class="sortIcon">
+                  <aura:if isTrue="{!v.sortAsc}">
+                   &#9650;
+                   <aura:set attribute="else">
+                    &#9660;
+                   </aura:set>
+                  </aura:if>
+                 </span>
+                </aura:if>
+               </th>
+              </tr>
+             </thead>
+             <tbody>
+              <aura:iteration
+               items="{!v.salesOrders}"
+               var="order"
+              >
+               <tr>
+                <td>
+                 <div class="slds-truncate">
+                  <div
+                   class="orderNumber slds-truncate"
+                   data-id="{!order.orderId}"
+                   onclick="{!c.onViewTicket}"
+                  >
+                   {!order.orderNumber}
+                  </div>
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <a
+                   onclick="{!c.gotoDetails}"
+                   id="{!order.brandQuote}"
+                   >{!order.BQname}</a
+                  >
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <a
+                   onclick="{!c.gotoDetails}"
+                   id="{!order.SOId}"
+                   >{!order.name}</a
+                  >
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <ui:outputDate
+                   format="MM-dd-yyyy"
+                   value="{!order.sODate}"
+                  />
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <div
+                   class="totalline"
+                   style="text-align: center"
+                  >
+                   {!order.totalLineItems}
+                  </div>
+                 </div>
+                </td>
+                <td>
+                 <div
+                  class="slds-truncate"
+                  style="text-align: right"
+                 >
+                  <ui:outputCurrency
+                   value="{!order.totatPrice}"
+                  />
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <a
+                   onclick="{!c.gotoDetails}"
+                   id="{!order.RSMId}"
+                   >{!order.RSMName}</a
+                  >
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <a
+                   onclick="{!c.gotoDetails}"
+                   id="{!order.invoiceId}"
+                  >
+                   {!order.invoiceName}</a
+                  >
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  <a
+                   onclick="{!c.gotoDetails}"
+                   id="{!order.purchaseOrderId}"
+                  >
+                   {!order.purchaseOrderName}</a
+                  >
+                 </div>
+                </td>
+                <td>
+                 <div class="slds-truncate">
+                  {!order.sOStatus}
+                 </div>
+                </td>
+               </tr>
+              </aura:iteration>
+             </tbody>
+            </table>
+           </lightning:layoutItem>
+          </lightning:layout>
+         </lightning:accordionSection>
+        </lightning:accordion>
+       </lightning:layoutItem>
+      </lightning:layout>
+     </div>
+    </lightning:layoutItem>
+    <lightning:layoutItem flexibility="grow" size="12">
+     <br />
+    </lightning:layoutItem>
+    <lightning:layoutItem
+     flexibility="grow"
+     size="12"
+     largeDeviceSize="12"
+     class="slds-p-horizontal_small barndDeviceSize"
+    >
+     <c:recentBrands isPublic="false" />
+    </lightning:layoutItem>
+   </lightning:layout> -->
+        </aura:if>
+    </div>
+</aura:component>

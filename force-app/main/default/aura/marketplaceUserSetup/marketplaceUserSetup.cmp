@@ -1,0 +1,321 @@
+<aura:component extends="c:utility"  controller="MarketplaceUserSetupController" implements="force:lightningQuickAction,flexipage:availableForAllPageTypes,force:appHostable,lightning:isUrlAddressable" access="global">	
+    <aura:html tag="style">
+        .cUtility .submitButton{
+        	background-color:white !important;
+        }
+        .fg-new-table, .fg-cart-table {
+            font-family: 'Roboto', sans-serif !important;
+            border-collapse: collapse;
+            width: 100%;
+        }        
+        .fg-new-table td.fg-td, .fg-new-table th.fg-th {
+            border: none;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        	border-right: 1px solid #ddd;
+            padding: 8px;
+        }        
+        .fg-cart-table td.fg-td, .fg-cart-table th.fg-th {
+        	padding: 8px;
+        }        
+        .fg-new-table tr:nth-child(even){}        
+        .fg-new-table tr:hover {background-color: #F3F2F2;}
+        .fg-new-table > thead > tr:hover {background-color: white;}        
+        .fg-cart-table tr:nth-child(even){background-color: #E7E7E7;}        
+        .fg-cart-table tr:hover {background-color: #D8EEEC;}       
+        .fg-span span, th.fg.th{
+        	font-family: 'Montserrat', sans-serif !important;
+        }
+        .fg-search
+        .fg-search input {
+        	outline: none;
+        }
+        .fg-search input[type=search] {
+        	-webkit-appearance: textfield;
+        	-webkit-box-sizing: content-box;
+        	font-family: inherit;
+        	font-size: 100%;
+        }
+        .fg-search input::-webkit-search-decoration,
+        .fg-search input::-webkit-search-cancel-button {
+        	display: none; 
+        }       
+        .fg-search input[type=search] {
+        	background:  url('/resource/marketPlaceNewAssets/images/search-icon.png') no-repeat 9px center;
+        	border: solid 2px #ccc;
+        	padding: 0px 10px 2px 32px;
+        	width: 55px;        
+        	-webkit-border-radius: 10em;
+        	-moz-border-radius: 10em;
+        	border-radius: 10em;        
+        	-webkit-transition: all .5s;
+        	-moz-transition: all .5s;
+        	transition: all .5s;
+        }
+        .fg-search input[type=search]:focus {
+        	width: 130px;
+        	background-color: #fff;
+        	border-color: #66CC75;        
+       	 	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+        	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+        	box-shadow: 0 0 5px rgba(109,207,246,.5);
+        }       
+        .fg-search input:-moz-placeholder {
+        	color: #999;
+        }
+        .fg-search input::-webkit-input-placeholder {
+        	color: #999;
+        }
+        .paymentOptions >label{
+        	display:none;
+        }
+        .fg-new-table th.fg-th {
+            color: var(--c-black,#080707);
+            background: var(--c-tan,#E7E6E2);
+            font-size: 12px;
+        }
+        .slds-p-around_small{
+        	padding-left: 0;
+        }
+        
+    </aura:html>
+    <aura:attribute name="perPage" type="Integer" default="25" />
+    <aura:attribute name="selectedUserType" type="String" default="Active"/>
+    <aura:attribute name="allIds" type="List" default="[]" />
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="searchString" type="String" default="" />
+    <aura:attribute name="Err_Msg_Select_User" type="String" default="" />
+    <aura:attribute name="Tooltip_For_Marketplace_User_Search_Box" type="String" default="" />
+	<aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchUsers}"/>
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <div class="slds-is-relative">
+        <lightning:spinner variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+        <article class="slds-card " style="background-color:#fff!important">
+            <div class="slds-card " style="overflow: auto;">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_4-of-4 slds-has-flexi-truncate">
+                        <div class="slds-media" style="background-color:#F3F2F2">
+                            <div style="padding : 10px;padding-right: 0px;">
+                                <span class="slds-icon_container slds-icon-standard-document" style="cursor:pointer;margin-right: var(--lwc-spacingSmall,0.75rem);">
+                                    <lightning:icon iconName="standard:report" alternativeText="Report" title="Report" />
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_3-of-12" style="margin:0 auto;padding-top: 15px;">
+                                        <h1  title="Record Title"  style="font-size:18px;font-weight:bold">
+                                            <div class="entityNameTitle slds-line-height_reset">
+                                                Marketplace {!v.selectedUserType} Users
+                                            </div>
+                                        </h1>
+                                    </div>
+                                    <div class="slds-col slds-size_2-of-12" style="margin:0 auto;padding-top: 15px;"></div>
+                                    <div class="slds-col slds-size_7-of-12" style="margin:0 auto;text-align:right">
+                                        <lightning:layout class="right-align">
+                                            <lightning:layoutItem padding="around-small" >
+                                                <div class="custom-box" style="display: flex;">
+                                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                                        <lightning:icon size="x-small" class="some-indicator slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" iconName="utility:search"></lightning:icon>
+                                                        <input type="text" style="color:rgb(6, 94, 102);font-size:14px;" aura:id="searchRec" id="searchRec" oninput="{!c.onChangeSearchUser}" placeholder="Search" variant="label-hidden" class="slds-input" value="{!v.searchString}"/>
+                                                    </div>
+                                                    &nbsp;<lightning:helptext content="{!v.Tooltip_For_Marketplace_User_Search_Box}" style="margin-top: 3px;"/>
+                                                </div>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem padding="around-small">
+                                                <div class="custom-box">
+                                                    <div class="select__hidden-label">
+                                                        <lightning:select aura:id="userType" value="{!v.selectedUserType}" label="" variant="label-hidden" onchange="{!c.onTypeChange}">
+                                                            <option value="Active" style="color:rgb(6, 94, 102);font-size:14px;" >Active</option>
+                                                            <option value="InActive" style="color:rgb(6, 94, 102);font-size:14px;">InActive</option>
+                                                        </lightning:select>
+                                                    </div>
+                                                </div>
+                                            </lightning:layoutItem >
+                                            <lightning:layoutItem padding="around-small">
+                                                <div class="custom-box">
+                                                    <lightning:button class="{!'submitButton' + v.selectedUserType == 'InActive' ? 'disableButton' : ''}" label="Reset News &amp; Announcement" onclick="{!c.resetNews}" disabled="{!v.selectedUserType == 'InActive'}"></lightning:button>
+                                                </div>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem padding="around-small">
+                                                <div class="custom-box">
+                                                    <lightning:button class="{!'submitButton' + v.selectedUserType == 'InActive' ? 'disableButton' : ''}" label="Reset Terms &amp; Condition" onclick="{!c.resetTerms}" disabled="{!v.selectedUserType == 'InActive'}"></lightning:button>
+                                                </div>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>                                   	
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <article class="slds-card " style="background-color:#fff!important">
+            <div class="slds-card " style="overflow: auto;">
+                <table class="fg-new-table">
+                    <thead class="fg-span">
+                        <tr>
+                            <th class="fg-th">
+                            	<ui:inputCheckbox aura:id="selectAll" change="{!c.selectAll}"/>
+                            </th>
+                            <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="FirstName">
+                                First Name
+                                <aura:if isTrue="{!v.filters.orderByField=='FirstName'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="LastName">
+                                Last Name
+                                <aura:if isTrue="{!v.filters.orderByField=='LastName'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="fg-th">Title</th>
+                            <aura:if isTrue="{!v.selectedUserType == 'Active'}">
+                                <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="Contact.Account.DBA__c">
+                                    Account
+                                    <aura:if isTrue="{!v.filters.orderByField=='Contact.Account.DBA__c'}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!v.filters.isASC}">
+                                                <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                                <aura:set attribute="else">
+                                                    <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                                <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="Contact.Account.Type">
+                                    Type
+                                    <aura:if isTrue="{!v.filters.orderByField=='Contact.Account.Type'}">
+                                        <span class="sortIcon">
+                                            <aura:if isTrue="{!v.filters.isASC}">
+                                                <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                                <aura:set attribute="else">
+                                                    <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                                </aura:set>
+                                            </aura:if>
+                                        </span>
+                                    </aura:if>
+                                </th>
+                            </aura:if>                            
+                            <th class="fg-th">Email</th>
+                            <th class="fg-th">License</th>
+                            <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="Don_t_Show_News_Again__c">
+                                Don't Show News Again
+                                <aura:if isTrue="{!v.filters.orderByField=='Don_t_Show_News_Again__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="Has_Accepted_Terms__c">
+                                Accepted Terms
+                                <aura:if isTrue="{!v.filters.orderByField=='Has_Accepted_Terms__c'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                            <th class="fg-th sortable" onclick="{!c.onSortUsers}" data-sortfield="LastLoginDate">
+                                Last Login
+                                <aura:if isTrue="{!v.filters.orderByField=='LastLoginDate'}">
+                                    <span class="sortIcon">
+                                        <aura:if isTrue="{!v.filters.isASC}">
+                                            <lightning:icon iconName="utility:up" alternativeText="up" title="" size="x-small"/>
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="down" title="" size="x-small"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </aura:if>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:if isTrue="{!v.records.length > 0}">
+                            <aura:iteration items="{!v.records}" var="user">
+                                <tr>
+                                    <td class="fg-td">
+                                    	<ui:inputCheckbox aura:id="selectUser" value="{!user.flag}"/>
+                                    </td>
+                                    <td  class="fg-td" style="max-width:120px;">
+                                        <div class="slds-truncate" title="{!user.usr.FirstName}" data-id="{!user.usr.Id}" onclick="{!c.onViewRecord}" style="color:#006DCC;cursor:pointer">
+                                            {!user.usr.FirstName}
+                                        </div>
+                                    </td>
+                                    <td class="fg-td" style="max-width:140px;">
+                                        <div class="slds-truncate" title="{!user.usr.LastName}">{!user.usr.LastName}</div>
+                                    </td>
+                                    <td class="fg-td" style="max-width:140px;">
+                                        <div class="slds-truncate" title="{!user.usr.Title}">{!user.usr.Title}</div>
+                                    </td>
+                                    <aura:if isTrue="{!v.selectedUserType == 'Active'}">
+                                        <td class="fg-td">
+                                            <div data-id="{!user.usr.Contact.AccountId}" onclick="{!c.onViewRecord}" style="color:#006DCC;cursor:pointer">{!user.usr.Contact.Account.DBA__c}</div>
+                                        </td>
+                                        <td class="fg-td" style="max-width:140px;">
+                                            <div class="slds-truncate" title="{!user.usr.Contact.Account.Type}">{!user.usr.Contact.Account.Type}</div>
+                                        </td>
+                                    </aura:if>
+                                    <td class="fg-td">
+                                        <div>{!user.usr.Email}</div>
+                                    </td>
+                                    <td class="fg-td">
+                                        <div>
+                                            <aura:if isTrue="{!user.usr.Profile.Name == 'Customer Community Plus User Custom'}">Plus</aura:if>
+                                            <aura:if isTrue="{!user.usr.Profile.Name == 'Customer Community User Custom'}">Standard</aura:if>
+                                        </div>
+                                    </td>
+                                    <td class="fg-td">
+                                        <ui:outputCheckbox aura:id="output" value="{!user.usr.Don_t_Show_News_Again__c}"/>
+                                    </td>
+                                    <td class="fg-td">
+                                        <ui:outputCheckbox aura:id="output" value="{!user.usr.Has_Accepted_Terms__c}"/>
+                                    </td>
+                                    <td class="fg-td">
+                                        <lightning:formattedDateTime value="{!user.usr.LastLoginDate}" year="numeric" month="numeric" day="numeric"/>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                            <aura:set attribute="else">
+                                <tr style="height:40px">
+                                    <td style="text-align:center" colspan="11">
+                                        No User Found.
+                                    </td>
+                                </tr>
+                            </aura:set>
+                        </aura:if>
+                    </tbody>
+                </table>
+                <c:paginator aura:id="paginator" perPage="{!v.perPage}" show25="true" />
+            </div>
+        </article>
+    </div>
+</aura:component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cubic_Volume_Utilization__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Expressed in Cubic Inches</inlineHelpText>
+    <label>Cubic Volume Utilization</label>
+    <summarizedField>Rack_Level__c.Cubic_Volume_Utilization__c</summarizedField>
+    <summaryForeignKey>Rack_Level__c.Rack__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

@@ -1,0 +1,328 @@
+<apex:page sidebar="false" showHeader="true" controller="HeatMapGeneratorCtlr">
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"/>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"/>
+    
+    <style>
+        html, body{
+        margin:0;
+        padding:0;
+        height:100%;
+        }
+        .divsection {
+        position: relative;
+        border: 1px solid #000;
+        padding-top: 37px;
+        background: grey;
+        }
+        .divsection.positioned {
+        position: absolute;
+        top:100px;
+        left:100px;
+        width:800px;
+        box-shadow: 0 0 15px #333;
+        }
+        .container {
+        overflow-y: auto;
+        height: 500px;
+        }
+        table {
+        border-spacing: 0;
+        width:100%;
+        background: white;
+        }
+        td + td {
+        border-left:1px solid #eee;
+        }
+        td, th {
+        border-bottom:1px solid #eee;
+        background: #ddd;
+        color: #000;
+        padding: 10px 25px;
+        }
+        th {
+        height: 0;
+        line-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        color: transparent;
+        border: none;
+        white-space: nowrap;
+        }
+        th div{
+        position: absolute;
+        background: transparent;
+        color: #fff;
+        padding: 9px 25px;
+        top: 0;
+        margin-left: -25px;
+        line-height: normal;
+        border-left: 1px solid #fff;
+        }
+        th:first-child div{
+        border: none;
+        }
+        .recks{
+        background-color: #ffcd7a;
+        }
+        .blkBG{
+        background-color: black;
+        height: 16px;
+        }
+        
+        .redBG{
+        background-color: #f87e7d;
+        }
+        .greenBG{
+        background-color: #7ed085;
+        }
+        .whiteBG{
+        background-color: #fff;
+        }
+        .blkBG td{
+        background : black !important;
+        }
+        .mrgnFont{
+        margin: 12px;
+        font-size: 15px;
+        }
+        
+        #frm{
+        display:flex;
+        }
+        .grey-background{
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        bottom: 0; 
+        opacity: 0.75; 
+        z-index: 1000; 
+        background-color: grey;
+        }
+        .loading-image{
+        position: fixed; 
+        left: 0; 
+        top: 0; 
+        bottom: 0; 
+        right: 0; 
+        z-index: 1001; 
+        margin: 30% 50%
+        }
+    </style>
+    
+    <script id="headerData" type="text/x-handlebars-template">
+    <th>Rack Number <div>Rack Number</div></th>
+        {{#each levels}}
+         <th><div class="trDiv">{{Name}}</div></th>
+             {{/each}}
+              </script>
+    
+    <script id="racks" type="text/x-handlebars-template">
+    {{#each result}}
+    {{#each this}}
+    <tr class="mainRacks">
+        <td class="recks">{{concatRack @../key @key}}</td>
+        {{#each this.this}}
+        
+         {{concatLevel @../../key this @../key}}
+         {{/each}}
+         </tr>
+         {{/each}}
+         <tr class="blkBG"><td></td> {{#each ../levels}} <td></td>{{/each}}</tr>
+         {{/each}}
+         </script>
+    <apex:actionStatus id="idRefreshingStatus" 
+                       style="align:center">
+        <apex:facet name="start">
+            <div class="grey-background">
+                &nbsp;
+            </div>
+            <div class="loading-image">
+                <img src="/img/loading.gif" />
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+    <apex:form >
+        <apex:outputPanel id="headerFilter">
+            <div id="frm" class="mrgnFont">
+                <apex:outputLabel value="Site: " style="margin-right:8px;" for="features"/>
+                <apex:selectList style="margin-right:12px;" value="{!siteId}" size="1" id="features">
+                    <apex:selectOptions value="{!sites}"/>
+                    <apex:actionSupport event="onchange" status="idRefreshingStatus" reRender="headerFilter" action="{!allLocations}" oncomplete="createHMAP();"/>
+                </apex:selectList>
+                
+                <apex:outputLabel value="Inventory Location: " for="locations" style="margin-right:8px;"/>
+                <apex:selectList style="min-width: 80px;" value="{!iLocation}" size="1" id="locations" disabled="{!ISNULL(siteId)}">
+                    <apex:selectOptions value="{!Locations}"/>
+                    <apex:actionSupport event="onchange" status="idRefreshingStatus" reRender="headerFilter" action="{!processRackData}" oncomplete="createHMAP();" />
+                </apex:selectList> 
+            </div>
+            
+            <!--section class="" >
+<div   class="container">
+<table border="1">
+<thead>
+<tr  class="header">
+</tr>
+</thead>
+<tbody ></tbody>
+</table>
+</div>
+</section-->
+            <div class="divsection" id="secId">
+                <div class="container" id="mainBody">
+                    <table>
+                        <thead>
+                            <tr class="header" id="tHeader">
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="noData" class="mrgnFont">
+                No Data available for current selections.
+            </div>
+            <apex:outputPanel id="rfData">
+                <script>
+                var jsData = JSON.parse('{!JSENCODE(jsonData)}');
+                </script>
+            </apex:outputPanel>
+            <apex:outputPanel id="hMap">
+                <script>
+                var flag = true;
+                if(flag){
+                    createHMAP();
+                    flag = false;            
+                }
+                function changeLocation(){
+                    $('[id$=locations]').trigger('change');
+                    
+                }
+                var reA = /[^a-zA-Z]/g;
+                var reN = /[^0-9]/g;
+                function createHMAP(){
+                    var levels = (jsData.level).split(',').sort();
+                    var tableData = JSON.parse(jsData.tableData);
+                    var levelsData = [];
+                    var data = {};
+                    
+                    var racks = Object.keys(tableData).sort(sortAlphaNum);
+                    
+                    Handlebars.registerHelper('addOne', function(a) {
+                        return a+1;
+                    });
+                    
+                    Handlebars.registerHelper('concatRack', function(a,b) {
+                        return a+' | '+b;
+                    });
+                    
+                    Handlebars.registerHelper('concatLevel', function(a,b,c) {
+                        var con1 = '';
+                        if(b == ''){
+                            con1 = '<td class="whiteBG"> </td>';
+                        }else if(b == 'Open'){
+                        	con1 = '<td class="greenBG">Open</td>';
+                        }else{
+                        	con1 = '<td class="redBG">'+a+' | '+b+' | '+c+'</td>';
+                        }
+                        return new Handlebars.SafeString(con1);
+                    });
+                    Handlebars.registerHelper('if_eq', function(a, b) {
+                        debugger;
+                        if (b.indexOf('Open') != -1) // Or === depending on your needs
+                            return true;
+                        else
+                            return false;
+                    });
+                    for(var i=0;i<levels.length;i++){
+                        levelsData.push({Name : levels[i]});
+                    }
+                    for(var i=0;i<racks.length;i++){
+                        var bins = Object.keys(tableData[racks[i]]).sort(sortAlphaNum);
+                        var binObj = {};
+                        for(var j=0;j<bins.length;j++){
+                            binObj[bins[j]] = tableData[racks[i]][bins[j]];
+                        }
+                        data[racks[i]] = binObj;
+                    }
+                    $('#tHeader').html(handlebarsDataCreation('#headerData', {
+                        levels: levelsData
+                    }));
+                    
+                    var arr1 = levels;
+                    var racks = Object.keys(data);
+                    for(var rack = 0;rack < racks.length;rack++){
+                        var bins = Object.keys(data[racks[rack]]);
+                        
+                        for(var bin = 0;bin<bins.length;bin++){
+                            var arr3 = [];
+                            var arr2 = data[racks[rack]][bins[bin]];
+                            //Apna Logic
+                            var j= 0;
+                            for(var i=0;i<arr1.length;i++){
+                                
+                                if(j == arr2.length){
+                                	for(var k=j;k<arr1.length;k++){
+                                    	arr3[k]='';
+                                    }
+                                    break;
+                                }
+                                
+                                if(arr1[i] == arr2[j]){
+                                    arr3[i] = arr2[j];
+                                    j++;
+                                }else if(arr2[j].indexOf('Open') != -1 && arr2[j].split('-')[0] == arr1[i]){
+                                    arr3[i] = 'Open';
+                                    j++;
+                                }else{
+                                    arr3[i] = '';
+                                }
+                            }
+                            data[racks[rack]][bins[bin]] = arr3;
+                        }
+                        
+                    }
+                    
+                    $('#tableBody').html(handlebarsDataCreation('#racks', {
+                        result : data,
+                        levels: levelsData
+                    }));
+                    if(Object.keys(data).length == 0){
+                        $('#secId').hide();
+                        $('#noData').show();
+                    }else{
+                        $('#secId').show();
+                        $('#noData').hide();
+                    }
+                    
+                }
+                
+                
+                function handlebarsDataCreation(templateId, data) {
+                    var source = $(templateId).html();
+                    var template = Handlebars.compile(source);
+                    return template(data);
+                }
+                
+                
+                
+                function sortAlphaNum(a, b) {
+                    var aA = a.replace(reA, "");
+                    var bA = b.replace(reA, "");
+                    if (aA === bA) {
+                        var aN = parseInt(a.replace(reN, ""), 10);
+                        var bN = parseInt(b.replace(reN, ""), 10);
+                        return aN === bN ? 0 : aN > bN ? 1 : -1;
+                    } else {
+                        return aA > bA ? 1 : -1;
+                    }
+                }
+                </script>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

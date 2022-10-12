@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Safety_Stock_Level_Medium_Alert_to_Brand</name>
+        <label>Safety Stock Level Medium Alert to Brand</label>
+        <locationX>848</locationX>
+        <locationY>336</locationY>
+        <actionName>Product2.Safety_Stock_Level_Medium_Alert_to_Brand</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Safety_Stock_Level_Medium_Alert_to_Brand_0</name>
+        <label>Safety Stock Level Medium Alert to Brand</label>
+        <locationX>584</locationX>
+        <locationY>336</locationY>
+        <actionName>Product2.Safety_Stock_Level_Medium_Alert_to_Brand</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <interviewLabel>Safety Stock Level Medium Alert {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Safety Stock Level Medium Alert</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>458</locationX>
+        <locationY>48</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <object>Product2</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X1_Hour_After_Rule_Trigger_Date</name>
+            <connector>
+                <targetReference>Safety_Stock_Level_Medium_Alert_to_Brand_0</targetReference>
+            </connector>
+            <label>1 Hour After Rule Trigger Date</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <timeSource>RecordTriggerEvent</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X3_Days_After_Rule_Trigger_Date</name>
+            <connector>
+                <targetReference>Safety_Stock_Level_Medium_Alert_to_Brand</targetReference>
+            </connector>
+            <label>3 Days After Rule Trigger Date</label>
+            <offsetNumber>3</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <timeSource>RecordTriggerEvent</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>safetyvalue</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <elementReference>$Record.Safety_Stock_Medium__c</elementReference>
+        </value>
+    </variables>
+</Flow>

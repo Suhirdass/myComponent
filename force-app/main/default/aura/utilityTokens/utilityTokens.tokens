@@ -1,0 +1,74 @@
+<aura:tokens>
+	<aura:token name="robotFamily" value="Roboto, sans-serif"/>
+    <aura:token name="montserratFamily" value="Montserrat, sans-serif"/>
+    <aura:token name="WorkFamily" value="Work Sans, sans-serif"/>
+    <aura:token name="fontWeight600" value="600"/>
+    <aura:token name="txtTransformUpper" value="uppercase"/>
+    <aura:token name="fontWeight500" value="500"/>
+    <aura:token name="fontColor" value="#0c0d0d"/>
+    <aura:token name="txtTransformCapital" value="capitalize"/>
+    <aura:token name="displayNone" value="none"/>
+    <aura:token name="cursorPointer" value="pointer"/>
+    <aura:token name="fontSize18" value="18px"/>
+    <aura:token name="fontSize16" value="16px"/>
+    <aura:token name="marginBottom" value="5px"/>
+    <aura:token name="fontSize20" value="20px"/>
+    <aura:token name="fontWeight400" value="400"/>
+    <aura:token name="borderNone" value="none"/>
+    <aura:token name="border2" value="2px solid #065e66"/>
+    <aura:token name="borderRadius0" value="0"/>
+    <aura:token name="fontColorWhite" value="white"/>
+    <aura:token name="backgroundColor1" value="#065e66"/>
+    <aura:token name="outline" value="0"/>
+    <aura:token name="backgroundColor2" value="rgba(6, 94, 102, .5)"/>
+    <aura:token name="border2Transparent" value="2px solid transparent"/>
+    <aura:token name="color" value="rgba(255, 255, 255, .5)"/>
+    <aura:token name="boxShadowNone" value="none"/>
+    <aura:token name="width100" value="100%"/>
+    <aura:token name="textDecoration" value="line-through"/>
+    <aura:token name="fontWeightNormal" value="normal"/>
+    <aura:token name="borderRadius1" value="1px"/>
+    <aura:token name="boxShadow" value="inset 0 1px 2px rgba(0,0,0,.4), inset 0 0 0 1px rgba(0,0,0,.1)"/>
+    <aura:token name="height17" value="17px"/>
+    <aura:token name="background1" value="#fb0"/>
+    <aura:token name="background2" value="-webkit-linear-gradient(top,#ffce00,#ffa700)"/>
+    <aura:token name="background3" value="linear-gradient(to bottom,#ffce00,#ffa700)"/>
+    <aura:token name="backgroundColor3" value="#ffce00"/>
+    <aura:token name="transition" value="width .5s ease"/>
+    <aura:token name="floatLeft" value="left"/>
+    <aura:token name="font0" value="0"/>
+    <aura:token name="height100" value="100%"/>
+    <aura:token name="width0" value="0"/>
+    <aura:token name="marginRight0" value="0"/>
+    <aura:token name="fill" value="#fff"/>
+    <aura:token name="letterSpacing3" value="3px"/>
+    <aura:token name="width120" value="120px"/>
+    <aura:token name="color1" value="#FFF"/>
+    <aura:token name="borderColor1" value="#B2772B"/>
+    <aura:token name="fontSize11" value="11px"/>   
+    <aura:token name="BorderColorTransparent" value="transparent"/>
+    <aura:token name="height300" value="300px"/>
+    <aura:token name="height250" value="250px"/>
+    <aura:token name="width100Imp" value="100%"/> 
+    <aura:token name="padding1rem" value="1rem"/>
+    <aura:token name="padding" value=".15rem 0"/>    
+    <aura:token name="backgroundColor5" value="rgba(255, 255, 255, .7)"/>
+    <aura:token name="color2" value="rgba(178, 119, 43, .3)"/>
+    
+    
+    <aura:token name="fontWeight700" value="700"/>
+    <aura:token name="background4" value="#e5e5e5"/>
+    
+    
+    <aura:token name="displayBlock" value="inline-block"/>
+    <aura:token name="paddingTop1" value="1px"/>
+    <aura:token name="floatRight" value="right"/>
+    <aura:token name="margin10" value="10px"/>
+    
+    <aura:token name="txtUnderline" value="underline"/>
+    <aura:token name="height500" value="500px"/>
+    <aura:token name="marginBottom50" value="50px"/>
+    <aura:token name="marginRight" value="-15px"/>
+    <aura:token name="position" value="absolute"/>
+    <aura:token name="top" value="60%"/>
+</aura:tokens>

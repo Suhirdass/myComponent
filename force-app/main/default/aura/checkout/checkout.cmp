@@ -1,0 +1,162 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+  access="global">
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+  <aura:attribute name="address" type="Map" default="{}" />
+  <aura:attribute name="items" type="List" default="[]" />
+  <aura:attribute name="orderId" type="String" default="" />
+  <aura:attribute name="total" type="Double" default="0" />
+  <aura:attribute name="cartTotal" type="Double" default="0" />
+  <aura:attribute name="isCartEmpty" type="Boolean" default="true" />
+  <aura:attribute name="exciseTax" type="Double" default="0" />
+  <aura:attribute name="subTotal" type="Double" default="0" />
+ <aura:registerEvent name="updateCartTotalEvt" type="c:updateCartTotalEvt" />
+
+  <div class="slds-is-relative">
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    <lightning:layout multipleRows="true">
+      <aura:if isTrue="{!!empty(v.orderId)}">
+        <lightning:layoutItem flexibility="grow" size="12" padding="around-small">
+          <div class="slds-text-align_center slds-text-heading_medium">
+            Thank you! We have received your Order.
+          </div>
+          <div class="slds-text-align_center slds-text-heading_medium">
+            <span class="slds-border_bottom">Your order number is: {!v.orderId}</span>
+          </div>
+        </lightning:layoutItem>
+      </aura:if>
+      <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="9" padding="around-small">
+        <div class="slds-box slds-box_small" style="padding: 0;">
+          <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+            <thead>
+              <tr class="slds-text-title_caps">
+                <th scope="col" style="width:70px">
+                  <div class="slds-truncate"></div>
+                </th>
+                <th scope="col">
+                  <div class="slds-truncate" title="Product">Product</div>
+                </th>
+                <th scope="col" style="width:100px">
+                  <div class="slds-truncate" title="Price">Price</div>
+                </th>
+                <th scope="col" style="width:90px">
+                  <div class="slds-truncate" title="Quantity">Quantity</div>
+                </th>
+                <th scope="col" >
+                  <div class="slds-truncate" title="Unit Per Case (MOQ)">Unit Per Case (MOQ)</div>
+                </th>
+                <th scope="col" style="width:90px">
+                  <div class="slds-truncate" title="Total Qty">Total Qty</div>
+                </th>
+                <th scope="col" style="width:150px;padding:0">
+                  <div class="slds-truncate" title="Total Excise Tax">Total Excise Tax</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <aura:iteration items="{!v.items}" var="item">
+                <tr class="slds-hint-parent">
+                  <th scope="row" style="width:70px">
+                    <img src="{!item.imageUrl}" alt="{!item.name}" class="responsive height50" />
+                  </th>
+                  <td data-label="Product">
+                    <div class="slds-truncate clickable" title="{!item.name}"><a style="color:#000" data-id="{!item.price.id}"
+                        onclick="{!c.onProductClick}">{!item.name}</a></div>
+                  </td>
+                  <td data-label="Price" style="width:100px">
+                    <div class="slds-truncate" title="Price">
+                      <ui:outputCurrency class="productPrice" value="{!item.price.unitPrice}" />
+                    </div>
+                  </td>
+                  <td data-label="Quantity" style="width:90px">
+                    {!item.quantity}
+                  </td>
+                  <td data-label="Unit Per Case (MOQ)">
+                    <div class="slds-truncate" title="Unit Per Case (MOQ)">
+                      {!item.MOQ}
+                    </div>
+                  </td>
+                  <td data-label="Total Qty" style="width:90px">
+                    <div class="slds-truncate" title="Total Qty">
+                      {!item.lineTotalQty}
+                    </div>
+                  </td>
+                  <td data-label="Total Excise Tax">
+                    <div class="slds-truncate" title="Total Excise Tax">
+                      <ui:outputCurrency value="{!item.lineTotalExciseTax}" />
+                    </div>
+                  </td>
+                </tr>
+              </aura:iteration>
+              <tr>
+                <td colspan="7" class="slds-text-align_right">
+                  <div class="slds-text-heading_medium slds-show_inline-block">Subtotal({!v.total} items):&nbsp;</div>
+                  <ui:outputCurrency class="productPrice" value="{!v.subTotal}" />
+                </td>
+              </tr>
+              <aura:if isTrue="{!v.isCartEmpty}">
+                <tr>
+                  <td colspan="7">
+                    <div class="slds-text-align_center">
+                      Your Shopping Cart is empty.
+                      <lightning:button class="addToCardButton" onclick="{!c.onContinueShopping}" label="Continue Shopping!" />
+                    </div>
+                  </td>
+                </tr>
+              </aura:if>
+            </tbody>
+          </table>
+        </div>
+      </lightning:layoutItem>
+      <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="3" padding="around-small">
+        <div class="slds-box slds-box_small">
+          <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-around_xx-small">
+              <div class="slds-m-bottom_medium">
+                <span class="slds-text-heading_medium">Address</span>
+              </div>
+              <div class="slds-box slds-box_small">
+                <aura:if isTrue="{!empty(v.orderId)}">
+                  <lightning:buttonGroup class="slds-float_right">
+                    <lightning:buttonIcon iconName="utility:edit" onclick="{!c.onChangeAddress}" />
+                  </lightning:buttonGroup>
+                </aura:if>
+                <div class="slds-text-heading_small">Shipping Address</div>
+                <lightning:formattedAddress disabled="{!true}" street="{!v.address.shipping.street}" country="{!v.address.shipping.country}"
+                  province="{!v.address.shipping.province}" city="{!v.address.shipping.city}" postalCode="{!v.address.shipping.postalCode}" />
+              </div>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-around_xx-small">
+              <!--div class="slds-m-bottom_medium"><div class="slds-text-heading_medium slds-show_inline-block">Total({!v.total} items):&nbsp;</div> <ui:outputCurrency class="productPrice" value="{!v.cartTotal}" /></div-->
+              <div class="slds-text-heading_medium slds-show_inline-block fullWidth">Subtotal:&nbsp;
+                <ui:outputCurrency class="productPrice slds-float_right" value="{!v.subTotal}" />
+              </div>
+              <div class="slds-text-heading_medium slds-show_inline-block fullWidth">Excise Tax:&nbsp;
+                <ui:outputCurrency class="productPrice slds-float_right" value="{!v.exciseTax}" />
+              </div>
+              <div class="slds-text-heading_medium slds-show_inline-block fullWidth">Total:&nbsp;
+                <ui:outputCurrency class="productPrice slds-float_right" value="{!v.cartTotal}" />
+              </div>
+              <div class="slds-text-heading_medium slds-show_inline-block fullWidth" style="min-height:100px">Terms
+                &amp; conditions:&nbsp;TBD</div>
+
+              <aura:if isTrue="{!empty(v.orderId)}">
+                <lightning:button disabled="{!v.isCartEmpty}" class="addToCardButton fullWidth slds-m-top_small" label="Place Order"
+                  title="Place Order" onclick="{!c.onCheckout}" />
+                <aura:set attribute="else">
+                  <div class="slds-text-align_center">
+                    Your Shopping Cart is empty.
+                    <lightning:button class="addToCardButton" onclick="{!c.onContinueShopping}" label="Continue Shopping!" />
+                  </div>
+                </aura:set>
+              </aura:if>
+            </lightning:layoutItem>
+          </lightning:layout>
+        </div>
+      </lightning:layoutItem>
+    </lightning:layout>
+  </div>
+</aura:component>

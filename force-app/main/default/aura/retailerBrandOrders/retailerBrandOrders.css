@@ -1,0 +1,13 @@
+.THIS {
+	font-family:'Alliance Neue' !important;
+    color: token(fontColor);
+}
+.THIS .sortable{
+    cursor:pointer;
+}
+.THIS .sortIcon{
+    color: token(land);
+    font-size: 9px;
+    padding-left: 4px;
+    filter: grayscale(1);
+}

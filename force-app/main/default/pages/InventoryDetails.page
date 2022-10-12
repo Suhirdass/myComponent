@@ -1,0 +1,435 @@
+<apex:page standardController="Product2" extensions="InventoryDetails" sidebar="false" id="pp1" docType="html-5.0" >
+
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryDataTablesZip, 'css/jquery.dataTables.css')}"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <style type="text/css">
+        .sorting {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_both.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_asc {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_desc {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_asc_disabled {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_asc_disabled.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_desc_disabled {
+            background: #f2f3f3 url('{! URLFOR($Resource.jQueryDataTablesZip, 'images/sort_desc_disabled.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        table.dataTable tr.odd { background-color: white; }
+        table.dataTable tr.even { background-color: white; }
+        table.dataTable tr.odd td.sorting_1 { background-color: white; }
+        table.dataTable tr.odd td.sorting_2 { background-color: white; }
+        table.dataTable tr.odd td.sorting_3 { background-color: white; }
+        table.dataTable tr.even td.sorting_1 { background-color: white; }
+        table.dataTable tr.even td.sorting_2 { background-color: white; }
+        table.dataTable tr.even td.sorting_3 { background-color: white; }
+        .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+            padding: 3px;
+        }
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+            .dataTables_wrapper .dataTables_filter {
+                float: none !important;
+                text-align: inherit !important;
+            }
+    </style>
+
+    <script>
+        function recSave(){ 
+            var inputCheckBoxSelected=false;
+            var inputCheckBox = document.getElementsByTagName("input");    
+            for(var i=0; i<inputCheckBox.length; i++){          
+                if(inputCheckBox[i].checked){ 
+                    inputCheckBoxSelected = true;
+                }
+            }
+            if(inputCheckBoxSelected){
+                saveAccount();
+            }else{
+                alert('ERROR:Please select the Inventory Position record.');
+            }
+        }
+        
+        function mergeConfirm(){
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              type: '',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#6b6161',
+              confirmButtonText: 'Yes, Merge it!'
+            }).then((result) => {
+              if (result.value) {
+                mergeIP();
+              }
+            });
+            return false;
+        }
+        
+            function mergeIP(){
+                var selectedIds = getSelectedIps();
+                mergeIPs(selectedIds);    
+                return false;
+            }
+            function holdIPs(){
+                debugger;
+                var selectedIds = getSelectedIps();
+                holdUnHoldIps(selectedIds,'Hold');    
+                return false;
+            }
+            
+            function unHoldIPs(){
+                var selectedIds = getSelectedIps();
+                holdUnHoldIps(selectedIds,'UnHold');    
+                return false;
+            }
+            
+            function getSelectedIps(){
+                var t = document.getElementsByClassName('checkbx');
+                var selectedIds = [];
+                for(var i=0;i<t.length;i++){
+                    if(t[i].checked == true)
+                        selectedIds.push(t[i].getAttribute('atr'));   
+                }
+                return selectedIds.join(',');
+            }
+    </script> 
+
+<apex:form id="mainForm">
+
+    <apex:actionfunction name="saveAccount" action="{!redirectToMiscIssue}"  />
+    
+
+            <apex:pageBlock rendered="{!searchPageRender}">
+           
+                <apex:pageBlockSection columns="1" title="Product Search" collapsible="true">
+                                    <apex:outputLabel >Search Product</apex:outputLabel>
+                    <apex:pageBlockSectionItem helpText="Search for Product, Try typing 'A' and press the submit button to get the value">
+
+                        <c:AutoComplete allowClear="true" importJquery="true" labelField="Name" SObject="Product2" valueField="Id" targetField="{!selectedRecordId}" style="width:200px"/>
+                     <apex:commandButton value="Search" action="{!refreshInventoryDetails}" reRender="pb1,pb2" style="width:100px" styleClass="dataTable"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                </apex:pageBlockSection>
+                
+            </apex:pageBlock>
+       
+
+    <apex:pageBlock id="pb1">
+        <apex:pageBlockButtons location="top">
+
+            <apex:commandButton action="{!redirectItemDetail}" value="Item Detail"/>
+            <apex:commandButton value="Cancel"  immediate="true" action="{!cancelRedirect}" />
+        </apex:pageBlockButtons>
+       
+        <apex:pageBlockSection columns="2" collapsible="true" title="Product Details">
+           
+            <apex:outputField label="Product Name" value="{!prod.Name}"/>
+            <apex:outputField label="Active" value="{!prod.IsActive}"/>
+            <apex:outputField label="Product Description" value="{!prod.Description}"/>
+            <apex:outputField label="Product Family" value="{!prod.Family}"/>
+            <apex:outputField label="Producer Name" value="{!prod.Producer_Name__c}"/>
+            <apex:outputField label="Quantity Type" value="{!prod.Quantity_Type__c}"/>
+            
+            <apex:outputText label="Cannabis Weight/UOM" value="{!prod.Cannabis_Weight__c} {!prod.Cannabis_Weight_UOM__c}"/>
+            <apex:outputField label="Supplier UOM" value="{!prod.Supplier_UOM__c}"/>
+            <apex:outputText label="Total Cannabis Weight" value="{!totalCannabisWeight} {!prod.Cannabis_Weight_UOM__c}"/>
+            <apex:outputField label="Strain" value="{!prod.Strain__c}"/>
+            <apex:outputField label="MOQ" value="{!prod.MOQ__c}"/>
+            <apex:outputField label="Strain Type" value="{!prod.Strain_Type__c}"/>        
+            <apex:outputText label="Total Inventory" value="{!totalInventory}"/>
+            <apex:outputText label="Allocated Inventory" value="{!allocatedInventoryQty}"/>
+            <apex:outputText label="Available Inventory" value="{!availableInventoryQty}"/>
+            <apex:outputText label="Item To Put Away" value="{!itemToPutAway}"/>
+            <apex:outputText label="Available to Sell" value="{!availableQty}"/>
+            
+            <apex:outputText label="Inventory On Hold" value="{!inventoryOnHoldQty}"/>
+            </apex:pageBlockSection>
+     
+         </apex:pageBlock>
+    <apex:pageBlock id="pb2" rendered="{!invPosSectionRender}">
+
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton immediate="true" action="{!redirectToMiscReceipt}" value="Misc.Receipt"/>
+            <apex:commandButton immediate="true"  value="Misc.issue" onclick="recSave()" reRender="pb3"/>
+            <apex:commandButton value="Inventory Transfer" 
+                                action="{!massTransferAction}" 
+                                reRender="massTransferBlock, mainForm"
+                                status="idRefreshingStatus"/>
+            <apex:commandButton immediate="true"  value="Merge IP"  onclick="return mergeConfirm()" />
+            <apex:commandButton immediate="true"  value="Hold"  onclick="return holdIPs()" />
+            <apex:commandButton immediate="true"  value="Remove Hold"  onclick="return unHoldIPs()" />
+            <apex:actionFunction name="mergeIPs" action="{!mergeIPs}" oncomplete="refreshData();return false;" 
+                                 status="idRefreshingStatus" reRender="pb2,mainForm">      
+                <apex:param id="selectedids" name="selectedids" value="" />
+            </apex:actionFunction>
+            
+            <apex:actionFunction name="holdUnHoldIps" action="{!holdUnHoldIps}" oncomplete="refreshData();return false;" 
+                                 status="idRefreshingStatus" reRender="pb2,mainForm">      
+                <apex:param id="selectedIps" name="selectedIps" value="" />
+                <apex:param id="holdType" name="holdType" value="" />
+            </apex:actionFunction>
+            
+
+        </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" collapsible="true" title="Inventory Positions">
+            <apex:pageMessages />
+            <apex:pageBlockTable value="{!invPositionWrappList}" var="item" styleClass="dataTable">
+            <apex:column headerValue="Action">
+                <apex:inputCheckbox value="{!item.isSelected}" styleClass="checkbx" html-atr="{!item.invPos.Id}" />
+            </apex:column>
+                <apex:column headerValue="OnHold">
+                    <apex:outputText value="{!IF(item.invPos.Hold__c == true,'Yes','No')}"></apex:outputText>
+                </apex:column>
+            <apex:column headerValue="Inventory Position Name">
+            <apex:outputlink value="/{!item.invPos.Id}">{!item.invPos.Name}</apex:outputlink>
+            </apex:column>
+            <apex:column value="{!item.invPos.Site__c}"/>
+            <apex:column value="{!item.invPos.Inventory_Location__c}"/>
+            <apex:column value="{!item.invPos.Rack__c}"/>
+            <apex:column value="{!item.invPos.Rack_Level__c}"/>
+            <apex:column value="{!item.invPos.Bin_Location__c}"/>
+            <apex:column value="{!item.invPos.Ownership__c}"/>
+            <apex:column value="{!item.invPos.Qty_On_Hand__c}" headerValue="Qty Available"/>
+            <apex:column value="{!item.invPos.Qty_Allocated__c}" headerValue="Qty Allocated"/>
+            <apex:column value="{!item.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}"/>
+            <apex:column value="{!item.invPos.Sales_Order_Line__c}"/>
+            <apex:column value="{!item.invPos.Date_Received__c}"/>
+            <apex:column value="{!item.invPos.Harvest_Batch_Code__r.Name}" headerValue="Harvest Batch Code"/>
+            <apex:column value="{!item.invPos.UID_New__r.Name}" headerValue="UID"/>
+            <apex:column value="{!item.invPos.Lab_Test_Status__c}" headerValue="Lab Test Status"/>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:form>
+    <!-- *********************************Misc Issue *********************************************-->
+    
+    <apex:form >
+           <apex:actionRegion >
+        <apex:pageMessages id="showmsg"></apex:pageMessages>
+
+        <apex:pageBlock id="pb3" rendered="{!miscIssueSectionRender}">
+
+          <div align="center" draggable="false" >
+            <apex:pageBlockButtons location="bottom" >
+
+                <apex:commandButton action="{!SaveRecord}" value="Save"  styleClass="btn"/>
+        <!--        <apex:commandButton value="Cancel"  immediate="true" action="{!cancelRedirect}" /> -->
+
+            </apex:pageBlockButtons>
+            </div>
+
+
+
+                <apex:pageBlockSection columns="1" collapsible="true" title="Inventory Positions">
+                    <apex:pageBlockTable value="{!invPositionWrappList}" var="item" styleClass="dataTable">
+                        <apex:column headerValue="Action"> <apex:inputCheckbox value="{!item.isSelected}"/></apex:column>
+                        <apex:column headerValue="Qty to Adjust">
+                         <apex:input value="{!item.qtyToAdjust}" required="true" type="number"/> 
+                        </apex:column>
+                        <apex:column headerValue="Inventory Position Name">
+                        <apex:outputlink value="/{!item.invPos.Id}">{!item.invPos.Name}</apex:outputlink>
+                        </apex:column>
+                        <apex:column value="{!item.invPos.Site__c}"/>
+                        <apex:column value="{!item.invPos.Inventory_Location__c}"/>
+                        <apex:column value="{!item.invPos.Rack__c}"/>
+                        <apex:column value="{!item.invPos.Rack_Level__c}"/>
+                        <apex:column value="{!item.invPos.Bin_Location__c}"/>
+                        <apex:column value="{!item.invPos.Ownership__c}"/>
+                        <apex:column value="{!item.invPos.Qty_On_Hand__c}" headerValue="Qty Available"/>
+                        <apex:column value="{!item.invPos.Qty_Allocated__c}" headerValue="Qty Allocated"/>
+                        <apex:column value="{!item.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}"/>
+                        <apex:column value="{!item.invPos.Sales_Order_Line__c}"/>
+                        <apex:column value="{!item.invPos.Date_Received__c}"/>
+                        <apex:column value="{!item.invPos.Harvest_Batch_Code__r.Name}" headerValue="Harvest Batch Code"/>
+                        <apex:column value="{!item.invPos.UID_New__r.Name}" headerValue="UID"/>
+                        <apex:column value="{!item.invPos.Lab_Test_Status__c}" headerValue="Lab Test Status"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+             
+                <apex:pageBlockSection columns="2" collapsible="true" title="Comments">
+                    <apex:inputField value="{!invPerAdj.Type__c}" required="true"/>
+                    <apex:inputField value="{!invPerAdj.Reason_for_Adjustments__c}" required="true"/>   
+                </apex:pageBlockSection> 
+               
+        </apex:pageBlock>
+
+                 </apex:actionRegion>
+                
+            
+    </apex:form>
+    
+    <!-- Mass Transfer detail -->
+    <apex:form id="massTransferBlock">
+        <apex:actionStatus id="idRefreshingStatus" 
+                           style="align:center">
+            <apex:facet name="start">
+                <div class="grey-background">
+                    &nbsp;
+                </div>
+                <div class="loading-image">
+                    <img src="/img/loading.gif" />
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:actionFunction name="loadRackLevels" 
+                             action="{!loadRackLevels}" 
+                             reRender="massTransferBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedInvPositionId" assignTo="{!selectedInvPositionId}" value=""/>
+            <apex:param name="selectedRackId" assignTo="{!selectedRackId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="loadBinLocations" 
+                             action="{!loadBinLocations}" 
+                             reRender="massTransferBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedInvPositionId" assignTo="{!selectedInvPositionId}" value=""/>
+            <apex:param name="selectedRackLevelId" assignTo="{!selectedRackLevelId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="loadBalanceQtyToPutAway" 
+                             action="{!loadBalanceQtyToPutAway}" 
+                             reRender="massTransferBlock"
+                             status="idRefreshingStatus">
+            <apex:param name="selectedInvPositionId" assignTo="{!selectedInvPositionId}" value=""/>
+            <apex:param name="selectedBinLocationId" assignTo="{!selectedBinLocationId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:pageBlock rendered="{!showMassTransferBlock}">
+            <apex:pageMessages />
+            <div align="center" draggable="false" >
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:commandButton value="Submit Transfer"  
+                                        action="{!updateInventoryLocations}"
+                                        reRender="massTransferBlock, mainForm"
+                                        status="idRefreshingStatus"/>
+                </apex:pageBlockButtons>
+            </div>
+
+            <apex:pageBlockSection columns="1" 
+                                   collapsible="true" 
+                                   title="Transfer Inventory"
+                                   rendered="{!inventoryPositions.size > 0}">
+                <apex:pageBlockTable value="{!inventoryPositions}" var="inventotyPosition">
+                    <apex:column headerValue="Inventory Position Name">
+                        <apex:outputlink value="/{!inventotyPosition.invPositionSO.Id}">{!inventotyPosition.invPositionSO.Name}</apex:outputlink>
+                    </apex:column>
+                    
+                    <!-- Receipt Date -->
+                    <apex:column headerValue="Receipt Date">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Date_Received__c}"/>
+                    </apex:column>
+                    
+                    <!-- PO Number -->
+                    <apex:column headerValue="PO Number"
+                                 value="{!inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}"/>
+                    
+                    <!-- Product Name -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Product_Name__c.Label}"
+                                 value="{!inventotyPosition.invPositionSO.Product_Name__c}"/>
+                    
+                    <!-- Product Description -->
+                    <apex:column value="{!inventotyPosition.invPositionSO.Product_Name__r.Description}"/>
+                    
+                    <!-- Supplier Name -->
+                    <apex:column headerValue="Supplier Name">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Supplier_Name__r.Name}"/>
+                    </apex:column>
+                    
+                    <!-- Received Qty -->
+                    <apex:column headerValue="Received Qty">
+                        <apex:outputField value="{!inventotyPosition.invPositionSO.Qty_On_Hand__c}"/>
+                    </apex:column>
+                    
+                    <!-- Qty to put away -->
+                    <apex:column headerValue="Qty to Transfer">
+                        <apex:inputText value="{!inventotyPosition.qtyToPutAway}" size="5"/>
+                    </apex:column>
+                    
+                    <!-- Current Site -->
+                    <apex:column headerValue="{!$Label.Current_Site}" value="{!inventotyPosition.invPositionSO.Site__c}"/>
+                    
+                    <!-- Ownership  -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Ownership__c.Label}"
+                                 value="{!inventotyPosition.invPositionSO.Ownership__c}"/>
+                    
+                    <!-- Current Location -->
+                    <apex:column headerValue="{!$Label.Current_Location}" 
+                                 value="{!inventotyPosition.invPositionSO.Inventory_Location__c}"/>
+                    
+                    <!-- Rack -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Rack__c.Label}">
+                        <apex:selectList size="1" 
+                                         value="{!inventotyPosition.invPositionSO.Rack__c}"
+                                         onchange="loadRackLevels('{!inventotyPosition.invPositionSO.Id}', 
+                                                                  this.value)">
+                            <apex:selectOptions value="{!inventotyPosition.rackOptions}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <!-- Rack Level -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Rack_Level__c.Label}">
+                        <apex:selectList size="1" 
+                                         value="{!inventotyPosition.invPositionSO.Rack_Level__c}"
+                                         onchange="loadBinLocations('{!inventotyPosition.invPositionSO.Id}', 
+                                                                    this.value)">
+                            <apex:selectOptions value="{!inventotyPosition.rackLevelOptions}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <!-- Bin Location -->
+                    <apex:column headerValue="{!$ObjectType.Inventory_Position__c.Fields.Bin_Location__c.Label}">
+                        <apex:selectList size="1" 
+                                         value="{!inventotyPosition.invPositionSO.Bin_Location__c}"
+                                         onchange="loadBalanceQtyToPutAway('{!inventotyPosition.invPositionSO.Id}', 
+                                                                          this.value)">
+                            <apex:selectOptions value="{!inventotyPosition.binLocationOptions}"/>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <!-- Max Put-away Qty to Bin -->
+                    <apex:column headerValue="Max Put-away Qty to Bin" 
+                                 value="{!inventotyPosition.balanceQtyToPutAway}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.js')}"></script>
+    <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jQueryDataTablesZip, 'js/jquery.dataTables.js')}"></script>
+    <script type="text/javascript" language="javascript">
+        var j$ = jQuery.noConflict();
+        j$('table.dataTable').dataTable({
+            sPaginationType: "full_numbers"
+         }
+         );
+    </script>
+</apex:page>

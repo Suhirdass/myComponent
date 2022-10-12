@@ -1,0 +1,37 @@
+<apex:page controller="EmailInvoiceController" renderAs="pdf">
+    <div style="padding: 1%;">
+        <h1 style="font-size: 1.5em;">Pending and Past Due Invoices</h1>
+    </div>
+    <table class="fg-new-table" style="width: 100%;font-size: 11px;" cellspacing="0" cellpadding="0">
+        <thead class="fg-span">
+            <tr>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Business Name</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Invoice #</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Order Number</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Ship Confirmation Date</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Invoice Amount</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Product Balance</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Excise Tax Balance</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">Invoice Balance</th>
+                <th class="fg-th" style="border-top:solid 1px;border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">AR Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!invoiceList}" var="inv">
+                <tr>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">{!inv.Receiver_Name__r.Name}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">{!inv.Name}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">{!inv.Brand_Quote__r.Opportunity_Name__r.Order__r.Name}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">
+                        <apex:outputField value="{!inv.Ship_Confirmation_Date__c}"/>
+                    </td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">${!inv.Total_Invoice_Amount__c}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">${!inv.Product_Balance__c}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">${!inv.Excise_Tax_Balance__c}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">${!inv.Invoice_Balance__c}</td>
+                    <td class="fg-td" style="border-bottom:solid 1px;padding-top:10px;padding-bottom:10px;padding-left:10px;">{!inv.AR_Status__c}</td>
+                </tr>
+            </apex:repeat>
+        </tbody>
+    </table>
+</apex:page>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unit_Excise_Tax__c</fullName>
+    <externalId>false</externalId>
+    <formula>if( Apply_Excise_Tax__c = &apos;Yes&apos; &amp;&amp; Brand_Quote_Number__r.Apply_Excise_Tax__c = true, 
+
+if(Brand_Quote_Number__r.Ship_Confirmation_Date__c &lt;= Date( 2019,12,31),Retail_Wholesale_Price__c * (1.6) *(0.15), 
+Retail_Wholesale_Price__c * (1.8) *(0.15)),0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Unit Excise Tax</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>4</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

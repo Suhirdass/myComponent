@@ -1,0 +1,19 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<!-- CHILD COMPONENT-->
+
+<template>
+
+  <!-- class is declared as static text & get this name dynamically in js file because if the item not completed, 
+    the background should be red & different class assigned to this Div tag & if the item is completed the background should be blue or green-->
+    
+    <!-- we can use get property in class -->
+    <div class={containerClass}>
+        <!-- span tag is used to display the value/items-->
+        <span class="slds-text-heading_label"> {todoName} </span>
+         <!-- calling js get property through icon-name -->
+          <lightning-button-icon icon-name={iconName} class="slds-p-horizontal_medium" title="Update ToDo" onclick={upDateHandler}></lightning-button-icon>
+          <lightning-button-icon icon-name="utility:delete" title="Delete ToDo" onclick={deleteHandler}></lightning-button-icon>
+          <br>
+    </div>
+</template>

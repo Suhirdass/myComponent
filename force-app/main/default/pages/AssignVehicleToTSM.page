@@ -1,0 +1,154 @@
+<!--
+ - Copyright (c) 2018 Filigreen Distro
+ - All rights reserved.
+ - AssignVehicleToTSM
+-->
+<apex:page standardController="Shipping_Manifest__c"  
+           extensions="AssignVehicleToTSMController"  
+           action="{!doPrepare}" 
+           title="{!$Label.Assign_Vehicle_Label}">
+    
+    <style>
+        .grey-background{
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            opacity: 0.75; 
+            z-index: 1000; 
+            background-color: grey;
+        }
+        .loading-image{
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            bottom: 0; 
+            right: 0; 
+            z-index: 1001; 
+            margin: 30% 50%
+        }
+    </style>
+    <apex:form >
+        
+        <apex:actionFunction name="retrieveVehicleAndRelatedRSMTSMs" 
+                             action="{!retrieveVehicleAndRelatedRSMTSMs}" 
+                             reRender="assignVehicleId"
+                             status="idRefreshingStatus" />
+                             
+        <apex:pageBlock title="{!$Label.Assign_Vehicle_Label}" id="assignVehicleId">
+            <apex:pageMessages escape="false"/>
+            <apex:actionStatus id="idRefreshingStatus" 
+                              style="align:center">
+                <apex:facet name="start">
+                    <div class="grey-background">
+                        &nbsp;
+                    </div>
+                    <div class="loading-image">
+                        <img src="/img/loading.gif" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            
+            <!-- Assign Vehicle -->
+            <apex:pageBlockSection >
+                <apex:inputField value="{!tsmObj.Vehicle__c}" onchange="retrieveVehicleAndRelatedRSMTSMs()" />
+                <apex:pageBlockSectionItem rendered="{!tsmObj.Id != null}">
+                    <apex:outputLabel value="{!$Label.Planned_Ship_Transfer_Date}" />
+                    <apex:inputField value="{!tsmObj.Planned_Ship_Transfer_Date__c}" onchange="retrieveVehicleAndRelatedRSMTSMs()"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!--  TSM Details -->
+            <apex:pageBlockSection title="{!$Label.TSM_details}" 
+                                   rendered="{!tsmObj.Id != null}"
+                                   collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Shipping_Manifest__c.Fields.Name.Label}"/>
+                    <apex:outputLink value="/{!tsmObj.Id}">{!tsmObj.Name}</apex:outputLink>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Total_Product}" />
+                    <apex:outputText value="{!totalProduct}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Total Product Capacity" />
+                    <apex:outputText value="??" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!--  Vehicle Details -->
+            <apex:pageBlockSection columns="2" 
+                                   title="{!$Label.Vehicle_details}"
+                                   rendered="{!vehicleObj.Id != null}"
+                                   collapsible="false">
+                <apex:outputField value="{!vehicleObj.Name}" />
+                <apex:outputField value="{!vehicleObj.Vehicle_Model__c}" />
+                <apex:outputField value="{!vehicleObj.Vehicle_Make__c}" />
+                <apex:outputField value="{!vehicleObj.Vehicle_License_Plate_Number__c}" />
+                <apex:outputField value="{!vehicleObj.Vehicle_Cubic_Volume_Capacity__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Allocated Capacity: " />
+                    <apex:outputText value="??" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Available Capacity: " />
+                    <apex:outputText value="??" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!--  List of TSM associated with selected vehicle -->
+            <apex:pageBlockSection columns="1" 
+                                   rendered="{!vehicleObj.Id != null}"
+                                   title="{!$Label.TSMs_Associated_with_Vehicle} {!vehicleObj.Name}"
+                                   collapsible="false">
+                
+                <apex:pageBlockTable value="{!tsmList}" 
+                                     var="tsm"
+                                     rendered="{!tsmList.size > 0}">
+                    <apex:column headerValue="{!$ObjectType.Shipping_Manifest__c.Fields.Name.Label}">
+                        <apex:outputLink value="/{!tsm.Id}">{!tsm.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!tsm.Status__c}" />
+                    <apex:column value="{!tsm.Planned_Ship_Transfer_Date__c}" />                   
+                    <apex:column value="{!tsm.Actual_Departure_Date_Time__c}" />
+                    <apex:column value="{!tsm.Actual_Arrival_Date_Time__c}" />
+                    <apex:column headerValue="Route Miles" value="{!tsm.Route_Miles__c}"/>
+                    <apex:column headerValue="Driver" value="{!tsm.Driver__c}"/>
+                </apex:pageBlockTable>
+                <apex:outputLabel value="{!$Label.No_Record_Found}" rendered="{!tsmList.size = 0}" />
+            </apex:pageBlockSection>
+            
+            <!--  List of RSMs associated with selected vehicle -->
+            <apex:pageBlockSection columns="1" 
+                                   rendered="{!vehicleObj.Id != null}"
+                                   title="{!$Label.RSMs_Associated_with_Vehicle} {!vehicleObj.Name}"
+                                   collapsible="false">
+                
+                <apex:pageBlockTable value="{!rsmList}" 
+                                     var="rsm"
+                                     rendered="{!rsmList.size > 0}">
+                    <apex:column headerValue="{!$ObjectType.Shipping_Manifest__c.Fields.Name.Label}">
+                        <apex:outputLink value="/{!rsm.Id}">{!rsm.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!rsm.Status__c}" />
+                    <apex:column value="{!rsm.Planned_Ship_Transfer_Date__c}" />
+                    <apex:column value="{!rsm.Actual_Departure_Date_Time__c}" />
+                    <apex:column value="{!rsm.Receiver_Acceptance_Date__c}" />
+                    <apex:column headerValue="Route Miles" value="{!rsm.Route_Miles__c}"/>
+                    <apex:column headerValue="Driver" value="{!rsm.Driver__c}"/>
+                </apex:pageBlockTable>
+                <apex:outputLabel value="{!$Label.No_Record_Found}" rendered="{!rsmList.size = 0}" />
+            </apex:pageBlockSection>
+            
+            <!-- Page block buttons -->
+            <apex:pageBlockButtons rendered="{!tsmObj.Id != null}">
+                <apex:commandButton value="{!$Label.Assign_Vehicle_Label}" 
+                                    action="{!assignVehicle}"
+                                    status="idRefreshingStatus"/>
+                <apex:commandButton value="{!$Label.Cancel}" 
+                                    action="{!cancelAction}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

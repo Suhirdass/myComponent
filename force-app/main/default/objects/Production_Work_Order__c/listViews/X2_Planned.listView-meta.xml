@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X2_Planned</fullName>
+    <columns>Site__c</columns>
+    <columns>Packaging_Status__c</columns>
+    <columns>Planned_Date__c</columns>
+    <columns>Priority__c</columns>
+    <columns>NAME</columns>
+    <columns>Brand_Quote__c</columns>
+    <columns>Service_Ticket_Line__c</columns>
+    <columns>Brand_Quote_Status__c</columns>
+    <columns>Service_Type__c</columns>
+    <columns>Brand_Name__c</columns>
+    <columns>New_Packaged_Product__c</columns>
+    <columns>Targeted_Converted_Qty__c</columns>
+    <columns>Request_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Packaging_Status__c</field>
+        <operation>equals</operation>
+        <value>Planned</value>
+    </filters>
+    <filters>
+        <field>Planned_Date__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Released_Date__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>2. Planned</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

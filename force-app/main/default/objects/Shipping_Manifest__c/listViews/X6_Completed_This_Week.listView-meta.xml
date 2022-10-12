@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X6_Completed_This_Week</fullName>
+    <columns>RECORDTYPE</columns>
+    <columns>Ship_Confirmation_Date__c</columns>
+    <columns>Metrc_Manifest__c</columns>
+    <columns>NAME</columns>
+    <columns>Sales_Order__c</columns>
+    <columns>Opportunity_Name__c</columns>
+    <columns>Ownership__c</columns>
+    <columns>Receiver_DBA__c</columns>
+    <columns>Receiver_Contact__c</columns>
+    <columns>Total_Line_Items__c</columns>
+    <columns>Total_Price__c</columns>
+    <columns>Driver__c</columns>
+    <columns>Site__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Shipment Complete</value>
+    </filters>
+    <filters>
+        <field>Ship_Confirmation_Date__c</field>
+        <operation>equals</operation>
+        <value>THIS_WEEK</value>
+    </filters>
+    <label>6. Completed This Week</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

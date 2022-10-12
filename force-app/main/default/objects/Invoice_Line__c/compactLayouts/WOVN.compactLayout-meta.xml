@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WOVN</fullName>
+    <fields>InvoiceLine_Status__c</fields>
+    <fields>Name</fields>
+    <fields>Product_Name__c</fields>
+    <fields>Invoice_Qty__c</fields>
+    <fields>Line_Excise_Tax__c</fields>
+    <fields>Line_Total_Product_Price__c</fields>
+    <fields>Line_Total_Invoice_Amount__c</fields>
+    <label>WOVN</label>
+</CompactLayout>

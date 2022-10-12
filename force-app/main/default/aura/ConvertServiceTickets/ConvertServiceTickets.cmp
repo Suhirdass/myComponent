@@ -1,0 +1,32 @@
+<aura:component implements="flexipage:availableForRecordHome,force:lightningQuickAction,force:hasRecordId" access="global"  controller="ConvertServiceTicketController"  extends="c:utility">
+    <aura:attribute name="recordId" type="String" />
+        <aura:attribute name="Opp" type="object" />
+    <aura:attribute name="newOpps" type="object" />
+
+    <aura:attribute name="errors" type="String[]"/>
+    <aura:handler name="init" value="{!this }" action="{!c.doInit}"/>
+    
+     <!--  <aura:if isTrue="{!not(empty(v.errors))}">
+           <ui:message title="Error" severity="error" closable="false">
+                <ul>
+                    <aura:iteration items="{!v.errors}" var="error">
+                        <li>{!error}</li>
+                    </aura:iteration>
+                </ul>
+            </ui:message>
+            <aura:set attribute="else">
+                <lightning:spinner alternativeText="Loading" size="large" />
+            </aura:set>
+        </aura:if>-->
+    
+    
+    
+  <!--  <div class="slds-box slds-theme_default" style="height:320px">
+      
+        <div style="margin-top:160px">
+        <center>
+            <lightning:button variant="brand" label="Return" title="Return" onclick="{! c.handleClick }"/>
+        </center>
+        </div>
+    </div>-->
+</aura:component>

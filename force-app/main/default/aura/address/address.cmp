@@ -1,0 +1,99 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+  access="global">
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+  <aura:attribute name="existingAddresses" type="List" default="" />
+  <aura:attribute name="address" type="Map" default="" />
+  <aura:attribute name="isEditing" type="Boolean" default="false" />
+  <aura:attribute name="selectedAddress" type="Integer" default="-1" />
+
+
+  <div class="slds-is-relative">
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+
+    <lightning:layout multipleRows="true" horizontalAlign="center">
+      <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="8" padding="horizontal-small">
+        <div class="slds-box slds-box_small">
+          <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" class="slds-p-around_xx-small">
+              <div class="slds-m-bottom_medium">
+                <span class="slds-text-heading_medium">Select Address</span>
+                <!--a class="slds-float_right" onclick="{!c.setAddress}">New Address</a-->
+              </div>
+            </lightning:layoutItem>
+            <aura:iteration items="{!v.existingAddresses}" var="address" indexVar="index">
+              <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="6" class="slds-p-around_xx-small">
+                <div class="{!'slds-box slds-box_small ' + (equals(v.selectedAddress, index)? 'selected': '')}">
+                  <!--lightning:buttonGroup class="slds-float_right">
+                                        <lightning:buttonIcon name="{!index}" iconName="utility:edit" onclick="{!c.setAddress}" />
+                                        <lightning:buttonIcon name="{!index}" iconName="utility:delete" onclick="{!c.onDeleteAddress}" />
+                                    </lightning:buttonGroup-->
+                  <div class="slds-text-heading_small">Shipping Address</div>
+                  <lightning:formattedAddress disabled="{!true}" street="{!address.shipping.street}" country="{!address.shipping.country}"
+                    province="{!address.shipping.province}" city="{!address.shipping.city}" postalCode="{!address.shipping.postalCode}" />
+                  <div class="slds-text-heading_small slds-m-top_small">
+                    <div>License Class:
+                      <span>{!address.licenseClass}</span>
+                    </div>
+                  </div>
+                  <div class="slds-text-heading_small slds-m-top_small">
+                    <div>License Type:
+                      <span>{!address.licenseType}</span>
+                    </div>
+                  </div>
+                  <div class="slds-text-heading_small slds-m-top_small">
+                    <div>License Number:
+                      <span>{!address.licenseNumber}</span>
+                    </div>
+                  </div>
+                  <div class="slds-text-heading_small slds-m-top_small">
+                    <div>Expiration Date:
+                      <span class="{!(address.isActive? 'slds-text-color_success': 'slds-text-color_error')}">{!address.expirationDate}</span>
+                    </div>
+                  </div>
+                  <div class="slds-text-align_right slds-m-top_small">
+                    <lightning:button disabled="{!!address.isActive}" name="{!index}" label="Deliver to this address"
+                      class="addToCardButton" onclick="{!c.onSelect}" />
+                  </div>
+                </div>
+              </lightning:layoutItem>
+            </aura:iteration>
+
+            <aura:if isTrue="{!v.isEditing}">
+              <lightning:layoutItem flexibility="grow" size="12" class="slds-p-around_xx-small">
+                <div class="slds-m-bottom_medium slds-text-heading_medium">Address Details</div>
+                <lightning:inputAddress required="true" addressLabel="Billing Address" streetLabel="Street"
+                  countryLabel="Country" provinceLabel="Province/State" cityLabel="City" postalCodeLabel="PostalCode"
+                  street="{!v.address.billing.street}" country="{!v.address.billing.country}" province="{!v.address.billing.province}"
+                  city="{!v.address.billing.city}" postalCode="{!v.address.billing.postalCode}" countryOptions="{!v.address.billing.countryOptions}"
+                  provinceOptions="{!v.address.billing.provinceOptions}" />
+                <div class="slds-m-vertical_small setCheckbox">
+                  <ui:inputCheckbox value="{!v.address.isShippingSameAsBilling}" label="Is Shipping address same as billing address?"
+                    change="{!c.setShippingAddress}" />
+                </div>
+                <lightning:inputAddress required="true" disabled="{!v.address.isShippingSameAsBilling}" addressLabel="Shipping Address"
+                  streetLabel="Street" countryLabel="Country" provinceLabel="Province/State" cityLabel="City"
+                  postalCodeLabel="PostalCode" street="{!v.address.shipping.street}" country="{!v.address.shipping.country}"
+                  province="{!v.address.shipping.province}" city="{!v.address.shipping.city}" postalCode="{!v.address.shipping.postalCode}"
+                  countryOptions="{!v.address.shipping.countryOptions}" provinceOptions="{!v.address.shipping.provinceOptions}" />
+                <lightning:layout multipleRows="true">
+                  <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="4" class="slds-p-around_xx-small slds-show_small">
+                    <lightning:button class="fullWidth" label="Cancel" title="Cancel" onclick="{!c.onCancel}" />
+                  </lightning:layoutItem>
+                  <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="8" class="slds-p-around_xx-small">
+                    <lightning:button class="addToCardButton fullWidth" label="{!((v.selectedAddress > -1)? 'Update and Deliver here': 'Save and Deliver here')}"
+                      title="{!((v.selectedAddress > -1)? 'Update and Deliver here': 'Save and Deliver here')}" onclick="{!c.onSaveAndOrder}" />
+                  </lightning:layoutItem>
+                  <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="4" class="slds-p-around_xx-small slds-hide_small">
+                    <lightning:button class="addToCardButton fullWidth" label="Cancel" title="Cancel" onclick="{!c.onCancel}" />
+                  </lightning:layoutItem>
+                </lightning:layout>
+              </lightning:layoutItem>
+            </aura:if>
+          </lightning:layout>
+        </div>
+      </lightning:layoutItem>
+    </lightning:layout>
+  </div>
+</aura:component>

@@ -1,0 +1,200 @@
+<aura:component extends="c:utility" controller="PrintInventoryLabelsController" implements="force:lightningQuickActionwithoutheader,force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+	
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />	
+    <aura:attribute name="prodRec" type="Object"/>
+    <aura:attribute name="searchStr" type="String"/>
+    <aura:attribute name="selectedDymoLabelLayout" type="String" default=''/>
+    <aura:attribute name="selectedPrinter" type="String" default=''/>
+    <aura:attribute name="imageXml" type="String" default=''/>
+    <aura:attribute name="printers" type="List" default='[]'/>
+    <aura:attribute name="imagetext" type="String" default=''/>
+    <aura:attribute name="isSelectedInventory" type="Boolean"/>
+    <aura:attribute name="isScriptsLoaded" type="boolean" default="false"/>
+    <aura:attribute name="isDataLoaded" type="boolean" default="false"/>
+    <!--ltng:require scripts="{!$Resource.DymoFramework}" afterScriptsLoaded="{!c.initDymo}"/-->
+    <ltng:require styles="{!join(',',$Resource.jQueryDataTablesZip+'/css/jquery.dataTables.css')}" scripts="{!join(',',$Resource.SweetAlert,$Resource.datatable+ '/js/jquery.min.js',
+                           $Resource.datatable+ '/js/jquery.dataTables.min.js',$Resource.DymoFramework)}" afterScriptsLoaded="{!c.onScriptsLoaded}"/>
+    <aura:html tag="style">
+        .slds-modal__container {
+        min-width: 90%;
+        }
+        .slds-form-element__label {
+        display : none;
+        }
+        .swal2-container{z-index:10000;}
+        
+        .back {
+        background-color: white;
+        }
+        .dataTables_length{
+        	margin-bottom:7px;
+        }
+    </aura:html>
+    
+    <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+    
+    <div class="back">
+        <br/><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <lightning:button class="uppserCase" variant="brand" label="Back to Product" onclick="{!c.redirectItemDetail}"/>
+        <lightning:button class="uppserCase" variant="brand" label="Preview" onclick="{!c.updatePreview}"/>
+        <lightning:button class="uppserCase" variant="brand" label="Print Label" onclick="{!c.printLabel}"/>
+        
+        <br/><br/>
+        
+        <div class="slds-is-relative slds-p-horizontal_small">
+            <table class="slds-table">
+                <thead ></thead>
+                <tbody>
+                    <tr>
+                        <td class="slds-float_left" style="width:175px"><b>Please select label layout</b></td>
+                        <td class="slds-float_left"> 
+                            <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.selectedDymoLabelLayout}">
+                                <aura:iteration items="{!v.prodRec.dymoLabelLayouts}" var="proTitle">
+                                    <option value="{!proTitle.label}" selected="{!proTitle.label == v.prodRec.selectedDymoLabelLayout}">{!proTitle.value}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="slds-float_left"  style="width:175px"><b>List of Dymo Printers </b></td>
+                        <td class="slds-float_left"> 
+                            <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.selectedPrinter}">
+                                <option value="">Select Printer</option>
+                                <aura:iteration items="{!v.printers}" var="p">
+                                    <option value="{!p.label}">{!p.value}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <img src="{!v.imagetext}"/>
+        </div>
+        
+        <!--div class="slds-is-relative slds-p-horizontal_small">
+            <table class="slds-table">
+                <thead ></thead>
+                <tbody>
+                    <tr>
+                        <td class="slds-float_left"><b>List of Dymo Printers </b></td>
+                        <td class="slds-float_left"> 
+                            <lightning:select name="a_opt3" aura:id="a_opt3" value="{!v.prodRec.selectedPrinter}">
+                                <aura:iteration items="{!v.prodRec.printers}" var="proTitle">
+                                    <option value="{!proTitle.label}">{!proTitle.value}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slds-is-relative slds-p-horizontal_small">
+            <img src="{!v.imagetext}"/>
+        </div-->
+        
+        <div class="slds-is-relative slds-p-horizontal_small">
+            <div class="slds-box slds-box_small slds-m-top_small" style="padding: 0;background-color: lightgray;">
+                <lightning:layout multipleRows="true" horizontalAlign="left">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                        <span class="productName">Product Details</span>
+                    </lightning:layoutItem>                
+                </lightning:layout>
+            </div>
+            <div class="slds-is-relative slds-p-horizontal_small">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                        <b>Product Name</b><div>{!v.prodRec.prod.Name}</div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                        <b>Active</b>
+                        <div class="slds-truncate">
+                            <lightning:input class="slds-float_left" type="checkbox" name="input1" disabled="true" checked="{!v.prodRec.prod.IsActive}"/>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                        Product Description
+                        <div class="slds-truncate">{!v.prodRec.prod.Description}</div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                        <b>Product Family </b><div class="slds-truncate">{!v.prodRec.prod.Family}</div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                <!--<table class="slds-table">
+                    <thead ></thead>
+                    <tbody>
+                        <tr>
+                            <td class="slds-float_right"><b>Product Name</b></td> <td >{!v.prodRec.prod.Name}</td>
+                            <td class="slds-float_right"><b>Active</b></td> <td><lightning:input class="slds-float_left" type="checkbox" name="input1" disabled="true" checked="{!v.prodRec.prod.IsActive}"/></td>
+                        </tr>
+                        <tr>
+                            <td class="slds-float_right"><b>Product Description</b></td> <td >{!v.prodRec.prod.Description}</td>
+                            <td class="slds-float_right"><b>Product Family</b></td> <td >{!v.prodRec.prod.Family}</td>
+                        </tr>
+                    </tbody>
+                </table>-->
+            </div>
+        </div>
+        
+        <br/>
+        
+        <div class="slds-is-relative slds-p-horizontal_small">
+            <div class="slds-box slds-box_small slds-m-vertical_small" style="padding: 0;background-color: lightgray;">
+                <lightning:layout multipleRows="true" horizontalAlign="left">
+                    <lightning:layoutItem flexibility="grow" size="12" padding="around-small" class="headerBackground">
+                        <span class="productName">Inventory Positions</span>
+                        <!--div class="slds-show_inline-block slds-float_right">
+                            <lightning:input name="input1" value="{!v.searchStr}" onchange="{!c.changeStr}"/>
+                        </div-->
+                    </lightning:layoutItem>                
+                </lightning:layout>
+            </div>
+            <div class="slds-is-relative slds-p-horizontal_small slds-scrollable">
+                <table class="dataTable slds-table slds-table_bordered slds-table_col-bordered slds-scrollable">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th> Inventory Position Name </th>
+                            <th> Site </th>
+                            <th> Inventory Location </th>
+                            <th> Rack </th>
+                            <th> Rack Level </th>
+                            <th> Bin Location </th>
+                            <th> Ownership </th>
+                            <th> Qty Available </th>
+                            <th> Qty Allocated </th>
+                            <th> Purchase Order </th>
+                            <th> Sales Order Line </th>
+                            <th> Date Received</th>
+                            <th> Batch ID </th>
+                            <th> UID </th>
+                            <th> Lab Test Status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.prodRec.invPositionWrappList}" var="itm" >
+                            <tr> 
+                                <td><lightning:input type="checkbox" name="input2"  aura:id="checkbx" checked="{!itm.isSelected}" styleClass="checkbx" value="{!itm.invPos.Id}"/></td>
+                                <td><a href="{!'/' + itm.invPos.Id}" style="color:black;" target="_blank">{!itm.invPos.Name}</a></td> 
+                                <td><a href="{!'/' + itm.invPos.Site__c}" style="color:black;" target="_blank">{!itm.invPos.Site__r.Name}</a></td>
+                                <td><a href="{!'/' + itm.invPos.Inventory_Location__c}" style="color:black;" target="_blank">{!itm.invPos.Inventory_Location__r.Name}</a></td>
+                                <td><a href="{!'/' + itm.invPos.Rack__c}" style="color:black;" target="_blank">{!itm.invPos.Rack__r.Name}</a></td>
+                                <td><a href="{!'/' + itm.invPos.Rack_Level__c}" style="color:black;" target="_blank">{!itm.invPos.Rack_Level__r.Name}</a></td>
+                                <td><a href="{!'/' + itm.invPos.Bin_Location__c}" style="color:black;" target="_blank">{!itm.invPos.Bin_Location__r.Name}</a></td>
+                                <td><a href="{!'/' + itm.invPos.Ownership__c}" style="color:black;" target="_blank">{!itm.invPos.Ownership__r.Name}</a></td>
+                                <td style="text-align: center;">{!itm.invPos.Qty_On_Hand__c}</td>
+                                <td style="text-align: center;">{!itm.invPos.Qty_Allocated__c}</td>
+                                <td><a href="{!'/' + itm.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__c}" style="color:black;" target="_blank">{!itm.invPos.Receiving_Line__r.Purchase_Order_Line__r.Purchase_Order__r.Name}</a></td>
+                                <td><a href="{!'/' + itm.invPos.Sales_Order_Line__c}" style="color:black;" target="_blank">{!itm.invPos.Sales_Order_Line__r.Name}</a></td>
+                                <td>{!itm.invPos.Date_Received__c}</td>
+                                <td><a href="{!'/' + itm.invPos.Harvest_Batch_Code__c}" style="color:black;" target="_blank">{!itm.invPos.Harvest_Batch_Code__r.Name}</a></td>
+                                <td>{!itm.invPos.UID_New__r.Name}</td>
+                                <td>{!itm.invPos.Lab_Test_Status__c}</td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</aura:component>

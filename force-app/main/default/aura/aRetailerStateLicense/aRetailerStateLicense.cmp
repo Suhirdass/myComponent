@@ -1,0 +1,149 @@
+<aura:component extends="c:utility"
+	controller="ProductsCtlr"
+	implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+	access="global">
+    <aura:attribute name="stateLicenses" type="List" default="[]" />
+    <aura:attribute name="retailerId" type="String" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="filters" type="Map" default="{}" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:handler name="paginatorChangeEvt" event="c:paginatorChangeEvt" action="{!c.fetchBrandLicense}"/>
+    <lightning:spinner
+			variant="brand"
+			alternativeText="{!v.processingMessage}"
+			class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}"/>
+    <table class="slds-table" style="border: solid 1px gainsboro;">
+        <thead>
+            <tr>
+                <th class="sortable"  onclick="{!c.sortLicense}" data-field="License_Address__c" style="background-color:#d1cdb0;">
+                    Address
+                    <aura:if isTrue="{!v.filters.orderByField=='License_Address__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable"  onclick="{!c.sortLicense}" data-field="License_Class__c" style="background-color:#d1cdb0;">
+                    License Class
+                    <aura:if isTrue="{!v.filters.orderByField=='License_Class__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable" onclick="{!c.sortLicense}" data-field="License_Type__c" style="background-color:#d1cdb0;">
+                    License Type
+                   <aura:if isTrue="{!v.filters.orderByField=='License_Type__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable" onclick="{!c.sortLicense}" data-field="License_Number__c" style="background-color:#d1cdb0;">
+                    License Number
+                    <aura:if isTrue="{!v.filters.orderByField=='License_Number__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable"  onclick="{!c.sortLicense}" data-field="License_Status__c" style="background-color:#d1cdb0;">
+                    Status
+                    <aura:if isTrue="{!v.filters.orderByField=='License_Status__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable" onclick="{!c.sortLicense}" data-field="License_Expiration_Date__c" style="background-color:#d1cdb0;">
+                    Expire Date
+                    <aura:if isTrue="{!v.filters.orderByField=='License_Expiration_Date__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+                <th class="sortable"  onclick="{!c.sortLicense}" data-field="Default_Warehouse__r.Warehouse_Name__c" style="background-color:#d1cdb0;">
+                    Warehouse
+                    <aura:if isTrue="{!v.filters.orderByField=='Default_Warehouse__r.Warehouse_Name__c'}">
+                        <span class="sortIcon">
+                            <aura:if isTrue="{!v.filters.isASC}">
+                                &#8593;
+                                <aura:set attribute="else">
+                                    &#8595;
+                                </aura:set>
+                            </aura:if>
+                        </span>
+                    </aura:if>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:if isTrue="{!v.stateLicenses.length > 0}">
+                <aura:iteration items="{!v.stateLicenses}" var="licenses" indexVar="index">
+                    <tr>
+                        <td>
+                            <div class="slds-truncate">
+                                {!licenses.shipping.street}, <br/>
+                                {!licenses.shipping.city}, {!licenses.shipping.province}, {!licenses.shipping.country}, {!licenses.shipping.postalCode}
+                            </div>
+                        </td>
+                        <td>{!licenses.licenseClass}</td>
+                        <td>{!licenses.licenseType}</td>
+                        <td>
+                            <!--<a data-id="{!licenses.id}" onclick="{!c.onLicenseClick}" style="color:#006DCC">-->{!licenses.licenseNumber}<!--</a>-->
+                        </td>
+                        <td class="{!licenses.licenseStatus == 'Expired' ? 'redColor' : 'greenColor'}">{!licenses.licenseStatus}</td>
+                        <td>
+                            <lightning:formattedDateTime value="{!licenses.expirationDate}" year="numeric" month="numeric" day="numeric"/>
+                        </td>
+                        <td>{!licenses.warehouseName}</td>
+                    </tr>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    <tr>
+                    	<td colspan="6">
+                        	<h3
+								class="slds-section-title_divider slds-text-align_center"
+								style="font-weight: 700;font-family:'Alliance Neue';">
+								No Licenses Found.
+							</h3>
+                        </td>
+                    </tr>
+                </aura:set>
+            </aura:if>
+        </tbody>
+    </table>
+    <c:paginator aura:id="licensespaginator" perPage="{!v.perPage}" />
+</aura:component>

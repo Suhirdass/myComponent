@@ -1,0 +1,429 @@
+<apex:page controller="BrandQuotePDFCtlr" action="{!doGoogleDriveAuth}" id="pg" title="{!brandQuote.Name}" lightningStylesheets="true">
+    <style>
+        .displayNone {
+        display: None;
+        }
+        .templatesCls tr :hover {
+          background-color: #eee;
+        }
+        .templatesCls td{
+            padding: 2%;
+        }
+        .displayBlock {
+        display: block;
+        }
+        .blackOverlayScreen {
+        position: fixed;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: #5A595A;
+        z-index: 99;
+        -moz-opacity: 0.8;
+        opacity: .80;
+        filter: alpha(opacity = 80);
+        }
+        
+        .popup {
+        min-width: 30%; 
+        position: fixed;
+        z-index: 100;
+        top: 2%;
+        left: 10%;
+        right:25%;
+        border: 5px solid #2E2E2E !important; 
+        border-radius: 5px; 
+        background-color: white; 
+        }
+        .closePreviewIcon{
+        position: absolute;
+        right: -25px;
+        top: -22px;
+        height: 20px;
+        width: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #000;
+        color: #fff;
+        padding-left: 6px;
+        cursor: pointer;
+        }
+        label:hover {
+        /*cursor: auto;*/
+        }
+        body{
+        padding:16px;
+        background-color: rgba(176, 196, 223, 1.0)!important;
+        }
+        
+        /* These are the gradients and image used in the Salesforce theme */
+        body:before {
+        background-image: url(/_slds/images/themes/lightning_blue/lightning_blue_background.png),linear-gradient(to top, rgba(255, 255, 255, 0.0) 0, rgba(160, 180, 206, 1.0))!important;
+        }
+        body:after {
+        background-image: linear-gradient(to bottom, rgba(176, 196, 223, 0.0) 60%, rgba(176, 196, 223, 1.0))!important;
+        }
+        .slds-template_iframe{
+        background-color:transparent!important;
+        }
+        .slds-card{
+        background:transparent!important;
+        }
+        .slds-media__figure {
+        flex-shrink: 0;
+        margin-right: var(--lwc-spacingSmall,0.75rem);
+        }
+    </style>
+    <c:waitingComponent />
+    <apex:slds />
+    <apex:form id="frm">
+        <div id="fade" class="blackOverlayScreen displayNone"></div>
+        <apex:inputHidden id="selectedTemplate" value="{!selectedTemplatedId}"/>
+        <apex:inputHidden id="selectedEmailTemplate" value="{!selectedEmailTemplatedId}"/>
+        <apex:pageMessages id="messages"></apex:pageMessages>
+        <apex:actionStatus id="downloadingstatus" startText="Downloading file...." startStyle="color:red;font-size:20px;"></apex:actionStatus>
+        <apex:actionStatus id="loadingstatus" startText="Preparing data...." startStyle="color:red;font-size:20px;"></apex:actionStatus>
+        <apex:actionFunction action="{!createFile}" name="createAndDownload" reRender="messages,downloadPanel" oncomplete="lockScreen(false,'');downloadAsPDF();" immediate="true">
+            <apex:param name="data" assignTo="{!fileData}" value=""/>
+            <apex:param name="tid" assignTo="{!details.selectedTemplatedId}" value=""/>
+            <apex:param name="frmDownload" assignTo="{!fromDownload}" value=""/>
+            <apex:param name="sveAtt" assignTo="{!details.isSaveAsAttachment}" value=""/>
+            <apex:param name="sveActivity" assignTo="{!details.isLogActivity}" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!createFile}" name="createAndPreview" reRender="messages,pdfviewpanel" oncomplete="lockScreen(false,'');previewPDF();" immediate="true">
+            <apex:param name="data" assignTo="{!fileData}" value=""/>
+            <apex:param name="tid" assignTo="{!details.selectedTemplatedId}" value=""/>
+            <apex:param name="frmDownload" assignTo="{!fromDownload}" value=""/>
+            <apex:param name="sveAtt" assignTo="{!details.isSaveAsAttachment}" value=""/>
+            <apex:param name="sveActivity" assignTo="{!details.isLogActivity}" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!loadTemplate}" name="loadTemplateDataAndDownload" reRender="messages,scriptPanel" oncomplete="generatePDF(true);" immediate="true">
+            <apex:param name="tid" assignTo="{!selectedTemplatedId}" value=""/>
+            <apex:param name="dname" assignTo="{!documentName}" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!loadTemplate}" name="loadTemplateDataAndPreview" reRender="messages,scriptPanel" oncomplete="generatePDF(false);" immediate="true">
+            <apex:param name="tid" assignTo="{!selectedTemplatedId}" value=""/>
+            <apex:param name="dname" assignTo="{!documentName}" value=""/>
+        </apex:actionFunction>
+        <apex:outputPanel id="pdfviewpanel">
+            <div id="divPdfview" class="popup displayNone"  style="width: 80%;margin-top: 25px;">
+                <div class="closePreviewIcon" onclick="closePreview();" style="position: absolute;right: -25px;top: -22px;height: 20px;width: 20px;border: 1px solid #ccc;border-radius: 4px;background-color: #000;color: #fff;padding-left: 6px;cursor: pointer;">
+                    x
+                </div>
+                <apex:iframe src="{!details.templateBodyPDF}" title="{!documentName}" frameborder="false" scrolling="true"></apex:iframe>
+           
+            </div>
+        </apex:outputPanel>
+        <apex:outputPanel id="detailsPanel" > 
+            <div class="slds-is-relative">
+                <article class="slds-card " style="background-color:#fff!important">
+                    <div class="slds-page-header heightfix" role="banner">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_4-of-4 slds-has-flexi-truncate">
+                                <div class="slds-media">                                    
+                                    <div>
+                                        <span class="slds-icon_container slds-icon-standard-document" style="cursor:pointer;margin-right: var(--lwc-spacingSmall,0.75rem);">
+                                            <svg aria-hidden="true" class="slds-icon slds-icon-text-default">
+                                                <use xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                     xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#document">
+                                                </use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_4-of-7" style="margin:0 auto">                                                
+                                                <h1  title="Record Title">
+                                                    <div class="entityNameTitle slds-line-height_reset">Brand Quote</div>
+                                                    <div class="slds-page-header__title slds-m-right--small slds-align-middle fade-text">
+                                                        {!details.quoteName} <a href="/{!brandQuote.ID}">{!brandQuote.Name}</a>
+                                                    </div>
+                                                </h1> 
+                                            </div>
+                                            <div class="slds-col slds-size_3-of-7" style="margin:0 auto;text-align: right;">
+                                                <button type="button" class="slds-button slds-button_neutral" onclick="leadTemplateAndPreview();return false;">
+                                                    Preview
+                                                </button>
+                                                <button type="button" class="slds-button slds-button_neutral" onclick="leadTemplateAndDownload();return false;">
+                                                    Download
+                                                </button>
+                                                <apex:commandButton styleClass="slds-button slds-button_neutral slds-m-left_small" action="{!redirectToSendEmail}" value="Email"/>
+                                                <apex:commandButton styleClass="slds-button slds-button_neutral slds-m-left_small" action="{!redirectBack}" value="Return"/>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <article class="slds-card " style="background-color:white!important">
+                    <div class="slds-page-header heightfix" role="banner" style="background-color:white;">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_12-of-12" style="margin:0 auto">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_5-of-12">
+                                        <div class="slds-p-around_medium" style="min-height:300px;"><!--class="slds-box slds-box_small" style="min-height:300px;border-right: none; border-top-right-radius: 0; border-bottom-right-radius: 0;"-->
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_2-of-4">
+                                                    <div>
+                                                        <h1 style="font-size:18px;font-weight:bold">
+                                                            Select Template
+                                                        </h1>
+                                                    </div>
+                                                    <apex:selectRadio styleClass="templatesCls" style="cursor: context-menu;" id="templates" value="{!selectedTemplatedId}" layout="pageDirection" onchange="updateSelectedTemplate(this.value);return false;" >
+                                                        <apex:selectOptions value="{!templateOptions}"/>
+                                                        <!--apex:selectOption itemLabel="{!details.template.Name__c}" itemValue="{!details.template.Id}"></apex:selectOption-->
+                                                    </apex:selectRadio>
+                                                </div>
+                                                <div class="slds-col slds-size_2-of-4">
+                                                    <div>
+                                                        <h1 style="font-size:18px;font-weight:bold">
+                                                            Select Email Template
+                                                        </h1>
+                                                    </div>
+                                                    <apex:selectRadio styleClass="templatesCls" style="cursor: context-menu;" id="emailtemplates" value="{!selectedEmailTemplatedId}" layout="pageDirection" onchange="updateSelectedEmailTemplate(this.value);return false;" >
+                                                        <apex:selectOptions value="{!emailTemplateOptions}"/>
+                                                    </apex:selectRadio>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_7-of-12">
+                                        <div class="slds-p-around_medium" style="min-height:300px;"><!--class="slds-box slds-box_small" style="min-height:300px;border-top-left-radius: 0; border-bottom-left-radius: 0;"-->
+                                            <div class="slds-m-left_small">
+                                                <label class="slds-form-element__label slds-no-flex" style="cursor: auto;display: inline-block;min-width: 150px;">
+                                                    Document Name<span style="color:red;">*</span>
+                                                </label>
+                                                <div class="slds-form-element__control slds-grow" style="display: inline-block;">
+                                                    <apex:inputText id="documentName" label="Document Name" value="{!documentName}" styleClass="slds-input" required="true"/>
+                                                </div>
+                                            </div>
+                                            <div  class="slds-m-around_small">
+                                                <label class="slds-form-element__label slds-no-flex" style="cursor: auto;display: inline-block;min-width: 150px;">
+                                                    Download As 
+                                                </label>
+                                                <div class="slds-form-element__control slds-grow" style="display: inline-block;">
+                                                    <apex:selectList size="1" styleClass="slds-input" style="min-width:175px;">
+                                                        <apex:selectOption itemLabel="PDF" itemValue="PDF"/>
+                                                    </apex:selectList>
+                                                </div>
+                                                
+                                            </div>
+                                            <div  class="slds-m-around_small">
+                                                <apex:inputCheckbox value="{!details.isSaveAsAttachment}" id="saveAtt"/>&nbsp;Save a copy in Files
+                                            </div>
+                                            <div  class="slds-m-around_small">
+                                                <apex:inputCheckbox value="{!details.isLogActivity}" id="activity" />&nbsp;Log in Activity
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </apex:outputPanel>
+        <div id="loadingDiv" class="displayNone">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading preview…</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                    <p style="transform: translate(-32%, -50%) rotate(-90deg);width: 320px;text-align: center;color:gray;"><br/><br/>Loading preview…</p>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.17.6/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.0.6/dist/pizzip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="https://unpkg.com/pizzip@3.0.6/dist/pizzip-utils.js"></script>
+    
+    
+    
+    
+    <!--
+Mandatory in IE 6, 7, 8 and 9.
+-->
+    <!--[if IE]>
+<script type="text/javascript" src="https://unpkg.com/pizzip@3.0.6/dist/pizzip-utils-ie.js"></script>
+<![endif]-->
+    <apex:outputPanel id="downloadPanel">
+        <script>
+        function previewPDF(){
+        var fadeClasses = document.getElementById("fade").classList;
+        fadeClasses.remove("displayNone");
+        fadeClasses.add("displayBlock");
+        document.getElementById("fade").classList = fadeClasses;
+        var divPdfviewClasses = document.getElementById("divPdfview").classList;
+        divPdfviewClasses.remove("displayNone");
+        divPdfviewClasses.add("displayBlock");
+        document.getElementById("divPdfview").classList = divPdfviewClasses;
+    }
+    function closePreview(){
+        var fadeClasses = document.getElementById("fade").classList;
+        fadeClasses.add("displayNone");
+        fadeClasses.remove("displayBlock");
+        document.getElementById("fade").classList = fadeClasses;
+        var divPdfviewClasses = document.getElementById("divPdfview").classList;
+        divPdfviewClasses.add("displayNone");
+        divPdfviewClasses.remove("displayBlock");
+        document.getElementById("divPdfview").classList = divPdfviewClasses;
+    }
+function downloadAsPDF(){
+    console.timeEnd('createAndDownload');
+    console.time('downloadAsPDF');
+    try{
+        
+        var dataURI = '{!details.templateBodyPDF}';
+        //debugger;
+        var BASE64_MARKER = ';base64,';
+        var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+        var base64 = dataURI.substring(base64Index);
+        raw = window.atob(base64); 
+        rawLength = raw.length;
+        array = new Uint8Array(new ArrayBuffer(rawLength));
+        
+        for(var i = 0; i < rawLength; i++) {
+            array[i] = raw.charCodeAt(i);
+        }
+        var blob = new Blob([array],{type:"application/pdf;charset=utf-8"});
+        saveAs(blob,'{!documentName}.pdf');   
+        console.timeEnd('downloadAsPDF');
+        lockScreen(false,'');
+       
+            }catch(err){
+                console.log('Error:',err);
+            }
+            }
+</script>
+</apex:outputPanel>
+<apex:outputPanel id="scriptPanel">
+<script>            
+if('{!isTemplatedLoaded}' == 'true'){
+    console.log('details::','{!details}');
+    //generatePDF();    
+}
+function leadTemplateAndDownload(){
+    console.log('Calling leadTemplateAndDownload...');
+    var documentName = document.getElementById('pg:frm:documentName').value;
+    if(!documentName || documentName == ''){
+        sforce.one.showToast({
+            "title": "Error!",
+            "message": "Document Name is required.",
+            "type": "error"
+        });
+        return false;
+    }
+    console.timeStamp('loadTemplateDataAndDownload Start');
+    loadTemplateDataAndDownload(document.getElementById('pg:frm:selectedTemplate').value,documentName);
+    lockScreen(true,'File Downlaoding...');
+    return false;
+}
+function leadTemplateAndPreview(){
+    console.log('Calling leadTemplateAndDownload...');
+    var documentName = document.getElementById('pg:frm:documentName').value;
+    if(!documentName || documentName == ''){
+        sforce.one.showToast({
+            "title": "Error!",
+            "message": "Document Name is required.",
+            "type": "error"
+        });
+        return false;
+    }
+    loadTemplateDataAndPreview(document.getElementById('pg:frm:selectedTemplate').value,documentName);
+    lockScreen(true,'Preview Loading...');
+    return false;
+}
+function updateSelectedTemplate(val){
+    console.log('#Old Selected Template:',document.getElementById('pg:frm:selectedTemplate').value);
+    console.log('#New  Selected Template:',val);
+    document.getElementById('pg:frm:selectedTemplate').value = val;
+    return false;
+}
+function updateSelectedEmailTemplate(val){
+  
+    document.getElementById('pg:frm:selectedEmailTemplate').value = val;
+    return false;
+}
+function showLoading(val){
+    if(val){
+        document.getElementById("loadingDiv").classList.add("displayBlock");
+        document.getElementById("loadingDiv").classList.remove("displayNone");
+    }else{
+        document.getElementById("loadingDiv").classList.add("displayNone");
+        document.getElementById("loadingDiv").classList.remove("displayBlock");
+    }
+}
+function generatePDF(isDownload) {
+    console.time('generatePDF');
+   
+    var dataURI = '{!details.templateBody}';
+    var BASE64_MARKER = ';base64,';
+    var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+    var base64 = dataURI.substring(base64Index);
+    var raw = window.atob(base64);
+    var rawLength = raw.length;
+    var array = new Uint8Array(new ArrayBuffer(rawLength));
+    
+    for(var i = 0; i < rawLength; i++) {
+        array[i] = raw.charCodeAt(i);
+    }
+    var zip = new PizZip(array);
+    var doc;
+    try {
+        doc=new window.docxtemplater(zip,{nullGetter(part) {
+                                          if (!part.module) {
+                                          return "";
+                                         }
+                                          if (part.module === "rawxml") {
+                                          return "";
+                                         }
+                                          return "";
+                                         },delimiters:{start:'{{',end:'}}'}});
+    } catch(error) {
+        // Catch compilation errors (errors caused by the compilation of the template : misplaced tags)
+        console.error(error);
+    }
+    doc.setData(JSON.parse('{!details.JSONData}'));
+    try {
+        // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+        doc.render();
+    }
+    catch (error) {
+        // Catch rendering errors (errors relating to the rendering of the template : angularParser throws an error)
+        console.error(error);
+    }
+    
+    var out=doc.getZip().generate({
+        type:"blob",
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    }) //Output the document using Data-URI
+    
+    var reader = new FileReader();
+    reader.readAsDataURL(out); 
+    reader.onloadend = function() {
+        var base64data = reader.result;     
+        console.log('base64data:',base64data);
+        if(isDownload){
+            lockScreen(true,'File Downloading...');
+            console.timeEnd('generatePDF');
+            console.time('createAndDownload');
+            console.log('createAndDownload Starts');
+            createAndDownload(base64data,document.getElementById('pg:frm:selectedTemplate').value,true,document.getElementById('pg:frm:saveAtt').checked,document.getElementById('pg:frm:activity').checked);
+        }else{
+            lockScreen(true,'Preview Loading...');
+            createAndPreview(base64data,document.getElementById('pg:frm:selectedTemplate').value,false,document.getElementById('pg:frm:saveAtt').checked,document.getElementById('pg:frm:activity').checked);  
+        }
+        
+    }
+    
+}
+
+</script>
+</apex:outputPanel>
+</apex:page>

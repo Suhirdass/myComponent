@@ -1,0 +1,205 @@
+<aura:component implements="force:appHostable" controller="InvoiceCollectionController">
+    <aura:attribute name="loaded" type="Boolean" default="false"/>
+    <aura:attribute name="searchText" type="String" />
+    <aura:attribute name="invoiceList" type="List" default="[]" />
+    <aura:html tag="style">
+    	.fg-new-table, .fg-cart-table {
+          font-family: 'Roboto', sans-serif !important;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        .fg-new-table td.fg-td, .fg-new-table th.fg-th {
+          border: none;
+          border-top: 1px solid #ddd;
+          border-bottom: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        .fg-cart-table td.fg-td, .fg-cart-table th.fg-th {
+          padding: 8px;
+        }
+        
+        .fg-new-table tr:nth-child(even){}
+        
+        .fg-new-table tr:hover {background-color: #E7E7E7;}
+        .fg-new-table > thead > tr:hover {background-color: white;}
+        
+        .fg-cart-table tr:nth-child(even){background-color: #E7E7E7;}
+        
+        .fg-cart-table tr:hover {background-color: #D8EEEC;}
+        
+        
+        .fg-span span, th.fg.th{
+          font-family: 'Montserrat', sans-serif !important;
+        }
+        .fg-search
+        .fg-search input {
+            outline: none;
+        }
+        .fg-search input[type=search] {
+            -webkit-appearance: textfield;
+            -webkit-box-sizing: content-box;
+            font-family: inherit;
+            font-size: 100%;
+        }
+        .fg-search input::-webkit-search-decoration,
+        .fg-search input::-webkit-search-cancel-button {
+            display: none; 
+        }
+        
+        
+        .fg-search input[type=search] {
+        background:  url('/resource/marketPlaceNewAssets/images/search-icon.png') no-repeat 9px center;
+            border: solid 2px #ccc;
+            padding: 0px 10px 2px 32px;
+            width: 55px;
+            
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+        .fg-search input[type=search]:focus {
+            width: 130px;
+            background-color: #fff;
+            border-color: #66CC75;
+            
+            -webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+            -moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+            box-shadow: 0 0 5px rgba(109,207,246,.5);
+        }
+        
+        
+        .fg-search input:-moz-placeholder {
+            color: #999;
+        }
+        .fg-search input::-webkit-input-placeholder {
+            color: #999;
+        }
+        .paymentOptions >label{
+        	display:none;
+        }
+    </aura:html>
+    <div class="slds-box slds-theme_default">
+        <div class="slds-is-relative">
+            <aura:if isTrue="{!v.loaded }">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:if>
+            <div ><!--style="background-color: #035158;"-->
+                <lightning:layout horizontalAlign="center" multipleRows="true">
+                    <lightning:layoutItem padding="around-small" size="8">
+                        <!--span style="color: white;font-size: 20px;padding-left:30px">Enter Business Name</span-->
+                        <div class="fg-search" style="margin:0 auto;" onkeyup="{!c.searchInvoice}">
+                        	<input type="search" placeholder="Enter Business Name or Invoice #" id="searchInput" value="{!v.searchValue}" aura:id="searchInput" class="searchBox"/>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+            <lightning:layout horizontalAlign="center" multipleRows="true">
+                <lightning:layoutItem padding="around-small" size="8">
+                	<h1 style="font-size: 1.5em;">Pending and Past Due Invoices</h1>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="4">
+                    <div style="float:right">
+                        <aura:if isTrue="{!v.invoiceList.length > 0}">
+                            <lightning:button type="submit"  class="submitButton slds-m-right_small" label="Submit" onclick="{!c.submitInvoices}"></lightning:button>
+                            <lightning:button variant="Neutral" class="cancelButton" label="Cancel" onclick="{!c.searchInvoice}"></lightning:button>
+                            
+                        </aura:if>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="tbl-header" style="overflow-y: auto;">
+                        <div class="slds-is-relative">
+                            <table class="fg-new-table">
+                                <thead class="fg-span">
+                                    <tr>
+                                        <th class="fg-th">Business Name</th>
+                                        <th class="fg-th">Invoice #</th>
+                                        <th class="fg-th">Order Number</th>
+                                        <th class="fg-th" style="width: 8%;">Ship Confirmation Date</th>
+                                        <th class="fg-th">Invoice Balance</th>
+                                        <th class="fg-th">Product Balance</th>
+                                        <th class="fg-th">Excise Tax Balance</th>
+                                        <th class="fg-th" >Due Date</th>
+                                        <th class="fg-th">Payment Form</th>
+                                        <th class="fg-th">Product Amount</th>
+                                        <th class="fg-th">Excise Tax Amount</th>
+                                        <th class="fg-th" style="width:10%">Payment Memo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:if isTrue="{!v.invoiceList.length > 0}">
+                                    	<aura:iteration items="{!v.invoiceList}" var="inv">
+                                        <tr>
+                                            <td class="fg-td">
+                                                <div title="{!inv.invoice.Receiver_DBA__c}" class="" style="max-width:140px;">{!inv.invoice.Receiver_DBA__c}</div>
+                                            </td>
+                                            <td class="fg-td" data-id="{!inv.invoice.Id}" onclick="{!c.onView}" style="cursor:pointer;color:rgba(27, 82, 151, 1)">{!inv.invoice.Name}</td>
+                                            <td class="fg-td" data-id="{!inv.invoice.Brand_Quote__r.Opportunity_Name__r.Order__c}" onclick="{!c.onView}" style="cursor:pointer;color:rgba(27, 82, 151, 1)">
+                                            	{!inv.invoice.Brand_Quote__r.Opportunity_Name__r.Order__r.Name}
+                                            </td>
+                                            <td class="fg-td">
+                                                <ui:outputDate value="{!inv.invoice.Ship_Confirmation_Date__c}" format="MM/dd/YYYY" />
+                                            </td>
+                                            <td class="fg-td">
+                                                <ui:outputCurrency value="{!inv.invoice.Invoice_Balance__c}"/>
+
+                                            </td>
+                                            <td class="fg-td">
+                                                <ui:outputCurrency value="{!inv.invoice.Product_Balance__c}" />
+
+                                            </td>
+                                            <td class="fg-td">
+                                                <ui:outputCurrency value="{!inv.invoice.Excise_Tax_Balance__c}" />
+
+                                            </td>
+                                            <td class="fg-td" style="max-width:170px;">
+                                                	<lightning:input type="date"  aura:id="validate" variant="label-hidden" value="{!inv.invoice.Invoice_Due_Date__c}" format="MM/dd/YYYY"  />
+
+                                            </td>
+                                            <td class="fg-td" style="min-width:90px">
+                                                <lightning:select class="paymentOptions" aura:id="validate" variant="label-hidden" value="{!inv.receivePaymentSO.Payment_Form__c}" required="{!or(!empty(inv.productAmount),!empty(inv.taxAmount))}" messageWhenValueMissing="Select Payment Form">
+                                                    <aura:iteration items="{!inv.paymentFormOptions}" var="option">
+                                                        <option text="{!option.label}" value="{!option.value}"/>
+                                                    </aura:iteration>
+                                                </lightning:select>
+                                                <!--{!inv.paymentForm}-->
+                                            </td>
+                                            <td class="fg-td">
+                                                <div  onkeydown="{!c.validateKeys}">
+                                                	<lightning:input aura:id="validate" variant="label-hidden" type="number" formatter="currency" step="0.01" value="{!inv.productAmount}"/>
+                                                </div>
+                                            </td>
+                                            <td class="fg-td">
+                                                <div  onkeydown="{!c.validateKeys}">
+                                                    <lightning:input aura:id="validate" variant="label-hidden" type="number" formatter="currency" step="0.01" value="{!inv.taxAmount}" />
+                                                </div>
+                                            </td>
+                                            <td class="fg-td" style="width:10%">
+                                                <lightning:input type="text" aura:id="validate" variant="label-hidden" value="{!inv.receivePaymentSO.Payment_Memo__c}"/>
+                                                <!--{!inv.paymentMemo}-->
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                    	<aura:set attribute="else">
+                                        	<tr style="height:40px">
+                                            	<td style="text-align:center" colspan="11">
+                                                	No Invoices Found.
+                                                </td>
+                                            </tr>
+                                        </aura:set>
+                                    </aura:if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

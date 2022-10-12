@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannabinoid_Threshold__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Cannabinoid Content are accurate if and within + / - 10% threshold for each cannabinoid content. Less than two (2) milligrams per serving or per package, the cannabinoid content may be labeled as “&lt;2.0 mg per serving” or “&lt;2.0 mg per package.”</inlineHelpText>
+    <label>Cannabinoid Threshold</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>QA_Result</valueSetName>
+    </valueSet>
+</CustomField>

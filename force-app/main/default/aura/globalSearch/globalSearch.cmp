@@ -1,0 +1,541 @@
+<aura:component extends="c:utility" controller="ProductsCtlr" implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="orders" type="List" default="" />
+    <aura:attribute name="brandQuote" type="List" default="" />
+    <aura:attribute name="salesOrder" type="List" default="" />
+    <aura:attribute name="invoices" type="List" default="" />
+    <aura:attribute name="purOrders" type="List" default="" />
+    <aura:attribute name="shipManifests" type="List" default="" />
+    <aura:attribute name="retailers" type="List" default="" />
+    <aura:attribute name="brands" type="List" default="" />
+    <aura:attribute name="contactRTId" type="String" default="" />
+    <aura:attribute name="products" type="List" default="" />
+    <aura:attribute name="isBrand" type="Boolean" default="false" />
+    <aura:attribute name="selectedStatus" type="String" default="Top Result" />
+    <!--ltng:require styles="{!join(',', $Resource.marketPlaceNewAssets + '/css/theme.css',
+                              $Resource.marketPlaceNewAssets + '/css/skins/default.css',
+                              $Resource.marketPlaceNewAssets + '/css/custom.css',
+                              $Resource.marketPlaceNewAssets + '/vendor/font-awesome/css/all.min.css')}"
+                      scripts= "{!join(',',$Resource.marketPlaceNewAssets + '/vendor/jquery/jquery.js')}"/-->
+    <div class="slds-is-relative slds-p-around_small">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <lightning:layout multipleRows="true">
+            <div class="flex slds-size_full">
+                <div class="slds-m-right_xx-large">
+                    <lightning:buttonGroup>
+                        <lightning:button class="{!if(equals(v.selectedStatus,'Top Result'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Top Result'),'brand','neutral')}" value="Top Result" label="Top Result" onclick="{!c.changeRecords}"/>
+                        <aura:if isTrue="{!not(empty(v.orders))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Order'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Order'),'brand','neutral')}" value="Order" label="{!'Order '+if(greaterthan(v.orders.length,5),'(5+)','('+v.orders.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.products))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Product'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Product'),'brand','neutral')}" value="Product" label="{!'Product '+if(greaterthan(v.products.length,5),'(5+)','('+v.products.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.brandQuote))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Brand Quote'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Brand Quote'),'brand','neutral')}" value="Brand Quote" label="{!'Brand Quote '+if(greaterthan(v.brandQuote.length,5),'(5+)','('+v.brandQuote.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.salesOrder))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Sales Order'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Sales Order'),'brand','neutral')}" value="Sales Order" label="{!'Sales Order '+if(greaterthan(v.salesOrder.length,5),'(5+)','('+v.salesOrder.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.invoices))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Invoice'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Invoice'),'brand','neutral')}" value="Invoice" label="{!'Invoice '+if(greaterthan(v.invoices.length,5),'(5+)','('+v.invoices.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.purOrders))}">
+                            <aura:if isTrue="{!v.isBrand}">
+                                <lightning:button class="{!if(equals(v.selectedStatus,'Purchase Order'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Purchase Order'),'brand','neutral')}" value="Purchase Order" label="{!'Purchase Order '+if(greaterthan(v.purOrders.length,5),'(5+)','('+v.purOrders.length+')')}" onclick="{!c.changeRecords}"/>
+                            </aura:if>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.shipManifests))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Shipping Manifest'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Shipping Manifest'),'brand','neutral')}" value="Shipping Manifest" label="{!'Shipping Manifest '+if(greaterthan(v.shipManifests.length,5),'(5+)','('+v.shipManifests.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.retailers))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Retailer'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Retailer'),'brand','neutral')}" value="Retailer" label="{!'Retailer '+if(greaterthan(v.retailers.length,5),'(5+)','('+v.retailers.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!not(empty(v.brands))}">
+                            <lightning:button class="{!if(equals(v.selectedStatus,'Brand'),'selectBtn','nonSelectBtn')}" variant="{!if(equals(v.selectedStatus,'Brand'),'brand','neutral')}" value="Brand" label="{!'Brand '+if(greaterthan(v.brands.length,5),'(5+)','('+v.brands.length+')')}" onclick="{!c.changeRecords}"/>
+                        </aura:if>
+                    </lightning:buttonGroup>
+                </div>
+            </div>
+            <lightning:layoutItem size="12">
+                <aura:if isTrue="{!and(empty(v.orders),and(empty(v.products),and(empty(v.brandQuote),and(empty(v.salesOrder),and(empty(v.invoices),and(empty(v.purOrders),and(empty(v.shipManifests),and(empty(v.retailers),empty(v.brands)))))))))}">
+                	<div class="slds-text-align_center">No matching records found.</div>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.orders))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Order'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Orders
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">Order Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">Status</th>
+                                                        <th class="sorting_asc slds-truncate" style="background-color:#d1cdb0;width:25%;max-width:25%" >Retailer DBA</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Contact</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Total Price</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Requested Ship Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.orders.length > 0}">
+                                                        <aura:iteration items="{!v.orders}" var="order">
+                                                            <tr>
+                                                                <td class="link"><div data-id="{!order.Id}" data-name="{!order.Name}" onclick="{!c.onViewTicket}">{!order.Name}</div>
+                                                                    
+                                                                </td>
+                                                                <td class="tbData">{!order.Status__c}</td>
+                                                                
+                                                                <td class="slds-truncate tbData" style="width:25%;max-width:25%">{!order.Retailer_DBA__c}</td>
+                                                                <td ><div class="tbData" data-id="{!order.Retailer_Contact__c}" data-name="{!order.Retailer_Contact__r.Name}" onclick="{!c.navigateToRecord}">{!order.Retailer_Contact__r.Name}</div></td>
+                                                                <td><ui:outputCurrency class="tbData" value="{!order.Total__c}" /></td>
+                                                                <td><ui:outputDate class="tbData" value="{!order.Request_Ship_Date__c}" format="MM/dd/YYYY" /></td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="7" class="slds-text-align_center">
+                                                                    No Orders
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.products))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Product'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Products
+                                </h2-->
+                                    <div >
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th">Brand Name</th>
+                                                        <th class="sorting_asc" >Product Name</th>
+                                                        <th class="sorting_asc">Strain</th>
+                                                        <th class="sorting_asc">Product Category</th>
+                                                        <th class="sorting_asc">MOQ</th>
+                                                        <th class="sorting_asc"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.products.length > 0}">
+                                                        <aura:iteration items="{!v.products}" var="pro">
+                                                            <tr>
+                                                                <td class="tbData"><span>{!pro.Product2.Brand_Name__c}</span></td>
+                                                                <td class="link" data-id="{!pro.Id}" data-name="{!pro.Product2.Product_Short_Description__c}"  onclick="{!c.onProductRecClick}"><span>{!pro.Product2.Product_Short_Description__c}</span></td>
+                                                                <td class="tbData"><span>{!pro.Product2.Strain__r.Name}</span></td>
+                                                                <td class="tbData"><span>{!pro.Product2.Family}</span></td>
+                                                                <td class="tbData"><span>{!pro.Product2.MOQ__c}</span></td>
+                                                                <td></td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="4" class="slds-text-align_center">
+                                                                    No Products
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.brandQuote))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Brand Quote'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Brand Quote
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">BQ Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">Status</th>
+                                                        <th class="sorting_asc slds-truncate" style="background-color:#d1cdb0;width:25%;max-width:25%" >Retailer DBA</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Terms</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Total Product Price</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Ship Date</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody> 
+                                                    <aura:if isTrue="{!v.brandQuote.length > 0}">
+                                                        <aura:iteration items="{!v.brandQuote}" var="quote">
+                                                            <tr>
+                                                                <td class="link">
+                                                                    <div data-id="{!quote.Id}" data-name="{!quote.Name}" onclick="{!c.navigateToRecord}">{!quote.Name}</div></td>
+                                                                <td class="tbData">{!quote.BQ_Status__c}</td>
+                                                                <td class="slds-truncate tbData" style="width:25%;max-width:25%">{!quote.Receiver_DBA__c}</td>
+                                                                <td class="tbData">{!quote.Payment_Terms__c}</td>
+                                                                <td class="tbData"><ui:outputCurrency  value="{!quote.Total_Product_Price__c}"/></td>
+                                                                <td class="tbData"><ui:outputDate value="{!quote.Ship_Confirmation_Date__c}" format="MM/dd/YYYY" /></td>
+                                                                
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="6" class="slds-text-align_center">
+                                                                    No Brand Quotes
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.salesOrder))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Sales Order'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Sales Order
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">SO Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">Status</th>
+                                                        <th class="sorting_asc slds-truncate" style="background-color:#d1cdb0;width:25%;max-width:25%">Retailer DBA</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">BQ Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Total Product Price</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Ship Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.salesOrder.length > 0}">
+                                                        <aura:iteration items="{!v.salesOrder}" var="sales">
+                                                            <tr>
+                                                                <td class="link"><div data-id="{!sales.Id}" data-name="{!sales.Name}"  onclick="{!c.navigateToRecord}">{!sales.Name}</div></td>
+                                                                <td class="tbData">{!sales.SO_Status__c}</td>
+                                                                <td class="slds-truncate tbData" style="width:25%;max-width:25%">{!sales.Receiver_DBA__c}</td>
+                                                                <td class="link"><div data-id="{!sales.Brand_Quote__c}" data-name="{!sales.Brand_Quote__r.Name}" onclick="{!c.navigateToRecord}">{!sales.Brand_Quote__r.Name}</div></td>
+                                                                <td class="tbData"><ui:outputCurrency value="{!sales.Total_Price__c}"/></td>
+                                                                <td class="tbData"><ui:outputDate value="{!sales.Ship_Confirmation_Date__c}" format="MM/dd/YYYY" /></td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="7" class="slds-text-align_center">
+                                                                    No Sales Orders
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.invoices))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Invoice'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Invoice
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">Invoice Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">Status</th>
+                                                        <th class="sorting_asc slds-truncate" style="background-color:#d1cdb0;width:25%;max-width:25%">Retailer DBA</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">BQ Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Total </th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Ship Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.invoices.length > 0}">
+                                                        <aura:iteration items="{!v.invoices}" var="invoice">
+                                                            <tr>
+                                                                <td class="link"><div data-id="{!invoice.Id}" data-name="{!invoice.Name}" onclick="{!c.navigateToRecord}">{!invoice.Name}</div></td>
+                                                                <td class="tbData">{!invoice.AR_Status__c}</td>
+                                                                <td class="slds-truncate tbData" style="width:25%;max-width:25%">{!invoice.Receiver_DBA__c}</td>
+                                                                <td class="link"><div data-id="{!invoice.Brand_Quote__c}" data-name="{!invoice.Brand_Quote__r.Name}" onclick="{!c.navigateToRecord}">{!invoice.Brand_Quote__r.Name}</div></td>
+                                                                <td class="tbData"><ui:outputCurrency value="{!invoice.Total_Invoice_Amount__c}"/></td>
+                                                                <td class="tbData"><ui:outputDate value="{!invoice.Ship_Confirmation_Date__c}" format="MM/dd/YYYY" /></td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="6" class="slds-text-align_center">
+                                                                    No Invoices
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.purOrders))}">
+                    <aura:if isTrue="{!and(v.isBrand,or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Purchase Order')))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Purchase Order
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">PO Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">Status</th>
+                                                        <th class="sorting_asc"  style="background-color:#d1cdb0;width:25%;max-width:25%">Total Cost</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Order Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Sold To Party</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Settlement Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.purOrders.length > 0}">
+                                                        <aura:iteration items="{!v.purOrders}" var="purOrder">
+                                                            <tr>
+                                                                <td class="link"><div data-id="{!purOrder.Id}" data-name="{!purOrder.Name}" onclick="{!c.navigateToRecord}">{!purOrder.Name}</div></td>
+                                                                <td class="tbData">{!purOrder.PO_Status__c}</td>
+                                                                <td class="tbData" style="width:25%;max-width:25%"><ui:outputCurrency value="{!purOrder.Total_Cost__c}"/></td>
+                                                                <td class="link">
+                                                                    <div data-id="{!purOrder.Brand_Quote__r.Opportunity_Name__r.Order__c}" data-name="{!purOrder.Brand_Quote__r.Opportunity_Name__r.Order__r.Name}" onclick="{!c.onViewTicket}">
+                                                                        {!purOrder.Brand_Quote__r.Opportunity_Name__r.Order__r.Name}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="tbData">{!purOrder.Sold_to_Party_DBA__c}</td>
+                                                                <td class="tbData"><ui:outputDate value="{!purOrder.Supplier_Payment_Settled_Date__c}" format="MM/dd/YYYY" /></td>
+                                                                
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="6" class="slds-text-align_center">
+                                                                    No Purchase Orders
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.shipManifests))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Shipping Manifest'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Shipping Manifest
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">SM Number</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">Status</th>
+                                                        <th class="sorting_asc slds-truncate" style="background-color:#d1cdb0;width:25%;max-width:25%">Retailer DBA</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">METRC Manifest</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Total Lines</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Ship Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.shipManifests.length > 0}">
+                                                        <aura:iteration items="{!v.shipManifests}" var="shipManifest">
+                                                            <tr>
+                                                                <td class="link"><span><div data-id="{!shipManifest.Id}" data-name="{!shipManifest.Name}" onclick="{!c.navigateToRecord}">{!shipManifest.Name}</div></span></td>
+                                                                <td class="tbData">{!shipManifest.Status__c}</td>
+                                                                <td class="slds-truncate tbData" style="width:25%;max-width:25%">{!shipManifest.Receiver_DBA__c}</td>
+                                                                <td class="tbData">{!shipManifest.Metrc_Manifest__c}</td>
+                                                                <td class="tbData">{!shipManifest.Total_Line_Items__c}</td>
+                                                                <td class="tbData"><ui:outputDate value="{!shipManifest.Ship_Confirmation_Date__c}" format="MM/dd/YYYY" /></td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="5" class="slds-text-align_center">
+                                                                    No Shipping Manifests
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.retailers))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Retailer'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Retailers
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th" style="background-color:#d1cdb0;width:17%">Retailer Name</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:13%">DBA</th>
+                                                        <th class="sorting_asc"  style="background-color:#d1cdb0;width:25%;max-width:25%">Billing City</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Licenses Held</th>
+                                                        <th class="sorting_asc" style="background-color:#d1cdb0;width:15%">Terms</th>
+                                                        <th class="slds-text-align_right" style="background-color:#d1cdb0;width:15%">Website</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.retailers.length > 0}">
+                                                        <aura:iteration items="{!v.retailers}" var="retail">
+                                                            <tr>
+                                                                <td class="link" data-id="{!retail.Id}" data-name="{!retail.DBA__c}"  data-type="retailer" onclick="{!c.onView}"><span>{!retail.Name}</span></td>
+                                                                <td class="tbData"><span>{!retail.DBA__c}</span></td>
+                                                                <td class="tbData" style="width:25%;max-width:25%">{!retail.BillingCity}</td>
+                                                                <td class="tbData"><span>{!retail.Licenses_Held__c}</span></td>
+                                                                <td class="tbData"><span>{!retail.Payment_Terms__c}</span></td>
+                                                                <td class="slds-text-align_right">
+                                                                    <aura:if isTrue="{!empty(retail.Website)}">
+                                                                    	<lightning:icon class="{!if(empty(retail.Website),'','some-indicator')}" iconName="utility:preview" alternativeText="" size="small"/>
+                                                                        <aura:set attribute="else">
+                                                                        	<a href="{!retail.Website}"><lightning:icon class="{!if(empty(retail.Website),'','some-indicator')}" iconName="utility:preview" alternativeText="" size="small"/></a>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                	
+                                                                </td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="4" class="slds-text-align_center">
+                                                                    No Retailers
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!not(empty(v.brands))}">
+                    <aura:if isTrue="{!or(equals(v.selectedStatus,'Top Result'),equals(v.selectedStatus,'Brand'))}">
+                        <div class="slds-grid slds-gutters slds-m-top_small">
+                            <section class="slds-col slds-size_1-of-1">
+                                <div class="slds-box height-full">
+                                    <!--h2 class="bg__tan ticket-header slds-text-heading_small slds-p-vertical_x-small slds-p-horizontal_medium">
+                                    Retailers
+                                </h2-->
+                                    <div>
+                                        <div class="table-container">
+                                            <table class="slds-table slds-table_cell-buffer">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="sorting_asc First_Th">Brand Name</th>
+                                                        <th class="sorting_asc">DBA</th>
+                                                        <th class="sorting_asc">Billing City</th>
+                                                        <th class="sorting_asc">Licenses Held</th>
+                                                        <th class="sorting_asc">Terms</th>
+                                                        <th class="slds-text-align_right">Website</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:if isTrue="{!v.brands.length > 0}">
+                                                        <aura:iteration items="{!v.brands}" var="brand">
+                                                            <tr>
+                                                                <td class="link" data-id="{!brand.Id}" data-type="brand" data-name="{!brand.Name}" onclick="{!c.onView}">{!brand.Name}</td>
+                                                                <td class="tbData">{!brand.DBA__c}</td>
+                                                                <td class="tbData">{!brand.BillingCity}</td>
+                                                                <td class="tbData">{!brand.Licenses_Held__c}</td>
+                                                                <td class="tbData">{!brand.Payment_Terms__c}</td>
+                                                                <td class="slds-text-align_right">
+                                                                    <a href="{!brand.Website}"><lightning:icon class="{!if(empty(brand.Website),'','some-indicator')}" iconName="utility:preview" alternativeText="" size="small"/></a>
+                                                                </td>
+                                                            </tr>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            <tr>
+                                                                <td colspan="4" class="slds-text-align_center">
+                                                                    No Brands
+                                                                </td>
+                                                            </tr>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </aura:if>
+                </aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>    
+    
+</aura:component>

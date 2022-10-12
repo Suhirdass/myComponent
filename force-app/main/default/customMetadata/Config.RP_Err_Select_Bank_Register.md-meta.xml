@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>RP_Err_Select_Bank_Register</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Key__c</field>
+        <value xsi:type="xsd:string">RP_Err_Select_Bank_Register</value>
+    </values>
+    <values>
+        <field>Related_To__c</field>
+        <value xsi:type="xsd:string">Receive Payments</value>
+    </values>
+    <values>
+        <field>Used_In__c</field>
+        <value xsi:type="xsd:string">CRM &amp; Marketplace</value>
+    </values>
+    <values>
+        <field>Value__c</field>
+        <value xsi:type="xsd:string">Selection of bank register is mandatory when Reconciliation date is provided</value>
+    </values>
+</CustomMetadata>

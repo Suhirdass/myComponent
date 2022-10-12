@@ -1,0 +1,13 @@
+<aura:component extensible="true" extends="c:utility">
+    
+    <ltng:require styles="{!join(',', $Resource.perfectScrollbar + '/perfect-scrollbar.css')}" />
+    <aura:attribute name="allIds" type="List" default="[]" />
+    <aura:attribute name="skipLazyLoad" type="Boolean" default="false" />
+    <aura:attribute name="ids" type="List" default="[]" />
+    <aura:attribute name="topHeight" type="String" default="100px;" />
+    <aura:attribute name="showScrollToTop" type="Boolean" default="false" />
+    <aura:attribute name="currentPage" type="Integer" default="0" />
+    <aura:attribute name="perPage" type="Integer" default="10" />
+    
+    {!v.body}
+</aura:component>

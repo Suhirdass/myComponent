@@ -1,0 +1,66 @@
+<aura:component extends="c:utility" controller="ProductsCtlr">
+	<aura:attribute name="brandId" type="String" default="" />
+    <aura:attribute name="brandName" type="String" default="" />
+    <aura:attribute name="nameStrain" type="String" default="" />
+    <aura:attribute name="serviceTypes" type="List"/>
+    <aura:attribute name="sativaPercentage" type="Integer"/>
+    <aura:attribute name="indicaPercentage" type="Integer"/>
+    <aura:attribute name="saved" type="Boolean" default="false" />
+    <aura:attribute name="selectedIndex" type="Integer" default="-1" />
+    <aura:attribute name="isStrain" type="Boolean" default="false" />
+    <aura:attribute name="StrainType" type="String" default="" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    
+    <aura:attribute name="selRecord" type="String" default="" description="selected Record Details" />
+    <!--<aura:attribute name="showSpinner" type="Boolean" default="true" />-->
+    <lightning:overlayLibrary aura:id="overlay" />
+    <aura:registerEvent name="batchIdEvent" type="c:batchIdEvent"/>
+    <aura:html tag="style">
+        .slds-modal__container{
+        	width:500px!important;
+        }
+        .slds-modal__content{
+            padding: 10px!important;
+            width: 500px;
+            margin: 0 auto;
+        }
+    </aura:html>
+    <div class="slds-is-relative">
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>
+        <lightning:messages />
+        <lightning:layout multipleRows="true">
+            <div class="slds-card__body slds-card__body_inner" style="width:100%">
+                <div class="flex-grid">
+                    <div class="slds-m-right_large slds-show_inline-block">
+                        <h3 class="boxHeader text__greenPrimary">
+                            Create Strain<br/>
+                        </h3>
+                    </div>
+                </div>
+                <lightning:layout multipleRows="true" horizontalAlign="center">
+                    <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small" mediumDeviceSize="12" >
+                        <lightning:input aura:id="validate" variant="label-hidden" label="Name" name="Name" value="{!v.nameStrain}" required="true" messageWhenTooShort="Strain name has 80 characters long"  maxlength="80"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small" mediumDeviceSize="12" >
+                        <lightning:select name="select1" value="{!v.StrainType}" label="Strain Type" required="true">
+                            <option value="">choose one...</option>
+                            <aura:iteration items="{!v.serviceTypes}" var="type">
+                                <option text="{!type.label}" value="{!type.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem flexibility="grow" size="12" class="slds-p-horizontal_small" >
+                        <div class="slds-m-top_medium slds-text-align_right">
+                            <lightning:button  type="button" name="cancel" label="Cancel" onclick="{!c.onCancel}"/>
+                            <lightning:button class="saveBtn" variant="brand" name="save" label="Save" onclick="{!c.onSave}"/>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+        </lightning:layout>
+    </div>
+</aura:component>

@@ -1,0 +1,20 @@
+.THIS .slds-form-element__icon.slds-align-middle{
+    padding: 0
+}
+/*toggleCss.css*/
+ .THIS .toggleme {
+   display: none;
+ }
+
+.THIS lightning-icon.some-indicator > lightning-primitive-icon > svg > use{
+    fill: var(--sds-c-button-brand-color-background, var(--lwc-brandAccessible,rgb(50, 64, 42)));
+}
+.THIS .slds-button{
+  filter: brightness(0.7) grayscale(1);
+}
+
+.THIS .slds-popover_tooltip, 
+.THIS .slds-popover--tooltip {
+    background: #32402A; /* background color */
+    color: #dcdac6; /* text color */
+}

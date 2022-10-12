@@ -1,0 +1,26 @@
+<aura:component >
+    
+    <aura:attribute name="label" type="String" default=""/>
+    <aura:attribute name="labelClass" type="String" default=""/>
+    <aura:attribute name="required" type="Boolean" default="false"/>
+    <aura:attribute name="hideRequired" type="Boolean" default="false"/>
+    <aura:attribute name="isDefaultIcon" type="Boolean" default="true"/>
+    <aura:attribute name="helpText" type="String" default=""/>
+    <aura:attribute name="isCurrencyFld" type="Boolean" default="false"/>
+    <aura:if isTrue="{!and(v.required,!v.hideRequired)}">
+    	<abbr class="slds-required" title="required">*</abbr>
+    </aura:if>
+    <aura:if isTrue="{!v.isCurrencyFld}">
+        <ui:outputCurrency class="{!v.labelClass}" value="{!v.label}" />
+        <aura:set attribute="else">
+            <label class="{!'slds-form-element__label '+v.labelClass}" for="form-element-help-01">{!v.label}&nbsp;</label>
+        </aura:set>
+    </aura:if>
+    <aura:if isTrue="{!v.isDefaultIcon}">
+    	<lightning:helptext class="helpIconClass" content="{!v.helpText}"/>
+        <aura:set attribute="else">
+        	<lightning:helptext class="slds-float_right helpIconClass" content="{!v.helpText}" iconName="utility:info_alt" iconVariant="bare"/>
+        </aura:set>
+    </aura:if>
+    {!v.body}
+</aura:component>

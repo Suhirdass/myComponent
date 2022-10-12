@@ -1,0 +1,15 @@
+<apex:page standardController="Purchase_Order__c"  extensions="CreateCTIfromPO"  
+    action="{!createCTI}" title="Cultivation Tax Invoice: Create New CTI" >  
+  <apex:form >
+  <apex:pageBlock title="PO Detail">
+  <apex:pageBlockButtons >
+      <apex:commandButton action="{!goBack}" value="Return"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection title="Warnings and Errors Associated with Create Cultivation Tax Invoice" columns="1">
+      <apex:pageBlockSectionItem >
+        <apex:pageMessages />
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,36 @@
+<!-- Base theme component for the Portal -->
+<aura:component implements="forceCommunity:themeLayout" access="global" description="Brand Product Theme">
+    <aura:attribute name="search" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="newHeader" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="footer" type="Aura.Component[]" required="false"/>
+    
+    <div class="slds-is-relative">
+        <div class="welcomeFont deepJade slds-text-align_center" style="width:100%;height:16px">WELCOME TO THE WOVN MARKETPLACE</div>
+        <lightning:layout multipleRows="true" class="filigreenHeader">
+            
+            <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="4" largeDeviceSize="2" padding="horizontal-small" class="FiligreenLogo slds-is-relative">
+                <a href="" onclick="{!c.onRedirect}" target="_blank">
+                    <!--img src="{!$Resource.BrigadeResources + '/assets/logo-combined.png'}" alt="Filigreen Logo" style="height: 31px;"/-->	
+                    <img class="WOVNLogo-img" src="{!$Resource.WOVNResources + '/assets/WOVN-Wordmark-Daze.png'}" alt="WOVN Logo" />
+                </a>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="4" largeDeviceSize="7" padding="horizontal-small" class="searchBar">
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="4" largeDeviceSize="3"  class="profilebar">
+			</lightning:layoutItem>
+            
+        </lightning:layout>
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem flexibility="grow" size="12" mediumDeviceSize="12" padding="horizontal-small" class="navigationBar">
+                {!v.newHeader}
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" padding="horizontal-small" class="filigreenContents">
+                {!v.body}
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" padding="horizontal-small">
+                {!v.footer}
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

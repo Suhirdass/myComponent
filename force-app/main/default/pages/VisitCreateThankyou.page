@@ -1,0 +1,47 @@
+<apex:page controller="VisitCreateController" lightningStylesheets="true" showHeader="false" action="{!reloadData}">
+    <apex:slds />
+    <style>
+        .bPageBlock{
+        background-color: white !important;
+        margin-left:10% !important;	
+        margin-right:10% !important;
+        border-top: 1px solid rgb(234, 234, 234) !important;
+        }
+        .pbSubheader {
+        display:flex !important;
+        }
+        .ptBody{
+        margin-left:8% !important;	
+        }
+               </style>
+    <div class="header">
+    <center><img src="{!$Resource.filigreenLogoHeader}" width="25%"/></center>
+  </div>
+  <apex:sectionHeader title="Welcome To" subtitle="Filigreen Distribution Center - San Francisco, CA"/>
+
+  <apex:form >
+      <apex:pageMessages ></apex:pageMessages>
+    <apex:pageBlock title="Visitor Information"  >
+          <apex:pageBlockButtons location="top">
+        <apex:commandButton action="{!homePage}" value="Back" style="width:20%;height:auto;float:right;" styleClass="slds-button slds-button_brand" />
+      </apex:pageBlockButtons>
+          
+      <apex:pageBlockSection showHeader="false" columns="2">
+        <apex:outputField value="{!CustomerVisit.Name}" />
+          <apex:outputField value="{!CustomerVisit.FirstName__c}" />
+          <apex:outputField value="{!CustomerVisit.LastName__c}" />
+        <apex:outputField value="{!CustomerVisit.Email__c}" />
+           <apex:outputField value="{!CustomerVisit.CompanyName__c}" />
+        <apex:outputField value="{!CustomerVisit.PersonToMeet__c}" />
+        <!--<apex:outputField value="{!CustomerVisit.InTime__c}" />-->
+        <apex:outputField value="{!CustomerVisit.ReasonForVisit__c}" />
+
+      </apex:pageBlockSection>
+
+    </apex:pageBlock>
+  </apex:form>
+    <script>
+    setTimeout(function(){ 
+            window.location = 'https://dev-customervisit.cs21.force.com/CustomerVisit/';}, 10000);
+    </script>
+</apex:page>

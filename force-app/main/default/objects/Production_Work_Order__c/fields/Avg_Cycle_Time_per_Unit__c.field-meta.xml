@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Avg_Cycle_Time_per_Unit__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(Completed_Qty__c = 0,0,Total_Production_Time__c * 60 / Completed_Qty__c)</formula>
+    <inlineHelpText>Calculated; Expressed in seconds. Average cycle time per unit</inlineHelpText>
+    <label>Time per Unit</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

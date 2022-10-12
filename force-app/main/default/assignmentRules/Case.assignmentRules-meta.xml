@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssignmentRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignmentRule>
+        <fullName>New Functionality CAse</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <assignedTo>khanh@wearewovn.com</assignedTo>
+            <assignedToType>User</assignedToType>
+            <criteriaItems>
+                <field>Case.Reason</field>
+                <operation>equals</operation>
+                <value>New Functionality Request</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <template>All_templates/Internal_Support_Case_NEW</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>IT_support_case</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>New</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>IT Support Case</value>
+            </criteriaItems>
+            <template>All_templates/Internal_Support_Case_NEW</template>
+        </ruleEntry>
+    </assignmentRule>
+    <assignmentRule>
+        <fullName>Support Cases</fullName>
+        <active>false</active>
+        <ruleEntry>
+            <assignedTo>Customer_Support</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>AND( ISNEW(),  RecordTypeId =&apos;0126A000000irirQAA&apos;)</formula>
+            <template>All_templates/Web_Ticket_Assignment_Notification</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>IT_support_case</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>AND( ISNEW(),  RecordTypeId = &apos;0126A000000is10QAA&apos;)</formula>
+            <template>All_templates/Internal_Support_Case_NEW</template>
+        </ruleEntry>
+    </assignmentRule>
+    <assignmentRule>
+        <fullName>Web Cases Routing</fullName>
+        <active>false</active>
+        <ruleEntry>
+            <assignedTo>Customer_Support</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>AND( ISNEW(), CreatedBy.ContactId!=null)</formula>
+            <template>All_templates/Web_Ticket_Assignment_Notification</template>
+        </ruleEntry>
+    </assignmentRule>
+</AssignmentRules>

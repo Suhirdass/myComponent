@@ -1,0 +1,13 @@
+<aura:component extends="c:utility" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickActionWithoutHeader,lightning:actionOverride,force:hasSObjectName,force:appHostable" access="global">
+    <aura:handler name="init" action="{!c.navigateEdit}" value="{!this}" />
+    
+    <aura:html tag="style">
+        .modal-body{
+        	display : none;
+        }
+        .slds-modal__close{
+        	display : none !important ;
+        }
+    </aura:html>
+    
+</aura:component>

@@ -1,0 +1,62 @@
+<aura:component extends="c:utility" controller="NewContactController">
+    <aura:attribute name="recordTypeId" type="String" default="" />
+    <aura:attribute name="accountId" type="String" default="" />
+    <aura:attribute name="newContact" type="Object" />
+    <aura:attribute name="accountName" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:html tag="style">
+        .slds-modal__content {
+        padding: 1em 3em 3em 4em!important;
+        }
+    </aura:html>
+    <lightning:overlayLibrary aura:id="overlay"/>
+    <div class="slds-box slds-box_small" style="border-radius: 0;border: none; box-shadow: none;">
+        <lightning:spinner variant="brand" alternativeText="{!v.processingMessage}" class="{!(v.isProcessing? 'slds-show slds-is-fixed': 'slds-hide')}" />
+        <div class="slds-size_full slds-m-bottom_small">
+            <h3 class="boxHeader text__greenPrimary" style="margin-bottom:1px;">
+                New Retailer Contact
+            </h3>
+        </div>
+        <!-- the messages component is for error messages -->
+        <!--lightning:messages /-->
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input1" aura:id="fieldId" label="First Name" value="{!v.newContact.firstname}" required="true"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input2"  aura:id="fieldId" label="Last Name" value="{!v.newContact.Lastname}" required="true" fieldLevelHelp="If you do not know the contacts last name, please enter Unknown."/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input3" label="Title" value="{!v.newContact.Title}"/>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input4" aura:id="fieldId" label="Email" value="{!v.newContact.Email}" required="true"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6"  padding="around-small">
+                <lightning:input  aura:id="validate" type="tel" label="Phone" value="{!v.newContact.Phone}" required="true" messageWhenValueMissing="Complete this field." pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" messageWhenTypeMismatch ="Invalid phone format. e.g. 999-999-9999" messageWhenPatternMismatch ="Invalid phone format. e.g. 999-999-9999" onblur ="{!c.onPhoneChange}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:textarea name="input5" label="Mailing Street" maxlength="255" value="{!v.newContact.MailingStreet}" />
+            </lightning:layoutItem>            
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input6" label="Mailing City" value="{!v.newContact.MailingCity}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input7" label="Mailing State" value="{!v.newContact.MailingState}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input8" label="Mailing Postal Code" value="{!v.newContact.MailingPostalCode}"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small">
+                <lightning:input name="input9" label="Retailer Name" value="{!v.accountName}" disabled="true"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem flexibility="grow" size="12" smallDeviceSize="6" padding="around-small"></lightning:layoutItem>
+            
+        </lightning:layout>
+        <div class="slds-show_inline-block slds-float_right" style="margin-top: 0.8rem;padding-right: .8rem;">
+            <lightning:button class="saveBtn" variant="brand" type="submit" name="save" label="Save" onclick="{!c.onSave}"/>
+            <lightning:button class="cancelBtn" type="button" name="cancel" label="Cancel" onclick="{!c.onCancel}"/>
+        </div>
+    </div>
+</aura:component>

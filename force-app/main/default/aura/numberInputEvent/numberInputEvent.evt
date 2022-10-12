@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="">
+    <aura:attribute name="currentValue" type="Integer"/>
+    <aura:attribute name="index" type="Integer"/>
+    <aura:attribute name="recordId" type="String"/>
+</aura:event>

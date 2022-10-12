@@ -1,0 +1,87 @@
+<aura:component extends="c:utility" controller="FiligreenProductsCtrl" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <ltng:require
+                  scripts="{!join(',',$Resource.ratingPlugin + '/js/jquery.min.js', $Resource.perfectScrollbar + '/jquery.zoom.js')}"
+                  afterScriptsLoaded="{!c.onScriptsLoaded}"
+                  />  
+    <aura:attribute name="fromBrandProduct" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <aura:attribute name="product" type="Map" default="" required="true" />
+    <aura:attribute name="isPublic" type="Boolean" default="false" />
+    <aura:attribute name="isDetails" type="Boolean" default="false" />
+    <aura:attribute name="isModalDisplay" type="Boolean" default="false" />
+    <aura:attribute name="quantity" type="Integer" default="1" />
+    <aura:attribute name="fromPublicProducts" type="Boolean" default="true" />
+    <aura:attribute name="isDataLoaded" type="Boolean" default="false" />
+    <lightning:layout multipleRows="true">                     
+        <lightning:layoutItem flexibility="grow" size="12">
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="flex-grid">
+                    <div class="slds-m-right_large" style="width:50%">
+                        <p class="slds-text-heading_small">{!v.product.producerName}</p>
+                        <h3 title="{!v.product.shortDescrption}" class="slds-truncate text__greenPrimary" style="font-size:24px;">
+                            <aura:renderIf isTrue="{!v.isModalDisplay}">
+                                <a href="#" class="text__greenPrimary" onclick="{!c.onProductDetails}">
+                                    {!v.product.shortDescrption}<!--{!v.product.productFamily}-->
+                                </a>
+                                
+                                <aura:set attribute="else">
+                                    <span>{!v.product.shortDescrption}</span>
+                                </aura:set>
+                            </aura:renderIf>
+                        </h3>
+                    </div>
+                    <aura:if isTrue="{!v.fromBrandProduct == 'false'}">
+                        <div>
+                            <c:addToCart isBrand="{!v.isBrand}" fromPublicProducts="{!v.fromPublicProducts}" product="{!v.product}" showQuantityInput="true" showDetails="false" allowSample="true" isPublic="{!v.isPublic}"/>
+                        </div>
+                    </aura:if>
+                </div>
+                
+                <lightning:layout  multipleRows="true">
+                    <lightning:layoutItem size="3">
+                        <p class="shortDescription">{!v.product.productFamily}</p>
+                        
+                        <div class="flex-grid">
+                            <div class="flex-grid__left flex items-center">
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="flex-grid-to-table">
+                            <div class="flex-grid">
+                                <p class="text__bold slds-p-bottom_xx-small slds-p-right--medium">THC*</p>
+                                <p class="slds-p-bottom_xx-small">{!v.product.THCPercent} | {!v.product.THCMG}</p>
+                            </div>
+                            <div class="flex-grid">
+                                <p class="text__bold slds-p-bottom_xx-small slds-p-right--medium">CBD*</p>
+                                <p class="slds-p-bottom_xx-small">{!v.product.CBDPercent} | {!v.product.CBDMG}</p>
+                            </div>
+                            <div class="flex-grid">
+                                <p class="text__bold slds-p-bottom_xx-small slds-p-right--medium NOWRAP">Cultivation Type</p>
+                                <p class="slds-p-bottom_xx-small">{!v.product.cultivationMethod}</p>
+                            </div>
+                            <div class="flex-grid">
+                                <p class="text__bold slds-p-bottom_xx-small slds-p-right--medium">Units Per Case</p>
+                                <p class="slds-p-bottom_xx-small">{!v.product.MOQ}</p>
+                            </div>
+                            <div class="flex-grid">
+                                <p class="text__bold slds-p-bottom_xx-small slds-p-right--medium">SKU</p>
+                                <p class="slds-p-bottom_xx-small">{!v.product.name}</p>
+                            </div>
+                        </div>
+                        
+                       <hr style="{!if(v.isDetails,'display:block','display:none')}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3">
+                        <span class="zoom" id="myimage">
+                            <img  src="{!v.product.imageUrl}" alt="{!v.product.name}" class="responsive" />
+                        </span>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="12">
+                        <p>{!v.product.description}</p>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

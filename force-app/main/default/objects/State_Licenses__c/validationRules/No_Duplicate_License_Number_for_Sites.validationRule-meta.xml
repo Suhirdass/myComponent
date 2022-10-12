@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_Duplicate_License_Number_for_Sites</fullName>
+    <active>true</active>
+    <errorConditionFormula>License_Number__c &lt;&gt; License_Number__c</errorConditionFormula>
+    <errorMessage>Duplicate License Number and License Class Not Allowed For Sites</errorMessage>
+</ValidationRule>

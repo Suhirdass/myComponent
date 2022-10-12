@@ -1,0 +1,38 @@
+<aura:component implements="forceCommunity:profileMenuInterface" access="global" controller="Utility" extends="c:utility">
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+  <aura:handler event="c:refreshUsernameEvt" action="{!c.onUsernameChange}" />
+
+  <aura:attribute name="user" type="Map" default="" />
+    <aura:attribute name="isLimited" type="Boolean" default="false" />
+  <aura:attribute name="initials" type="String" default="" />
+
+  <aura:registerEvent name="updateCartTotalEvt" type="c:updateCartTotalEvt" />
+
+
+  <div class="slds-is-relative">
+    <div id="profileContainer">
+      <ui:menu>
+
+        <!-- <div class="{!'header-profile' + (v.isProfileExpanded ? ' is-expanded' : '')}">
+            <a href="#" class="header-profile-toggle" onclick="{!c.toggleUserMenu}"><span>FG</span></a>
+            <ul class="header-profile-dropdown">
+                dropdown content
+            </ul>
+        </div> -->
+        <ui:menuTriggerLink aura:id="trigger" class="header-profile-toggle">
+          <!--lightning:icon iconName="action:user" size="x-small" class="iconPadding"/{!v.initials}-->
+          <ui:outputText value="{!v.initials}" aura:id="userName" class="userInfo" />
+          <!-- <lightning:icon iconName="utility:down" size="xx-small" class="iconPadding" /> -->
+        </ui:menuTriggerLink>
+
+        <ui:menuList class="header-profile-dropdown" aura:id="actionMenu" closeOnClickOutside="true">
+            <aura:if isTrue="{!not(v.isLimited)}">
+                <ui:actionMenuItem label="My Settings" click="{!c.navigateToSettings}" />
+            </aura:if>
+          <ui:actionMenuItem label="Logout" click="{!c.logout}" />
+        </ui:menuList>
+      </ui:menu>
+    </div>
+  </div>
+</aura:component>

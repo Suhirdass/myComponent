@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <assignments>
+        <name>Cancelled_BQ_Status</name>
+        <label>Cancelled BQ Status</label>
+        <locationX>264</locationX>
+        <locationY>575</locationY>
+        <assignmentItems>
+            <assignToReference>BQ_Loop.BQ_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Cancelled</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>BQ_Loop</targetReference>
+        </connector>
+    </assignments>
+    <interviewLabel>Update BQ Status to Cancelled from Lost Opportunities flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update BQ Status to Cancelled from Lost Opportunities flow</label>
+    <loops>
+        <name>BQ_Loop</name>
+        <label>BQ Loop</label>
+        <locationX>176</locationX>
+        <locationY>455</locationY>
+        <collectionReference>Get_Opportunity_BQ</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Cancelled_BQ_Status</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Update_BQ_Status</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Opportunity_BQ</name>
+        <label>Get Opportunity BQ</label>
+        <locationX>176</locationX>
+        <locationY>335</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>BQ_Loop</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Opportunity_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Brand_Quote__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_BQ_Status</name>
+        <label>Update BQ Status</label>
+        <locationX>176</locationX>
+        <locationY>791</locationY>
+        <inputReference>BQ_Loop</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Opportunity_BQ</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Closed Lost</stringValue>
+            </value>
+        </filters>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

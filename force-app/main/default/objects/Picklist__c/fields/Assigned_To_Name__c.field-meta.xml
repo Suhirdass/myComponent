@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigned_To_Name__c</fullName>
+    <externalId>false</externalId>
+    <label>Assigned To Name</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Alessandra Nieto</fullName>
+                <default>false</default>
+                <label>Alessandra Nieto</label>
+            </value>
+            <value>
+                <fullName>Cayla</fullName>
+                <default>false</default>
+                <label>Cayla</label>
+            </value>
+            <value>
+                <fullName>Colin Brown</fullName>
+                <default>false</default>
+                <label>Colin Brown</label>
+            </value>
+            <value>
+                <fullName>James</fullName>
+                <default>false</default>
+                <label>James</label>
+            </value>
+            <value>
+                <fullName>JJ</fullName>
+                <default>false</default>
+                <label>JJ</label>
+            </value>
+            <value>
+                <fullName>Khanh</fullName>
+                <default>false</default>
+                <label>Khanh</label>
+            </value>
+            <value>
+                <fullName>Mac</fullName>
+                <default>false</default>
+                <label>Mac</label>
+            </value>
+            <value>
+                <fullName>Manh</fullName>
+                <default>false</default>
+                <label>Manh</label>
+            </value>
+            <value>
+                <fullName>Matt</fullName>
+                <default>false</default>
+                <label>Matt</label>
+            </value>
+            <value>
+                <fullName>Max</fullName>
+                <default>false</default>
+                <label>Max</label>
+            </value>
+            <value>
+                <fullName>Phong</fullName>
+                <default>false</default>
+                <label>Phong</label>
+            </value>
+            <value>
+                <fullName>Scott</fullName>
+                <default>false</default>
+                <label>Scott</label>
+            </value>
+            <value>
+                <fullName>Tracey</fullName>
+                <default>false</default>
+                <label>Tracey</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

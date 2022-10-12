@@ -1,0 +1,15 @@
+<apex:page standardController="Invoice__c"  extensions="CreateShippingManifestfromInvoice"  
+    action="{!createReShipManifest}" title="Retail Shipping Manifest: Create New Re.Manifest" >  
+  <apex:form >
+  <apex:pageBlock title="SO Detail">
+  <apex:pageBlockButtons >
+      <apex:commandButton action="{!goBack}" value="Return"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection title="Warnings and Errors Associated with Create Retail Shipping Manifest" columns="1">
+      <apex:pageBlockSectionItem >
+        <apex:pageMessages />
+      </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

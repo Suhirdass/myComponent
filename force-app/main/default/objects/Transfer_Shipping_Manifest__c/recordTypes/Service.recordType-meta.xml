@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service</fullName>
+    <active>true</active>
+    <compactLayoutAssignment>Filigreen</compactLayoutAssignment>
+    <description>Service Transfer or Change of Custody</description>
+    <label>Service</label>
+    <picklistValues>
+        <picklist>Payment_Terms__c</picklist>
+        <values>
+            <fullName>COD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 10</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 120</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 15</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 21</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 30</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 45</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 50</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 60</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 7</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 77</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NET 90</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Shipping_Method__c</picklist>
+        <values>
+            <fullName>Distributor Delivery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Distributor Pick-up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Disty Partner Delivery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Internal Conversion</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lab Sampling</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ownership Conversion</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Production Conversion</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Receiver Disty Pick-up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Receiver Drop-off</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Receiver Pick-up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Site to Site</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Supplier Drop-off</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Supplier Partner Pick-up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Supplier Pick-up</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Shipping_Terms__c</picklist>
+        <values>
+            <fullName>CFR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CIF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CIP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CPT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DAP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DAT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DDP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EXW</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FAS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FCA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FOB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TSM_Type__c</picklist>
+        <values>
+            <fullName>Product</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Transfer_Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Draft</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>In-Transit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Received</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submitted</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

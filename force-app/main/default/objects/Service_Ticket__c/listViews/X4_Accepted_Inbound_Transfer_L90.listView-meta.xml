@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X4_Accepted_Inbound_Transfer_L90</fullName>
+    <columns>CREATED_DATE</columns>
+    <columns>NAME</columns>
+    <columns>Status__c</columns>
+    <columns>Brand_Name__c</columns>
+    <columns>Brand_Contact__c</columns>
+    <columns>Opportunity__c</columns>
+    <columns>Total_Service_Lines__c</columns>
+    <columns>Request_Date_Time__c</columns>
+    <columns>Special_Instruction__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Accepted</value>
+    </filters>
+    <filters>
+        <field>Transfer_Method__c</field>
+        <operation>equals</operation>
+        <value>Drop-off,Pick-up</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>LAST_90_DAYS</value>
+    </filters>
+    <label>4. Accepted Inbound Transfer L90</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

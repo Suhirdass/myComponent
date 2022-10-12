@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Update_All_day_delivery_Start_Time</fullName>
+        <field>Earliest_Delivery_Window__c</field>
+        <literalValue>06:00 AM PST</literalValue>
+        <name>Update All day delivery Start Time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_All_day_last_delivery_Time</fullName>
+        <field>Last_Delivery_Window__c</field>
+        <literalValue>10:00 PM PST</literalValue>
+        <name>Update All day last delivery Time</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>All Day Delivery</fullName>
+        <actions>
+            <name>Update_All_day_delivery_Start_Time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_All_day_last_delivery_Time</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <failedMigrationToolVersion>236.19.14</failedMigrationToolVersion>
+        <formula>ISCHANGED( Full_Day_Delivery__c ) &amp;&amp; Full_Day_Delivery__c = true</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>
